@@ -1,0 +1,681 @@
+/* Shopify table css*/
+/* Tables
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.table td, .table th {
+    border-top: none;
+    padding: 1.2rem 1.5rem;
+    vertical-align: middle;
+}
+.table tr td {
+    padding-top: .8rem;
+    padding-bottom: .8rem;
+}
+.table-responsive .Polaris-ButtonGroup--segmented {
+    display: -webkit-box;
+}
+/* Pagination
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.page-pagination {
+    width: 100%;
+    text-align: center;
+    margin-top: 2.0rem; 
+}
+.pagination-popup{
+    width: 100%;
+    text-align: center;
+}
+/* Tips
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.tip {
+    display: inline;
+    position: relative; }
+.tip:hover {
+    text-decoration: none; }
+.tip:hover:before {
+    border: solid;
+    border-color: #333 transparent;
+    border-width: .6rem .6rem 0 .6rem;
+    bottom: 3.0rem;
+    content: "";
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    position: absolute;
+    z-index: 99; }
+.tip:hover:after {
+    background-color: #333;
+    border-radius: .3rem;
+    bottom: 3.5rem;
+    color: #fff;
+    content: attr(data-hover);
+    font-size: 1.4rem;
+    line-height: 2.0rem;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    padding: .5rem 1.5rem;
+    position: absolute;
+    z-index: 98;
+    width: auto;
+    white-space: nowrap;
+    text-align: left; }
+
+/********************************************
+******    Flash notice css start      *******
+*********************************************/
+/* flash */
+.inline-flash-wrapper{position:fixed;z-index:552;bottom:1.6rem;display:none;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:end;-webkit-align-items:flex-end;-ms-flex-align:end;align-items:flex-end;width:100%;pointer-events:none}.inline-flash-wrapper--is-visible{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}.inline-flash{position:relative;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;margin:0 1.6rem;background:rgba(0,0,0,.88);-webkit-box-shadow:0 0 0 1px rgba(63,63,68,.05),0 1px 3px 0 rgba(63,63,68,.15);box-shadow:0 0 0 1px rgba(63,63,68,.05),0 1px 3px 0 rgba(63,63,68,.15);border-radius:3px;color:#fff;cursor:default;pointer-events:auto;font-size:1.6rem;font-weight:400;line-height:2.4rem}.inline-flash__message{padding:.8rem 1.6rem;margin-bottom:0;margin-top:0}p{margin:0;display:block;-webkit-margin-before:1em;-webkit-margin-after:1em;-webkit-margin-start:0;-webkit-margin-end:0}.inline-flash-wrapper.animated{-webkit-animation-duration:2s;animation-duration:2s;-webkit-animation-fill-mode:both;animation-fill-mode:both}@-webkit-keyframes bounceInUp{0%{opacity:0;-webkit-transform:translateY(2000px);transform:translateY(2000px)}60%{opacity:1;-webkit-transform:translateY(-30px);transform:translateY(-30px)}80%{-webkit-transform:translateY(10px);transform:translateY(10px)}100%{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes bounceInUp{0%{opacity:0;-webkit-transform:translateY(2000px);-ms-transform:translateY(2000px);transform:translateY(2000px)}60%{opacity:1;-webkit-transform:translateY(-30px);-ms-transform:translateY(-30px);transform:translateY(-30px)}80%{-webkit-transform:translateY(10px);-ms-transform:translateY(10px);transform:translateY(10px)}100%{-webkit-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0)}}.inline-flash-wrapper.bounceInUp{-webkit-animation-name:bounceInUp;animation-name:bounceInUp}@media screen and (min-width:768px){.inline-flash--nav-offset{margin-left:24rem}}@media (min-width:640px){.inline-flash{font-size:2rem;line-height:2.8rem}}
+/* error */
+.inline-flash.error{background:-webkit-gradient(linear,left top,left bottom,from(#e6391a),to(#d53417));background:linear-gradient(to bottom,#e6391a,#d53417);border-color:background:rgba(255,0,0,.88);-webkit-box-shadow:inset 0 1px 0 0 #e84528;box-shadow:inset 0 1px 0 0 #e84528}
+/* add other color flash here */
+/********************************************
+******    Flash notice css start Ene  *******
+*********************************************/
+.Polaris-Icon__Svg{
+    cursor: pointer;
+}
+/********************************************
+******   help page css start      *******
+*********************************************/
+/*accordion css strat*/
+.accordion .card-header:after {
+    font-family: 'FontAwesome';  
+    content: "\f078";
+    float: right; 
+}
+.accordion .card-header.collapsed:after {
+    /* symbol for "collapsed" panels */
+    font-family: 'FontAwesome';
+    content: "\f054"; 
+}
+.accordion .card-header {
+    background-color: #6C7BCF;
+    color: #fff;
+}
+/*accordion css end*/
+/*image hover css satrt*/
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 1;
+    transition: .5s ease;
+    /*background-color: #008CBA;*/
+    background: rgba(0,0,0,.8);
+}
+
+.overlay:hover {
+    opacity: 0;
+    /*background: rgba(54, 52, 52, 0.8);*/
+}
+.text {
+    color: white;
+    font-size: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+/*image hover css end*/
+/********************************************
+******   help page css end      *******
+*********************************************/
+/********************************************
+******   Model css start      *******
+*********************************************/
+.shopify{
+    background-color: rgba(33,43,54,.4);
+}
+.shopify .shopify-close-btn {
+    opacity: 1;
+}
+.shopify .modal-dialog {
+    max-width: 640px;
+    margin-top: 6.6rem;
+    width: auto;
+}
+.shopify .Polaris-Card {
+    box-shadow: none;
+}
+.shopify .modal-body {
+    padding: 0px;
+}
+.shopify .modal-footer.pagination {
+    margin-top: 0rem;
+    margin: 0px;
+}
+.shopify .Polaris-Card__Section.Polaris-Card__Section-list {
+    padding: 0.2rem;
+}
+/********************************************
+******    Model css end      *******
+*********************************************/
+/********************************************
+******   Datepicker css start      *******
+*********************************************/
+.report-btn .Polaris-Button--sizeSlim {
+    min-height: 3.6rem;
+    padding-right: 1.5rem;
+    padding-left: 0.5rem;
+}
+/********************************************
+******   Datepicker css end      *******
+*********************************************/
+/********************************************
+******   Popver css start      *******
+*********************************************/
+.popover-content {
+    padding: 0px;
+}
+/********************************************
+******   Popver css end      *******
+*********************************************/
+/********************************************
+******   Tab code start    *******
+*********************************************/
+.Polaris-Tabs_tabcontent{
+    display: none;
+}
+.Polaris-Tabs_tabcontent.first {
+    display: block;
+}
+/********************************************
+******   Tab code end    *******
+*********************************************/
+
+/********************************************
+******   Colorpicker start  *******
+*********************************************/
+.form-control{
+    font-size:1.4rem;
+}
+/********************************************
+******   Colorpicker end   *******
+*********************************************/
+/********************************************
+******   Popver css start   *******
+*********************************************/
+.popover-body {
+    padding: 0px;
+    font-size:1.4rem;
+}
+/********************************************
+******    Popver css End  *******
+*********************************************/
+.fileinput-button {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+.fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px !important;
+    direction: ltr;
+    cursor: pointer;
+}
+
+/* Fixes for IE < 8 */
+@media screen\9 {
+    .fileinput-button input {
+        filter: alpha(opacity=0);
+        font-size: 100%;
+        height: 100%;
+    }
+}
+
+/*Svg css*/
+.Polaris-OptionList-Option:hover {
+    background-image: none !important;
+}
+.svg-list .Polaris-ResourceList-Item:hover {
+    background-image: none;
+}
+.svg-list .Polaris-ResourceList-Item {
+    cursor: auto;
+}
+.Polaris-ResourceList__ItemWrapper .Polaris-ResourceList-Item__Container span.Polaris-Icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+/*Svg css*/
+
+/*select2 css start*/
+.coutnry-select2  .select2-container .select2-selection--single{
+    min-height: 3.6rem;
+}
+
+.coutnry-select2  .select2-container--default .select2-selection--single .select2-selection__arrow{
+    min-height: 3.6rem;
+    top: 8px;
+}
+
+.coutnry-select2  .select2-container--default .select2-selection--single .select2-selection__rendered{
+    line-height: 32px;
+    color: #000000;
+    background-color: transparent;
+}
+
+.coutnry-select2  .select2-container--default .select2-selection--single{
+    border: 1px solid #c4cdd5;
+    border-radius: 3px;
+}
+
+.coutnry-select2  .select2-container .select2-selection--single .select2-selection__rendered{
+    padding-left: 12px;
+    padding-top: 2px;
+}
+
+.coutnry-select2  .select2-container--default .select2-search--dropdown .select2-search__field:focus{
+    border: 1px solid #3f4eae;
+}
+
+.coutnry-select2   .select2-container{
+    width: 107% !important;
+}
+.coutnry-select2  .select-hide{
+    display:none;
+}
+.countrySelect2.select2-container .select2-choice{
+    border: 1px solid #ccc;
+    padding: 7px 12px;
+    color: #555;
+}
+.countrySelect2 .Polaris-Icon{
+    margin-top: 8px;
+}
+.select2-container--open{
+    z-index: 999999999999;
+}
+.coutnry-select2 .Polaris-Icon{
+    margin-top: 8px;
+}
+
+.coutnry-select2 .Polaris-Label {
+    margin-left: 12px;
+}
+.Polaris-FormLayout__Item.coutnry-select2 {
+    margin-left: 7px;
+}
+.coutnry-select2 .select2-container .select2-choice .select2-arrow {
+    margin-right: 8px;
+}
+.form-control:focus {
+    border-color: #5c6ac4;
+    box-shadow: inset 0 0 0 0 transparent, 0 0 0 1px #5c6ac4;
+}
+/*select2 css end*/
+
+/*rating start css start*/
+
+.hide {
+    display: none!important;
+}
+/*rating start css end*/
+
+/*vertical tab css start*/
+.vertical-tabs ul.Polaris-Tabs {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    padding: 0;
+    list-style: none;
+    background: #f4f6f8;
+}
+.vertical-tabs  li.Polaris-Tabs__TabContainer {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin: 0 0 -1px;
+    padding: 0;
+    /*    border-top: 1px solid #dfe3e8;*/
+    border-bottom: 1px solid #dfe3e8;
+}
+.vertical-tabs .Polaris-Tabs__Tab {
+    display: flex;
+    /*    margin: 0 -1px;*/
+    padding: 1.4rem;
+    outline: none;
+    text-decoration: none;
+    justify-content: left;
+    cursor: pointer;
+    border-right: 1px solid #dfe3e8;
+    border-left: 1px solid #dfe3e8;
+    font-weight: 600;
+}
+.vertical-tabs .Polaris-Tabs__Title {
+    //font-weight: 600;
+    padding: 0px;
+}
+.vertical-tabs .demo{
+    margin-right: 1.6rem;
+}
+.vertical-tabs .Polaris-Tabs__Tab.Polaris-Tabs__Tab--selected .Polaris-Tabs__Title{
+    color: #5c6ac4;
+    font-weight: 600;
+    border-bottom-color: transparent;
+}
+.vertical-tabs .Polaris-Tabs__Tab.Polaris-Tabs__Tab--selected .Polaris-Tabs__Title:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: .3rem;
+    background: #5c6ac4;
+
+}
+.vertical-tabs .Polaris-Tabs__Tab--selected {
+    background: #fff;
+    //color: #5c6ac4;
+    border-right-color: transparent;
+    //font-weight: 600;
+}
+.vertical-tabs .Polaris-Tabs__Tab:focus{
+    box-shadow:none;
+}
+.vertical-tabs .Polaris-Tabs__Tab.Polaris-Tabs__Tab--selected .Polaris-Tabs__Title:hover {
+    color: #000;
+    font-weight: 600;
+}
+.vertical-tabs .Polaris-Tabs__Tab:hover .Polaris-Tabs__Title{
+    font-weight: 600;
+    //color: #5c6ac4;
+    border-bottom-color: transparent;
+}
+@media (max-width: 600px) {
+    .vertical-tabs ul.Polaris-Tabs{
+        float: inherit;
+    }
+}
+/*vertical tab css end*/
+
+/*owl carousel css start*/
+.owl-carousel .owl-stage-outer{
+    overflow: visible !important
+}
+/*owl carousel css end*/
+footer css start
+.footer-review-bar .Polaris-Banner__Heading{
+    width: 100%;
+}
+.Polaris-Page__Footer--hasSeparator{
+    padding: 1.6rem 0;
+    border-top: 1px solid #dfe3e8;
+}
+.Polaris-Banner--statusSuccess.footer-review-bar{
+    background: #FDFDFD !important;
+    box-shadow: inset 0 3px 0 0 #6C7BCF, inset 0 0 0 0 transparent, 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)!important;
+}
+.footer-review-bar .Polaris-Button {
+    width: 121px;
+}
+.footer-review-bar  .Polaris-Heading span,.copyrightheart{
+    color: red;
+    font-size: 17px;
+}
+/*footer css end*/
+/*star rating css start*/
+.rating-container {display: inline;}
+.rating-container .rating {cursor: default;position: relative;vertical-align: middle;display: inline-block;overflow: hidden;white-space: nowrap;}
+.rating-container .star {display: inline-block;margin: 0 2px;text-align: center;}
+.rating-container .empty-stars {color: #aaa;}
+.rating-container .filled-stars { position: absolute;left: 0;top: 0;margin: auto;color: #6c7bcf;white-space: nowrap;overflow: hidden;-webkit-text-stroke: 1px #fff;text-shadow: 1px 1px #fff;}
+.rating-animate .filled-stars {transition: width 0.25s ease; -o-transition: width 0.25s ease;-moz-transition: width 0.25s ease;-webkit-transition: width 0.25s ease;}
+.rating-rtl .filled-stars {left: auto;right: 0;-moz-transform: matrix(-1, 0, 0, 1, 0, 0) translate3d(0, 0, 0);-webkit-transform: matrix(-1, 0, 0, 1, 0, 0) translate3d(0, 0, 0);-o-transform: matrix(-1, 0, 0, 1, 0, 0) translate3d(0, 0, 0);transform: matrix(-1, 0, 0, 1, 0, 0) translate3d(0, 0, 0);}
+.rating-rtl.is-star .filled-stars {right: 0.06em;}
+.rating-rtl.is-heart .empty-stars { margin-right: 0.07em;}
+.rating-xs {font-size: 2rem;}
+.rating-container .caption {color: #999;display: inline-block;vertical-align: middle;font-size: 60%;/*    margin-top: -0.6em;*/}
+.rating-container .caption {margin-left: 5px;margin-right: 0;}
+.app-rating-banner .info{background-color: #B4E1FA;color: #fff;}
+.app-rating-banner .success {background-color: #50B83C;color: #fff;}
+.app-rating-banner .attention {background-color: #FFEA8A;color: #595130;}
+.app-rating-banner .warning{background-color: #DE3618;color: #fff;}
+.app-rating-banner .primary {background-color: #5C6AC4;color: #fff;}
+.app-rating-banner .rating-banner{margin: 0 auto;}
+/*star rating css end*/
+
+/*.highcharts-tooltip-box {
+	fill: rgba(0,0,0,.8);
+	fill-opacity: 1;
+	stroke-width: 0;
+}
+
+.highcharts-tooltip text {
+	fill: white !important;
+	text-shadow: 0 0 3px black;
+}*/
+
+/*new app block*/
+.new-app-block .Polaris-ButtonGroup__Item .app-install-btn{
+    min-width: 120px;
+    background: #ec5f42;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #ec5f42;
+}
+.new-app-block .Polaris-Icon--colorInkLighter {
+    fill: #00848e;
+}
+.new-app-block  .Polaris-Banner__Heading{
+    width: 100%;
+}
+.new-app-block .Polaris-Icon--colorInkLighter:after {
+    background-color: #b7ecec;
+}
+/*new app block*/
+/*update app block*/
+.update-app-block .Polaris-ButtonGroup__Item .Polaris-Button{
+    min-width: 120px;
+    background: #eec200;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #eec200;
+}
+/*update app block*/
+
+/*our app dropdown*/
+.app-dropdown-menu .dropdown::before {
+    border-bottom: none;
+}
+.app-dropdown-menu  .dropdown-menu {
+    font-size: 14px;
+    margin-top: 0.8rem;
+}
+.app-dropdown-menu  .Polaris-Thumbnail--sizeSmall {
+    width: 6rem;
+}
+/*our app dropdown*/
+/*simple popup start*/
+.shopify-onload-popup .modal-content {
+    border-radius: 16px;
+}
+.shopify-onload-popup .modal-header {
+    border-bottom: none;
+}
+.shopify-onload-popup h5{
+    text-align: center;
+    font-size: 4rem;
+    color: #20a5a5;
+    font-weight: 600;
+    letter-spacing: 0.4rem;
+}
+.shopify-onload-popup .modal-body{
+    margin-top: 13%;
+}
+.shopify-onload-popup .modal-content{
+    background-image: url("../img/bg_offers (1).png");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: none;
+}
+
+.shopify-onload-popup p{
+    text-align: center;
+    line-height: 1.5;
+    font-size: 3rem;
+    margin-top: 10px;
+}
+.shopify-onload-popup .popup-btn button{
+    margin-top: 10px;
+    background: #73c3c3;
+    border-color: #73c3c3;
+    box-shadow: inset 0 1px 0 0 #73c3c3, 0 1px 0 0 rgba(22, 29, 37, .05), 0 0 0 0 transparent;
+    padding: 2.3rem 5rem;
+    border-radius: 1.5rem;
+}
+.shopify-onload-popup .btn-review-text{
+    font-size: 20px;
+    font-weight: 600;
+}
+.shopify-onload-popup .Polaris-Icon{
+    height: 3rem;
+    width: 3rem;  
+}
+.shopify-onload-popup .modal-open .modal{
+    padding-right: 0px;
+}
+/*simple popup end*/
+
+/*silder popup css start*/
+.silder-popup .owl-carousel .owl-stage-outer {
+    overflow: hidden !important;
+}
+.silder-popup .owl-theme .owl-dots,.owl-theme .owl-nav{
+    text-align:center;
+    -webkit-tap-highlight-color:transparent
+}
+.silder-popup .owl-theme .owl-nav{
+    margin-top:10px
+}
+.silder-popup .owl-theme .owl-nav [class*=owl-]{
+    color:#FFF;
+    font-size:14px;
+    margin:5px;
+    padding:4px 7px;
+    background:#000 !important;
+    display:inline-block;
+    cursor:pointer;
+    border-radius:50px!important
+}
+.silder-popup .owl-theme .owl-nav .disabled{
+    opacity:.5;
+    cursor:default
+}
+.silder-popup .owl-theme .owl-nav.disabled+.owl-dots{
+    margin-top:10px
+}
+.silder-popup .owl-theme .owl-dots .owl-dot{
+    display:inline-block;
+    zoom:1
+}
+.silder-popup .owl-theme .owl-dots .owl-dot span{
+    width:10px;
+    height:10px;
+    margin:5px 7px;
+    background:#D6D6D6;
+    display:block;
+    -webkit-backface-visibility:visible;
+    transition:opacity .2s ease;
+    border-radius:30px
+}
+.silder-popup .owl-theme .owl-dots .owl-dot.active span,.owl-theme .owl-dots .owl-dot:hover span{
+    background:#869791
+}
+.silder-popup .owl-carousel .owl-nav button span {
+    color: #FFF;
+    display: inline-block;
+    zoom: 1;
+    *display: inline;
+    margin: 0 auto;
+    font-size: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    /*    background: #869791;*/
+    filter: Alpha(Opacity=50);
+}
+.silder-popup .owl-carousel .owl-nav button {
+    position: absolute;
+    top: 35%;
+    bottom: 0;
+    display: inline-block;
+    zoom: 1;
+    margin: 0;
+    width: 40px;
+    height: 40px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 1em;
+    border-radius: 30px;
+    color: #FFF;
+    background: #000;
+    opacity: .6;
+    border-radius: 50px;
+}
+.silder-popup .owl-carousel .owl-nav .owl-prev {
+    left: .5em;
+}
+.silder-popup .owl-carousel .owl-nav .owl-next {
+    right: .5em;
+}
+/*silder popup css end*/
+/*==========  Mobile First Method  ==========*/
+
+/* Extra Small Devices, Phones */ 
+@media screen and (max-width : 992px) {
+    .shopify-onload-popup h5 {
+        font-size: 3rem;
+    }
+    .shopify-onload-popup p {
+        font-size: 1.5rem;
+    }
+    .shopify-onload-popup .btn-review-text{
+        font-size: 14px;
+    }
+    .shopify-onload-popup .popup-btn button {
+        padding: 1rem 2rem;  
+    }
+}
+
+/* Custom, iPhone Retina */ 
+@media screen and (max-width : 375px) {
+    .shopify-onload-popup h5 {
+        font-size: 2rem;
+    }
+    .shopify-onload-popup p {
+        font-size: 1.5rem;
+    }
+    .shopify-onload-popup .btn-review-text{
+        font-size: 14px;
+    }
+    .shopify-onload-popup .popup-btn button {
+        padding: 1rem 2rem;  
+    }
+
+}

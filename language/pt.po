@@ -1,0 +1,565 @@
+messageid ""
+messagestr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-10-29 11:17+0530\n"
+"PO-Revision-Date: 2018-10-29 11:17+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: user/help.php:7
+messageid "Support/FAQ"
+messagestr ""
+
+#: user/help.php:116 user/help.php:147 user/help.php:178
+#: user/help.php:209
+messageid "Click here to zoom"
+messagestr ""
+
+#: user/help.php:229
+messageid "Need any other help?"
+messagestr ""
+
+#: user/help.php:232
+messageid "We are always here to help you. Please "
+messagestr ""
+
+#: user/help.php:232
+messageid "email us"
+messagestr ""
+
+#: user/help.php:232
+messageid ""
+" or contact us via the live chat support at the bottom right corner of the "
+"screen."
+messagestr ""
+
+#: user/index.php:98
+messageid "How would you rate our app?"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:129
+#: collection/pomo_library/calender_lang_locale.php:138
+#: collection/pomo_library/calender_lang_locale.php:147
+messageid "Sunday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:130
+#: collection/pomo_library/calender_lang_locale.php:139
+#: collection/pomo_library/calender_lang_locale.php:148
+messageid "Monday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:131
+#: collection/pomo_library/calender_lang_locale.php:140
+#: collection/pomo_library/calender_lang_locale.php:149
+messageid "Tuesday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:132
+#: collection/pomo_library/calender_lang_locale.php:141
+#: collection/pomo_library/calender_lang_locale.php:150
+messageid "Wednesday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:133
+#: collection/pomo_library/calender_lang_locale.php:142
+#: collection/pomo_library/calender_lang_locale.php:151
+messageid "Thursday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:134
+#: collection/pomo_library/calender_lang_locale.php:143
+#: collection/pomo_library/calender_lang_locale.php:152
+messageid "Friday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:135
+#: collection/pomo_library/calender_lang_locale.php:144
+#: collection/pomo_library/calender_lang_locale.php:153
+messageid "Saturday"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:138
+#: collection/pomo_library/calender_lang_locale.php:144
+messageid "S"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:139
+messageid "M"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:140
+#: collection/pomo_library/calender_lang_locale.php:142
+messageid "T"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:141
+messageid "W"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:143
+messageid "F"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:147
+messageid "Sun"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:148
+messageid "Mon"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:149
+messageid "Tue"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:150
+messageid "Wed"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:151
+messageid "Thu"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:152
+messageid "Fri"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:153
+messageid "Sat"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:156
+#: collection/pomo_library/calender_lang_locale.php:170
+#: collection/pomo_library/lang.php:80
+messageid "January"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:157
+#: collection/pomo_library/calender_lang_locale.php:171
+#: collection/pomo_library/calender_lang_locale.php:184
+#: collection/pomo_library/lang.php:81
+messageid "February"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:158
+#: collection/pomo_library/calender_lang_locale.php:172
+#: collection/pomo_library/calender_lang_locale.php:185
+#: collection/pomo_library/lang.php:82
+messageid "March"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:159
+#: collection/pomo_library/calender_lang_locale.php:173
+#: collection/pomo_library/calender_lang_locale.php:186
+#: collection/pomo_library/lang.php:83
+messageid "April"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:160
+#: collection/pomo_library/calender_lang_locale.php:174
+#: collection/pomo_library/calender_lang_locale.php:187
+#: collection/pomo_library/lang.php:84
+messageid "May"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:161
+#: collection/pomo_library/calender_lang_locale.php:175
+#: collection/pomo_library/calender_lang_locale.php:188
+#: collection/pomo_library/lang.php:85
+messageid "June"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:162
+#: collection/pomo_library/calender_lang_locale.php:176
+#: collection/pomo_library/calender_lang_locale.php:189
+#: collection/pomo_library/lang.php:86
+messageid "July"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:163
+#: collection/pomo_library/calender_lang_locale.php:177
+#: collection/pomo_library/calender_lang_locale.php:190
+#: collection/pomo_library/lang.php:87
+messageid "August"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:164
+#: collection/pomo_library/calender_lang_locale.php:178
+#: collection/pomo_library/calender_lang_locale.php:191
+#: collection/pomo_library/lang.php:88
+messageid "September"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:165
+#: collection/pomo_library/calender_lang_locale.php:179
+#: collection/pomo_library/calender_lang_locale.php:192
+#: collection/pomo_library/lang.php:89
+messageid "October"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:166
+#: collection/pomo_library/calender_lang_locale.php:180
+#: collection/pomo_library/calender_lang_locale.php:193
+#: collection/pomo_library/lang.php:90
+messageid "November"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:167
+#: collection/pomo_library/calender_lang_locale.php:181
+#: collection/pomo_library/calender_lang_locale.php:194
+#: collection/pomo_library/lang.php:91
+messageid "December"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:184
+messageid "Feb"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:185
+messageid "Mar"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:186
+messageid "Apr"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:188
+messageid "Jun"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:189
+messageid "Jul"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:190
+messageid "Aug"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:191
+messageid "Sep"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:192
+messageid "Oct"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:193
+messageid "Nov"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:194
+messageid "Dec"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:197
+messageid "am"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:198
+messageid "pm"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:199
+messageid "AM"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:200
+messageid "PM"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:206
+messageid "number_format_thousands_sep"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:219
+messageid "number_format_decimal_point"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:243
+#, php-format
+messageid "The %s directory of the develop repository must be used for RTL."
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:387
+messageid "F j, Y"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:389
+messageid "g:i a"
+messagestr ""
+
+#: collection/pomo_library/calender_lang_locale.php:391
+messageid "F j, Y g:i a"
+messagestr ""
+
+#: collection/pomo_library/lang.php:4
+messageid "Order confirmed"
+messagestr ""
+
+#: collection/pomo_library/lang.php:5
+messageid "consumer information"
+messagestr ""
+
+#: collection/pomo_library/lang.php:6
+messageid "Text"
+messagestr ""
+
+#: collection/pomo_library/lang.php:7
+messageid "Heading"
+messagestr ""
+
+#: collection/pomo_library/lang.php:8
+messageid "Image with text"
+messagestr ""
+
+#: collection/pomo_library/lang.php:9
+messageid "Video"
+messagestr ""
+
+#: collection/pomo_library/lang.php:10
+messageid "Birthday subscription"
+messagestr ""
+
+#: collection/pomo_library/lang.php:11
+messageid "Reorder"
+messagestr ""
+
+#: collection/pomo_library/lang.php:12
+messageid "Social media"
+messagestr ""
+
+#: collection/pomo_library/lang.php:13
+messageid "Social sharing"
+messagestr ""
+
+#: collection/pomo_library/lang.php:14
+messageid "Call to action"
+messagestr ""
+
+#: collection/pomo_library/lang.php:15
+messageid "Custom html"
+messagestr ""
+
+#: collection/pomo_library/lang.php:16
+messageid "Navigation bar"
+messagestr ""
+
+#: collection/pomo_library/lang.php:17
+messageid "Collection list"
+messagestr ""
+
+#: collection/pomo_library/lang.php:18
+messageid "Social like"
+messagestr ""
+
+#: collection/pomo_library/lang.php:19
+messageid "Survey"
+messagestr ""
+
+#: collection/pomo_library/lang.php:20
+messageid "Header"
+messagestr ""
+
+#: collection/pomo_library/lang.php:21
+messageid "Discount"
+messagestr ""
+
+#: collection/pomo_library/lang.php:22
+messageid "Product comment"
+messagestr ""
+
+#: collection/pomo_library/lang.php:23
+messageid "Popup with timer"
+messagestr ""
+
+#: collection/pomo_library/lang.php:26
+messageid "Left Area"
+messagestr ""
+
+#: collection/pomo_library/lang.php:27
+messageid "Right Area"
+messagestr ""
+
+#: collection/pomo_library/lang.php:30
+messageid "Free text"
+messagestr ""
+
+#: collection/pomo_library/lang.php:31 collection/pomo_library/lang.php:103
+messageid "Select"
+messagestr ""
+
+#: collection/pomo_library/lang.php:32
+messageid "Radio"
+messagestr ""
+
+#: collection/pomo_library/lang.php:33
+messageid "Check-box"
+messagestr ""
+
+#: collection/pomo_library/lang.php:37
+#, php-format
+messageid ""
+"Are you sure you want to delete the %s ? This action cannot be reversed."
+messagestr ""
+
+#: collection/pomo_library/lang.php:38
+#, php-format
+messageid "Delete %s ?"
+messagestr ""
+
+#: collection/pomo_library/lang.php:39
+#, php-format
+messageid "Delete %s"
+messagestr ""
+
+#: collection/pomo_library/lang.php:40 collection/pomo_library/lang.php:65
+messageid "Cancel"
+messagestr ""
+
+#: collection/pomo_library/lang.php:41 collection/pomo_library/lang.php:42
+messageid "Question"
+messagestr ""
+
+#: collection/pomo_library/lang.php:43
+messageid "Template"
+messagestr ""
+
+#: collection/pomo_library/lang.php:44
+messageid "This browser does not support FileReader."
+messagestr ""
+
+#: collection/pomo_library/lang.php:45
+messageid ""
+"Image file is invalid. Make sure the format is valid (jpg/jpeg/png/gif/bmp) "
+"and the image isn't corrupted."
+messagestr ""
+
+#: collection/pomo_library/lang.php:46
+messageid "Sorry, please try again."
+messagestr ""
+
+#: collection/pomo_library/lang.php:47
+messageid "Please enter name."
+messagestr ""
+
+#: collection/pomo_library/lang.php:48
+messageid "Please enter URL."
+messagestr ""
+
+#: collection/pomo_library/lang.php:49
+messageid "Please enter logo."
+messagestr ""
+
+#: collection/pomo_library/lang.php:50
+messageid "ReConvert"
+messagestr ""
+
+#: collection/pomo_library/lang.php:51
+messageid "shop"
+messagestr ""
+
+#: collection/pomo_library/lang.php:55
+messageid "Today"
+messagestr ""
+
+#: collection/pomo_library/lang.php:56
+messageid "Yesterday"
+messagestr ""
+
+#: collection/pomo_library/lang.php:57
+messageid "Last 7 days"
+messagestr ""
+
+#: collection/pomo_library/lang.php:58
+messageid "Last 30 days"
+messagestr ""
+
+#: collection/pomo_library/lang.php:59
+messageid "This month"
+messagestr ""
+
+#: collection/pomo_library/lang.php:60
+messageid "Last month"
+messagestr ""
+
+#: collection/pomo_library/lang.php:61
+messageid "Custom"
+messagestr ""
+
+#: collection/pomo_library/lang.php:64
+messageid "Apply"
+messagestr ""
+
+#: collection/pomo_library/lang.php:67
+messageid "From"
+messagestr ""
+
+#: collection/pomo_library/lang.php:68
+messageid "To"
+messagestr ""
+
+#: collection/pomo_library/lang.php:71
+messageid "Su"
+messagestr ""
+
+#: collection/pomo_library/lang.php:72
+messageid "Mo"
+messagestr ""
+
+#: collection/pomo_library/lang.php:73
+messageid "Tu"
+messagestr ""
+
+#: collection/pomo_library/lang.php:74
+messageid "We"
+messagestr ""
+
+#: collection/pomo_library/lang.php:75
+messageid "Th"
+messagestr ""
+
+#: collection/pomo_library/lang.php:76
+messageid "Fr"
+messagestr ""
+
+#: collection/pomo_library/lang.php:77
+messageid "Sa"
+messagestr ""
+
+#: collection/pomo_library/lang.php:94
+messageid "Disable ReConvert"
+messagestr ""
+
+#: collection/pomo_library/lang.php:95
+messageid "Enable ReConvert"
+messagestr ""
+
+#: collection/pomo_library/lang.php:98
+messageid "Tobi application not installed. Please install it and check again."
+messagestr ""
+
+#: collection/pomo_library/lang.php:99
+messageid "Tobi application installed."
+messagestr ""
+
+#: collection/pomo_library/lang.php:100
+messageid "Selected integration removed successfully."
+messagestr ""
+
+#: collection/pomo_library/lang.php:101
+messageid "Something wrong. Try again later."
+messagestr ""
+
+#: collection/pomo_library/lang.php:102
+messageid "Synced with Tobi"
+messagestr ""

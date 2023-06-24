@@ -1,0 +1,105 @@
+
+
+---------------------04:42:31
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:42:31
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:42:31
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:42:32
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:42:32
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:07
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:08
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:08
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:08
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:08
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:24
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:24
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:25
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:25
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:25
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:27
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:28
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:28
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:28
+"Content-Security-Policy, https:dashboardmanage.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:29
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:46:29
+"Content-Security-Policy, https:rewritertest.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:47:22
+"Content-Security-Policy, https:cls-rewriter.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:47:22
+"Content-Security-Policy, https:cls-rewriter.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:47:22
+"Content-Security-Policy, https:cls-rewriter.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:47:23
+"Content-Security-Policy, https:cls-rewriter.myshopify.com"
+-*-*-*-*-*-*-*-*-*
+
+---------------------04:47:23
+"Content-Security-Policy, https:cls-rewriter.myshopify.com"
+-*-*-*-*-*-*-*-*-*
