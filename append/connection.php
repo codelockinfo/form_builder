@@ -15,7 +15,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define('SITE_CLIENT_URL', 'http://localhost/form_builder/user/');
     define('CLS_TRACK_PATH', $_SERVER['DOCUMENT_ROOT']);
     define('SITE_ADMIN_URL', 'http://localhost/form_builder/admin/');
-}elseif ($_SERVER['SERVER_NAME'] == 'codelocksolutions.in') {
+}elseif ($_SERVER['SERVER_NAME'] == 'codelocksolutions.com') {
     define("DB_SERVER", "localhost");
     define("DB_DATABASE", "u402017191_form_builder");
     define("DB_USERNAME", "u402017191_form_builder");
@@ -23,11 +23,11 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_OBJECT", "mysql");
     define('MODE', 'live');
     define('ABS_PATH', dirname(dirname(__FILE__)));
-    define('MAIN_URL', 'https://codelocksolutions.in/form_builder/');
-    define('CLS_SITE_URL', 'https://codelocksolutions.in/form_builder/');
+    define('MAIN_URL', 'https://codelocksolutions.com/form_builder/');
+    define('CLS_SITE_URL', 'https://codelocksolutions.com/form_builder/');
      define('CLS_TRACK_PATH', $_SERVER['DOCUMENT_ROOT']);
-    define('SITE_CLIENT_URL', 'https://codelocksolutions.in/form_builder/user/');
-    define('SITE_ADMIN_URL', 'https://codelocksolutions.in/form_builder/admin/');
+    define('SITE_CLIENT_URL', 'https://codelocksolutions.com/form_builder/user/');
+    define('SITE_ADMIN_URL', 'https://codelocksolutions.com/form_builder/admin/');
 } else {
     echo 'Undefine host';
     exit;
