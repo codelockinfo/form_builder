@@ -17,8 +17,8 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define('SITE_ADMIN_URL', 'http://localhost/form_builder/admin/');
 }elseif ($_SERVER['SERVER_NAME'] == 'codelocksolutions.in') {
     define("DB_SERVER", "localhost");
-    define("DB_DATABASE", "u402017191_cls_rewriter");
-    define("DB_USERNAME", "u402017191_rewriter");
+    define("DB_DATABASE", "u402017191_form_builder");
+    define("DB_USERNAME", "u402017191_form_builder");
     define("DB_PASSWORD", "Codelock@99");
     define("DB_OBJECT", "mysql");
     define('MODE', 'live');
