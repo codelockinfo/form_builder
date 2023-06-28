@@ -4,17 +4,17 @@ ini_set("error_reporting", E_ALL);
  session_start();
 if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_SERVER", "localhost");
-    define("DB_DATABASE", "cls_rewriter");
+    define("DB_DATABASE", "form_builder");
     define("DB_USERNAME", "root");
     define("DB_PASSWORD", "");
     define("DB_OBJECT", "mysql"); 
     define('MODE', 'dev');
     define('ABS_PATH', dirname(dirname(__FILE__)));
-    define('MAIN_URL', 'http://localhost/cls-rewriter');
-    define('CLS_SITE_URL', 'http://localhost/cls-rewriter');
-    define('SITE_CLIENT_URL', 'http://localhost/cls-rewriter/user/');
+    define('MAIN_URL', 'http://localhost/form_builder');
+    define('CLS_SITE_URL', 'http://localhost/form_builder');
+    define('SITE_CLIENT_URL', 'http://localhost/form_builder/user/');
     define('CLS_TRACK_PATH', $_SERVER['DOCUMENT_ROOT']);
-    define('SITE_ADMIN_URL', 'http://localhost/cls-rewriter/admin/');
+    define('SITE_ADMIN_URL', 'http://localhost/form_builder/admin/');
 }elseif ($_SERVER['SERVER_NAME'] == 'codelocksolutions.in') {
     define("DB_SERVER", "localhost");
     define("DB_DATABASE", "u402017191_cls_rewriter");
@@ -23,11 +23,11 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_OBJECT", "mysql");
     define('MODE', 'live');
     define('ABS_PATH', dirname(dirname(__FILE__)));
-    define('MAIN_URL', 'https://codelocksolutions.in/cls-rewriter/');
-    define('CLS_SITE_URL', 'https://codelocksolutions.in/cls-rewriter/');
+    define('MAIN_URL', 'https://codelocksolutions.in/form_builder/');
+    define('CLS_SITE_URL', 'https://codelocksolutions.in/form_builder/');
      define('CLS_TRACK_PATH', $_SERVER['DOCUMENT_ROOT']);
-    define('SITE_CLIENT_URL', 'https://codelocksolutions.in/cls-rewriter/user/');
-    define('SITE_ADMIN_URL', 'https://codelocksolutions.in/cls-rewriter/admin/');
+    define('SITE_CLIENT_URL', 'https://codelocksolutions.in/form_builder/user/');
+    define('SITE_ADMIN_URL', 'https://codelocksolutions.in/form_builder/admin/');
 } else {
     echo 'Undefine host';
     exit;
@@ -196,7 +196,7 @@ function  generate_log($inventory = 'General', $log_information = 'test') {
 
   
     if (MODE == 'live') {
-       $log_filled_track = CLS_TRACK_PATH.'/cls-rewriter/logs/'. $inventory . '/'. date('Y-m-d') . ".txt";
+       $log_filled_track = CLS_TRACK_PATH.'/form_builder/logs/'. $inventory . '/'. date('Y-m-d') . ".txt";
         $directoryname = dirname($log_filled_track);
         if (!is_dir($directoryname)) {
             mkdir($directoryname,0777, true);
