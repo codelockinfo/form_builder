@@ -29,15 +29,13 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <link rel="stylesheet" href="<?php echo main_url('assets/css/polaris.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/shopify_clients.css'); ?>" />
         <link rel="stylesheet" href="<?php echo main_url('assets/css/shopify_client.css'); ?>" />
-        <link rel="stylesheet" href="<?php // echo main_url('assets/css/polaris.min.css'); ?>" rel="stylesheet"> 
         
         <link rel="icon" type="image/png" href="<?php echo CLS_SITE_URL; ?>/assets/images/logo-icons.svg.png"/>
-        <link rel="stylesheet" href="<?php // echo main_url('assets/css/shopify_css.css'); ?>" />
         <link rel="stylesheet" href="<?php echo main_url('assets/css/spectrum.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" />
         <link rel="stylesheet" href="<?php echo main_url('assets/css/font-awesome/css/font-awesome.css'); ?>" rel="stylesheet">
-	<link rel="stylesheet" href="<?php echo main_url('assets/css/bootstrap-tagsinput.css'); ?>" rel="stylesheet">
-	<link rel="stylesheet" href="<?php echo main_url('assets/css/select2.min.css'); ?>" rel="stylesheet"> 
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/bootstrap-tagsinput.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/select2.min.css'); ?>" rel="stylesheet"> 
         <link rel="stylesheet" href="../assets/css/style.css">
          <style>
             @import url('https://fonts.googleapis.com/css2?family=Oi&display=swap&family=Goblin+One&display=swap&family=Dancing+Script&display=swap&family=Dancing+Script&family=Goblin+One&family=Pacifico&display=swap&family=Caveat&display=swap&family=Martel:wght@200&display=swap&family=Satisfy&display=swap&family=Courgette&display=swap&family=Secular+One&display=swap&family=Limelight&display=swap&family=Odibee+Sans&display=swap&family=Sigmar+One&display=swap&family=Mate+SC&display=swap&family=Pattaya&display=swap&amily=Cinzel&display=swap&family=Great+Vibes&display=swap&family=Sacramento&display=swap&family=Monoton&display=swap&family=Cookie&display=swap&family=Damion&display=swap');  
@@ -51,17 +49,16 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="<?php echo main_url('assets/js/popper.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/star_rating.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/bootstrap.min.js'); ?>"></script>
-	<script src="<?php echo main_url('assets/js/ckeditor/ckeditor.js'); ?>"></script>
-	<script src="<?php // echo main_url('assets/js/bootstrap-tagsinput.min.js'); ?>"></script>
-	<script src="<?php echo main_url('assets/js/select2.full.min.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/ckeditor/ckeditor.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/select2.full.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/shopify_custom.js');?>"></script> 
-        <script src="../assets/js/tinymce.min.js" type="text/javascript" /></script>
+        <script src="../assets/js/tinymce.min.js" type="text/javascript"></script>
    
      <?php  if($view == true){  ?>
-        <script src="../assets/js/viewscript.js" type="text/javascript" /></script>
+        <script src="../assets/js/viewscript.js" type="text/javascript"></script>
     <?php }else{ ?>
-        <script src="../assets/js/script.js" type="text/javascript" /></script>
+        <script src="../assets/js/script.js" type="text/javascript"></script>
     <?php 
     } ?>
    

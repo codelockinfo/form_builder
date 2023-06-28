@@ -83,7 +83,7 @@ class DB_Class {
         }
                 
 }
-define('CLS_SITE_NAME','CLS REWRITER');
+define('CLS_SITE_NAME','Form builder');
 define('CLS_SITE_EMAIL', '#');
 define('CLS_NO_IMAGE','no-image.png');
 define('CHARGE', '0.99');
