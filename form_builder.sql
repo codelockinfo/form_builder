@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 17, 2021 at 09:32 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 8.0.1
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 30, 2023 at 12:24 PM
+-- Server version: 8.0.31
+-- PHP Version: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cls_rewriter`
+-- Database: `form_builder`
 --
 
 -- --------------------------------------------------------
@@ -27,18 +27,20 @@ SET time_zone = "+00:00";
 -- Table structure for table `blogpost_master`
 --
 
-CREATE TABLE `blogpost_master` (
-  `id` int(11) NOT NULL,
-  `blogpost_id` bigint(20) NOT NULL,
-  `image` text DEFAULT NULL,
+DROP TABLE IF EXISTS `blogpost_master`;
+CREATE TABLE IF NOT EXISTS `blogpost_master` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `blogpost_id` bigint NOT NULL,
+  `image` text,
   `title` varchar(255) NOT NULL,
   `description` varchar(10000) NOT NULL,
   `handle` varchar(255) NOT NULL,
-  `store_user_id` int(11) NOT NULL,
+  `store_user_id` int NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1:active; 0:inactive;',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `blogpost_master`
@@ -54,18 +56,20 @@ INSERT INTO `blogpost_master` (`id`, `blogpost_id`, `image`, `title`, `descripti
 -- Table structure for table `collection_master`
 --
 
-CREATE TABLE `collection_master` (
-  `id` int(11) NOT NULL,
-  `collection_id` bigint(11) NOT NULL,
+DROP TABLE IF EXISTS `collection_master`;
+CREATE TABLE IF NOT EXISTS `collection_master` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `collection_id` bigint NOT NULL,
   `image` text NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` varchar(10000) NOT NULL,
   `handle` varchar(255) NOT NULL,
-  `store_user_id` int(11) NOT NULL,
+  `store_user_id` int NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `collection_master`
@@ -84,15 +88,18 @@ INSERT INTO `collection_master` (`id`, `collection_id`, `image`, `title`, `descr
 -- Table structure for table `consumer`
 --
 
-CREATE TABLE `consumer` (
-  `consumer_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `consumer`;
+CREATE TABLE IF NOT EXISTS `consumer` (
+  `consumer_id` int NOT NULL AUTO_INCREMENT,
   `consumer_name` varchar(50) NOT NULL,
-  `age` int(3) NOT NULL,
+  `age` int NOT NULL,
   `city` varchar(50) NOT NULL,
   `user_name` varchar(50) NOT NULL,
   `status` enum('0','1') NOT NULL COMMENT '1:active; 0:inactive',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`consumer_id`),
+  UNIQUE KEY `user_name` (`user_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -101,14 +108,16 @@ CREATE TABLE `consumer` (
 -- Table structure for table `customize`
 --
 
-CREATE TABLE `customize` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `customize`;
+CREATE TABLE IF NOT EXISTS `customize` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `url_key` varchar(11) NOT NULL,
   `used` enum('0','1') NOT NULL DEFAULT '0',
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=733 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `customize`
@@ -855,8 +864,9 @@ INSERT INTO `customize` (`id`, `url_key`, `used`, `status`, `created_at`, `updat
 -- Table structure for table `  font_family`
 --
 
-CREATE TABLE `  font_family` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `  font_family`;
+CREATE TABLE IF NOT EXISTS `  font_family` (
+  `id` int NOT NULL,
   `name` varchar(60) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -898,18 +908,20 @@ INSERT INTO `  font_family` (`id`, `name`) VALUES
 -- Table structure for table `login_user`
 --
 
-CREATE TABLE `login_user` (
-  `id` int(11) NOT NULL,
-  `login_user_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `login_user`;
+CREATE TABLE IF NOT EXISTS `login_user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `login_user_id` int NOT NULL,
   `email` varchar(100) NOT NULL,
   `user_name` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   `role` enum('0','1') NOT NULL,
   `store` varchar(100) NOT NULL,
-  `status` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `status` int NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `login_user`
@@ -924,17 +936,19 @@ INSERT INTO `login_user` (`id`, `login_user_id`, `email`, `user_name`, `password
 -- Table structure for table `page_master`
 --
 
-CREATE TABLE `page_master` (
-  `id` int(11) NOT NULL,
-  `page_id` bigint(20) NOT NULL,
+DROP TABLE IF EXISTS `page_master`;
+CREATE TABLE IF NOT EXISTS `page_master` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `page_id` bigint NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` varchar(10000) NOT NULL,
   `handle` varchar(255) NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `store_user_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `store_user_id` int NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `page_master`
@@ -953,20 +967,22 @@ INSERT INTO `page_master` (`id`, `page_id`, `title`, `description`, `handle`, `s
 -- Table structure for table `product_master`
 --
 
-CREATE TABLE `product_master` (
-  `id` int(11) NOT NULL,
-  `product_id` bigint(20) NOT NULL,
+DROP TABLE IF EXISTS `product_master`;
+CREATE TABLE IF NOT EXISTS `product_master` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` bigint NOT NULL,
   `image` text NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` varchar(10000) NOT NULL,
   `handle` varchar(255) NOT NULL,
-  `price` int(11) NOT NULL,
+  `price` int NOT NULL,
   `vendor` varchar(255) NOT NULL,
-  `store_user_id` int(11) NOT NULL,
+  `store_user_id` int NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `product_master`
@@ -986,9 +1002,10 @@ INSERT INTO `product_master` (`id`, `product_id`, `image`, `title`, `description
 -- Table structure for table `shipping_type`
 --
 
-CREATE TABLE `shipping_type` (
-  `shiping_type_id` int(10) NOT NULL,
-  `shop_user_id` int(10) NOT NULL,
+DROP TABLE IF EXISTS `shipping_type`;
+CREATE TABLE IF NOT EXISTS `shipping_type` (
+  `shiping_type_id` int NOT NULL AUTO_INCREMENT,
+  `shop_user_id` int NOT NULL,
   `inner_name` varchar(255) NOT NULL,
   `display_name` varchar(255) NOT NULL,
   `label_prefix` varchar(255) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL,
@@ -999,9 +1016,10 @@ CREATE TABLE `shipping_type` (
   `mixed_label_param` text NOT NULL,
   `no_label_param` text NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`shiping_type_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `shipping_type`
@@ -1025,9 +1043,10 @@ INSERT INTO `shipping_type` (`shiping_type_id`, `shop_user_id`, `inner_name`, `d
 -- Table structure for table `store_setting`
 --
 
-CREATE TABLE `store_setting` (
-  `store_setting_id` int(11) NOT NULL,
-  `shop_user_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `store_setting`;
+CREATE TABLE IF NOT EXISTS `store_setting` (
+  `store_setting_id` int NOT NULL AUTO_INCREMENT,
+  `shop_user_id` int NOT NULL,
   `font_family` varchar(255) NOT NULL,
   `product_title_css` varchar(255) NOT NULL,
   `original_pirce_css` varchar(255) NOT NULL,
@@ -1035,9 +1054,11 @@ CREATE TABLE `store_setting` (
   `image_css` varchar(255) NOT NULL,
   `not_at_text` varchar(255) NOT NULL,
   `not_at_css` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`store_setting_id`),
+  UNIQUE KEY `store_client_id` (`shop_user_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `store_setting`
@@ -1052,8 +1073,9 @@ INSERT INTO `store_setting` (`store_setting_id`, `shop_user_id`, `font_family`, 
 -- Table structure for table `user_shops`
 --
 
-CREATE TABLE `user_shops` (
-  `store_user_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_shops`;
+CREATE TABLE IF NOT EXISTS `user_shops` (
+  `store_user_id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1=active,0=deactive',
   `application_status` enum('1','0') NOT NULL DEFAULT '0' COMMENT '1=enable,0=disable',
@@ -1061,7 +1083,7 @@ CREATE TABLE `user_shops` (
   `shop_name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `is_demand_accept` enum('0','1') NOT NULL DEFAULT '0' COMMENT '1:aproved; 0:not approved',
-  `charge` float NOT NULL DEFAULT 0,
+  `charge` float NOT NULL DEFAULT '0',
   `price_id` varchar(255) DEFAULT NULL,
   `invoice_on` date DEFAULT NULL,
   `operated_on` date DEFAULT NULL,
@@ -1085,11 +1107,12 @@ CREATE TABLE `user_shops` (
   `domain` varchar(255) NOT NULL,
   `feedback_status` enum('1','0') NOT NULL DEFAULT '0',
   `block_status` enum('1','0') NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uninstall_on` timestamp NULL DEFAULT NULL,
-  `install_date` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `install_date` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`store_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_shops`
@@ -1098,136 +1121,6 @@ CREATE TABLE `user_shops` (
 INSERT INTO `user_shops` (`store_user_id`, `email`, `status`, `application_status`, `application_language`, `shop_name`, `password`, `is_demand_accept`, `charge`, `price_id`, `invoice_on`, `operated_on`, `test_finals_on`, `removed_on`, `store_name`, `api_key`, `store_idea`, `price_pattern`, `cash`, `store_holder`, `address11`, `address22`, `city`, `country_name`, `mobile_no`, `division`, `zip`, `timezone`, `america_timezone`, `domain`, `feedback_status`, `block_status`, `created_at`, `updated_at`, `uninstall_on`, `install_date`) VALUES
 (4, 'codelock2021@gmail.com', '1', '0', 'en', 'cls-rakshita.myshopify.com', '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', '0', 0, NULL, NULL, NULL, NULL, NULL, 'cls_rakshita', '', 'partner_test', '', '', '', '', '', 'Surat', 'India', '', '', '394105', '(GMT+05:30) Asia/Calcutta', '', '', '0', '0', '2021-06-15 06:05:36', '2021-06-15 06:05:36', NULL, NULL),
 (5, 'codelock2021@gmail.com', '1', '0', 'en', 'cls-rewriter.myshopify.com', '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', '0', 0, NULL, NULL, NULL, NULL, NULL, 'cls_rewriter', '', 'partner_test', '', '', '', '', '', 'Surat', 'India', '', '', '394105', '(GMT+05:30) Asia/Calcutta', '', '', '0', '0', '2021-06-16 05:49:43', '2021-06-16 05:49:43', NULL, NULL);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `blogpost_master`
---
-ALTER TABLE `blogpost_master`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `collection_master`
---
-ALTER TABLE `collection_master`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `consumer`
---
-ALTER TABLE `consumer`
-  ADD PRIMARY KEY (`consumer_id`),
-  ADD UNIQUE KEY `user_name` (`user_name`);
-
---
--- Indexes for table `customize`
---
-ALTER TABLE `customize`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `login_user`
---
-ALTER TABLE `login_user`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `page_master`
---
-ALTER TABLE `page_master`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `product_master`
---
-ALTER TABLE `product_master`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `shipping_type`
---
-ALTER TABLE `shipping_type`
-  ADD PRIMARY KEY (`shiping_type_id`);
-
---
--- Indexes for table `store_setting`
---
-ALTER TABLE `store_setting`
-  ADD PRIMARY KEY (`store_setting_id`),
-  ADD UNIQUE KEY `store_client_id` (`shop_user_id`);
-
---
--- Indexes for table `user_shops`
---
-ALTER TABLE `user_shops`
-  ADD PRIMARY KEY (`store_user_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `blogpost_master`
---
-ALTER TABLE `blogpost_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `collection_master`
---
-ALTER TABLE `collection_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `consumer`
---
-ALTER TABLE `consumer`
-  MODIFY `consumer_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `customize`
---
-ALTER TABLE `customize`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=733;
-
---
--- AUTO_INCREMENT for table `login_user`
---
-ALTER TABLE `login_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `page_master`
---
-ALTER TABLE `page_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `product_master`
---
-ALTER TABLE `product_master`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `shipping_type`
---
-ALTER TABLE `shipping_type`
-  MODIFY `shiping_type_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
-
---
--- AUTO_INCREMENT for table `store_setting`
---
-ALTER TABLE `store_setting`
-  MODIFY `store_setting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `user_shops`
---
-ALTER TABLE `user_shops`
-  MODIFY `store_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
