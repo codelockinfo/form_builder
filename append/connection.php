@@ -107,6 +107,8 @@ define('TABLE_USER_SHOP', 'user_shops');
 define('TABLE_BACKDROPS', 'store_settings');
 define('TABLE_CUSTOMIZE', 'customize');
 define('TABLE_COLLECTION_MASTER', 'collection_master');
+define('FORMS', 'forms');
+define('ELEMENTS', 'elements');
 
 define("CLS_API_VERSIION",'api/2021-07');
 define("CLS_API_KEY",'9875728c6b382b21f2b77786a7b11d06');

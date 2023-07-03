@@ -744,4 +744,64 @@ $(document).on("click", ".enable-btn", function(event) {
                 loading_hide('.save_loader_show', 'Save');
             }
         });
+});
+
+    // start 014
+    $(document).on("click", ".btn_add_element", function(event) {
+        event.preventDefault();    
+        // console.log("oooo2");
+        $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                data: {'routine_name': 'get_all_element_fun' , store: store},
+                success: function (comeback) {
+                   var comeback = JSON.parse(comeback);
+                   if (comeback['code'] != undefined && comeback['code'] == '403') {
+                      redirect403();
+                  } else{
+                    $(".setvalue_element").html(comeback['outcome']);
+                    $(".setvalue_element_select").html(comeback['outcome2']);
+                    $(".setvalue_element_static").html(comeback['outcome3']);
+                    $(".setvalue_element_structure").html(comeback['outcome4']);
+                    $(".setvalue_element_customization").html(comeback['outcome5']);
+                  }
+                  loading_hide('.save_loader_show', 'Save');
+                    }
+            });
+        });
+    $(document).on("submit", "#createNewForm", function(e) {
+        e.preventDefault();    
+        console.log("start...");
+        var form_data = $("#createNewForm")[0];
+        var form_data = new FormData(form_data);
+        form_data.append('selectedTypes',$(".selectedType").attr("data-val"));
+        form_data.append('formnamehiden',$(".formnamehide").attr("data-val"));
+        form_data.append('store',store); 
+        form_data.append('routine_name','function_create_form');      
+        $.ajax({
+            url: "ajax_call.php",
+            type: "post",
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            data: form_data, 
+              beforeSend: function () {
+                loading_show('.save_loader_show');
+            },
+            success: function (response) {
+                console.log("start function  ...");
+                  var response = JSON.parse(response);
+                 if (response['code'] != undefined && response['code'] == '403') {
+                    redirect403();
+                } else{
+                    $(".text_image_list").removeClass("first_txt_image");
+                    $(".firstone_").addClass("first_txt_image");
+                    window.location.href = "index.php?store="+ store;
+                }
+                loading_hide('.save_loader_show', 'Save');
+            }
     });
+
+        
+});

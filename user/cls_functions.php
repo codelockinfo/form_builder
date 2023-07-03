@@ -1332,6 +1332,144 @@ $shopinfo = $this->current_store_obj;
         $response = json_encode($response_data);
         return $response;
     }
+    // start 014
+    function function_create_form() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            // if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] == '') {
+            //     // $error_array['title'] = "Please select";
+            // }
+            if (empty($error_array)) {
+                $shopinfo = $this->current_store_obj;
+          
+                if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] != '') {
+                    $mysql_date = date('Y-m-d H:i:s');
+                    $fields_arr = array(
+                        '`id`' => '',
+                        '`store_client_id`' => $shopinfo->store_user_id,
+                        '`form_name`' => $_POST['formnamehiden'],
+                        '`form_type`' => $_POST['selectedTypes'],
+                        '`created`' => $mysql_date,
+                        '`updated`' => $mysql_date
+                    );
+                      $response_data = $this->post_data(FORMS, array($fields_arr));
+                    
+                }
+
+              
+            } else {
+                $response_data = array('data' => 'fail', 'msg' => $error_array);
+            }
+        }
+        $response = json_encode($response_data);
+     
+        return $response;
+    }
+    function get_all_element_fun() {
+        
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            // $shop = $_POST['store'];
+            $where_query = array(["", "status", "=", "1"]);
+            $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+            $where_query2 = array(["", "element_category", "=", "2"]);
+            $comeback_client2 = $this->select_result(ELEMENTS, '*', $where_query2);
+            $where_query3 = array(["", "element_category", "=", "3"]);
+            $comeback_client3 = $this->select_result(ELEMENTS, '*', $where_query3);
+            $where_query4 = array(["", "element_category", "=", "4"]);
+            $comeback_client4 = $this->select_result(ELEMENTS, '*', $where_query4);
+            $where_query5 = array(["", "element_category", "=", "5"]);
+            $comeback_client5 = $this->select_result(ELEMENTS, '*', $where_query5);
+
+            $html="";$html2="";$html3="";$html4="";$html5="";
+            foreach($comeback_client['data'] as $templates){
+                    $category = ($templates['element_category']);
+                if($category == 1){
+                    $html .= '<div class="builder-item-wrapper ">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
+                            <div class="title">
+                                <div>
+                                    <div>'.$templates['element_title'].'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+                if($category == 2){
+                    $html2 .= '<div class="builder-item-wrapper ">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
+                            <div class="title">
+                                <div>
+                                    <div>'.$templates['element_title'].'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+                if($category == 3){
+                    $html3 .= '<div class="builder-item-wrapper ">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
+                            <div class="title">
+                                <div>
+                                    <div>'.$templates['element_title'].'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+                if($category == 4){
+                    $html4 .= '<div class="builder-item-wrapper ">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
+                            <div class="title">
+                                <div>
+                                    <div>'.$templates['element_title'].'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+                if($category == 5){
+                    $html5 .= '<div class="builder-item-wrapper ">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
+                            <div class="title">
+                                <div>
+                                    <div>'.$templates['element_title'].'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+                
+            }
+            // echo "<pre>";
+            // print_r("ooooo");
+            // print_r($html);
+            // die;
+            
+            // $btnval = (isset($_POST['btnval']) && $_POST['btnval'] !== '') ? $_POST['btnval'] : ''; 
+        }
+        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $html,'outcome2' => $html2,'outcome3' => $html3,'outcome4' => $html4,'outcome5' => $html5);
+        $response = json_encode($response_data);
+     
+        return $response;
+    }
+    // end 014
 function enable_disable(){
     $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {

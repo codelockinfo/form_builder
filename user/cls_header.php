@@ -27,12 +27,17 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.theme.default.min.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/style_create-new-form.css'); ?>" rel="stylesheet">
        
         <script> var store = "<?php echo $store; ?>"; </script>
             <?php  $_SESSION['store'] = $store; ?>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
         <script src="<?php echo main_url('assets/js/jquery3.6.4.min.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/ckeditor.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/alljs.js'); ?>"></script>
+  
    

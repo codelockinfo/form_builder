@@ -356,7 +356,7 @@ include_once('cls_header.php');
                                 </div>
                             </div>
                             <div class="root">
-                                <div class="builder-item-wrapper ">
+                                <div class="builder-item-wrapper btn_add_element">
                                     <div class="list-item" data-owl="6">
                                         <div class="row">
                                             <div class="icon">
@@ -1945,8 +1945,8 @@ include_once('cls_header.php');
                                     <div class="">
                                         <h3 class="subheading">Input</h3>
                                         <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
+                                            <div class="setvalue_element">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item">
                                                         <div class="row">
                                                             <div class="icon"><span class="Polaris-Icon"><span
@@ -2160,7 +2160,7 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2169,8 +2169,8 @@ include_once('cls_header.php');
                                     <div class="">
                                         <h3 class="subheading">Selects</h3>
                                         <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
+                                            <div class="setvalue_element_select">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item">
                                                         <div class="row">
                                                             <div class="icon"><span class="Polaris-Icon"><span
@@ -2264,7 +2264,7 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2273,8 +2273,8 @@ include_once('cls_header.php');
                                     <div class="">
                                         <h3 class="subheading">Static text</h3>
                                         <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
+                                            <div class="setvalue_element_static">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item">
                                                         <div class="row">
                                                             <div class="icon"><span class="Polaris-Icon"><span
@@ -2311,12 +2311,12 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="builder-item-wrapper ">
+                                <!-- <div class="builder-item-wrapper ">
                                     <div class="">
                                         <h3 class="subheading">Rating</h3>
                                         <div>
@@ -2343,13 +2343,13 @@ include_once('cls_header.php');
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="builder-item-wrapper ">
                                     <div class="">
                                         <h3 class="subheading">Structure</h3>
                                         <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
+                                            <div class="setvalue_element_structure">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item">
                                                         <div class="row">
                                                             <div class="icon"><span class="Polaris-Icon"><span
@@ -2386,7 +2386,7 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2395,8 +2395,8 @@ include_once('cls_header.php');
                                     <div class="">
                                         <h3 class="subheading">Customization</h3>
                                         <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
+                                            <div class="setvalue_element_customization">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item">
                                                         <div class="row">
                                                             <div class="icon"><span class="Polaris-Icon"><span
@@ -2414,7 +2414,7 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>

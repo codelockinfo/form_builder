@@ -94,13 +94,13 @@ include dirname(dirname(__FILE__)). "/base_function.php";
         } else {
             $sql = $this->db_connection->query("SELECT $columns FROM $tbl_name $where_query $groupBy $orderBy LIMIT $skip, $limit");
         }
-        $result_row = $sql->fetch_object();
+        $return_data = array();
         $c = 0;
         while ($cls_rows = $sql->fetch_object()) {
-                   if ($format == "object") {
+            if ($format == "object") {
                 if ($single) {
                     $return_data = $cls_rows;
-               } else {
+                } else {
                     $return_data->$c = $cls_rows;
                 }
             } else {
@@ -117,10 +117,10 @@ include dirname(dirname(__FILE__)). "/base_function.php";
             }
             $c++;            
         }
-        if (!$result_row) {
+        if (!$return_data) {
             $status = 0;
         }
-        $final_arr = array('status' => $status,'data' => $result_row);
+        $final_arr = array('status' => $status,'data' => $return_data);
         if ($format == "object") {
             return json_encode($final_arr);
         }
