@@ -1531,7 +1531,7 @@ $shopinfo = $this->current_store_obj;
         
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "status", "=", "1"],["AND", "form_id", "=", $_POST['form_id']]);
-            $comeback_client = $this->select_result(FORM_DATA, "element_id,element_data", $where_query);
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data", $where_query);
             
         $html = '';
         foreach($comeback_client['data'] as $templates){
