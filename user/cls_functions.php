@@ -1356,7 +1356,7 @@ $shopinfo = $this->current_store_obj;
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
-                      $response_data = $this->post_data(FORMS, array($fields_arr));
+                      $response_data = $this->post_data(TABLE_FORMS, array($fields_arr));
                 }
             } else {
                 $response_data = array('data' => 'fail', 'msg' => $error_array);
@@ -1371,7 +1371,7 @@ $shopinfo = $this->current_store_obj;
 
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "status", "=", "1"]);
-            $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+            $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
 
             $html="";$html2="";$html3="";$html4="";$html5="";
             foreach($comeback_client['data'] as $templates){
@@ -1469,7 +1469,7 @@ $shopinfo = $this->current_store_obj;
                 if (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') {
 
                     $where_query = array(["", "id", "=", $_POST['get_element_hidden']]);
-                    $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+                    $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                     $value_res=$comeback_client['data'][0];
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
@@ -1483,7 +1483,7 @@ $shopinfo = $this->current_store_obj;
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
-                    $response_data = $this->post_data(FORM_DATA, array($fields_arr));
+                    $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr));
                     // $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $value_res);
                 }
             } else {
@@ -1500,7 +1500,7 @@ $shopinfo = $this->current_store_obj;
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
                 $where_query = array(["", "id", "=", "1"], ["OR", "id", "=", "2"], ["OR", "id", "=", "3"]);
-                $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+                $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                
                 foreach($comeback_client['data'] as $templates){
                     $mysql_date = date('Y-m-d H:i:s');
@@ -1515,7 +1515,7 @@ $shopinfo = $this->current_store_obj;
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
-                    $response_data = $this->post_data(FORM_DATA, array($fields_arr)); 
+                    $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr)); 
                 }
                 $response_data = array('data' => 'success', 'msg' => 'insert successfully');
             } else {
@@ -1531,12 +1531,12 @@ $shopinfo = $this->current_store_obj;
 
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "status", "=", "1"]);
-            $comeback_client = $this->select_result(FORM_DATA, '*', $where_query);
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
             $html="";
             foreach($comeback_client['data'] as $templates){
             $element_no= $templates['element_id'];
             $where_query = array(["", "id", "=", "$element_no"]);
-            $comeback_client_second = $this->select_result(ELEMENTS, '*', $where_query);
+            $comeback_client_second = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
             foreach($comeback_client_second['data'] as $templates){
                 $html .= '<div class="builder-item-wrapper ">
                 <input type="hidden" class="form_design_hidden" name="form_design_hidden" value='.$templates['id'].'>

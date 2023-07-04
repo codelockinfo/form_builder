@@ -847,12 +847,13 @@ $(document).on("click", ".enable-btn", function(event) {
                           beforeSend: function () {
                             loading_show('.save_loader_show');
                         },
-                        success: function (response) {
+                        success: function (responce) {
                             console.log("start function  ...");
-                              var response = JSON.parse(response);
-                             if (response['code'] != undefined && response['code'] == '403') {
+                              var responce = JSON.parse(responce);
+                             if (responce['code'] != undefined && responce['code'] == '403') {
                                 redirect403();
                             } else{
+                               
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
                                 window.location.href = "index.php?store="+ store;
