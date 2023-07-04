@@ -1341,28 +1341,28 @@ $shopinfo = $this->current_store_obj;
             // }
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
-          
+                $id=$shopinfo[6];
+                
+                // store client id mate direct aa set karelu hatu but second day work notu kartu
+                // $shopinfo->store_user_id
+                // $last_id = $this->db->insert_id;
                 if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
                         '`id`' => '',
-                        '`store_client_id`' => $shopinfo->store_user_id,
+                        '`store_client_id`' => $id,
                         '`form_name`' => $_POST['formnamehiden'],
                         '`form_type`' => $_POST['selectedTypes'],
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
                       $response_data = $this->post_data(FORMS, array($fields_arr));
-                    
                 }
-
-              
             } else {
                 $response_data = array('data' => 'fail', 'msg' => $error_array);
             }
         }
         $response = json_encode($response_data);
-     
         return $response;
     }
     function get_all_element_fun() {
@@ -1370,23 +1370,15 @@ $shopinfo = $this->current_store_obj;
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
 
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            // $shop = $_POST['store'];
             $where_query = array(["", "status", "=", "1"]);
             $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
-            $where_query2 = array(["", "element_category", "=", "2"]);
-            $comeback_client2 = $this->select_result(ELEMENTS, '*', $where_query2);
-            $where_query3 = array(["", "element_category", "=", "3"]);
-            $comeback_client3 = $this->select_result(ELEMENTS, '*', $where_query3);
-            $where_query4 = array(["", "element_category", "=", "4"]);
-            $comeback_client4 = $this->select_result(ELEMENTS, '*', $where_query4);
-            $where_query5 = array(["", "element_category", "=", "5"]);
-            $comeback_client5 = $this->select_result(ELEMENTS, '*', $where_query5);
 
             $html="";$html2="";$html3="";$html4="";$html5="";
             foreach($comeback_client['data'] as $templates){
                     $category = ($templates['element_category']);
                 if($category == 1){
-                    $html .= '<div class="builder-item-wrapper ">
+                    $html .= '<div class="builder-item-wrapper element_coppy_to">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value='.$templates['id'].'>
                     <div class="list-item">
                         <div class="row">
                             <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
@@ -1400,7 +1392,8 @@ $shopinfo = $this->current_store_obj;
                 </div>';
                 }
                 if($category == 2){
-                    $html2 .= '<div class="builder-item-wrapper ">
+                    $html2 .= '<div class="builder-item-wrapper element_coppy_to">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value="">
                     <div class="list-item">
                         <div class="row">
                             <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
@@ -1414,7 +1407,8 @@ $shopinfo = $this->current_store_obj;
                 </div>';
                 }
                 if($category == 3){
-                    $html3 .= '<div class="builder-item-wrapper ">
+                    $html3 .= '<div class="builder-item-wrapper element_coppy_to">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value="">
                     <div class="list-item">
                         <div class="row">
                             <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
@@ -1428,7 +1422,8 @@ $shopinfo = $this->current_store_obj;
                 </div>';
                 }
                 if($category == 4){
-                    $html4 .= '<div class="builder-item-wrapper ">
+                    $html4 .= '<div class="builder-item-wrapper element_coppy_to">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value="">
                     <div class="list-item">
                         <div class="row">
                             <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
@@ -1442,7 +1437,8 @@ $shopinfo = $this->current_store_obj;
                 </div>';
                 }
                 if($category == 5){
-                    $html5 .= '<div class="builder-item-wrapper ">
+                    $html5 .= '<div class="builder-item-wrapper element_coppy_to">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value="">
                     <div class="list-item">
                         <div class="row">
                             <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span>'.$templates['element_icon'].'</span></div>
@@ -1455,18 +1451,134 @@ $shopinfo = $this->current_store_obj;
                     </div>
                 </div>';
                 }
-                
             }
-            // echo "<pre>";
-            // print_r("ooooo");
-            // print_r($html);
-            // die;
-            
-            // $btnval = (isset($_POST['btnval']) && $_POST['btnval'] !== '') ? $_POST['btnval'] : ''; 
         }
         $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $html,'outcome2' => $html2,'outcome3' => $html3,'outcome4' => $html4,'outcome5' => $html5);
         $response = json_encode($response_data);
-     
+        return $response;
+    }
+    function set_element() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            // if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] == '') {
+            //     // $error_array['title'] = "Please select";
+            // }
+            if (empty($error_array)) {
+                $shopinfo = $this->current_store_obj;
+          
+                if (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') {
+
+                    $where_query = array(["", "id", "=", $_POST['get_element_hidden']]);
+                    $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+                    $value_res=$comeback_client['data'][0];
+                    $mysql_date = date('Y-m-d H:i:s');
+                    $fields_arr = array(
+                        '`id`' => '',
+                        '`form_id`' => $value_res['id'],
+                        '`element_id`' => $value_res['id'],
+                        '`element_data`' => "",
+                        '`form_header_data`' => "",
+                        '`form_footer_data`' => "",
+                        '`status`' => "1",
+                        '`created`' => $mysql_date,
+                        '`updated`' => $mysql_date
+                    );
+                    $response_data = $this->post_data(FORM_DATA, array($fields_arr));
+                    // $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $value_res);
+                }
+            } else {
+                $response_data = array('data' => 'fail', 'msg' => $error_array);
+            }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function get_three_element_fun() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+
+            if (empty($error_array)) {
+                $shopinfo = $this->current_store_obj;
+                $where_query = array(["", "id", "=", "1"], ["OR", "id", "=", "2"], ["OR", "id", "=", "3"]);
+                $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+               
+                foreach($comeback_client['data'] as $templates){
+                    $mysql_date = date('Y-m-d H:i:s');
+                    $fields_arr = array(
+                        '`id`' => '',
+                        '`form_id`' => $templates['id'],
+                        '`element_id`' => $templates['id'],
+                        '`element_data`' => "",
+                        '`form_header_data`' => "",
+                        '`form_footer_data`' => "",
+                        '`status`' => "1",
+                        '`created`' => $mysql_date,
+                        '`updated`' => $mysql_date
+                    );
+                    $response_data = $this->post_data(FORM_DATA, array($fields_arr)); 
+                }
+                $response_data = array('data' => 'success', 'msg' => 'insert successfully');
+            } else {
+                $response_data = array('data' => 'fail', 'msg' => $error_array);
+            }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function set_all_element_selected_fun() {
+        
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $where_query = array(["", "status", "=", "1"]);
+            $comeback_client = $this->select_result(FORM_DATA, '*', $where_query);
+            $html="";
+            foreach($comeback_client['data'] as $templates){
+            $element_no= $templates['element_id'];
+            $where_query = array(["", "id", "=", "$element_no"]);
+            $comeback_client_second = $this->select_result(ELEMENTS, '*', $where_query);
+            foreach($comeback_client_second['data'] as $templates){
+                $html .= '<div class="builder-item-wrapper ">
+                <input type="hidden" class="form_design_hidden" name="form_design_hidden" value='.$templates['id'].'>
+                <div class="list-item" data-owl="3">
+                    <div class="row">
+                        <div class="icon">
+                            <span class="Polaris-Icon">
+                                <span class="Polaris-VisuallyHidden"></span>
+                                 '.$templates['element_icon'].'                                   
+                            </span>
+                        </div>
+                        <div class="title">
+                            <div>
+                                <div>'.$templates['element_title'].'</div>
+                            </div>
+                        </div>
+                        <div title="Duplicate this element" class="duplicate">
+                            <span class="Polaris-Icon">
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div title="Sort this element" class="softable">
+                            <span class="Polaris-Icon">
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path d="M7 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm6-8a2 2 0 1 0-.001-4.001 2 2 0 0 0 .001 4.001zm0 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+            }                    
+            }
+        }
+        $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html);
+        $response = json_encode($response_data);
         return $response;
     }
     // end 014

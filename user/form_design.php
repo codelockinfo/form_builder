@@ -211,8 +211,8 @@ include_once('cls_header.php');
                                     <div class="">
                                         <h3 class="subheading">Elements</h3>
                                         <div>
-                                            <div>
-                                                <div class="builder-item-wrapper ">
+                                            <div class="selected_element_set">
+                                                <!-- <div class="builder-item-wrapper ">
                                                     <div class="list-item" data-owl="3">
                                                         <div class="row">
                                                             <div class="icon">
@@ -349,7 +349,7 @@ include_once('cls_header.php');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -2559,3 +2559,10 @@ include_once('cls_header.php');
 
             </div>
         </div>
+        <script>
+    $(document).ready(function() {
+        // get_three_element();
+        set_all_element_selected();
+    });
+
+</script>
