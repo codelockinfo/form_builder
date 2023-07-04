@@ -1340,9 +1340,7 @@ $shopinfo = $this->current_store_obj;
             //     // $error_array['title'] = "Please select";
             // }
             if (empty($error_array)) {
-                $shopinfo = $this->current_store_obj;
-                $id=$shopinfo[6];
-                
+                $shopinfo = (object)$this->current_store_obj;
                 // store client id mate direct aa set karelu hatu but second day work notu kartu
                 // $shopinfo->store_user_id
                 // $last_id = $this->db->insert_id;
@@ -1350,14 +1348,15 @@ $shopinfo = $this->current_store_obj;
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
                         '`id`' => '',
-                        '`store_client_id`' => $id,
+                        '`store_client_id`' => $shopinfo->store_user_id,
                         '`form_name`' => $_POST['formnamehiden'],
                         '`form_type`' => $_POST['selectedTypes'],
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
                       $response_data = $this->post_data(FORMS, array($fields_arr));
-                }
+                      $response_data = json_decode($response_data);
+                    }
             } else {
                 $response_data = array('data' => 'fail', 'msg' => $error_array);
             }
@@ -1506,12 +1505,11 @@ $shopinfo = $this->current_store_obj;
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
                         '`id`' => '',
-                        '`form_id`' => $templates['id'],
+                        '`form_id`' => $_POST['form_id'],
                         '`element_id`' => $templates['id'],
                         '`element_data`' => "",
                         '`form_header_data`' => "",
                         '`form_footer_data`' => "",
-                        '`status`' => "1",
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
@@ -1525,32 +1523,35 @@ $shopinfo = $this->current_store_obj;
         $response = json_encode($response_data);
         return $response;
     }
+
     function set_all_element_selected_fun() {
         
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
-
+        
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            $where_query = array(["", "status", "=", "1"]);
-            $comeback_client = $this->select_result(FORM_DATA, '*', $where_query);
-            $html="";
-            foreach($comeback_client['data'] as $templates){
+            $where_query = array(["", "status", "=", "1"],["AND", "form_id", "=", $_POST['form_id']]);
+            $comeback_client = $this->select_result(FORM_DATA, "element_id,element_data", $where_query);
+            
+        $html = '';
+        foreach($comeback_client['data'] as $templates){
             $element_no= $templates['element_id'];
-            $where_query = array(["", "id", "=", "$element_no"]);
-            $comeback_client_second = $this->select_result(ELEMENTS, '*', $where_query);
-            foreach($comeback_client_second['data'] as $templates){
+            $where_query = array(["", "id", "=", "$element_no"] );
+            $element_data = $this->select_result(ELEMENTS, '*', $where_query);
+            
+            foreach($element_data['data'] as $elements){
                 $html .= '<div class="builder-item-wrapper ">
-                <input type="hidden" class="form_design_hidden" name="form_design_hidden" value='.$templates['id'].'>
+                <input type="hidden" class="form_design_hidden" name="form_design_hidden" value='.$elements['id'].'>
                 <div class="list-item" data-owl="3">
                     <div class="row">
                         <div class="icon">
                             <span class="Polaris-Icon">
                                 <span class="Polaris-VisuallyHidden"></span>
-                                 '.$templates['element_icon'].'                                   
+                                 '.$elements['element_icon'].'                                   
                             </span>
                         </div>
                         <div class="title">
                             <div>
-                                <div>'.$templates['element_title'].'</div>
+                                <div>'.$elements['element_title'].'</div>
                             </div>
                         </div>
                         <div title="Duplicate this element" class="duplicate">

@@ -106,7 +106,7 @@ include dirname(dirname(__FILE__)). "/base_function.php";
             } else {
                 if ($single) {
                     foreach ($cls_rows as $key => $row) {
-                        $return_data[$row] = $row;
+                        $return_data[$key] = $row;
                     }
                     continue;
                 } else {
@@ -117,6 +117,9 @@ include dirname(dirname(__FILE__)). "/base_function.php";
             }
             $c++;            
         }
+    //     echo "<pre>";
+    //    print_r($return_data);
+
         if (!$return_data) {
             $status = 0;
         }
