@@ -789,13 +789,14 @@ $(document).on("click", ".enable-btn", function(event) {
                         }
                 });
             });
-            $(document).on("click", ".btncreate_new", function(event) {
-                console.log("start a fun ....");
-                $.ajax({
+            
+            
+                function insertDefaultElements(form_id){            
+                    $.ajax({
                         url: "ajax_call.php",
                         type: "post",
                         dataType: "json",
-                        data: {'routine_name': 'get_three_element_fun' , store: store},
+                        data: {'routine_name': 'get_three_element_fun' , store: store, "form_id":form_id},
                         success: function (comeback) {
                             console.log("return func.........");
                            var comeback = JSON.parse(comeback);
@@ -807,14 +808,15 @@ $(document).on("click", ".enable-btn", function(event) {
                           loading_hide('.save_loader_show', 'Save');
                             }
                     });
-                });
-                function set_all_element_selected(){
+                }
+                
+                function set_all_element_selected(form_id){
                     console.log("start set all element slected");
                     $.ajax({
                             url: "ajax_call.php",
                             type: "post",
                             dataType: "json",
-                            data: {'routine_name': 'set_all_element_selected_fun' , store: store},
+                            data: {'routine_name': 'set_all_element_selected_fun','form_id': form_id, store: store },
                             success: function (comeback) {
                                 console.log("return set all elemnt");
                                var comeback = JSON.parse(comeback);
@@ -847,20 +849,19 @@ $(document).on("click", ".enable-btn", function(event) {
                           beforeSend: function () {
                             loading_show('.save_loader_show');
                         },
-                        success: function (responce) {
-                            console.log("start function  ...");
-                              var responce = JSON.parse(responce);
-                             if (responce['code'] != undefined && responce['code'] == '403') {
+
+                        success: function (response) {
+                            var response = JSON.parse(response);
+                            if (response['code'] != undefined && response['code'] == '403') {
                                 redirect403();
                             } else{
                                
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
-                                window.location.href = "index.php?store="+ store;
+                                insertDefaultElements(response["data"]);
+                                window.location.href = "index.php?form_id="+response["data"]+"&store="+store;
                             }
                             loading_hide('.save_loader_show', 'Save');
                         }
                     });
-
-        
-});
+                });

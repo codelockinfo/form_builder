@@ -19,6 +19,7 @@
 </head> -->
 <?php 
 include_once('cls_header.php'); 
+$form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
 ?>
     <div>
         <div class=" form_header">
@@ -2562,7 +2563,7 @@ include_once('cls_header.php');
         <script>
     $(document).ready(function() {
         // get_three_element();
-        set_all_element_selected();
+        set_all_element_selected(<?php echo $form_id; ?>);
     });
 
 </script>
