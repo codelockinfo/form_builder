@@ -1654,7 +1654,7 @@ $shopinfo = $this->current_store_obj;
               }else if($_POST['form_type'] == 6){
                 $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "4"]);
               }
-                $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
+                $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                 foreach($comeback_client['data'] as $templates){
                     if($templates['id'] == 1){
 
