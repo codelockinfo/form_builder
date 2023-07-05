@@ -1826,8 +1826,6 @@ function form_element_data_html(){
         $comebackdata = $comeback['data'];
         if(!empty($comebackdata)){
             $comeback = '';
-            if($elementid == 1 || $elementid == 2 || $elementid == 3 || $elementid == 4 || $elementid == 6 || $elementid == 7){
-
             $comeback .= '<div class="header backheader">
                         <button class="ui-btn back-icon">
                             <span class="Polaris-Icon backBtn" data-id="0">
@@ -1841,6 +1839,8 @@ function form_element_data_html(){
                         </button>
                         <div class="title">'.$comebackdata['element_title'].'</div>
                     </div>';
+            if($elementid == 1 || $elementid == 2 || $elementid == 3 || $elementid == 4 || $elementid == 6 || $elementid == 7){
+
                     $comeback .= '  <div class="">
                     <div class="container tabContent">
                         <div class="">
@@ -2082,6 +2082,8 @@ function form_element_data_html(){
                         </div>
                     </div>
                 </div>';
+                }else{
+                    $comeback .= '   Working in progress ';
                 }
                 $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
         }else{
