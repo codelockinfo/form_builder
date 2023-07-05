@@ -1344,6 +1344,8 @@ $shopinfo = $this->current_store_obj;
                 // store client id mate direct aa set karelu hatu but second day work notu kartu
                 // $shopinfo->store_user_id
                 // $last_id = $this->db->insert_id;
+                $headerserialize = serialize(array("1", $_POST['formnamehiden'] , "Leave your message and we will get back to you shortly."));
+                $footerserialize = serialize(array("", "Submit", "0","Reset", "0","center"));
                 if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
@@ -1351,6 +1353,8 @@ $shopinfo = $this->current_store_obj;
                         '`store_client_id`' => $shopinfo->store_user_id,
                         '`form_name`' => $_POST['formnamehiden'],
                         '`form_type`' => $_POST['selectedTypes'],
+                        '`form_header_data`' => $headerserialize,
+                        '`form_footer_data`' => $footerserialize,
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
@@ -1476,8 +1480,6 @@ $shopinfo = $this->current_store_obj;
                         '`form_id`' => $value_res['id'],
                         '`element_id`' => $value_res['id'],
                         '`element_data`' => "",
-                        '`form_header_data`' => "",
-                        '`form_footer_data`' => "",
                         '`status`' => "1",
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
@@ -1498,18 +1500,28 @@ $shopinfo = $this->current_store_obj;
 
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
-                $where_query = array(["", "id", "=", "1"], ["OR", "id", "=", "2"], ["OR", "id", "=", "3"]);
+              if($_POST['form_type'] == 2){
+                  $where_query = array(["", "id", "=", "3"], ["OR", "id", "=", "2"], ["OR", "id", "=", "1"]);
+              }else if($_POST['form_type'] == 3){
+                $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
+              }else if($_POST['form_type'] == 4){
+                $where_query = array(["", "id", "=", "3"], ["OR", "id", "=", "2"], ["OR", "id", "=", "1"]);
+              }else if($_POST['form_type'] == 5){
+                $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
+              }else if($_POST['form_type'] == 6){
+                $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "4"]);
+              }
                 $comeback_client = $this->select_result(ELEMENTS, '*', $where_query);
-               
                 foreach($comeback_client['data'] as $templates){
+                    if($templates['id'] == 1){
+
+                    }
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
                         '`id`' => '',
                         '`form_id`' => $_POST['form_id'],
                         '`element_id`' => $templates['id'],
                         '`element_data`' => "",
-                        '`form_header_data`' => "",
-                        '`form_footer_data`' => "",
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );

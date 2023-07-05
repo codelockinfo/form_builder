@@ -92,7 +92,7 @@ $(document).ready(function(){
             nav:false,
     	    mouseDrag: false,
         })
-        $(".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item").click(function(){
+        $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
             console.log("HRRRRR");
             var slideTo = $(this).data("owl");
             console.log(slideTo);
@@ -109,6 +109,26 @@ $(document).ready(function(){
                 console.error( error );
             } );
         
+    });
+    // Reset button  in footer element
+    $("#PolarisCheckbox6 ").change(function() {	
+        if(this.checked) {	
+            $(".reset").removeClass("hidden");	
+        } 	
+        else{	
+            $(".reset").addClass("hidden");	
+        }	
+        	
+    });
+    // Width of footer button in footer element
+    $("#PolarisCheckbox7 ").change(function() {	
+        if(this.checked) {	
+            $(".alignment").addClass("hidden");	
+        } 	
+        else{	
+            $(".alignment").removeClass("hidden");	
+        }	
+        	
     });
        
 });
