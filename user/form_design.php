@@ -2519,7 +2519,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                                 </path>
                                                             </svg></span></span></span></span><span
                                                 class="Polaris-Choice__Label">Reset button</span></label></div>
-                                    <div class="form-control hidden">
+                                    <div class="form-control hidden reset">
                                         <div class="textfield-wrapper">
                                             <div class="">
                                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -2561,7 +2561,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                             </svg></span></span></span></span><span
                                                 class="Polaris-Choice__Label">Full width footer
                                                 button</span></label></div>
-                                    <div class="form-control">
+                                    <div class="form-control alignment">
                                         <div class="chooseInput">
                                             <div class="label">Alignment</div>
                                             <div class="chooseItems">

@@ -769,8 +769,9 @@ $(document).on("click", ".enable-btn", function(event) {
             });
         });
         $(document).on("click", ".element_coppy_to", function(event) {
+            event.preventDefault();  
+            var thisObj = $(this);
             var formid=$(".formid").val();
-            event.preventDefault();    
             var  get_val=$(this).find(".get_element_hidden").val();
             $.ajax({
                     url: "ajax_call.php",
@@ -782,18 +783,19 @@ $(document).on("click", ".enable-btn", function(event) {
                        if (comeback['code'] != undefined && comeback['code'] == '403') {
                           redirect403();
                       } else{
-                        // location.reload(true);
+                        $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
                       }
                     }
                 });
             });
             
-                function insertDefaultElements(form_id){            
+
+                function insertDefaultElements(form_id,selectedType){       
                     $.ajax({
                         url: "ajax_call.php",
                         type: "post",
                         dataType: "json",
-                        data: {'routine_name': 'get_three_element_fun' , store: store, "form_id":form_id},
+                        data: {'routine_name': 'get_three_element_fun' , store: store, "form_id":form_id, "form_type":selectedType},
                         success: function (comeback) {
                            var comeback = JSON.parse(comeback);
                            if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -953,11 +955,13 @@ $(document).on("click", ".enable-btn", function(event) {
                                 }
                             });
                         }
+                        
                 $(document).on("click", ".btncreate_new", function(event) {
                     event.preventDefault();    
                     var form_data = $("#createNewForm")[0];
                     var form_data = new FormData(form_data);
-                    form_data.append('selectedTypes',$(".selectedType").attr("data-val"));
+                    var selectedType = $(".selectedType").attr("data-val");
+                    form_data.append('selectedTypes',selectedType);
                     form_data.append('formnamehiden',$(".formnamehide").attr("data-val"));
                     form_data.append('store',store); 
                     form_data.append('routine_name','function_create_form');      
@@ -978,7 +982,7 @@ $(document).on("click", ".enable-btn", function(event) {
                             } else{
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
-                                insertDefaultElements(response["data"]);
+                                insertDefaultElements(response["data"],selectedType);
                                 window.location.href = "index.php?form_id="+response["data"]+"&store="+store;
                             }
                             loading_hide('.save_loader_show', 'Create Form');

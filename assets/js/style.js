@@ -93,6 +93,12 @@ $(document).ready(function(){
     	    mouseDrag: false,
         })
 
+        $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
+            console.log("HRRRRR");
+            var slideTo = $(this).data("owl");
+            console.log(slideTo);
+            $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
+        });
     
         $(".backBtn").click(function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [0, 40, true]);
@@ -105,11 +111,25 @@ $(document).ready(function(){
             } );
         
     });
+    // Reset button  in footer element
+    $("#PolarisCheckbox6 ").change(function() {	
+        if(this.checked) {	
+            $(".reset").removeClass("hidden");	
+        } 	
+        else{	
+            $(".reset").addClass("hidden");	
+        }	
+        	
+    });
+    // Width of footer button in footer element
+    $("#PolarisCheckbox7 ").change(function() {	
+        if(this.checked) {	
+            $(".alignment").addClass("hidden");	
+        } 	
+        else{	
+            $(".alignment").removeClass("hidden");	
+        }	
+        	
+    });
        
-});
-$(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function () {
-        console.log("HRRRRR");
-        var slideTo = $(this).data("owl");
-        console.log(slideTo);
-        $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
 });
