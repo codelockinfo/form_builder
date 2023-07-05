@@ -99,7 +99,7 @@ $(document).ready(function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
         });
     
-        $(".backBtn").click(function(){
+        $(document).on("click",".backBtn",function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [0, 40, true]);
         });
         $('.editor').each(function(index,item){
