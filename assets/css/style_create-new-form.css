@@ -154,7 +154,8 @@ input:checked + .slider:before {
 /* for switch icons end */
 .main_left_{
   display: flex;
-  width: 32%;
+  /* width: 32%; */
+  width: 50%;
 }
 .main_right_{
   width: 31%;
@@ -273,6 +274,12 @@ input:checked + .slider:before {
 .first_txt_image{
   color: #fff;
   background-color: #65ab65; 
+}
+.disp_flex_input{
+  display: flex;
+}
+.btnFormSubmit{
+  margin-left: 10px;
 }
 @media only screen and (max-width: 900px) {
   .main_right_{

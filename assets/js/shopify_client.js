@@ -772,12 +772,13 @@ $(document).on("click", ".enable-btn", function(event) {
         $(document).on("click", ".element_coppy_to", function(event) {
             event.preventDefault();  
             var thisObj = $(this);
+            var formid=$(".formid").val();
             var  get_val=$(this).find(".get_element_hidden").val();
             $.ajax({
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
-                    data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val},
+                    data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val,'formid':formid},
                     success: function (comeback) {
                        var comeback = JSON.parse(comeback);
                        if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -830,6 +831,90 @@ $(document).on("click", ".enable-btn", function(event) {
                                 }
                         });
                     }
+                    function getFormTitle(form_id){
+                        console.log("start set all element slected");
+                        $.ajax({
+                                url: "ajax_call.php",
+                                type: "post",
+                                dataType: "json",
+                                data: {'routine_name': 'getFormTitleFun','form_id': form_id, store: store },
+                                success: function (comeback) {
+                                   var comeback = JSON.parse(comeback);
+                                   if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                      redirect403();
+                                  } else{
+                                    console.log(comeback['msg']);
+                                    console.log(comeback['outcome']);
+                                    $(".form_name_form_design").val(comeback['outcome'])
+                                  }
+                                  loading_hide('.save_loader_show', 'Save');
+                                    }
+                            });
+                        }
+                    $(document).on("click", ".btnFormSubmit", function(event) {
+                        var formid=$(".formid").val();
+                        var form_name=$(".form_name_form_design").val();
+                        event.preventDefault();  
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {'routine_name': 'insertFormData', store: store,'formid':formid,'form_name':form_name },
+                            success: function (comeback) {
+                                console.log("return set all elemnt");
+                               var comeback = JSON.parse(comeback);
+                               if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                //   redirect403();
+                              } else{
+                                // console.log("return get all form ");
+                                // $(".set_all_form").html(comeback['outcome'])
+                              }
+                              loading_hide('.save_loader_show', 'Save');
+                                }
+                        });
+                    });
+                    $(document).on("click", ".clsmain_form", function(event) {
+                        // var formid=$(".formid").val();
+                        // var form_name=$(".form_name_form_design").val();
+                        event.preventDefault();  
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {'routine_name': 'insertFormData', store: store,'formid':formid,'form_name':form_name },
+                            success: function (comeback) {
+                                // console.log("return set all elemnt");
+                               var comeback = JSON.parse(comeback);
+                               if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                //   redirect403();
+                              } else{
+                                // console.log("return get all form ");
+                                // $(".set_all_form").html(comeback['outcome'])
+                              }
+                              loading_hide('.save_loader_show', 'Save');
+                                }
+                        });
+                    });
+                    function getAllForm(){
+                        console.log("start get all form");
+                        $.ajax({
+                                url: "ajax_call.php",
+                                type: "post",
+                                dataType: "json",
+                                data: {'routine_name': 'getAllFormFunction', store: store },
+                                success: function (comeback) {
+                                    console.log("return set all elemnt");
+                                   var comeback = JSON.parse(comeback);
+                                   if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                    //   redirect403();
+                                  } else{
+                                    console.log("return get all form ");
+                                    $(".set_all_form").html(comeback['outcome'])
+                                  }
+                                  loading_hide('.save_loader_show', 'Save');
+                                    }
+                            });
+                        }
                 $(document).on("submit", "#createNewForm", function(event) {
                     event.preventDefault();    
                     console.log("start...");
@@ -850,11 +935,13 @@ $(document).on("click", ".enable-btn", function(event) {
                           beforeSend: function () {
                             loading_show('.save_loader_show');
                         },
+
                         success: function (response) {
                             var response = JSON.parse(response);
                             if (response['code'] != undefined && response['code'] == '403') {
                                 redirect403();
                             } else{
+                               
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
                                 insertDefaultElements(response["data"],selectedType);
