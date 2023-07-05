@@ -1467,8 +1467,7 @@ $shopinfo = $this->current_store_obj;
             $html="";
             
             foreach($comeback_client['data'] as $templates){
-                    $html .= '<div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky clsmain_form">
-                    <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
+                    $html .= '<div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
                     <div class="Polaris-ResourceList__HeaderContentWrapper">
                         <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div>
                         <div class="Polaris-ResourceList__CheckableButtonWrapper">
@@ -1492,7 +1491,8 @@ $shopinfo = $this->current_store_obj;
                                       </span>
                                     </span>
                                   </label>
-                                <div class="main_left_">
+                                <div class="main_left_ clsmain_form">
+                                <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
                                     <div class="Polaris-CheckableButton__Label">MTEzNzI0</div>
                                     <div class="sp-font-size">'.$templates['form_name'].'</div>
                                 </div>
@@ -1673,17 +1673,17 @@ $shopinfo = $this->current_store_obj;
         
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "status", "=", "1"],["AND", "form_id", "=", $_POST['form_id']]);
-            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data", $where_query); 
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id", $where_query); 
 
         $html = '';
+        $i=3;
         foreach($comeback_client['data'] as $templates){
             $element_no= $templates['element_id'];
             $where_query = array(["", "id", "=", "$element_no"] );
             $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
             
             foreach($element_data['data'] as $elements){
-                $html .= '<div class="builder-item-wrapper ">
-                <input type="hidden" class="form_design_hidden" name="form_design_hidden" value='.$elements['id'].'>
+                $html .= '<div class="builder-item-wrapper clsselected_element">
                 <div class="list-item" data-owl="3">
                     <div class="row">
                         <div class="icon">
@@ -1697,7 +1697,9 @@ $shopinfo = $this->current_store_obj;
                                 <div>'.$elements['element_title'].'</div>
                             </div>
                         </div>
-                        <div title="Duplicate this element" class="duplicate">
+                        <div title="Duplicate this element" class="duplicate element_coppy_to">
+                        <input type="hidden" class="get_element_hidden" name="get_element_hidden" value='.$elements['id'].'>
+                        <input type="hidden" class="form_data_id" name="form_data_id" value='.$templates['id'].'>
                             <span class="Polaris-Icon">
                                 <span class="Polaris-VisuallyHidden"></span>
                                 <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
@@ -1718,7 +1720,8 @@ $shopinfo = $this->current_store_obj;
                     </div>
                 </div>
             </div>';
-            }                    
+            }       
+            $i++;             
             }
            
         }
@@ -1751,6 +1754,65 @@ $shopinfo = $this->current_store_obj;
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
         }
         $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function getElementdetails() {
+        $formid=$_POST['formid'];
+        $element_id=$_POST['element_id'];
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        // if (isset($_POST['store']) && $_POST['store'] != '') {
+
+        //     $formid=$_POST['formid'];
+        //     $element_id=$_POST['element_id'];
+        //     $fields = array(
+        //         'status' => "0"
+        //     );
+        //     $where_query = array(["", "element_id", "=", "$element_id"],["AND", "form_id", "=", "$formid"]);
+        //     $comeback = $this->put_data(TABLE_FORM_DATA, $fields, $where_query);
+        // }
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $where_query = array(["", "element_id", "=", "$element_id"],["AND", "form_id", "=", "$formid"]);
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id", $where_query);
+            $value=$comeback_client['data'][0]['element_id']; 
+
+            $where_query = array(["", "id", "=", "$value"] );
+            $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
+            $element_name=$element_data['data'][0]['element_title'];
+    }
+        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $element_name);
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function deleteElement() {
+        $formid=$_POST['formid'];
+        $element_id=$_POST['element_id'];
+        $form_data_id=$_POST['form_data_id'];
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $fields = array(
+                'status' => "0"
+            );
+            $where_query = array(["", "element_id", "=", "$element_id"],["AND", "form_id", "=", "$formid"],["AND", "id", "=", "$form_data_id"]);
+            $comeback = $this->put_data(TABLE_FORM_DATA, $fields, $where_query);
+        }
+        $response_data = array('data' => 'success', 'msg' => 'delete successfully','outcome' => $where_query);
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function mainForm() {
+      
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+
+            $formid=$_POST['formid'];
+            $fields = array(
+                'form_name' => ""
+            );
+            $where_query = array(["", "id", "=","$formid"]);
+            // $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+        }
+        // $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $where_query);
         $response = json_encode($response_data);
         return $response;
     }

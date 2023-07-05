@@ -746,10 +746,10 @@ $(document).on("click", ".enable-btn", function(event) {
         });
 });
 
-    // start 014
-    $(document).on("click", ".btn_add_element", function(event) {
-        event.preventDefault();    
-        $.ajax({
+         // start 014
+        $(document).on("click", ".btn_add_element", function(event) {
+            event.preventDefault();    
+            $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
@@ -765,14 +765,11 @@ $(document).on("click", ".enable-btn", function(event) {
                     $(".setvalue_element_structure").html(comeback['outcome4']);
                     $(".setvalue_element_customization").html(comeback['outcome5']);
                   }
-                  loading_hide('.save_loader_show', 'Save');
-                    }
+                }
             });
         });
         $(document).on("click", ".element_coppy_to", function(event) {
             var formid=$(".formid").val();
-            // console.log("lllllllllllll");
-            // console.log(formid);
             event.preventDefault();    
             var  get_val=$(this).find(".get_element_hidden").val();
             $.ajax({
@@ -781,19 +778,15 @@ $(document).on("click", ".enable-btn", function(event) {
                     dataType: "json",
                     data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val,'formid':formid},
                     success: function (comeback) {
-                        console.log("ppppp");
                        var comeback = JSON.parse(comeback);
                        if (comeback['code'] != undefined && comeback['code'] == '403') {
                           redirect403();
                       } else{
-                        // console.log(comeback['outcome']);
-                        location.reload(true);
+                        // location.reload(true);
                       }
-                      loading_hide('.save_loader_show', 'Save');
-                        }
+                    }
                 });
             });
-            
             
                 function insertDefaultElements(form_id){            
                     $.ajax({
@@ -802,40 +795,34 @@ $(document).on("click", ".enable-btn", function(event) {
                         dataType: "json",
                         data: {'routine_name': 'get_three_element_fun' , store: store, "form_id":form_id},
                         success: function (comeback) {
-                            console.log("return func.........");
                            var comeback = JSON.parse(comeback);
                            if (comeback['code'] != undefined && comeback['code'] == '403') {
                               redirect403();
                           } else{
-                            console.log(comeback['msg']);
                           }
-                          loading_hide('.save_loader_show', 'Save');
-                            }
+                        }
                     });
                 }
                 
                 function set_all_element_selected(form_id){
-                    console.log("start set all element slected");
                     $.ajax({
                             url: "ajax_call.php",
                             type: "post",
                             dataType: "json",
                             data: {'routine_name': 'set_all_element_selected_fun','form_id': form_id, store: store },
                             success: function (comeback) {
-                                console.log("return set all elemnt");
                                var comeback = JSON.parse(comeback);
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{
                                 console.log(comeback['msg']);
-                                $(".selected_element_set").html(comeback['outcome'])
+                                $(".selected_element_set").html(comeback['outcome']);
+
                               }
-                              loading_hide('.save_loader_show', 'Save');
-                                }
+                            }
                         });
                     }
                     function getFormTitle(form_id){
-                        console.log("start set all element slected");
                         $.ajax({
                                 url: "ajax_call.php",
                                 type: "post",
@@ -846,12 +833,9 @@ $(document).on("click", ".enable-btn", function(event) {
                                    if (comeback['code'] != undefined && comeback['code'] == '403') {
                                       redirect403();
                                   } else{
-                                    console.log(comeback['msg']);
-                                    console.log(comeback['outcome']);
                                     $(".form_name_form_design").val(comeback['outcome'])
                                   }
-                                  loading_hide('.save_loader_show', 'Save');
-                                    }
+                                }
                             });
                         }
                     $(document).on("click", ".btnFormSubmit", function(event) {
@@ -863,43 +847,96 @@ $(document).on("click", ".enable-btn", function(event) {
                             type: "post",
                             dataType: "json",
                             data: {'routine_name': 'insertFormData', store: store,'formid':formid,'form_name':form_name },
+                            beforeSend: function () {
+                                loading_show('.save_loader_show');
+                            },
                             success: function (comeback) {
-                                console.log("return set all elemnt");
                                var comeback = JSON.parse(comeback);
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
-                                //   redirect403();
+                                  redirect403();
                               } else{
-                                // console.log("return get all form ");
                                 // $(".set_all_form").html(comeback['outcome'])
                               }
                               loading_hide('.save_loader_show', 'Save');
-                                }
+                           }
                         });
                     });
                     $(document).on("click", ".clsmain_form", function(event) {
-                        // var formid=$(".formid").val();
+                        event.preventDefault();
+                        console.log("ssss data 1");
+                        var formid=$(this).find(".form_id_main").val();
                         // var form_name=$(".form_name_form_design").val();
+                       
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {'routine_name': 'mainForm', store: store,'formid':formid},
+                            success: function (comeback) {
+                               var comeback = JSON.parse(comeback);
+                               if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                  redirect403();
+                              } else{
+                                console.log("return data 1");
+                                window.location.href = "index.php?form_id="+formid+"&store="+store;
+                                // $(".set_all_form").html(comeback['outcome'])
+                              }
+                            }
+                        });
+                    });
+                    $(document).on("click", ".clsselected_element", function(event) {
+                        var formid=$(".formid").val();
+                        var element_id=$(this).find(".get_element_hidden").val();
+                        var form_data_id=$(this).find(".form_data_id").val();
+                       
                         event.preventDefault();  
                         $.ajax({
                             url: "ajax_call.php",
                             type: "post",
                             dataType: "json",
-                            data: {'routine_name': 'insertFormData', store: store,'formid':formid,'form_name':form_name },
+                            data: {'routine_name': 'getElementdetails', store: store,'formid':formid,'element_id':element_id },
+                            beforeSend: function () {
+                                loading_show('.save_loader_show');
+                            },
                             success: function (comeback) {
-                                // console.log("return set all elemnt");
                                var comeback = JSON.parse(comeback);
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
-                                //   redirect403();
-                              } else{
-                                // console.log("return get all form ");
-                                // $(".set_all_form").html(comeback['outcome'])
+                                  redirect403();
+                              } else{  
+                                $(".clsname_of_element").html(comeback['outcome']);
+                                $(".clsname_of_element_val").val(comeback['outcome']);
+                                $(".element_id_in_form").val(element_id);
+                                $(".form_data_id_second").val(form_data_id);
                               }
                               loading_hide('.save_loader_show', 'Save');
-                                }
+                           }
+                        });
+                    });
+                    $(document).on("click", ".remove_this_element", function(event) {
+                        var formid=$(".formid").val();
+                        var element_id=$(".element_id_in_form").val();
+                        var form_data_id=$(".form_data_id_second").val();
+                        event.preventDefault();  
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id },
+                            beforeSend: function () {
+                                loading_show('.save_loader_show');
+                            },
+                            success: function (comeback) {
+                               var comeback = JSON.parse(comeback);
+                               if (comeback['code'] != undefined && comeback['code'] == '403') {
+                                  redirect403();
+                              } else{
+                                // location.reload();   
+                              }
+                              loading_hide('.save_loader_show', 'Save');
+                           }
                         });
                     });
                     function getAllForm(){
-                        console.log("start get all form");
                         $.ajax({
                                 url: "ajax_call.php",
                                 type: "post",
@@ -909,18 +946,15 @@ $(document).on("click", ".enable-btn", function(event) {
                                     console.log("return set all elemnt");
                                    var comeback = JSON.parse(comeback);
                                    if (comeback['code'] != undefined && comeback['code'] == '403') {
-                                    //   redirect403();
+                                      redirect403();
                                   } else{
-                                    console.log("return get all form ");
                                     $(".set_all_form").html(comeback['outcome'])
                                   }
-                                  loading_hide('.save_loader_show', 'Save');
-                                    }
+                                }
                             });
                         }
-                $(document).on("submit", "#createNewForm", function(event) {
+                $(document).on("click", ".btncreate_new", function(event) {
                     event.preventDefault();    
-                    console.log("start...");
                     var form_data = $("#createNewForm")[0];
                     var form_data = new FormData(form_data);
                     form_data.append('selectedTypes',$(".selectedType").attr("data-val"));
@@ -937,19 +971,17 @@ $(document).on("click", ".enable-btn", function(event) {
                           beforeSend: function () {
                             loading_show('.save_loader_show');
                         },
-
                         success: function (response) {
                             var response = JSON.parse(response);
                             if (response['code'] != undefined && response['code'] == '403') {
                                 redirect403();
                             } else{
-                               
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
                                 insertDefaultElements(response["data"]);
                                 window.location.href = "index.php?form_id="+response["data"]+"&store="+store;
                             }
-                            loading_hide('.save_loader_show', 'Save');
+                            loading_hide('.save_loader_show', 'Create Form');
                         }
                     });
                 });

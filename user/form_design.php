@@ -31,13 +31,13 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             <div class="Polaris-Connected">
                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary disp_flex_input">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                        <input id="PolarisTextField1" placeholder="Name your form"
+                                        <input id="PolarisTextField1" placeholder=""
                                             class="Polaris-TextField__Input form_name_form_design" name="form_name_form_design" type="text"
                                             aria-labelledby="PolarisTextField1Label" aria-invalid="false"
-                                            value="Contact form">
+                                            value="">
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
-                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit" aria-disabled="false"
+                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
                                             <span class="Polaris-Button__Text">
@@ -1194,7 +1194,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 </svg>
                             </span>
                         </button>
-                        <div class="title">Other page</div>
+                        <div class="title clsname_of_element">Other page</div>
                     </div>
                     <div class="">
                         <div class="container tabContent">
@@ -1237,14 +1237,14 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label"><label id="PolarisTextField25Label"
                                                         for="PolarisTextField25" class="Polaris-Label__Text">
-                                                        <div>Label</div>
+                                                        <div class="lbl_form">Label</div>
                                                     </label></div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
                                                         <input id="PolarisTextField25" placeholder="Your Name"
-                                                            class="Polaris-TextField__Input" type="text"
+                                                            class="Polaris-TextField__Input clsname_of_element_val" type="text"
                                                             aria-labelledby="PolarisTextField25Label"
                                                             aria-invalid="false" value="">
                                                         <div class="Polaris-TextField__Backdrop"></div>
@@ -1428,12 +1428,23 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" class="element_id_in_form" name="element_id_in_form" value="">
+                            <input type="hidden" class="form_data_id_second" name="form_data_id_second" value="">
                             <div class="form-control">
-                                <button
-                                    class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth"
+                            <div style="color:#bf0711;text-align: center;">
+                                  <button class="Polaris-Button Polaris-Button--outline Polaris-Button--monochrome remove_this_element" type="button">
+                                    <span class="Polaris-Button__Content">
+                                      <span class="Polaris-Button__Text">Remove this
+                                                element</span>
+                                    </span>
+                                  </button>
+</div>
+                                <!-- <button
+                                    class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth remove_this_element"
                                     type="button"><span class="Polaris-Button__Content"><span
                                             class="Polaris-Button__Text"><span>Remove this
-                                                element</span></span></span></button>
+                                                element</span></span></span></button> -->
+                                                
                             </div>
                         </div>
                     </div>

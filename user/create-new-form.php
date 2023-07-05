@@ -743,11 +743,11 @@ include_once('cls_header.php');
                                 <div class="Polaris-TextContainer">
                                     <div class="d-flex-b">
                                         <div class="main_list_" data-val="1">
-                                            <img src="../assets/images/New-Contact-form.png" alt="" />
+                                            <img src="../assets/images/multistep_new.jpg" alt="" />
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
                                         <div class="main_list_" data-val="2">
-                                            <img src="../assets/images/New-Register-Form.png" alt="" />
+                                            <img src="../assets/images/multistep_new.jpg" alt="" />
                                             <p class="text_image_list">Contact Form</p>
                                         </div>
                                         <div class="main_list_" data-val="3">

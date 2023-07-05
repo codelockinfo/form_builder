@@ -92,12 +92,7 @@ $(document).ready(function(){
             nav:false,
     	    mouseDrag: false,
         })
-        $(".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item").click(function(){
-            console.log("HRRRRR");
-            var slideTo = $(this).data("owl");
-            console.log(slideTo);
-            $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
-        });
+
     
         $(".backBtn").click(function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [0, 40, true]);
@@ -111,4 +106,10 @@ $(document).ready(function(){
         
     });
        
+});
+$(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function () {
+        console.log("HRRRRR");
+        var slideTo = $(this).data("owl");
+        console.log(slideTo);
+        $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
 });
