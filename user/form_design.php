@@ -23,20 +23,28 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
 ?>
     <div>
         <div class=" form_header">
-
+        <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
             <div class="context">
                 <div class="context-inner">
                     <div class="item form-name-wrapper">
                         <div class="Polaris-Labelled--hidden">
                             <div class="Polaris-Connected">
-                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary disp_flex_input">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
                                         <input id="PolarisTextField1" placeholder="Name your form"
-                                            class="Polaris-TextField__Input" type="text"
+                                            class="Polaris-TextField__Input form_name_form_design" name="form_name_form_design" type="text"
                                             aria-labelledby="PolarisTextField1Label" aria-invalid="false"
                                             value="Contact form">
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
+                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit" aria-disabled="false"
+                                        type="button">
+                                        <span class="Polaris-Button__Content">
+                                            <span class="Polaris-Button__Text">
+                                                <span>Save</span>
+                                            </span>
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2564,6 +2572,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
     $(document).ready(function() {
         // get_three_element();
         set_all_element_selected(<?php echo $form_id; ?>);
+        getFormTitle(<?php echo $form_id; ?>);
     });
 
 </script>

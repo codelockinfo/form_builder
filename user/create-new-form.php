@@ -19,6 +19,7 @@
 </head> -->
 <?php 
 include_once('cls_header.php'); 
+
 ?>
 
 <div class="Polaris-Page">
@@ -182,7 +183,8 @@ include_once('cls_header.php');
                     </div>
                 </div>
             </div>
-            <div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
+            <div class="set_all_form"></div>
+            <!-- <div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
                 <div class="Polaris-ResourceList__HeaderContentWrapper">
                     <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div>
                     <div class="Polaris-ResourceList__CheckableButtonWrapper">
@@ -435,8 +437,8 @@ include_once('cls_header.php');
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="Polaris-ResourceList__HeaderWrapper border-radi-top-set border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
+            </div> -->
+            <!-- <div class="Polaris-ResourceList__HeaderWrapper border-radi-top-set border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
                 <div class="Polaris-ResourceList__HeaderContentWrapper">
                     <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div>
                     <div class="Polaris-ResourceList__CheckableButtonWrapper">
@@ -562,7 +564,7 @@ include_once('cls_header.php');
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="mar_top_bott_30">
                 <div>
                     <select name="cars" id="cars" class="">
@@ -890,4 +892,7 @@ include_once('cls_header.php');
                }
              }
          });
+         $(document).ready(function() {
+            getAllForm();
+    });
     </script>

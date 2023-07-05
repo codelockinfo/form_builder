@@ -1457,6 +1457,148 @@ $shopinfo = $this->current_store_obj;
         $response = json_encode($response_data);
         return $response;
     }
+    function getAllFormFunction() {
+        
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        $shopinfo = (object)$this->current_store_obj;
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
+            $comeback_client = $this->select_result(TABLE_FORMS, '*', $where_query);
+            $html="";
+            
+            foreach($comeback_client['data'] as $templates){
+                    $html .= '<div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky clsmain_form">
+                    <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
+                    <div class="Polaris-ResourceList__HeaderContentWrapper">
+                        <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div>
+                        <div class="Polaris-ResourceList__CheckableButtonWrapper">
+                            <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain">
+                                <label class="Polaris-Choice">
+                                    <span class="Polaris-Choice__Control">
+                                      <span class="Polaris-Checkbox">
+                                        <input name="chekbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
+                                        <span class="Polaris-Checkbox__Backdrop">
+                                        </span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                          <span class="Polaris-Icon">
+                                            <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                            </span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                              <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                              </path>
+                                            </svg>
+                                          </span>
+                                        </span>
+                                      </span>
+                                    </span>
+                                  </label>
+                                <div class="main_left_">
+                                    <div class="Polaris-CheckableButton__Label">MTEzNzI0</div>
+                                    <div class="sp-font-size">'.$templates['form_name'].'</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+        
+                        <div class="Polaris-ResourceList__AlternateToolWrapper main_right_">
+                            <div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="submissions_btn">
+                                <button class="Polaris-Button" type="button">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text">
+                                            <span tabindex="0" aria-describedby="PolarisTooltipContent58" data-polaris-tooltip-activator="true">
+                                                <span class="Polaris-Icon Polaris-Icon--colorBase Polaris-Icon--applyColor">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M4 7h9v2h-9zm0 4h7v2h-7z"></path>
+                                                        <path d="M16 10a1 1 0 0 1 1 1v4.5a1.5 1.5 0 0 1-1.5 1.5h-7.864l-2.818 2.707a1 1 0 0 1-1.707-.707v-2h-1.611a1.5 1.5 0 0 1-1.5-1.5v-11a1.5 1.5 0 0 1 1.5-1.5h7.5a1 1 0 0 1 0 2h-7v10h2.111a1 1 0 0 1 1 1v.697l1.404-1.404a1 1 0 0 1 .707-.293h7.778v-4a1 1 0 0 1 1-1zm0-5a.999.999 0 0 1-.707-1.707l2-2a1 1 0 1 1 1.414 1.414l-2 2a.996.996 0 0 1-.707.293zm3 1a1 1 0 1 1 0 2h-2a1 1 0 1 1 0-2h2zm-6-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
+        
+                            <div class="resourceItem-td datetime-td">2023-06-26 11:18:56</div>
+                        </div>
+                    </div>
+                    <div class="Polaris-ResourceList__BulkActionsWrapper">
+                        <div>
+                            <div class="Polaris-BulkActions__Group Polaris-BulkActions__Group--largeScreen Polaris-BulkActions__Group--exited">
+                                <div class="Polaris-BulkActions__ButtonGroupWrapper">
+                                    <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented" data-buttongroup-segmented="true">
+                                        <div class="Polaris-ButtonGroup__Item">
+                                            <div class="Polaris-CheckableButton">
+                                                <label class="Polaris-Choice">
+                                                    <span class="Polaris-Choice__Control">
+                                                      <span class="Polaris-Checkbox">
+                                                        <input name="chekbox4" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
+                                                        <span class="Polaris-Checkbox__Backdrop">
+                                                        </span>
+                                                        <span class="Polaris-Checkbox__Icon">
+                                                          <span class="Polaris-Icon">
+                                                            <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+                                                            </span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                              <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                              </path>
+                                                            </svg>
+                                                          </span>
+                                                        </span>
+                                                      </span>
+                                                    </span>
+                                                  </label>
+                                                <span class="Polaris-CheckableButton__Label">0 selected</span>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-ButtonGroup__Item">
+                                            <div class="Polaris-BulkActions__BulkActionButton">
+                                                <button class="Polaris-Button" type="button">
+                                                    <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Duplicate selected form(s)</span></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-ButtonGroup__Item">
+                                            <div>
+                                                <div>
+                                                    <div class="Polaris-BulkActions__BulkActionButton">
+                                                        <button class="Polaris-Button" type="button" aria-controls="Polarispopover21" aria-owns="Polarispopover21" aria-expanded="false">
+                                                            <span class="Polaris-Button__Content">
+                                                                <span class="Polaris-Button__Text">More actions</span>
+                                                                <span class="Polaris-Button__Icon">
+                                                                    <div class="">
+                                                                        <span class="Polaris-Icon">
+                                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                                <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </div>
+                                                                </span>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
+                }
+            }
+        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $html);
+        $response = json_encode($response_data);
+        return $response;
+    }
     function set_element() {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
@@ -1474,7 +1616,7 @@ $shopinfo = $this->current_store_obj;
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
                         '`id`' => '',
-                        '`form_id`' => $value_res['id'],
+                        '`form_id`' => $_POST['formid'],
                         '`element_id`' => $value_res['id'],
                         '`element_data`' => "",
                         '`form_header_data`' => "",
@@ -1531,13 +1673,13 @@ $shopinfo = $this->current_store_obj;
         
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "status", "=", "1"],["AND", "form_id", "=", $_POST['form_id']]);
-            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data", $where_query);
-            
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data", $where_query); 
+
         $html = '';
         foreach($comeback_client['data'] as $templates){
             $element_no= $templates['element_id'];
             $where_query = array(["", "id", "=", "$element_no"] );
-            $element_data = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
+            $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
             
             foreach($element_data['data'] as $elements){
                 $html .= '<div class="builder-item-wrapper ">
@@ -1578,8 +1720,37 @@ $shopinfo = $this->current_store_obj;
             </div>';
             }                    
             }
+           
         }
         $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html);
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function getFormTitleFun() {
+        
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $where_query = array(["", "status", "=", "1"],["AND", "id", "=", $_POST['form_id']]);
+            $comeback_client = $this->select_result(TABLE_FORMS, "*", $where_query); 
+            $value=$comeback_client['data'][0]['form_name'];
+        }
+        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $value);
+        $response = json_encode($response_data);
+        return $response;
+    }
+    function insertFormData() {
+      
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $formid=$_POST['formid'];
+            $fields = array(
+                'form_name' => $_POST['form_name']
+            );
+            $where_query = array(["", "id", "=","$formid"]);
+            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+        }
+        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
         $response = json_encode($response_data);
         return $response;
     }
