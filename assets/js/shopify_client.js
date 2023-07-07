@@ -987,3 +987,27 @@ $(document).on("click", ".enable-btn", function(event) {
                         }
                     });
                 });
+
+                $(document).on("click",".Polaris-Tabs__Panel .list-item",function(){
+                    console.log("element click ");
+                    var slideTo = $(this).data("owl");
+                    var elementId = $(this).data("elementid");
+                    $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
+                    $.ajax({
+                        url: "ajax_call.php",
+                        type: "post",
+                        dataType: "json",
+                        data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId },
+                        success: function (comeback) {
+                            console.log(comeback);
+                            var comeback = JSON.parse(comeback);
+                            console.log(comeback);
+                           if (comeback['code'] != undefined && comeback['code'] == '403') {
+                            //   redirect403();
+                          } else{
+                            console.log("return get all form ");
+                            $(".elementAppend").html(comeback.outcome)
+                          }
+                        }
+                    });
+                });
