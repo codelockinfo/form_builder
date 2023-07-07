@@ -1367,6 +1367,7 @@ $shopinfo = $this->current_store_obj;
             }
         }
         $response = json_encode($response_data);
+  
         return $response;
     }
     function get_all_element_fun() {

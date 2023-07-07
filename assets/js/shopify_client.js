@@ -784,6 +784,7 @@ $(document).on("click", ".enable-btn", function(event) {
                           redirect403();
                       } else{
                         $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
+                        set_all_element_selected(formid);
                       }
                     }
                 });
@@ -817,7 +818,6 @@ $(document).on("click", ".enable-btn", function(event) {
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{
-                                console.log(comeback['msg']);
                                 $(".selected_element_set").html(comeback['outcome']);
 
                               }
@@ -865,10 +865,7 @@ $(document).on("click", ".enable-btn", function(event) {
                     });
                     $(document).on("click", ".clsmain_form", function(event) {
                         event.preventDefault();
-                        console.log("ssss data 1");
                         var formid=$(this).find(".form_id_main").val();
-                        // var form_name=$(".form_name_form_design").val();
-                       
                         $.ajax({
                             url: "ajax_call.php",
                             type: "post",
@@ -879,9 +876,7 @@ $(document).on("click", ".enable-btn", function(event) {
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{
-                                console.log("return data 1");
                                 window.location.href = "index.php?form_id="+formid+"&store="+store;
-                                // $(".set_all_form").html(comeback['outcome'])
                               }
                             }
                         });
@@ -905,8 +900,8 @@ $(document).on("click", ".enable-btn", function(event) {
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{  
-                                $(".clsname_of_element").html(comeback['outcome']);
-                                $(".clsname_of_element_val").val(comeback['outcome']);
+                                // $(".clsname_of_element").html(comeback['outcome']);
+                                // $(".clsname_of_element_val").val(comeback['outcome']);
                                 $(".element_id_in_form").val(element_id);
                                 $(".form_data_id_second").val(form_data_id);
                               }
@@ -915,6 +910,8 @@ $(document).on("click", ".enable-btn", function(event) {
                         });
                     });
                     $(document).on("click", ".remove_this_element", function(event) {
+                        event.preventDefault();
+                        var thisObj = $(this);
                         var formid=$(".formid").val();
                         var element_id=$(".element_id_in_form").val();
                         var form_data_id=$(".form_data_id_second").val();
@@ -932,7 +929,8 @@ $(document).on("click", ".enable-btn", function(event) {
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{
-                                // location.reload();   
+                                $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
+                                set_all_element_selected(formid); 
                               }
                               loading_hide('.save_loader_show', 'Save');
                            }
