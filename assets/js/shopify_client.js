@@ -981,7 +981,7 @@ $(document).on("click", ".enable-btn", function(event) {
                                 $(".text_image_list").removeClass("first_txt_image");
                                 $(".firstone_").addClass("first_txt_image");
                                 insertDefaultElements(response["data"],selectedType);
-                                window.location.href = "index.php?form_id="+response["data"]+"&store="+store;
+                                window.location.href = "form_design.php?form_id="+response["data"]+"&store="+store;
                             }
                             loading_hide('.save_loader_show', 'Create Form');
                         }
