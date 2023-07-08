@@ -743,27 +743,27 @@ include_once('cls_header.php');
                                 <div class="Polaris-TextContainer">
                                     <div class="d-flex-b">
                                         <div class="main_list_" data-val="1">
-                                            <img src="../assets/images/New-Contact-form.png" alt="" />
+                                            <img src="../assets/images/form/build_from_scratch.png" alt="" />
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
                                         <div class="main_list_" data-val="2">
-                                            <img src="../assets/images/New-Register-Form.png" alt="" />
+                                            <img src="../assets/images/form/contact_us_form.png" alt="" />
                                             <p class="text_image_list">Contact Form</p>
                                         </div>
                                         <div class="main_list_" data-val="3">
-                                            <img src="../assets/images/New-Contact-form.png" alt="" />
+                                            <img src="../assets/images/form/registration_form.png" alt="" />
                                             <p class="text_image_list">Shopify Registration Form</p>
                                         </div>
                                         <div class="main_list_" data-val="4">
-                                            <img src="../assets/images/New-Register-Form.png" alt="" />
+                                            <img src="../assets/images/form/floating_contact_us_form.png" alt="" />
                                             <p class="text_image_list">Floating contact form</p>
                                         </div>
                                         <div class="main_list_" data-val="5">
-                                            <img src="../assets/images/New-Register-Form.png" alt="" />
+                                            <img src="../assets/images/form/multi_step_form.png" alt="" />
                                             <p class="text_image_list">Multi-Step Form</p>
                                         </div>
                                         <div class="main_list_" data-val="6">
-                                            <img src="../assets/images/New-Register-Form.png" alt="" />
+                                            <img src="../assets/images/form/application_form.png" alt="" />
                                             <p class="text_image_list">Application form</p>
                                         </div>
                                   

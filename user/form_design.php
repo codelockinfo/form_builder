@@ -31,13 +31,13 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             <div class="Polaris-Connected">
                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary disp_flex_input">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                        <input id="PolarisTextField1" placeholder="Name your form"
+                                        <input id="PolarisTextField1" placeholder=""
                                             class="Polaris-TextField__Input form_name_form_design" name="form_name_form_design" type="text"
                                             aria-labelledby="PolarisTextField1Label" aria-invalid="false"
-                                            value="Contact form">
+                                            value="">
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
-                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit" aria-disabled="false"
+                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
                                             <span class="Polaris-Button__Text">
@@ -1180,8 +1180,8 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         </div>
                     </div>
                 </div>
-                <div class="polarisformcontrol elementAppend">
-                  
+
+                <div class="polarisformcontrol elementAppend">                  
                 </div>
                 <div class="polarisformcontrol">
                     <div class="header backheader">

@@ -92,6 +92,7 @@ $(document).ready(function(){
             nav:false,
     	    mouseDrag: false,
         })
+
         $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
             console.log("HRRRRR");
             var slideTo = $(this).data("owl");

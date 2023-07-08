@@ -34,6 +34,7 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
         <script src="<?php echo main_url('assets/js/jquery3.6.4.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client_second.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
