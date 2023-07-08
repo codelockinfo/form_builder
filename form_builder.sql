@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 04, 2023 at 09:07 AM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.1.12
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jul 08, 2023 at 06:01 AM
+-- Server version: 8.0.31
+-- PHP Version: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,14 +27,16 @@ SET time_zone = "+00:00";
 -- Table structure for table `customize`
 --
 
-CREATE TABLE `customize` (
-  `id` int(11) NOT NULL,
-  `url_key` varchar(11) NOT NULL,
-  `used` enum('0','1') NOT NULL DEFAULT '0',
-  `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `customize`;
+CREATE TABLE IF NOT EXISTS `customize` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `url_key` varchar(11) COLLATE utf8mb4_general_ci NOT NULL,
+  `used` enum('0','1') COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0',
+  `status` enum('0','1') COLLATE utf8mb4_general_ci NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=733 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customize`
@@ -781,16 +783,18 @@ INSERT INTO `customize` (`id`, `url_key`, `used`, `status`, `created_at`, `updat
 -- Table structure for table `elements`
 --
 
-CREATE TABLE `elements` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `elements`;
+CREATE TABLE IF NOT EXISTS `elements` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `element_title` varchar(255) DEFAULT NULL,
   `element_icon` varchar(2000) NOT NULL,
   `element_type` varchar(255) NOT NULL,
-  `element_category` int(200) NOT NULL,
+  `element_category` int NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `elements`
@@ -807,15 +811,19 @@ INSERT INTO `elements` (`id`, `element_title`, `element_icon`, `element_type`, `
 (8, 'Password', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M10 12a2 2 0 0 0 2-2c0-.178-.03-.348-.074-.512l5.781-5.781a.999.999 0 1 0-1.414-1.414l-2.61 2.61a7.757 7.757 0 0 0-3.683-.903c-5.612 0-7.837 5.399-7.929 5.628a1.017 1.017 0 0 0 0 .744c.054.133.835 2.011 2.582 3.561l-2.36 2.36a.999.999 0 1 0 1.414 1.414l5.781-5.781c.164.043.334.074.512.074zm-4-2a4 4 0 0 1 4-4c.742 0 1.432.208 2.025.561l-1.513 1.513a2.004 2.004 0 0 0-.512-.074 2 2 0 0 0-2 2c0 .178.031.347.074.511l-1.513 1.514a3.959 3.959 0 0 1-.561-2.025zm10.145-3.144-2.252 2.252c.064.288.106.585.106.893a4 4 0 0 1-4 4 3.97 3.97 0 0 1-.89-.108l-1.682 1.68a7.903 7.903 0 0 0 2.573.427c5.613 0 7.837-5.399 7.928-5.629a1.004 1.004 0 0 0 0-.742c-.044-.111-.596-1.437-1.784-2.773z\">\r\n                                                                        </path>\r\n                                                                  ', 'password', 1, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
 (9, 'Date Time', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path fill-rule=\"evenodd\" d=\"M17.5 2h-2.5v-1a1 1 0 1 0-2 0v1h-7v-1a1 1 0 0 0-2 0v1h-1.5c-.8 0-1.5.7-1.5 1.5v15c0 .8.7 1.5 1.5 1.5h15c.8 0 1.5-.7 1.5-1.5v-15c0-.8-.7-1.5-1.5-1.5zm-14.5 16h14v-10h-14v10z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'datetime-local', 1, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
 (10, 'File', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M5.243 20a5.228 5.228 0 0 1-3.707-1.533 5.213 5.213 0 0 1-1.536-3.708c0-1.402.546-2.719 1.536-3.708l9.515-9.519a5.25 5.25 0 0 1 8.553 1.7 5.21 5.21 0 0 1 .396 2.008 5.208 5.208 0 0 1-1.535 3.708l-4.258 4.26a3.124 3.124 0 0 1-5.092-1.012 3.098 3.098 0 0 1-.236-1.196c0-.835.324-1.619.914-2.208l4.5-4.501a1 1 0 1 1 1.414 1.414l-4.5 4.501a1.112 1.112 0 0 0-.328.794 1.114 1.114 0 0 0 1.121 1.12c.297 0 .582-.118.793-.327l4.258-4.26a3.223 3.223 0 0 0 .949-2.293c0-.866-.337-1.681-.949-2.293a3.248 3.248 0 0 0-4.586 0l-9.515 9.518a3.224 3.224 0 0 0-.95 2.295c0 .866.338 1.68.95 2.293a3.248 3.248 0 0 0 4.586 0l1.757-1.758a1 1 0 1 1 1.414 1.414l-1.757 1.758a5.236 5.236 0 0 1-3.707 1.533z\">\r\n                                                                        </path>\r\n                                                              ', 'file', 1, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
-(11, 'Chekboxes', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path fill-rule=\"evenodd\" d=\"M4.5 3a1.5 1.5 0 0 0-1.5 1.5v11a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-11a1.5 1.5 0 0 0-1.5-1.5h-11zm9.207 5.707a1 1 0 0 0-1.414-1.414l-3.293 3.293-1.293-1.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'checkbox', 2, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
+(11, 'Checkboxes', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path fill-rule=\"evenodd\" d=\"M4.5 3a1.5 1.5 0 0 0-1.5 1.5v11a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-11a1.5 1.5 0 0 0-1.5-1.5h-11zm9.207 5.707a1 1 0 0 0-1.414-1.414l-3.293 3.293-1.293-1.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'checkbox', 2, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
 (12, 'Accept Terms', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\n                                                                        <path fill-rule=\"evenodd\" d=\"M9.128.233c-2.37 1.383-5.37 2.33-7.635 2.646-.821.115-1.495.79-1.493 1.62l.001.497c-.03 6.043.477 11.332 9.462 14.903a1.45 1.45 0 0 0 1.062 0c8.993-3.571 9.503-8.86 9.473-14.903v-.501c-.001-.828-.674-1.51-1.492-1.638-2.148-.337-5.281-1.274-7.65-2.628a1.733 1.733 0 0 0-1.728.004zm4.577 8.478a1 1 0 0 0-1.414-1.415l-3.293 3.294-1.293-1.293a1 1 0 1 0-1.415 1.413l2 2.001a1 1 0 0 0 1.414 0l4-4.001z\">\n                                                                        </path>\n                                                                    </svg>', 'checkbox', 2, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
 (13, 'Radio Buttons', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M10 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm0-14c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm-1 9a.997.997 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.293 1.293 3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a.996.996 0 0 1-.707.293z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'radio', 2, '1', '2023-07-01 05:50:46', '2023-07-01 05:50:46'),
 (14, 'Dropdown', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\n                                                                        <path d=\"M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-4.293-1.707a1 1 0 0 0-1.414 0l-2.293 2.293-2.293-2.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0 0-1.414z\">\n                                                                        </path>\n                                                                    </svg>', 'select', 2, '1', '2023-07-01 05:52:34', '2023-07-01 05:52:34'),
 (15, 'Country', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M3.07 6a8.025 8.025 0 0 1 4.262-3.544 12.802 12.802 0 0 0-1.737 3.544h-2.525zm-.818 2a8.015 8.015 0 0 0-.252 2c0 .69.088 1.36.252 2h2.89a13.886 13.886 0 0 1-.142-2c0-.704.051-1.371.143-2h-2.891zm4.916 0c-.108.62-.168 1.286-.168 2 0 .713.061 1.38.168 2h5.664c.107-.62.168-1.287.168-2 0-.714-.061-1.38-.168-2h-5.664zm7.69 0a14.102 14.102 0 0 1-.001 4h2.891a8 8 0 0 0 .252-2 8 8 0 0 0-.252-2h-2.89zm2.072-2h-2.525a12.805 12.805 0 0 0-1.737-3.544 8.025 8.025 0 0 1 4.262 3.544zm-4.638 0h-4.584c.324-.865.725-1.596 1.124-2.195.422-.633.842-1.117 1.168-1.452.326.335.746.82 1.168 1.452.4.599.8 1.33 1.124 2.195zm-1.124 10.195c.4-.599.8-1.33 1.124-2.195h-4.584c.324.865.725 1.596 1.124 2.195.422.633.842 1.117 1.168 1.452.326-.335.746-.82 1.168-1.452zm-8.098-2.195h2.525a12.802 12.802 0 0 0 1.737 3.544 8.025 8.025 0 0 1-4.262-3.544zm9.762 3.305a12.9 12.9 0 0 1-.164.24 8.025 8.025 0 0 0 4.262-3.545h-2.525a12.805 12.805 0 0 1-1.573 3.305zm7.168-7.305c0 5.52-4.472 9.994-9.99 10h-.022c-5.518-.006-9.988-4.481-9.988-10 0-5.523 4.477-10 10-10s10 4.477 10 10z\"></path></svg>', 'select\r\n', 2, '1', '2023-07-01 05:52:34', '2023-07-01 05:52:34'),
 (16, 'Heading', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\n                                                                        <path fill-rule=\"evenodd\" d=\"M9 0c-.6 0-1.1.4-1.4 1l-5.6 16.3a1 1 0 0 1-.9.7 1 1 0 1 0 0 2h4a1 1 0 1 0 0-2 1 1 0 0 1-.9-1.2l.8-2.8h7l.9 2.8a1 1 0 0 1-.9 1.2 1 1 0 1 0 0 2h7a1 1 0 1 0 0-2 1 1 0 0 1-1-.7l-5.5-16.3c-.3-.6-.8-1-1.5-1h-2zm-.5 4.3-2.7 7.7h5.4l-2.7-7.7z\">\n                                                                        </path>\n                                                                    </svg>', 'text', 3, '1', '2023-07-01 05:53:49', '2023-07-01 05:53:49'),
-(17, 'Parageaph', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M3 3h14a1 1 0 1 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 1 1 0 2h-10a1 1 0 0 1 0-2zm0 4h14a1 1 0 0 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 0 1 0 2h-10a1 1 0 0 1 0-2z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'textarea', 3, '1', '2023-07-01 05:53:49', '2023-07-01 05:53:49'),
+(17, 'Paragraph', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M3 3h14a1 1 0 1 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 1 1 0 2h-10a1 1 0 0 1 0-2zm0 4h14a1 1 0 0 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 0 1 0 2h-10a1 1 0 0 1 0-2z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'textarea', 3, '1', '2023-07-01 05:53:49', '2023-07-01 05:53:49'),
 (18, 'Rating Star', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"m6.71 15.116 3.357-1.658.892.452 2.327 1.178-.56-3.912.708-.707 1.29-1.29-3.235-.576-.445-.915-1.059-2.176-1.585 3.171-1.005.168-2.098.35 1.975 1.975-.141.99-.422 2.95zm-1.51 2.884a.8.8 0 0 1-.792-.914l.743-5.203-2.917-2.917a.8.8 0 0 1 .434-1.355l4.398-.733 2.218-4.435a.8.8 0 0 1 1.435.008l2.123 4.361 4.498.801a.8.8 0 0 1 .425 1.353l-2.917 2.917.744 5.203a.8.8 0 0 1-1.154.828l-4.382-2.22-4.502 2.223a.792.792 0 0 1-.354.083z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'int', 4, '1', '2023-07-01 05:58:18', '2023-07-01 05:58:18'),
-(19, 'HTML', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M2.707 9.707a.996.996 0 0 0 .293-.707v-4a1 1 0 0 1 1-1 1 1 0 0 0 0-2c-1.654 0-3 1.346-3 3v3.586l-.707.707a.999.999 0 0 0 0 1.414l.707.707v3.586c0 1.654 1.346 3 3 3a1 1 0 0 0 0-2 1 1 0 0 1-1-1v-4a.996.996 0 0 0-.293-.707l-.293-.293.293-.293zm17.217-.09a1.001 1.001 0 0 0-.217-.324l-.707-.707v-3.586c0-1.654-1.346-3-3-3a1 1 0 1 0 0 2 1 1 0 0 1 1 1v4a.997.997 0 0 0 .293.707l.293.293-.293.293a.996.996 0 0 0-.293.707v4a1 1 0 0 1-1 1 1 1 0 1 0 0 2c1.654 0 3-1.346 3-3v-3.586l.707-.707a1.001 1.001 0 0 0 .217-1.09zm-7.227-4.333a1.002 1.002 0 0 0-1.63.346l-3.996 8a.999.999 0 0 0 .56 1.299 1.006 1.006 0 0 0 1.302-.557l3.995-8a.997.997 0 0 0-.23-1.088z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'text', 5, '1', '2023-07-01 05:58:18', '2023-07-01 05:58:18');
+(19, 'HTML', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n                                                                        <path d=\"M2.707 9.707a.996.996 0 0 0 .293-.707v-4a1 1 0 0 1 1-1 1 1 0 0 0 0-2c-1.654 0-3 1.346-3 3v3.586l-.707.707a.999.999 0 0 0 0 1.414l.707.707v3.586c0 1.654 1.346 3 3 3a1 1 0 0 0 0-2 1 1 0 0 1-1-1v-4a.996.996 0 0 0-.293-.707l-.293-.293.293-.293zm17.217-.09a1.001 1.001 0 0 0-.217-.324l-.707-.707v-3.586c0-1.654-1.346-3-3-3a1 1 0 1 0 0 2 1 1 0 0 1 1 1v4a.997.997 0 0 0 .293.707l.293.293-.293.293a.996.996 0 0 0-.293.707v4a1 1 0 0 1-1 1 1 1 0 1 0 0 2c1.654 0 3-1.346 3-3v-3.586l.707-.707a1.001 1.001 0 0 0 .217-1.09zm-7.227-4.333a1.002 1.002 0 0 0-1.63.346l-3.996 8a.999.999 0 0 0 .56 1.299 1.006 1.006 0 0 0 1.302-.557l3.995-8a.997.997 0 0 0-.23-1.088z\">\r\n                                                                        </path>\r\n                                                                    </svg>', 'text', 5, '1', '2023-07-01 05:58:18', '2023-07-01 05:58:18'),
+(20, 'First Name', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n <path\r\n fill-rule=\"evenodd\"\r\n d=\"m8.24 9 .816 2.33a1 1 0 0 0 1.888-.66l-3.335-9.528a1.705 1.705 0 0 0-3.218 0l-3.335 9.528a1 1 0 0 0 1.888.66l.815-2.33h4.482zm-.7-2-1.54-4.401-1.54 4.401h3.08zm7.96-2c.608 0 1.18.155 1.68.428a.999.999 0 0 1 1.82.572v5a1 1 0 0 1-1.82.572 3.5 3.5 0 1 1-1.68-6.572zm0 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z\"\r\n ></path>\r\n <path d=\"M2 14a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2h-16zm0 4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-12z\"></path>\r\n</svg>\r\n', 'text', 1, '1', '2023-07-01 05:16:47', '2023-07-01 05:16:47'),
+(21, 'Last Name', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n <path\r\n fill-rule=\"evenodd\"\r\n d=\"m8.24 9 .816 2.33a1 1 0 0 0 1.888-.66l-3.335-9.528a1.705 1.705 0 0 0-3.218 0l-3.335 9.528a1 1 0 0 0 1.888.66l.815-2.33h4.482zm-.7-2-1.54-4.401-1.54 4.401h3.08zm7.96-2c.608 0 1.18.155 1.68.428a.999.999 0 0 1 1.82.572v5a1 1 0 0 1-1.82.572 3.5 3.5 0 1 1-1.68-6.572zm0 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z\"\r\n ></path>\r\n <path d=\"M2 14a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2h-16zm0 4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-12z\"></path>\r\n</svg>\r\n', 'text', 1, '1', '2023-07-01 05:16:47', '2023-07-01 05:16:47'),
+(22, 'Address 1', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n <path fill-rule=\"evenodd\" d=\"M2.5 1a1.5 1.5 0 0 0-1.5 1.5v15a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-15a1.5 1.5 0 0 0-1.5-1.5h-15zm13.5 4h-12v2h12v-2zm-12 4h12v2h-12v-2zm6 4h-6v2h6v-2z\"></path>\r\n</svg>\r\n', 'textarea', 1, '1', '2023-07-01 05:41:00', '2023-07-01 05:41:00'),
+(23, 'Address 2', '<svg viewBox=\"0 0 20 20\" class=\"Polaris-Icon__Svg\" focusable=\"false\" aria-hidden=\"true\">\r\n <path fill-rule=\"evenodd\" d=\"M2.5 1a1.5 1.5 0 0 0-1.5 1.5v15a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-15a1.5 1.5 0 0 0-1.5-1.5h-15zm13.5 4h-12v2h12v-2zm-12 4h12v2h-12v-2zm6 4h-6v2h6v-2z\"></path>\r\n</svg>\r\n', 'textarea', 1, '1', '2023-07-01 05:41:00', '2023-07-01 05:41:00');
 
 -- --------------------------------------------------------
 
@@ -823,10 +831,11 @@ INSERT INTO `elements` (`id`, `element_title`, `element_icon`, `element_type`, `
 -- Table structure for table `  font_family`
 --
 
-CREATE TABLE `  font_family` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `  font_family`;
+CREATE TABLE IF NOT EXISTS `  font_family` (
+  `id` int NOT NULL,
   `name` varchar(60) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `  font_family`
@@ -866,77 +875,29 @@ INSERT INTO `  font_family` (`id`, `name`) VALUES
 -- Table structure for table `forms`
 --
 
-CREATE TABLE `forms` (
-  `id` int(255) NOT NULL,
-  `store_client_id` int(255) DEFAULT NULL,
+DROP TABLE IF EXISTS `forms`;
+CREATE TABLE IF NOT EXISTS `forms` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `store_client_id` int DEFAULT NULL,
   `form_name` varchar(255) NOT NULL DEFAULT 'simple form',
-  `form_type` int(11) DEFAULT NULL COMMENT 'selected form type',
+  `form_type` int DEFAULT NULL COMMENT 'selected form type',
+  `form_header_data` varchar(255) DEFAULT NULL,
+  `form_footer_data` varchar(255) DEFAULT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
-  `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `forms`
 --
 
-INSERT INTO `forms` (`id`, `store_client_id`, `form_name`, `form_type`, `status`, `created`, `updated`) VALUES
-(1, 2, 'Contact Form', 3, '1', '2023-07-03 02:45:29', '2023-07-03 02:45:29'),
-(2, 2, 'Shopify Registration Form', 3, '1', '2023-07-03 02:46:13', '2023-07-03 02:46:13'),
-(3, 2, 'Application form', 0, '1', '2023-07-03 02:49:35', '2023-07-03 02:49:35'),
-(4, 2, 'Multi-Step Form', 0, '1', '2023-07-03 02:50:27', '2023-07-03 02:50:27'),
-(5, 2, 'Contact Form', 3, '1', '2023-07-03 02:51:29', '2023-07-03 02:51:29'),
-(6, 2, 'Multi-Step Form', 0, '1', '2023-07-03 02:51:47', '2023-07-03 02:51:47'),
-(7, 2, 'Application form', 0, '1', '2023-07-03 02:53:00', '2023-07-03 02:53:00'),
-(8, 2, 'Application form', 0, '1', '2023-07-03 02:54:44', '2023-07-03 02:54:44'),
-(9, 2, 'Shopify Registration Form', 3, '1', '2023-07-03 02:55:55', '2023-07-03 02:55:55'),
-(10, 2, 'Application form', 0, '1', '2023-07-03 02:57:36', '2023-07-03 02:57:36'),
-(11, 2, 'Application form', 0, '1', '2023-07-03 02:58:23', '2023-07-03 02:58:23'),
-(12, 2, 'Multi-Step Form', 0, '1', '2023-07-03 03:00:24', '2023-07-03 03:00:24'),
-(13, 2, 'Application form', 6, '1', '2023-07-03 03:01:50', '2023-07-03 03:01:50'),
-(14, 2, 'Application form', 6, '1', '2023-07-03 03:02:02', '2023-07-03 03:02:02'),
-(15, 2, 'Application form', 6, '1', '2023-07-03 03:02:03', '2023-07-03 03:02:03'),
-(16, 2, 'Blank Form', 1, '1', '2023-07-03 03:02:50', '2023-07-03 03:02:50'),
-(17, 2, 'Blank Form', 1, '1', '2023-07-03 03:03:18', '2023-07-03 03:03:18'),
-(18, 2, 'Blank Form', 1, '1', '2023-07-03 03:03:28', '2023-07-03 03:03:28'),
-(19, 2, 'Blank Form', 1, '1', '2023-07-03 03:03:40', '2023-07-03 03:03:40'),
-(20, 2, 'Blank Form', 1, '1', '2023-07-03 03:03:54', '2023-07-03 03:03:54'),
-(21, 2, 'Floating contact form', 4, '1', '2023-07-03 03:09:47', '2023-07-03 03:09:47'),
-(22, 2, 'Floating contact form', 4, '1', '2023-07-03 03:09:59', '2023-07-03 03:09:59'),
-(23, 2, 'Floating contact form', 4, '1', '2023-07-03 03:10:01', '2023-07-03 03:10:01'),
-(24, 2, 'Contact Form', 2, '1', '2023-07-03 03:11:02', '2023-07-03 03:11:02'),
-(25, 2, 'Contact Form', 2, '1', '2023-07-03 03:11:09', '2023-07-03 03:11:09'),
-(26, 2, 'Contact Form', 2, '1', '2023-07-03 03:12:36', '2023-07-03 03:12:36'),
-(27, 2, 'Shopify Registration Form', 3, '1', '2023-07-03 03:13:05', '2023-07-03 03:13:05'),
-(28, 2, 'Multi-Step Form', 5, '1', '2023-07-03 03:13:16', '2023-07-03 03:13:16'),
-(29, 2, 'Multi-Step Form', 5, '1', '2023-07-03 03:13:37', '2023-07-03 03:13:37'),
-(30, 2, 'Floating contact form', 4, '1', '2023-07-03 03:15:30', '2023-07-03 03:15:30'),
-(31, 2, 'Application form', 6, '1', '2023-07-03 03:16:28', '2023-07-03 03:16:28'),
-(32, 9, 'Contact Form', 2, '1', '2023-07-03 03:30:38', '2023-07-03 03:30:38'),
-(33, 6, 'Contact Form', 2, '1', '2023-07-03 03:31:01', '2023-07-03 03:31:01'),
-(34, 6, 'Application form', 6, '1', '2023-07-03 03:31:38', '2023-07-03 03:31:38'),
-(35, 6, 'Blank Form', 1, '1', '2023-07-03 03:56:19', '2023-07-03 03:56:19'),
-(36, 6, 'Contact Form', 2, '1', '2023-07-03 04:01:01', '2023-07-03 04:01:01'),
-(37, 6, 'Blank Form', 1, '1', '2023-07-03 04:26:23', '2023-07-03 04:26:23'),
-(38, 0, 'Contact Form', 2, '1', '2023-07-04 00:27:46', '2023-07-04 00:27:46'),
-(39, 0, 'Contact Form', 2, '1', '2023-07-04 00:27:50', '2023-07-04 00:27:50'),
-(40, 0, 'Contact Form', 2, '1', '2023-07-04 00:27:59', '2023-07-04 00:27:59'),
-(41, 0, 'Contact Form', 2, '1', '2023-07-04 00:28:51', '2023-07-04 00:28:51'),
-(42, 0, 'Blank Form', 1, '1', '2023-07-04 00:28:59', '2023-07-04 00:28:59'),
-(43, 6, 'Blank Form', 1, '1', '2023-07-04 00:37:43', '2023-07-04 00:37:43'),
-(44, 6, 'Application form', 6, '1', '2023-07-04 00:38:07', '2023-07-04 00:38:07'),
-(45, 0, 'Multi-Step Form', 5, '1', '2023-07-04 00:39:45', '2023-07-04 00:39:45'),
-(46, 0, 'Multi-Step Form', 5, '1', '2023-07-04 00:40:26', '2023-07-04 00:40:26'),
-(47, 6, 'Blank Form', 1, '1', '2023-07-04 02:13:55', '2023-07-04 02:13:55'),
-(48, 6, 'Blank Form', 1, '1', '2023-07-04 02:20:29', '2023-07-04 02:20:29'),
-(49, 6, 'Shopify Registration Form', 3, '1', '2023-07-04 02:27:06', '2023-07-04 02:27:06'),
-(50, 6, 'Contact Form', 2, '1', '2023-07-04 02:30:54', '2023-07-04 02:30:54'),
-(51, 6, 'Floating contact form', 4, '1', '2023-07-04 03:00:17', '2023-07-04 03:00:17'),
-(52, 6, 'Contact Form', 2, '1', '2023-07-04 03:05:04', '2023-07-04 03:05:04'),
-(53, 0, 'Contact Form', 2, '1', '2023-07-04 03:13:37', '2023-07-04 03:13:37'),
-(54, 0, 'Contact Form', 2, '1', '2023-07-04 03:13:44', '2023-07-04 03:13:44'),
-(55, 6, 'Application form', 6, '1', '2023-07-04 03:15:48', '2023-07-04 03:15:48'),
-(56, 6, 'Application form', 6, '1', '2023-07-04 03:30:05', '2023-07-04 03:30:05');
+INSERT INTO `forms` (`id`, `store_client_id`, `form_name`, `form_type`, `form_header_data`, `form_footer_data`, `status`, `created`, `updated`) VALUES
+(1, 6, 'Contact Form', 2, 'a:3:{i:0;s:1:\"1\";i:1;s:12:\"Contact Form\";i:2;s:55:\"Leave your message and we will get back to you shortly.\";}', 'a:6:{i:0;s:0:\"\";i:1;s:6:\"Submit\";i:2;s:1:\"0\";i:3;s:5:\"Reset\";i:4;s:1:\"0\";i:5;s:6:\"center\";}', '1', '2023-07-05 07:06:38', '2023-07-05 07:06:38'),
+(2, 6, 'Shopify Registration Form', 3, 'a:3:{i:0;s:1:\"1\";i:1;s:25:\"Shopify Registration Form\";i:2;s:55:\"Leave your message and we will get back to you shortly.\";}', 'a:6:{i:0;s:0:\"\";i:1;s:6:\"Submit\";i:2;s:1:\"0\";i:3;s:5:\"Reset\";i:4;s:1:\"0\";i:5;s:6:\"center\";}', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(3, 6, 'Contact Form', 2, 'a:3:{i:0;s:1:\"1\";i:1;s:12:\"Contact Form\";i:2;s:55:\"Leave your message and we will get back to you shortly.\";}', 'a:6:{i:0;s:0:\"\";i:1;s:6:\"Submit\";i:2;s:1:\"0\";i:3;s:5:\"Reset\";i:4;s:1:\"0\";i:5;s:6:\"center\";}', '1', '2023-07-05 07:09:34', '2023-07-05 07:09:34'),
+(4, 6, 'Contact Form', 2, 'a:3:{i:0;s:1:\"1\";i:1;s:12:\"Contact Form\";i:2;s:55:\"Leave your message and we will get back to you shortly.\";}', 'a:6:{i:0;s:0:\"\";i:1;s:6:\"Submit\";i:2;s:1:\"0\";i:3;s:5:\"Reset\";i:4;s:1:\"0\";i:5;s:6:\"center\";}', '1', '2023-07-08 00:22:03', '2023-07-08 00:22:03');
 
 -- --------------------------------------------------------
 
@@ -944,45 +905,38 @@ INSERT INTO `forms` (`id`, `store_client_id`, `form_name`, `form_type`, `status`
 -- Table structure for table `form_data`
 --
 
-CREATE TABLE `form_data` (
-  `id` int(255) NOT NULL,
-  `form_id` int(12) NOT NULL,
-  `element_id` int(12) NOT NULL,
+DROP TABLE IF EXISTS `form_data`;
+CREATE TABLE IF NOT EXISTS `form_data` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `form_id` int NOT NULL,
+  `element_id` int NOT NULL,
   `element_data` varchar(255) DEFAULT NULL,
-  `form_header_data` varchar(255) DEFAULT NULL,
-  `form_footer_data` varchar(255) DEFAULT NULL,
-  `status` int(11) NOT NULL,
-  `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `status` enum('0','1') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '1',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `form_data`
 --
 
-INSERT INTO `form_data` (`id`, `form_id`, `element_id`, `element_data`, `form_header_data`, `form_footer_data`, `status`, `created`, `updated`) VALUES
-(34, 10, 10, 'file', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(30, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(31, 3, 3, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(29, 1, 1, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(33, 5, 5, 'url', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(32, 6, 6, 'number', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(35, 7, 7, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(36, 1, 1, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(37, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(38, 3, 3, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(39, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(40, 9, 9, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(41, 1, 1, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(42, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(43, 3, 3, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(44, 6, 6, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(45, 1, 1, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(46, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(47, 3, 3, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(48, 1, 1, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(49, 2, 2, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(50, 3, 3, '', '', '', 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `form_data` (`id`, `form_id`, `element_id`, `element_data`, `status`, `created`, `updated`) VALUES
+(1, 1, 1, '', '1', '2023-07-05 07:06:38', '2023-07-05 07:06:38'),
+(2, 1, 2, '', '1', '2023-07-05 07:06:38', '2023-07-05 07:06:38'),
+(3, 1, 4, '', '1', '2023-07-05 07:06:38', '2023-07-05 07:06:38'),
+(4, 2, 6, '', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(5, 2, 8, '', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(6, 2, 20, '', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(7, 2, 21, '', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(8, 2, 22, '', '1', '2023-07-05 07:08:39', '2023-07-05 07:08:39'),
+(9, 3, 1, 'a:8:{i:0;s:9:\"Your Text\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-05 07:09:34', '2023-07-05 07:09:34'),
+(10, 3, 2, 'a:8:{i:0;s:10:\"Your Email\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-05 07:09:34', '2023-07-05 07:09:34'),
+(11, 3, 4, 'a:8:{i:0;s:13:\"Your Textarea\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-05 07:09:34', '2023-07-05 07:09:34'),
+(12, 3, 5, '', '1', '2023-07-05 07:19:08', '2023-07-05 07:19:08'),
+(13, 4, 1, 'a:8:{i:0;s:9:\"Your Text\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-08 00:22:03', '2023-07-08 00:22:03'),
+(14, 4, 2, 'a:8:{i:0;s:10:\"Your Email\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-08 00:22:03', '2023-07-08 00:22:03'),
+(15, 4, 4, 'a:8:{i:0;s:13:\"Your Textarea\";i:1;s:9:\"Your Name\";i:2;s:0:\"\";i:3;s:1:\"0\";i:4;s:1:\"0\";i:5;s:1:\"1\";i:6;s:1:\"0\";i:7;s:3:\"33%\";}', '1', '2023-07-08 00:22:03', '2023-07-08 00:22:03');
 
 -- --------------------------------------------------------
 
@@ -990,8 +944,9 @@ INSERT INTO `form_data` (`id`, `form_id`, `element_id`, `element_data`, `form_he
 -- Table structure for table `user_shops`
 --
 
-CREATE TABLE `user_shops` (
-  `store_user_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_shops`;
+CREATE TABLE IF NOT EXISTS `user_shops` (
+  `store_user_id` int NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1' COMMENT '1=active,0=deactive',
   `application_status` enum('1','0') NOT NULL DEFAULT '0' COMMENT '1=enable,0=disable',
@@ -999,7 +954,7 @@ CREATE TABLE `user_shops` (
   `shop_name` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `is_demand_accept` enum('0','1') NOT NULL DEFAULT '0' COMMENT '1:aproved; 0:not approved',
-  `charge` float NOT NULL DEFAULT 0,
+  `charge` float NOT NULL DEFAULT '0',
   `price_id` varchar(255) DEFAULT NULL,
   `invoice_on` date DEFAULT NULL,
   `operated_on` date DEFAULT NULL,
@@ -1023,11 +978,12 @@ CREATE TABLE `user_shops` (
   `domain` varchar(255) NOT NULL,
   `feedback_status` enum('1','0') NOT NULL DEFAULT '0',
   `block_status` enum('1','0') NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `uninstall_on` timestamp NULL DEFAULT NULL,
-  `install_date` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `install_date` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`store_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_shops`
@@ -1037,74 +993,6 @@ INSERT INTO `user_shops` (`store_user_id`, `email`, `status`, `application_statu
 (4, 'codelock2021@gmail.com', '1', '0', 'en', 'cls-rakshita.myshopify.com', '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', '0', 0, NULL, NULL, NULL, NULL, NULL, 'cls_rakshita', '', 'partner_test', '', '', '', '', '', 'Surat', 'India', '', '', '394105', '(GMT+05:30) Asia/Calcutta', '', '', '0', '0', '2021-06-15 06:05:36', '2021-06-15 06:05:36', NULL, NULL),
 (5, 'codelock2021@gmail.com', '1', '0', 'en', 'cls-rewriter.myshopify.com', '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', '0', 0, NULL, NULL, NULL, NULL, NULL, 'cls_rewriter', '', 'partner_test', '', '', '', '', '', 'Surat', 'India', '', '', '394105', '(GMT+05:30) Asia/Calcutta', '', '', '0', '0', '2021-06-16 05:49:43', '2021-06-16 05:49:43', NULL, NULL),
 (6, '', '1', '0', 'en', 'dashboardmanage.myshopify.com', 'shpua_186f8b385741d6dc192002943fef5c43', '0', 0, NULL, NULL, NULL, NULL, NULL, 'dashboardmanage.myshopify.com', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '0', '0', '2023-06-28 12:28:03', '2023-06-28 12:28:03', NULL, NULL);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `customize`
---
-ALTER TABLE `customize`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `elements`
---
-ALTER TABLE `elements`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `forms`
---
-ALTER TABLE `forms`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `form_data`
---
-ALTER TABLE `form_data`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `user_shops`
---
-ALTER TABLE `user_shops`
-  ADD PRIMARY KEY (`store_user_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `customize`
---
-ALTER TABLE `customize`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=733;
-
---
--- AUTO_INCREMENT for table `elements`
---
-ALTER TABLE `elements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
---
--- AUTO_INCREMENT for table `forms`
---
-ALTER TABLE `forms`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
-
---
--- AUTO_INCREMENT for table `form_data`
---
-ALTER TABLE `form_data`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
-
---
--- AUTO_INCREMENT for table `user_shops`
---
-ALTER TABLE `user_shops`
-  MODIFY `store_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
