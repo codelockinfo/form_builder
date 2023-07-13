@@ -51,7 +51,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     </div>
                     <div class="item viewport">
                         <ul class="view_icon">
-                            <li class="mobile ">
+                            <li class="mobile "data-id="mobile">
                                 <span class="Polaris-Icon">
                                     <span class="Polaris-VisuallyHidden"></span>
                                     <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false"
@@ -62,7 +62,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     </svg>
                                 </span>
                             </li>
-                            <li class="desktop active">
+                            <li class="desktop active" data-id="desktop">
                                 <span class="Polaris-Icon">
                                     <span class="Polaris-VisuallyHidden"></span>
                                     <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false"
@@ -137,7 +137,59 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                 <div class="banner">
                     <div></div>
                 </div>
-                <div class="preview-box iframe-wrapper desktop"></div>
+                <div class="preview-box iframe-wrapper desktop">
+                    <div class="contact-form">
+                        <div class="code-form-app boxed-layout">
+                            <div class="header dismiss hidden" onclick="Globo.FormBuilder.closeModalForm(this)">
+                                <svg width="20" height="20" viewBox="0 0 20 20" class="" focusable="false" aria-hidden="true"><path d="M11.414 10l4.293-4.293a.999.999 0 1 0-1.414-1.414L10 8.586 5.707 4.293a.999.999 0 1 0-1.414 1.414L8.586 10l-4.293 4.293a.999.999 0 1 0 1.414 1.414L10 11.414l4.293 4.293a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414L11.414 10z" fill-rule="evenodd"></path></svg>
+                            </div>
+                            <div class="g-container" novalidate="" action="/api/front/form/false/send" method="POST" enctype="multipart/form-data" data-id="false">
+                                <div class="header">
+                                    <h3 class="title globo-heading">Contact us</h3>
+                                        <div class="description globo-description">Leave your message and we'll get back to you shortly.</div>
+                                </div>         
+                                <div class="content flex-wrap block-container" data-id="false">
+                                    <div class="code-form-control layout-2-column" data-id="element0">
+                                        <label for="false-text" class="classic-label globo-label ">
+                                            <span class="label-content" data-label="Your Name">Your Name</span><span class="text-danger text-smaller"> *</span></label>
+                                        <div class="globo-form-input">
+                                            
+                                            <input type="text" data-type="text" class="classic-input" id="false-text" name="text" placeholder="Your Name" presence="">
+                                        </div>
+                            
+                            <small class="messages"></small>
+                        </div>
+                            
+                        <div class="code-form-control layout-2-column" data-id="element1">
+                            <label for="false-email" class="classic-label globo-label "><span class="label-content" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
+                            <div class="globo-form-input">
+                                
+                                <input type="text" data-type="email" class="classic-input" id="false-email" name="email" placeholder="Email" presence="">
+                            </div>
+                            
+                            <small class="messages"></small>
+                        </div>
+                        
+                        <div class="code-form-control layout-1-column" data-id="element2">
+                            <label for="false-textarea" class="classic-label globo-label "><span class="label-content" data-label="Message">Message</span><span class="text-danger text-smaller"> *</span></label>
+                            <textarea id="false-textarea" data-type="textarea" class="classic-input" rows="3" name="textarea" placeholder="Message" presence=""></textarea>
+                            
+                            <small class="messages"></small>
+                        </div>
+                          </div>
+                                </div>   
+                                    <p style="text-align: right;font-size:small;display: block !important;">Powered by <a href="https://globosoftware.net" target="_blank">Globo</a> <a href="https://apps.shopify.com/form-builder-contact-form" target="_blank">Contact Form</a></p>
+                                    <div class="footer fleft">
+                                        <button class="action submit classic-button">
+                                            <span class="spinner"></span>
+                                            Submit
+                                        </button>
+                                        <button class="action reset classic-button hidden" type="button" onclick="Globo.FormBuilder.handleResetForm(this)">Reset</button>
+                                    </div>
+                                </div> 
+                               
+                    </div>
+                </div>
             </div>
 
         </div>
