@@ -685,8 +685,6 @@ include_once('cls_header.php');
                     </div>
                 </div>
             </div>
-            
-            <h1>next page</h1>
         </div>
     </div>
     
