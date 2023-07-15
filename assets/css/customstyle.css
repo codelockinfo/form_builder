@@ -362,3 +362,44 @@ display: none;
     text-rendering: auto!important;
     text-transform: uppercase;
  }
+ .Polaris-TopBar .Polaris-TopBar__LogoLink{
+    margin-right: 6px;
+}
+.Polaris-TopBar .Polaris-TopBar__LogoContainer span{
+    font-size: 14px;
+    font-weight: 500;
+}
+/* @media (min-width: 90em){ */
+.Polaris-TopBar .Polaris-TopBar__SecondaryMenu{
+    width: 55%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding-right: 20px;
+}
+.Polaris-TopBar__SearchField {
+    margin-left: calc(50% - 19.1875rem);
+}
+@media screen and (max-width:580px) {
+    .Polaris-TopBar__SearchField {
+        margin-left: calc(50% - 15.1875rem);
+    }
+}
+@media screen and (max-width:500px) {
+    .Polaris-TopBar__SearchField {
+        margin-left: calc(50% - 10.1875rem);
+    }
+}
+/* } */
+/* @media screen and (max-width:520px) {
+    .Polaris-TopBar__Contents{
+        flex-wrap: wrap;
+    }
+    .Polaris-TopBar .Polaris-TopBar__SecondaryMenu{
+        width: 100%;
+        justify-content: start;
+    }
+    .Polaris-TopBar__SearchField{
+        width: 100%;
+    }
+} */
