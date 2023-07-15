@@ -178,7 +178,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         </div>
                           </div>
                                 </div>   
-                                    <p style="text-align: right;font-size:small;display: block !important;">Powered by <a href="https://globosoftware.net" target="_blank">Globo</a> <a href="https://apps.shopify.com/form-builder-contact-form" target="_blank">Contact Form</a></p>
+                                    <p style="text-align: right;font-size:small;display: block !important;">Powered by <a href="https://codelocksolutions.in/" target="_blank">Codelock</a> <a href="https://apps.shopify.com/form-builder-contact-form" target="_blank">Contact Form</a></p>
                                     <div class="footer fleft">
                                         <button class="action submit classic-button">
                                             <span class="spinner"></span>
