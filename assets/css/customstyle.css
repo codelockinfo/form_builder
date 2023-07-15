@@ -377,19 +377,8 @@ display: none;
     justify-content: end;
     padding-right: 20px;
 }
-.Polaris-TopBar__SearchField {
-    margin-left: calc(50% - 19.1875rem);
-}
-@media screen and (max-width:580px) {
-    .Polaris-TopBar__SearchField {
-        margin-left: calc(50% - 15.1875rem);
-    }
-}
-@media screen and (max-width:500px) {
-    .Polaris-TopBar__SearchField {
-        margin-left: calc(50% - 10.1875rem);
-    }
-}
+
+
 /* } */
 /* @media screen and (max-width:520px) {
     .Polaris-TopBar__Contents{
@@ -403,3 +392,9 @@ display: none;
         width: 100%;
     }
 } */
+.DataRange  .Polaris-Select{
+    width: 20%;
+}
+.DataRange {
+    margin: 10px 0;
+}

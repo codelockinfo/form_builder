@@ -185,7 +185,7 @@ include_once('cls_header.php');
             </div>
             <div class="set_all_form"></div>
             
-            <div class="">
+            <div class="DataRange">
   <div class="Polaris-Labelled__LabelWrapper">
     <div class="Polaris-Label">
       <label id=":R1n6:Label" for=":R1n6:" class="Polaris-Label__Text">Date range</label>
