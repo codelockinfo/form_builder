@@ -469,3 +469,34 @@ display: none;
     text-align: left;
     white-space: pre-wrap;
 }
+.svgicon svg{
+    width: 32px;
+}
+.indexButton button {
+    background: transparent;
+    border: 1px solid #808080bd;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+.indexButton button a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+}
+.bultActionss {
+    display: none;
+}
+.Polaris-ResourceList__HeaderWrapper.border-radi-botom-unset.Polaris-ResourceList__HeaderWrapper--hasAlternateTool.Polaris-ResourceList__HeaderWrapper--hasSelect.Polaris-ResourceList__HeaderWrapper--isSticky{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.Polaris-CheckableButton.Polaris-CheckableButton__CheckableButton--selectMode.Polaris-CheckableButton__CheckableButton--selected{
+    border: 1px solid #afb0b1;
+    border-radius: 2px;
+}
+span.Polaris-Choice__Label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0 20px 0 0;
+}

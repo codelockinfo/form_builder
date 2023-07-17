@@ -857,7 +857,7 @@ $(document).on("click", ".enable-btn", function(event) {
                                if (comeback['code'] != undefined && comeback['code'] == '403') {
                                   redirect403();
                               } else{
-                                // $(".set_all_form").html(comeback['outcome'])
+                                // $(".").html(comeback['outcome'])
                               }
                               loading_hide('.save_loader_show', 'Save');
                            }
@@ -1011,3 +1011,61 @@ $(document).on("click", ".enable-btn", function(event) {
                         }
                     });
                 });
+
+                // index page checkbox selected
+                
+                $(document).on("click","#checkAll",function(){
+                  
+                    var checked = $(this).is(":checked");
+                    if (checked) {
+                      $(".selectedCheck").each(function() {
+                        $(this).prop("checked", true);
+                      });
+                    } else {
+                      $(".selectedCheck").each(function() {
+                        $(this).prop("checked", false);
+                      });
+                    }
+                });
+                  $(document).on("click",".selectedCheck",function() {
+                    if ($(".selectedCheck").length == $(".selectedCheck:checked").length) {
+                      $("#checkAll").prop("checked", true);
+                    } else {
+                      // $("#checkall").removeAttr("checked");
+                      $("#checkAll").prop("checked", false);
+                    }
+                  });
+
+$(document).ready(function() {
+
+    setTimeout(function () {
+        
+        var count = $(".set_all_form .Polaris-ResourceList__HeaderWrapper").length;
+      
+        $('.dataAdded').append('Showing '+count+'  form');
+      
+    }, 100);
+});
+
+$(document).ready(function() {
+    
+});
+$(document).on("click",".selectedCheck",function () {
+            if ($(this).is(":checked")) {
+          
+                $(".bultActionss").css("display","block");
+                $(".selectedshow").css("display","none");
+                $(".Polaris-Labelled--hidden").css("display","none");
+                setTimeout(function () {
+                    var mychecked = $('.selectedCheck:checked').length;
+                    
+                    $('.Deselectcount').text('Deselect all '+ mychecked + '  form');
+                   
+                }, 100);  
+           } else {
+          
+                $(".bultActionss").css("display","none");
+                $(".selectedshow").css("display","block");
+                $(".Polaris-Labelled--hidden").css("display","block");
+           }
+});

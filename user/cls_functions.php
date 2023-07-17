@@ -1480,7 +1480,7 @@ $shopinfo = $this->current_store_obj;
                                 <label class="Polaris-Choice">
                                     <span class="Polaris-Choice__Control">
                                       <span class="Polaris-Checkbox">
-                                        <input name="chekbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
+                                        <input name="chekbox3" type="checkbox" class="Polaris-Checkbox__Input selectedCheck" aria-invalid="false" role="checkbox" aria-checked="false" value="">
                                         <span class="Polaris-Checkbox__Backdrop">
                                         </span>
                                         <span class="Polaris-Checkbox__Icon">
@@ -1506,32 +1506,25 @@ $shopinfo = $this->current_store_obj;
                         </div>
         
                         <div class="Polaris-ResourceList__AlternateToolWrapper main_right_">
-                            <div>
+                            <div class="svgicon">
+                            
+                                
                                 <label class="switch">
                                     <input type="checkbox">
                                     <span class="slider"></span>
                                 </label>
+
+                                
                             </div>
-                            <div class="submissions_btn">
-                                <button class="Polaris-Button" type="button">
-                                    <span class="Polaris-Button__Content">
-                                        <span class="Polaris-Button__Text">
-                                            <span tabindex="0" aria-describedby="PolarisTooltipContent58" data-polaris-tooltip-activator="true">
-                                                <span class="Polaris-Icon Polaris-Icon--colorBase Polaris-Icon--applyColor">
-                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                        <path d="M4 7h9v2h-9zm0 4h7v2h-7z"></path>
-                                                        <path d="M16 10a1 1 0 0 1 1 1v4.5a1.5 1.5 0 0 1-1.5 1.5h-7.864l-2.818 2.707a1 1 0 0 1-1.707-.707v-2h-1.611a1.5 1.5 0 0 1-1.5-1.5v-11a1.5 1.5 0 0 1 1.5-1.5h7.5a1 1 0 0 1 0 2h-7v10h2.111a1 1 0 0 1 1 1v.697l1.404-1.404a1 1 0 0 1 .707-.293h7.778v-4a1 1 0 0 1 1-1zm0-5a.999.999 0 0 1-.707-1.707l2-2a1 1 0 1 1 1.414 1.414l-2 2a.996.996 0 0 1-.707.293zm3 1a1 1 0 1 1 0 2h-2a1 1 0 1 1 0-2h2zm-6-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1z"></path>
-                                                    </svg>
-                                                </span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </button>
+                            
+                            
+                            <div class="indexButton">
+                            <button><a href="">view</a></button>
+                            <button><a href="">Customize</a></button>
                             </div>
         
-                            <div class="resourceItem-td datetime-td">2023-06-26 11:18:56</div>
                         </div>
+                          
                     </div>
                     <div class="Polaris-ResourceList__BulkActionsWrapper">
                         <div>
@@ -1559,7 +1552,7 @@ $shopinfo = $this->current_store_obj;
                                                       </span>
                                                     </span>
                                                   </label>
-                                                <span class="Polaris-CheckableButton__Label">0 selected</span>
+                                                <span class="Polaris-CheckableButton__Label ">0 selected</span>
                                             </div>
                                         </div>
                                         <div class="Polaris-ButtonGroup__Item">
@@ -4205,162 +4198,162 @@ function form_element_data_html(){
                     </div>
                     </div>';
                 }
-                // else if($elementid == 17){
-                //     $comeback .= '  <div class="">
-                //     <div class="container tabContent">
-                //     <div>
-                //        <div class="">
-                //           <div class="form-control">
-                //              <div class="hidden">
-                //                 <div class="">
-                //                    <div class="Polaris-Connected">
-                //                       <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                //                          <div class="Polaris-TextField Polaris-TextField--hasValue">
-                //                             <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="paragraph">
-                //                             <div class="Polaris-TextField__Backdrop"></div>
-                //                          </div>
-                //                       </div>
-                //                    </div>
-                //                 </div>
-                //              </div>
-                //           </div>
-                //           <div class="form-control">
-                //              <div class="hidden">
-                //                 <div class="">
-                //                    <div class="Polaris-Connected">
-                //                       <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                //                          <div class="Polaris-TextField Polaris-TextField--hasValue">
-                //                             <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="paragraph">
-                //                             <div class="Polaris-TextField__Backdrop"></div>
-                //                          </div>
-                //                       </div>
-                //                    </div>
-                //                 </div>
-                //              </div>
-                //           </div>
-                //           <div class="form-control">
-                //              <div>
-                //                 <div class="label">Text</div>
-                //                 <div class="l ">
-                //                    <div class="ql-toolbar ql-snow">
-                //                       <span class="ql-formats">
-                //                          <button type="button" class="ql-bold">
-                //                             <svg viewBox="0 0 18 18">
-                //                                <path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path>
-                //                                <path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path>
-                //                             </svg>
-                //                          </button>
-                //                          <button type="button" class="ql-italic">
-                //                             <svg viewBox="0 0 18 18">
-                //                                <line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line>
-                //                                <line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line>
-                //                                <line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line>
-                //                             </svg>
-                //                          </button>
-                //                          <button type="button" class="ql-underline">
-                //                             <svg viewBox="0 0 18 18">
-                //                                <path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path>
-                //                                <rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect>
-                //                             </svg>
-                //                          </button>
-                //                          <span class="ql-align ql-picker ql-icon-picker">
-                //                             <span class="ql-picker-label" tabindex="0" role="button" aria-expanded="false" aria-controls="ql-picker-options-0">
-                //                                <svg viewBox="0 0 18 18">
-                //                                   <line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"></line>
-                //                                   <line class="ql-stroke" x1="3" x2="13" y1="14" y2="14"></line>
-                //                                   <line class="ql-stroke" x1="3" x2="9" y1="4" y2="4"></line>
-                //                                </svg>
-                //                             </span>
-                //                             <span class="ql-picker-options" aria-hidden="true" tabindex="-1" id="ql-picker-options-0">
-                //                                <span tabindex="0" role="button" class="ql-picker-item">
-                //                                   <svg viewBox="0 0 18 18">
-                //                                      <line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"></line>
-                //                                      <line class="ql-stroke" x1="3" x2="13" y1="14" y2="14"></line>
-                //                                      <line class="ql-stroke" x1="3" x2="9" y1="4" y2="4"></line>
-                //                                   </svg>
-                //                                </span>
-                //                                <span tabindex="0" role="button" class="ql-picker-item" data-value="center">
-                //                                   <svg viewBox="0 0 18 18">
-                //                                      <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
-                //                                      <line class="ql-stroke" x1="14" x2="4" y1="14" y2="14"></line>
-                //                                      <line class="ql-stroke" x1="12" x2="6" y1="4" y2="4"></line>
-                //                                   </svg>
-                //                                </span>
-                //                                <span tabindex="0" role="button" class="ql-picker-item" data-value="right">
-                //                                   <svg viewBox="0 0 18 18">
-                //                                      <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
-                //                                      <line class="ql-stroke" x1="15" x2="5" y1="14" y2="14"></line>
-                //                                      <line class="ql-stroke" x1="15" x2="9" y1="4" y2="4"></line>
-                //                                   </svg>
-                //                                </span>
-                //                                <span tabindex="0" role="button" class="ql-picker-item" data-value="justify">
-                //                                   <svg viewBox="0 0 18 18">
-                //                                      <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
-                //                                      <line class="ql-stroke" x1="15" x2="3" y1="14" y2="14"></line>
-                //                                      <line class="ql-stroke" x1="15" x2="3" y1="4" y2="4"></line>
-                //                                   </svg>
-                //                                </span>
-                //                             </span>
-                //                          </span>
-                //                          <select class="ql-align" style="display: none;">
-                //                             <option selected="selected"></option>
-                //                             <option value="center"></option>
-                //                             <option value="right"></option>
-                //                             <option value="justify"></option>
-                //                          </select>
-                //                          <button type="button" class="ql-link">
-                //                             <svg viewBox="0 0 18 18">
-                //                                <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line>
-                //                                <path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path>
-                //                                <path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path>
-                //                             </svg>
-                //                          </button>
-                //                          <span class="ql-header ql-picker">
-                //                             <span class="ql-picker-label" tabindex="0" role="button" aria-expanded="false" aria-controls="ql-picker-options-1">
-                //                                <svg viewBox="0 0 18 18">
-                //                                   <polygon class="ql-stroke" points="7 11 9 13 11 11 7 11"></polygon>
-                //                                   <polygon class="ql-stroke" points="7 7 9 5 11 7 7 7"></polygon>
-                //                                </svg>
-                //                             </span>
-                //                             <span class="ql-picker-options" aria-hidden="true" tabindex="-1" id="ql-picker-options-1"><span tabindex="0" role="button" class="ql-picker-item" data-value="1"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="2"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="3"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="4"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="5"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="6"></span><span tabindex="0" role="button" class="ql-picker-item"></span></span>
-                //                          </span>
-                //                          <select class="ql-header" style="display: none;">
-                //                             <option value="1"></option>
-                //                             <option value="2"></option>
-                //                             <option value="3"></option>
-                //                             <option value="4"></option>
-                //                             <option value="5"></option>
-                //                             <option value="6"></option>
-                //                             <option selected="selected"></option>
-                //                          </select>
-                //                       </span>
-                //                    </div>
-                //                    <div class="ql-container ql-snow">
-                //                       <div class="ql-editor" data-gramm="false" contenteditable="true">
-                //                          <p>Paragraph</p>
-                //                       </div>
-                //                       <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
-                //                       <div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div>
-                //                    </div>
-                //                 </div>
-                //              </div>
-                //           </div>
-                //           <div class="form-control">
-                //              <div class="chooseInput">
-                //                 <div class="label">Column width</div>
-                //                 <div class="chooseItems">
-                //                    <div class="chooseItem ">33%</div>
-                //                    <div class="chooseItem active">50%</div>
-                //                    <div class="chooseItem ">100%</div>
-                //                 </div>
-                //              </div>
-                //           </div>
-                //        </div>
-                //     </div>
-                //     <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                //  </div>
-                //     </div>';
-                // }
+                else if($elementid == 17){
+                    $comeback .= '  <div class="">
+                    <div class="container tabContent">
+                        <div>
+                        <div class="">
+                            <div class="form-control">
+                                <div class="hidden">
+                                    <div class="">
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="paragraph">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="hidden">
+                                    <div class="">
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="paragraph">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div>
+                                    <div class="label">Text</div>
+                                    <div class="l ">
+                                    <div class="ql-toolbar ql-snow">
+                                        <span class="ql-formats">
+                                            <button type="button" class="ql-bold">
+                                                <svg viewBox="0 0 18 18">
+                                                <path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path>
+                                                <path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path>
+                                                </svg>
+                                            </button>
+                                            <button type="button" class="ql-italic">
+                                                <svg viewBox="0 0 18 18">
+                                                <line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line>
+                                                <line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line>
+                                                <line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line>
+                                                </svg>
+                                            </button>
+                                            <button type="button" class="ql-underline">
+                                                <svg viewBox="0 0 18 18">
+                                                <path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path>
+                                                <rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect>
+                                                </svg>
+                                            </button>
+                                            <span class="ql-align ql-picker ql-icon-picker">
+                                                <span class="ql-picker-label" tabindex="0" role="button" aria-expanded="false" aria-controls="ql-picker-options-0">
+                                                <svg viewBox="0 0 18 18">
+                                                    <line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"></line>
+                                                    <line class="ql-stroke" x1="3" x2="13" y1="14" y2="14"></line>
+                                                    <line class="ql-stroke" x1="3" x2="9" y1="4" y2="4"></line>
+                                                </svg>
+                                                </span>
+                                                <span class="ql-picker-options" aria-hidden="true" tabindex="-1" id="ql-picker-options-0">
+                                                <span tabindex="0" role="button" class="ql-picker-item">
+                                                    <svg viewBox="0 0 18 18">
+                                                        <line class="ql-stroke" x1="3" x2="15" y1="9" y2="9"></line>
+                                                        <line class="ql-stroke" x1="3" x2="13" y1="14" y2="14"></line>
+                                                        <line class="ql-stroke" x1="3" x2="9" y1="4" y2="4"></line>
+                                                    </svg>
+                                                </span>
+                                                <span tabindex="0" role="button" class="ql-picker-item" data-value="center">
+                                                    <svg viewBox="0 0 18 18">
+                                                        <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
+                                                        <line class="ql-stroke" x1="14" x2="4" y1="14" y2="14"></line>
+                                                        <line class="ql-stroke" x1="12" x2="6" y1="4" y2="4"></line>
+                                                    </svg>
+                                                </span>
+                                                <span tabindex="0" role="button" class="ql-picker-item" data-value="right">
+                                                    <svg viewBox="0 0 18 18">
+                                                        <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
+                                                        <line class="ql-stroke" x1="15" x2="5" y1="14" y2="14"></line>
+                                                        <line class="ql-stroke" x1="15" x2="9" y1="4" y2="4"></line>
+                                                    </svg>
+                                                </span>
+                                                <span tabindex="0" role="button" class="ql-picker-item" data-value="justify">
+                                                    <svg viewBox="0 0 18 18">
+                                                        <line class="ql-stroke" x1="15" x2="3" y1="9" y2="9"></line>
+                                                        <line class="ql-stroke" x1="15" x2="3" y1="14" y2="14"></line>
+                                                        <line class="ql-stroke" x1="15" x2="3" y1="4" y2="4"></line>
+                                                    </svg>
+                                                </span>
+                                                </span>
+                                            </span>
+                                            <select class="ql-align" style="display: none;">
+                                                <option selected="selected"></option>
+                                                <option value="center"></option>
+                                                <option value="right"></option>
+                                                <option value="justify"></option>
+                                            </select>
+                                            <button type="button" class="ql-link">
+                                                <svg viewBox="0 0 18 18">
+                                                <line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line>
+                                                <path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path>
+                                                <path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path>
+                                                </svg>
+                                            </button>
+                                            <span class="ql-header ql-picker">
+                                                <span class="ql-picker-label" tabindex="0" role="button" aria-expanded="false" aria-controls="ql-picker-options-1">
+                                                <svg viewBox="0 0 18 18">
+                                                    <polygon class="ql-stroke" points="7 11 9 13 11 11 7 11"></polygon>
+                                                    <polygon class="ql-stroke" points="7 7 9 5 11 7 7 7"></polygon>
+                                                </svg>
+                                                </span>
+                                                <span class="ql-picker-options" aria-hidden="true" tabindex="-1" id="ql-picker-options-1"><span tabindex="0" role="button" class="ql-picker-item" data-value="1"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="2"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="3"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="4"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="5"></span><span tabindex="0" role="button" class="ql-picker-item" data-value="6"></span><span tabindex="0" role="button" class="ql-picker-item"></span></span>
+                                            </span>
+                                            <select class="ql-header" style="display: none;">
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option selected="selected"></option>
+                                            </select>
+                                        </span>
+                                    </div>
+                                    <div class="ql-container ql-snow">
+                                        <div class="ql-editor" data-gramm="false" contenteditable="true">
+                                            <p>Paragraph</p>
+                                        </div>
+                                        <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
+                                        <div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="chooseInput">
+                                    <div class="label">Column width</div>
+                                    <div class="chooseItems">
+                                    <div class="chooseItem ">33%</div>
+                                    <div class="chooseItem active">50%</div>
+                                    <div class="chooseItem ">100%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }
                 else{
                     $comeback .= '   Working in progress ';
                 }
