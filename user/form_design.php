@@ -2347,7 +2347,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                             </svg></span></span></span></span><span
                                                 class="Polaris-Choice__Label">Full width footer
                                                 button</span></label></div>
-                                    <div class="form-control alignment">
+                                    <div class="form-control alignment" >
                                         <div class="chooseInput">
                                             <div class="label">Alignment</div>
                                             <div class="chooseItems">
