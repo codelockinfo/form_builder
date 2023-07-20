@@ -1637,6 +1637,7 @@ $shopinfo = $this->current_store_obj;
 
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
+
               if($_POST['form_type'] == 2){
                   $where_query = array(["", "id", "=", "4"], ["OR", "id", "=", "2"], ["OR", "id", "=", "1"]);
               }else if($_POST['form_type'] == 3){
@@ -1651,10 +1652,16 @@ $shopinfo = $this->current_store_obj;
                 $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                 foreach($comeback_client['data'] as $templates){
                     $element_data = '';
-                    if($templates['id'] == 1 || $templates['id'] == 3 || $templates['id'] == 2 || $templates['id'] == 4 || $templates['id'] == 6 || $templates['id'] == 7 ){
+                    
+                $elementid= $templates['id'];
+                $element_type = array("1","2","3","4","6","7");
+                $element_type2 = array("5");
+                $element_type3 = array("8");
+                    if(in_array($elementid,$element_type)){
                         $element_data = serialize(array("Your ".$templates['element_title'], "Your Name", "","0", "0","1","0","33%"));
-                    }else if($templates['id'] == 5){
+                    }else if(in_array($elementid,$element_type2)){
                         $element_data = serialize(array("Url", "", "","0", "0","0"));
+                    }else if(in_array($elementid,$element_type3)){
                     }
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
