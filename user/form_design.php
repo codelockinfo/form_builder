@@ -169,7 +169,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             
                             <small class="messages"></small>
                         </div>
-                        
+
                         <div class="code-form-control layout-1-column" data-id="element2">
                             <label for="false-textarea" class="classic-label globo-label "><span class="label-content" data-label="Message">Message</span><span class="text-danger text-smaller"> *</span></label>
                             <textarea id="false-textarea" data-type="textarea" class="classic-input" rows="3" name="textarea" placeholder="Message" presence=""></textarea>
@@ -178,7 +178,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         </div>
                           </div>
                                 </div>   
-                                    <p style="text-align: right;font-size:small;display: block !important;">Powered by <a href="https://codelocksolutions.in/" target="_blank">Codelock</a> <a href="https://apps.shopify.com/form-builder-contact-form" target="_blank">Contact Form</a></p>
                                     <div class="footer fleft">
                                         <button class="action submit classic-button">
                                             <span class="spinner"></span>
@@ -469,7 +468,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         <div class="tabContent">
                             <div class="root">
                                 <div class="builder-item-wrapper ">
-                                    <div class="list-item">
+                                    <div class="list-item" data-owl="9">
                                         <div class="row">
                                             <div class="icon">
                                                 <span class="Polaris-Icon">
@@ -1469,11 +1468,13 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 </div>
                             </div>
                         </div>
-                        <div class="form-control"><button
-                                class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth"
-                                type="button"><span class="Polaris-Button__Content"><span
-                                        class="Polaris-Button__Text"><span>Remove this
-                                            element</span></span></span></button></div>
+                        <div class="form-control">
+                            <button class="Polaris-Button Polaris-Button--destructive" type="button">
+                                <span class="Polaris-Button__Content">
+                                    <span class="Polaris-Button__Text">Remove this element</span>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="polarisformcontrol">
