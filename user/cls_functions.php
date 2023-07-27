@@ -1597,40 +1597,35 @@ $shopinfo = $this->current_store_obj;
         $response = json_encode($response_data);
         return $response;
     }
+
     function set_element() {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            // if (isset($_POST['selectedTypes']) && $_POST['selectedTypes'] == '') {
-            //     // $error_array['title'] = "Please select";
-            // }
-            if (empty($error_array)) {
-                $shopinfo = $this->current_store_obj;
-          
-                if (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') {
-
-                    $where_query = array(["", "id", "=", $_POST['get_element_hidden']]);
-                    $comeback_client = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
-                    $value_res=$comeback_client['data'][0];
-                    $mysql_date = date('Y-m-d H:i:s');
-                    $fields_arr = array(
-                        '`id`' => '',
-                        '`form_id`' => $_POST['formid'],
-                        '`element_id`' => $value_res['id'],
-                        '`element_data`' => "",
-                        '`status`' => "1",
-                        '`created`' => $mysql_date,
-                        '`updated`' => $mysql_date
-                    );
-                    $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr));
-                    // $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $value_res);
-                }
-            } else {
-                $response_data = array('data' => 'fail', 'msg' => $error_array);
+            $shopinfo = $this->current_store_obj;
+            if (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') {
+                $where_query = array(["", "id", "=", $_POST['get_element_hidden']]);
+                $comeback_client = $this->select_result(TABLE_ELEMENTS, 'id', $where_query);
+                $value_res = $comeback_client['data'][0];
+                $mysql_date = date('Y-m-d H:i:s');
+                $fields_arr = array(
+                    '`id`' => '',
+                    '`form_id`' => $_POST['formid'],
+                    '`element_id`' => $value_res['id'],
+                    '`element_data`' => "",
+                    '`status`' => "1",
+                    '`created`' => $mysql_date,
+                    '`updated`' => $mysql_date
+                );
+                $result = $this->post_data(TABLE_FORM_DATA, array($fields_arr));
+                $response_data = array('data' => 'success', 'msg' => 'Element added successfully');
             }
+        }else{
+            $response_data = array('data' => 'fail', 'msg' => $error_array);
         }
         $response = json_encode($response_data);
         return $response;
     }
+
     function get_three_element_fun() {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
@@ -1683,7 +1678,7 @@ $shopinfo = $this->current_store_obj;
         return $response;
     }
 
-    function set_all_element_selected_fun() {
+    function get_selected_elements_fun() {
         
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         
@@ -4913,4 +4908,8 @@ function form_element_data_html(){
     $response_data = json_encode($response_data);
     return $response_data;
 }
+
+
+
+
 }

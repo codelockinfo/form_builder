@@ -110,6 +110,8 @@ define('TABLE_COLLECTION_MASTER', 'collection_master');
 define('TABLE_FORMS', 'forms');
 define('TABLE_ELEMENTS', 'elements');
 define('TABLE_FORM_DATA', 'form_data');
+// setting
+define('TABLE_SETTINGS', 'settings');
 
 define("CLS_API_VERSIION",'api/2021-07');
 define("CLS_API_KEY",'9875728c6b382b21f2b77786a7b11d06');
