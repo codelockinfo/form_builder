@@ -539,7 +539,7 @@ include_once('cls_header.php');
         </form>
     </div>
     <script>
-   const ctx = document.getElementById('chart').getContext('2d');
+    const ctx = document.getElementById('chart').getContext('2d');
          const chart = new Chart(ctx, {
              // The type of chart we want to create
              type: 'bar',

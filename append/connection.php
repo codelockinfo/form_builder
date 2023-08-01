@@ -110,6 +110,7 @@ define('TABLE_COLLECTION_MASTER', 'collection_master');
 define('TABLE_FORMS', 'forms');
 define('TABLE_ELEMENTS', 'elements');
 define('TABLE_FORM_DATA', 'form_data');
+define('TABLE_SETTINGS', 'settings');
 define('CLS_TABLE_THIRDPARTY_APIKEY','thirdparty_apikey');
 define('TABLE_CUSTOMER_MASTER','customer_master');
 

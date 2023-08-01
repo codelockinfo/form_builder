@@ -5,6 +5,7 @@ var CLS_MINUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 80 80" focusable="f
 var CLS_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M17 9h-6V3a1 1 0 1 0-2 0v6H3a1 1 0 1 0 0 2h6v6a1 1 0 1 0 2 0v-6h6a1 1 0 1 0 0-2" fill-rule="evenodd"></path></svg>';
 var CLS_CIRCLE_MINUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 80 80" focusable="false" aria-hidden="true"><path d="M39.769,0C17.8,0,0,17.8,0,39.768c0,21.956,17.8,39.768,39.769,39.768   c21.965,0,39.768-17.812,39.768-39.768C79.536,17.8,61.733,0,39.769,0z M13.261,45.07V34.466h53.014V45.07H13.261z" fill-rule="evenodd" fill="#DE3618"></path></svg>';
 var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focusable="false" aria-hidden="true"><path d="M255,0C114.75,0,0,114.75,0,255s114.75,255,255,255s255-114.75,255-255S395.25,0,255,0z M382.5,280.5h-102v102h-51v-102    h-102v-51h102v-102h51v102h102V280.5z" fill-rule="evenodd" fill="#3f4eae"></path></svg>';
+var BACKTO = 0;
 // var store = (window.location != window.parent.location)
 //             ? document.referrer
 //             : document.location.href; 
@@ -763,27 +764,29 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
                 }
             });
         });
+
         $(document).on("click", ".element_coppy_to", function(event) {
             event.preventDefault();  
             var thisObj = $(this);
-            var formid=$(".formid").val();
-            var  get_val=$(this).find(".get_element_hidden").val();
+            var formid= $(".formid").val();
+            var get_val= $(this).find(".get_element_hidden").val();
             $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val,'formid':formid},
-                    success: function (comeback) {
-                       var comeback = JSON.parse(comeback);
-                       if (comeback['code'] != undefined && comeback['code'] == '403') {
-                          redirect403();
-                      } else{
-                        $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-                        set_all_element_selected(formid);
-                      }
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val,'formid':formid},
+                success: function (comeback) {
+                    var comeback = JSON.parse(comeback);
+                    if (comeback['code'] != undefined && comeback['code'] == '403') {
+                        redirect403();
+                    } else{
+                        $('.owl-carousel').trigger('to.owl.carousel',  [BACKTO, 40, true]);
+                        get_selected_elements(formid);
                     }
-                });
+                }
+            });
         });
+
         function insertDefaultElements(form_id,selectedType){       
             $.ajax({
                 url: "ajax_call.php",
@@ -799,12 +802,12 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
                 }
             });
         }      
-        function set_all_element_selected(form_id){
+        function get_selected_elements(form_id){
             $.ajax({
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
-                    data: {'routine_name': 'set_all_element_selected_fun','form_id': form_id, store: store },
+                    data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store },
                     success: function (comeback) {
                         var comeback = JSON.parse(comeback);
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -873,6 +876,7 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
                 }
             });
         });
+
         $(document).on("click", ".clsselected_element", function(event) {
             var formid=$(".formid").val();
             var element_id=$(this).find(".get_element_hidden").val();
@@ -922,7 +926,7 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
                         redirect403();
                     } else{
                     $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-                    set_all_element_selected(formid); 
+                    get_selected_elements(formid); 
                     }
                     loading_hide('.save_loader_show', 'Save');
                 }
@@ -944,7 +948,8 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
                         }
                     }
                 });
-        }                        
+        }  
+        
         $(document).on("click", ".btncreate_new", function(event) {
             event.preventDefault();    
             var form_data = $("#createNewForm")[0];
@@ -1048,3 +1053,5 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
             }
            
         });
+
+

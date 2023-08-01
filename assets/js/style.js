@@ -7,7 +7,6 @@ $(document).ready(function(){
             $(".preview-box").removeClass("desktop");
             $(".preview-box").addClass($(this).data("id"));
         });
-    
 
         $(".settingselect li .settingsbtn ").click(function(){
             $(".settingsbtn").removeClass("Polaris-Tabs__Tab--selected");
@@ -27,6 +26,45 @@ $(document).ready(function(){
             {
                 $(".required_message").addClass("hidden");
             
+            }
+        });
+        $(document).on("change",".confirmpass" ,function(){
+            if(this.checked) {
+                $(".conpass").removeClass("hidden");
+            }
+            else
+            {   
+                $(".conpass").addClass("hidden");
+            }
+        });
+
+        $(document).on("change",".pass_required" ,function(){
+            if(this.checked) {
+                $(".Requiredpass").removeClass("hidden");
+            }
+            else
+            {   
+                $(".Requiredpass").addClass("hidden");
+            }
+        });
+
+        $(document).on("change",".passLabel" ,function(){
+            if(this.checked) {
+                $(".passhideLabel").removeClass("hidden");
+            }
+            else
+            {   
+                $(".passhideLabel").addClass("hidden");
+            }
+        });
+
+        $(document).on("change",".passLimitcar" ,function(){
+            if(this.checked) {
+                $(".limitCar").removeClass("hidden");
+            }
+            else
+            {   
+                $(".limitCar").addClass("hidden");
             }
         });
 
@@ -50,7 +88,6 @@ $(document).ready(function(){
             } else
             {
                 $(".shortcode").addClass("hidden");
-            
             }
         });
 
@@ -112,7 +149,7 @@ $(document).ready(function(){
             ClassicEditor.create(item)
             .catch( error => {
                 console.error( error );
-            } );
+        });
         
     });
         // Reset button  in footer element
@@ -120,14 +157,23 @@ $(document).ready(function(){
             if(this.checked) {	
                 $(".reset").removeClass("hidden");	
                 $(".reset.classic-button").removeClass("hidden");	
-
             } 	
             else{	
                 $(".reset").addClass("hidden");
                 $(".reset.classic-button").addClass("hidden");		
-            }	
-                
+            }	        
         });
+
+        // column width changes 
+        
+        $(document).on('click','.chooseItems .chooseItem ', function(){
+            $('.chooseItems .chooseItem ').removeClass('active');
+            $(this).addClass('active');
+            var content = $('.chooseItem.active').text();
+            var additionalClassName = "choose" + content;
+            $(".form_content").find(".contact-form  .g-container .code-form-control").addClass(additionalClassName);
+        });
+
         // Width of footer button in footer element
         $("#PolarisCheckbox7 ").change(function() {	
             if(this.checked) {	
@@ -166,7 +212,6 @@ $(document).ready(function(){
         $(document).on("change "," #PolarisCheckbox15 " ,function() {	
             if(this.checked) {	
                 $(".required_Content").removeClass("hidden");	
-
             } 	
             else{	
                 $(".required_Content").addClass("hidden");	
@@ -186,7 +231,6 @@ $(document).ready(function(){
         $(document).on("change "," #PolarisCheckbox3 " ,function() {	
             if(this.checked) {	
                 $(".hideLabel").removeClass("hidden");	
-
             } 	
             else{	
                 $(".hideLabel").addClass("hidden");	
@@ -196,17 +240,12 @@ $(document).ready(function(){
         $(document).on("change "," #PolarisCheckbox5 " ,function() {	
             if(this.checked) {	
                 $(".hideRequired").removeClass("hidden");	
-
             } 	
             else{	
                 $(".hideRequired").addClass("hidden");	
             }	
                 
         });
-        // $(document).click(".select_ICon1" , function(){
-        //     $(this).find(" .pickerList").addClass("show");
-         // });
-       
        
         $(document).on("click",".Polaris-Tabs__Panel .list-item",function(){
             setTimeout(function(){
@@ -232,24 +271,14 @@ $(document).ready(function(){
             $( ".mainskill" ).each(function( index ) {
                 console.log("value");
                 var optionval =$(this).val();
-                console.log(optionval);
-             
-                    console.log("select");
-                    console.log(optionval); 
-                    optionHtml += "<option>"+optionval+"</option>";
-
-        
+                optionHtml += "<option>"+optionval+"</option>";
             });
             $('#optionSelect').html(optionHtml);
     	});
-        $(document).on('click', '.btn_add11', function(){
-            console.log("bdbf");
-                 var button_id = $(this).attr("id"); 
-                 console.log(button_id);
-               $(this).closest(".addskildy").remove();
-                    
-      
-       
+            $(document).on('click', '.btn_add11', function(){
+                var button_id = $(this).attr("id"); 
+                $(this).closest(".addskildy").remove();
+            
     });
        
 
