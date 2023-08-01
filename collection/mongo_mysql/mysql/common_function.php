@@ -56,7 +56,7 @@ include dirname(dirname(__FILE__)). "/base_function.php";
     }
     
     public function select_result($tbl_name, $columns, $where_query_arr = array(), $options_arr = array()) {
-         $format = isset($options_arr['format']) ? $options_arr['format'] : 'array';
+        $format = isset($options_arr['format']) ? $options_arr['format'] : 'array';
         $skip = isset($options_arr['skip']) ? $options_arr['skip'] : 0;
         $limit = isset($options_arr['limit']) ? $options_arr['limit'] : 20;
         $single = isset($options_arr['single']) ? $options_arr['single'] : false;
@@ -94,13 +94,13 @@ include dirname(dirname(__FILE__)). "/base_function.php";
         } else {
             $sql = $this->db_connection->query("SELECT $columns FROM $tbl_name $where_query $groupBy $orderBy LIMIT $skip, $limit");
         }
-        $return_data = array();
         $c = 0;
         while ($cls_rows = $sql->fetch_object()) {
+
             if ($format == "object") {
                 if ($single) {
                     $return_data = $cls_rows;
-                } else {
+               } else {
                     $return_data->$c = $cls_rows;
                 }
             } else {
@@ -117,9 +117,7 @@ include dirname(dirname(__FILE__)). "/base_function.php";
             }
             $c++;            
         }
-    //     echo "<pre>";
-    //    print_r($return_data);
-
+        
         if (!$return_data) {
             $status = 0;
         }
@@ -181,7 +179,6 @@ include dirname(dirname(__FILE__)). "/base_function.php";
             }
             $sql = "UPDATE $tbl_name SET " . rtrim($columns, ",") . " $where_query $limit";
             $sql = str_replace(array("'NULL'", "'null'"), 'NULL', $sql);
-//            generate_log('query', $sql);
             $query = $this->db_connection->prepare($sql);
             $query->execute();
             $return_data['affected_rows'] = $query->num_rows();

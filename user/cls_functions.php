@@ -35,7 +35,8 @@ class Client_functions extends common_function {
         $password = $shopinfo->password;
         $shopify_url_array = array_merge(array('/admin/' . CLS_API_VERSIION), $shopify_api_name_arr);
         $shopify_main_url = implode('/', $shopify_url_array) . '.json';
-//           generate_log("collection",$shopify_main_url  . "url");
+        $comeback= $this->select_result(CLS_TABLE_THIRDPARTY_APIKEY, '*',$where_query);
+        $CLS_API_KEY = (isset($comeback['data'][1]['thirdparty_apikey']) && $comeback['data'][1]['thirdparty_apikey'] !== '') ? $comeback['data'][1]['thirdparty_apikey'] : '';
         $shopify_data_list = cls_api_call(CLS_API_KEY, $password, $store_name, $shopify_main_url, $shopify_url_param_array, $type);
         
         if ($shopify_is_object) {
@@ -492,10 +493,8 @@ class Client_functions extends common_function {
                 $comeback = array("data" => true);
             } else {
                 $api_fields = array('custom_collection' => array('id' => $_POST['collection_id'], 'title' => $_POST["title"], 'body_html' => $_POST["description"]));
-//                   generate_log("collection",json_encode($api_fields)  . "    api_fields");
                 $main_api = array("api_name" => "custom_collections", 'id' => $_POST['collection_id']);
                 $set_position = $this->cls_get_shopify_list($main_api, $api_fields, 'PUT', 1, array("Content-Type: application/json"));
-//                   generate_log("collection",json_encode($set_position) ."put api collection");
                 if (!empty($set_position)) {
                     $fields = array(
                         'title' => $_POST['title'],
@@ -505,7 +504,6 @@ class Client_functions extends common_function {
                         ["", "collection_id", "=", $id],
                     );
                     $comeback = $this->put_data(TABLE_COLLECTION_MASTER, $fields, $where_query);
-//                       generate_log("collection",json_encode($comeback));
                 }
                 $comeback = array("data" => true, "for_data" => 'collections');
             }
@@ -528,7 +526,6 @@ class Client_functions extends common_function {
                         'updated_at' => date('Y-m-d H:i:s')
                     );
                     $comeback = $this->post_data(TABLE_PRODUCT_MASTER, array($fields_arr));
-//                    generate_log('product_update', json_encode($comeback));
                     $comeback = array("data" => true);
                     
                 }
@@ -1233,7 +1230,6 @@ $shopinfo = $this->current_store_obj;
                         }
                     }
                     
-                        generate_log('product_testing', json_encode(array($fields_arr)));
                     $response_data = $this->post_data(TABLE_PRODUCT_MASTER, array($fields_arr));
                   
                 }

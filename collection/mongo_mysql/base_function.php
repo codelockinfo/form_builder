@@ -1037,7 +1037,6 @@ class base_function {
     }
       public function verify_webhook($data, $hmac_header) {
         $calculated_hmac = base64_encode(hash_hmac('sha256', $data, SHOPIFY_SECRET, true));
-        generate_log('testingwebhook ', json_encode($calculated_hmac) . " calculated_hmac");
         return ($hmac_header == $calculated_hmac);
     }
     
