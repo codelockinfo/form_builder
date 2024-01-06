@@ -41,7 +41,7 @@ body {
   margin: 0 -5px;
   padding: 0;
 }
-.code-form-control label {
+.content .code-form-control label {
   color: #212b36;
   display: block;
   margin-bottom: 4px;
@@ -53,10 +53,10 @@ body {
   font-size:  14px;color: #000;
   text-align: left !important;
 }
-.code-form-control .text-smaller {
+.content .code-form-control .text-smaller {
   font-size: 12px;
 }
-.code-form-control input, .code-form-control textarea, .code-form-control select {
+.content .code-form-control input, .content .code-form-control textarea, .content .code-form-control select {
   display: block;
   height: 41px;
   padding: 10px 12px;
@@ -74,23 +74,23 @@ body {
   background-image: none !important;
   border:none;
 }
-.code-form-control .code-form-input {
+.content .code-form-control .code-form-input {
   display: flex;
 }
-.code-form-control.layout-2-column {
+.content .code-form-control.layout-2-column {
   width: 50%;
 }
-.code-form-control textarea {
+.content .code-form-control textarea {
   height: initial;
 }
 .code-form-app .flex-wrap {
   display: flex;
   flex-wrap: wrap;
 }
-.code-form-control.layout-1-column {
+.content .code-form-control.layout-1-column {
   width: 100%;
 }
-.code-form-control {
+.content .code-form-control {
   margin-bottom: 1.5rem;
   font-size: 14px;
   padding: 0 5px;
@@ -125,8 +125,8 @@ button.action.submit.classic-button {
 .btnRight{
   text-align:right;
 }
-.layout-3-column{
-  width:33%;
+.content .code-form-control.layout-3-column {
+  width: 33%;
 }
 .layout-1-column{
   width:100%;

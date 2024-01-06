@@ -153,20 +153,20 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             <label for="false-text" class="classic-label globo-label ">
                                             <span class="label-content" data-label="Your Name">Your Name</span><span class="text-danger text-smaller"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input" id="false-text" name="text" placeholder="Your Name" presence="">
+                                            <input type="text" data-type="text" class="classic-input" id="false-text" name="text" placeholder="Your Name" value="">
                                         </div>
                                         <small class="messages"></small>
                                     </div>
                                     <div class="code-form-control layout-2-column" data-id="element1">
                                         <label for="false-email" class="classic-label globo-label "><span class="label-content" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="email" class="classic-input" id="false-email" name="email" placeholder="Email" presence="">
+                                            <input type="text" data-type="email" class="classic-input" id="false-email" name="email" placeholder="Email" value="">
                                         </div>
                                         <small class="messages"></small>
                                     </div>
-                                    <div class="code-form-control layout-1-column" data-id="element2">
+                                    <div class="code-form-control layout-1-column" data-id="element4">
                                         <label for="false-textarea" class="classic-label globo-label "><span class="label-content" data-label="Message">Message</span><span class="text-danger text-smaller"> *</span></label>
-                                        <textarea id="false-textarea" data-type="textarea" class="classic-input" rows="3" name="textarea" placeholder="Message" presence=""></textarea>
+                                        <textarea id="false-textarea" data-type="textarea" class="classic-input" rows="3" name="textarea" placeholder="Message" value=""></textarea>
                                         
                                         <small class="messages"></small>
                                     </div>
@@ -178,7 +178,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <small class="help-text globo-description"></small>
                                         <small class="messages"></small>
                                     </div>
-                                    <div class="code-form-control layout-2-column"data-id="element4">
+                                    <div class="code-form-control layout-2-column"data-id="element2">
                                         <label for="false-email-1" class="classic-label globo-label "><span class="label-content" data-label="Email">Email</span><span></span></label>
                                         <div class="globo-form-input">
                                             <input type="text" data-type="email" class="classic-input" id="false-email-1" name="email-1" placeholder="">
@@ -200,7 +200,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             <small class="help-text globo-description"></small>
                                             <small class="messages"></small>
                                     </div>
-                                    <div class="code-form-control layout-2-column"data-id="element7">
+                                    <div class="code-form-control layout-2-column"data-id="element4">
                                         <label for="false-url-1" class="classic-label globo-label "><span class="label-content" data-label="Url">Url</span><span></span></label>
                                         <div class="globo-form-input">
                                             <input type="text" data-type="url" class="classic-input" id="false-url-1" name="url-1" placeholder="">
@@ -455,187 +455,96 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                 <option value="Monaco">Monaco</option>
                                                 <option value="Mongolia">Mongolia</option>
                                                 <option value="Montenegro">Montenegro</option>
-                                                
                                                 <option value="Montserrat">Montserrat</option>
-                                                
                                                 <option value="Morocco">Morocco</option>
-                                                
                                                 <option value="Mozambique">Mozambique</option>
-                                                
                                                 <option value="Myanmar">Myanmar</option>
-                                                
                                                 <option value="Namibia">Namibia</option>
-                                                
                                                 <option value="Nauru">Nauru</option>
-                                                
                                                 <option value="Nepal">Nepal</option>
-                                                
                                                 <option value="Netherlands">Netherlands</option>
-                                                
                                                 <option value="Netherlands Antilles">Netherlands Antilles</option>
-                                                
                                                 <option value="New Caledonia">New Caledonia</option>
-                                                
                                                 <option value="New Zealand">New Zealand</option>
-                                                
                                                 <option value="Nicaragua">Nicaragua</option>
-                                                
                                                 <option value="Niger">Niger</option>
-                                                
                                                 <option value="Nigeria">Nigeria</option>
-                                                
                                                 <option value="Niue">Niue</option>
-                                                
                                                 <option value="Norfolk Island">Norfolk Island</option>
-                                                
                                                 <option value="Korea, Democratic People's Republic Of">Korea, Democratic People's Republic Of</option>
-                                                
                                                 <option value="North Macedonia">North Macedonia</option>
-                                                
                                                 <option value="Norway">Norway</option>
-                                                
                                                 <option value="Oman">Oman</option>
-                                                
                                                 <option value="Pakistan">Pakistan</option>
-                                                
                                                 <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
-                                                
                                                 <option value="Panama">Panama</option>
-                                                
                                                 <option value="Papua New Guinea">Papua New Guinea</option>
-                                                
                                                 <option value="Paraguay">Paraguay</option>
-                                                
                                                 <option value="Peru">Peru</option>
-                                                
                                                 <option value="Philippines">Philippines</option>
-                                                
                                                 <option value="Pitcairn">Pitcairn</option>
-                                                
                                                 <option value="Poland">Poland</option>
-                                                
                                                 <option value="Portugal">Portugal</option>
-                                                
                                                 <option value="Qatar">Qatar</option>
-                                                
                                                 <option value="Reunion">Reunion</option>
-                                                
                                                 <option value="Romania">Romania</option>
-                                                
                                                 <option value="Russia">Russia</option>
-                                                
                                                 <option value="Rwanda">Rwanda</option>
-                                                
                                                 <option value="Samoa">Samoa</option>
-                                                
                                                 <option value="San Marino">San Marino</option>
-                                                
                                                 <option value="Sao Tome And Principe">Sao Tome And Principe</option>
-                                                
                                                 <option value="Saudi Arabia">Saudi Arabia</option>
-                                                
                                                 <option value="Senegal">Senegal</option>
-                                                
                                                 <option value="Serbia">Serbia</option>
-                                                
                                                 <option value="Seychelles">Seychelles</option>
-                                                
                                                 <option value="Sierra Leone">Sierra Leone</option>
-                                                
                                                 <option value="Singapore">Singapore</option>
-                                                
                                                 <option value="Sint Maarten">Sint Maarten</option>
-                                                
                                                 <option value="Slovakia">Slovakia</option>
-                                                
                                                 <option value="Slovenia">Slovenia</option>
-                                                
                                                 <option value="Solomon Islands">Solomon Islands</option>
-                                                
                                                 <option value="Somalia">Somalia</option>
-                                                
                                                 <option value="South Africa">South Africa</option>
-                                                
                                                 <option value="South Georgia And The South Sandwich Islands">South Georgia And The South Sandwich Islands</option>
-                                                
                                                 <option value="South Korea">South Korea</option>
-                                                
                                                 <option value="South Sudan">South Sudan</option>
-                                                
                                                 <option value="Spain">Spain</option>
-                                                
                                                 <option value="Sri Lanka">Sri Lanka</option>
-                                                
                                                 <option value="Saint Barthélemy">Saint Barthélemy</option>
-                                                
                                                 <option value="Saint Helena">Saint Helena</option>
-                                                
                                                 <option value="Saint Kitts And Nevis">Saint Kitts And Nevis</option>
-                                                
                                                 <option value="Saint Lucia">Saint Lucia</option>
-                                                
                                                 <option value="Saint Martin">Saint Martin</option>
-                                                
                                                 <option value="Saint Pierre And Miquelon">Saint Pierre And Miquelon</option>
-                                                
                                                 <option value="St. Vincent">St. Vincent</option>
-                                                
                                                 <option value="Sudan">Sudan</option>
-                                                
                                                 <option value="Suriname">Suriname</option>
-                                                
                                                 <option value="Svalbard And Jan Mayen">Svalbard And Jan Mayen</option>
-                                                
                                                 <option value="Sweden">Sweden</option>
-                                                
                                                 <option value="Switzerland">Switzerland</option>
-                                                
                                                 <option value="Syria">Syria</option>
-                                                
                                                 <option value="Taiwan">Taiwan</option>
-                                                
                                                 <option value="Tajikistan">Tajikistan</option>
-                                                
                                                 <option value="Tanzania, United Republic Of">Tanzania, United Republic Of</option>
-                                                
                                                 <option value="Thailand">Thailand</option>
-                                                
                                                 <option value="Timor Leste">Timor Leste</option>
-                                                
                                                 <option value="Togo">Togo</option>
-                                                
                                                 <option value="Tokelau">Tokelau</option>
-                                                
                                                 <option value="Tonga">Tonga</option>
-                                                
                                                 <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                                                
                                                 <option value="Tunisia">Tunisia</option>
-                                                
                                                 <option value="Turkey">Turkey</option>
-                                                
                                                 <option value="Turkmenistan">Turkmenistan</option>
-                                                
                                                 <option value="Turks and Caicos Islands">Turks and Caicos Islands</option>
-                                                
                                                 <option value="Tuvalu">Tuvalu</option>
-                                                
                                                 <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
-                                                
                                                 <option value="Uganda">Uganda</option>
-                                                
                                                 <option value="Ukraine">Ukraine</option>
-                                                
                                                 <option value="United Arab Emirates">United Arab Emirates</option>
-                                                
                                                 <option value="United Kingdom">United Kingdom</option>
-                                                
                                                 <option value="United States">United States</option>
-                                                
                                                 <option value="Uruguay">Uruguay</option>
-                                                
                                                 <option value="Uzbekistan">Uzbekistan</option>
-                                                
                                                 <option value="Vanuatu">Vanuatu</option>
                                                 <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
                                                 <option value="Venezuela">Venezuela</option>
@@ -675,7 +584,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <div>Enter your code</div>
                                     </div>
                                     <div class="code-form-control layout-2-column"data-id="element22">
-                                        <hr>
+                                        <!-- <hr> -->
                                     </div>
                                 </div>
                             </div>   
@@ -767,7 +676,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     </div>
                                 </div>
                             </div>
-                            <div class="root">
+                            <div class="root elementroot">
                                 <div class="builder-item-wrapper ">
                                     <div class="">
                                         <h3 class="subheading">Elements</h3>
@@ -2254,221 +2163,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <h3 class="subheading">Input</h3>
                                         <div>
                                             <div class="setvalue_element">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="m8.24 9 .816 2.33a1 1 0 0 0 1.888-.66l-3.335-9.528a1.705 1.705 0 0 0-3.218 0l-3.335 9.528a1 1 0 0 0 1.888.66l.815-2.33h4.482zm-.7-2-1.54-4.401-1.54 4.401h3.08zm7.96-2c.608 0 1.18.155 1.68.428a.999.999 0 0 1 1.82.572v5a1 1 0 0 1-1.82.572 3.5 3.5 0 1 1-1.68-6.572zm0 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z">
-                                                                        </path>
-                                                                        <path
-                                                                            d="M2 14a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2h-16zm0 4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-12z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Text</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M0 5.324v10.176a1.5 1.5 0 0 0 1.5 1.5h17a1.5 1.5 0 0 0 1.5-1.5v-10.176l-9.496 5.54a1 1 0 0 1-1.008 0l-9.496-5.54z">
-                                                                        </path>
-                                                                        <path
-                                                                            d="M19.443 3.334a1.494 1.494 0 0 0-.943-.334h-17a1.49 1.49 0 0 0-.943.334l9.443 5.508 9.443-5.508z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Email</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M10 13c-1.654 0-3-1.346-3-3s1.346-3 3-3 3 1.346 3 3-1.346 3-3 3zm0-13c-5.514 0-10 4.486-10 10s4.486 10 10 10a1 1 0 0 0 0-2c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8v1c0 .827-.673 1.5-1.5 1.5s-1.5-.673-1.5-1.5v-1c0-2.757-2.243-5-5-5s-5 2.243-5 5 2.243 5 5 5c1.531 0 2.887-.707 3.805-1.795a3.477 3.477 0 0 0 2.695 1.295c1.93 0 3.5-1.57 3.5-3.5v-1c0-5.514-4.486-10-10-10z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Name</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M2.5 1a1.5 1.5 0 0 0-1.5 1.5v15a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-15a1.5 1.5 0 0 0-1.5-1.5h-15zm13.5 4h-12v2h12v-2zm-12 4h12v2h-12v-2zm6 4h-6v2h6v-2z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Textarea</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M6.534 18a4.507 4.507 0 0 1-3.208-1.329 4.54 4.54 0 0 1 0-6.414l1.966-1.964a.999.999 0 1 1 1.414 1.414l-1.966 1.964a2.54 2.54 0 0 0 0 3.586c.961.959 2.631.958 3.587 0l1.966-1.964a1 1 0 1 1 1.415 1.414l-1.966 1.964a4.503 4.503 0 0 1-3.208 1.329zm7.467-6a.999.999 0 0 1-.707-1.707l1.966-1.964a2.54 2.54 0 0 0 0-3.586c-.961-.959-2.631-.957-3.587 0l-1.966 1.964a1 1 0 1 1-1.415-1.414l1.966-1.964a4.503 4.503 0 0 1 3.208-1.329c1.211 0 2.351.472 3.208 1.329a4.541 4.541 0 0 1 0 6.414l-1.966 1.964a.997.997 0 0 1-.707.293zm-6.002 1a.999.999 0 0 1-.707-1.707l4.001-4a1 1 0 1 1 1.415 1.414l-4.001 4a1 1 0 0 1-.708.293z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Url</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="m7.876 6.976-.534-2.67a1.5 1.5 0 0 0-1.471-1.206h-3.233c-.86 0-1.576.727-1.537 1.586.461 10.161 5.499 14.025 14.415 14.413.859.037 1.584-.676 1.584-1.535v-3.235a1.5 1.5 0 0 0-1.206-1.471l-2.67-.534a1.5 1.5 0 0 0-1.636.8l-.488.975c-2 0-5-3-5-5l.975-.488c.606-.302.934-.972.801-1.635z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Phone</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M7.992 2.124a1 1 0 1 0-1.984-.248l-.39 3.124h-3.618a1 1 0 0 0 0 2h3.367l-.75 6h-2.617a1 1 0 1 0 0 2h2.367l-.36 2.876a1 1 0 1 0 1.985.248l.39-3.124h5.985l-.36 2.876a1 1 0 0 0 1.985.248l.39-3.124h3.618a1 1 0 1 0 0-2h-3.367l.75-6h2.617a1 1 0 1 0 0-2h-2.367l.36-2.876a1 1 0 1 0-1.985-.248l-.39 3.124h-5.986l.36-2.876zm4.625 10.876.75-6h-5.984l-.75 6h5.984z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Number</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M10 12a2 2 0 0 0 2-2c0-.178-.03-.348-.074-.512l5.781-5.781a.999.999 0 1 0-1.414-1.414l-2.61 2.61a7.757 7.757 0 0 0-3.683-.903c-5.612 0-7.837 5.399-7.929 5.628a1.017 1.017 0 0 0 0 .744c.054.133.835 2.011 2.582 3.561l-2.36 2.36a.999.999 0 1 0 1.414 1.414l5.781-5.781c.164.043.334.074.512.074zm-4-2a4 4 0 0 1 4-4c.742 0 1.432.208 2.025.561l-1.513 1.513a2.004 2.004 0 0 0-.512-.074 2 2 0 0 0-2 2c0 .178.031.347.074.511l-1.513 1.514a3.959 3.959 0 0 1-.561-2.025zm10.145-3.144-2.252 2.252c.064.288.106.585.106.893a4 4 0 0 1-4 4 3.97 3.97 0 0 1-.89-.108l-1.682 1.68a7.903 7.903 0 0 0 2.573.427c5.613 0 7.837-5.399 7.928-5.629a1.004 1.004 0 0 0 0-.742c-.044-.111-.596-1.437-1.784-2.773z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Password</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M17.5 2h-2.5v-1a1 1 0 1 0-2 0v1h-7v-1a1 1 0 0 0-2 0v1h-1.5c-.8 0-1.5.7-1.5 1.5v15c0 .8.7 1.5 1.5 1.5h15c.8 0 1.5-.7 1.5-1.5v-15c0-.8-.7-1.5-1.5-1.5zm-14.5 16h14v-10h-14v10z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Date time</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M5.243 20a5.228 5.228 0 0 1-3.707-1.533 5.213 5.213 0 0 1-1.536-3.708c0-1.402.546-2.719 1.536-3.708l9.515-9.519a5.25 5.25 0 0 1 8.553 1.7 5.21 5.21 0 0 1 .396 2.008 5.208 5.208 0 0 1-1.535 3.708l-4.258 4.26a3.124 3.124 0 0 1-5.092-1.012 3.098 3.098 0 0 1-.236-1.196c0-.835.324-1.619.914-2.208l4.5-4.501a1 1 0 1 1 1.414 1.414l-4.5 4.501a1.112 1.112 0 0 0-.328.794 1.114 1.114 0 0 0 1.121 1.12c.297 0 .582-.118.793-.327l4.258-4.26a3.223 3.223 0 0 0 .949-2.293c0-.866-.337-1.681-.949-2.293a3.248 3.248 0 0 0-4.586 0l-9.515 9.518a3.224 3.224 0 0 0-.95 2.295c0 .866.338 1.68.95 2.293a3.248 3.248 0 0 0 4.586 0l1.757-1.758a1 1 0 1 1 1.414 1.414l-1.757 1.758a5.236 5.236 0 0 1-3.707 1.533z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>File</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M10 12a2 2 0 0 0 2-2c0-.178-.03-.348-.074-.512l5.781-5.781a.999.999 0 1 0-1.414-1.414l-2.61 2.61a7.757 7.757 0 0 0-3.683-.903c-5.612 0-7.837 5.399-7.929 5.628a1.017 1.017 0 0 0 0 .744c.054.133.835 2.011 2.582 3.561l-2.36 2.36a.999.999 0 1 0 1.414 1.414l5.781-5.781c.164.043.334.074.512.074zm-4-2a4 4 0 0 1 4-4c.742 0 1.432.208 2.025.561l-1.513 1.513a2.004 2.004 0 0 0-.512-.074 2 2 0 0 0-2 2c0 .178.031.347.074.511l-1.513 1.514a3.959 3.959 0 0 1-.561-2.025zm10.145-3.144-2.252 2.252c.064.288.106.585.106.893a4 4 0 0 1-4 4 3.97 3.97 0 0 1-.89-.108l-1.682 1.68a7.903 7.903 0 0 0 2.573.427c5.613 0 7.837-5.399 7.928-5.629a1.004 1.004 0 0 0 0-.742c-.044-.111-.596-1.437-1.784-2.773z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Hidden</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                               
                                             </div>
                                         </div>
                                     </div>
@@ -2478,101 +2173,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <h3 class="subheading">Selects</h3>
                                         <div>
                                             <div class="setvalue_element_select">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M4.5 3a1.5 1.5 0 0 0-1.5 1.5v11a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-11a1.5 1.5 0 0 0-1.5-1.5h-11zm9.207 5.707a1 1 0 0 0-1.414-1.414l-3.293 3.293-1.293-1.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Checkboxes</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M9.128.233c-2.37 1.383-5.37 2.33-7.635 2.646-.821.115-1.495.79-1.493 1.62l.001.497c-.03 6.043.477 11.332 9.462 14.903a1.45 1.45 0 0 0 1.062 0c8.993-3.571 9.503-8.86 9.473-14.903v-.501c-.001-.828-.674-1.51-1.492-1.638-2.148-.337-5.281-1.274-7.65-2.628a1.733 1.733 0 0 0-1.728.004zm4.577 8.478a1 1 0 0 0-1.414-1.415l-3.293 3.294-1.293-1.293a1 1 0 1 0-1.415 1.413l2 2.001a1 1 0 0 0 1.414 0l4-4.001z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Accept terms</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M10 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm0-14c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm-1 9a.997.997 0 0 1-.707-.293l-2-2a1 1 0 1 1 1.414-1.414l1.293 1.293 3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a.996.996 0 0 1-.707.293z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Radio buttons</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-4.293-1.707a1 1 0 0 0-1.414 0l-2.293 2.293-2.293-2.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0 0-1.414z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Dropdown</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M3.07 6a8.025 8.025 0 0 1 4.262-3.544 12.802 12.802 0 0 0-1.737 3.544h-2.525zm-.818 2a8.015 8.015 0 0 0-.252 2c0 .69.088 1.36.252 2h2.89a13.886 13.886 0 0 1-.142-2c0-.704.051-1.371.143-2h-2.891zm4.916 0c-.108.62-.168 1.286-.168 2 0 .713.061 1.38.168 2h5.664c.107-.62.168-1.287.168-2 0-.714-.061-1.38-.168-2h-5.664zm7.69 0a14.102 14.102 0 0 1-.001 4h2.891a8 8 0 0 0 .252-2 8 8 0 0 0-.252-2h-2.89zm2.072-2h-2.525a12.805 12.805 0 0 0-1.737-3.544 8.025 8.025 0 0 1 4.262 3.544zm-4.638 0h-4.584c.324-.865.725-1.596 1.124-2.195.422-.633.842-1.117 1.168-1.452.326.335.746.82 1.168 1.452.4.599.8 1.33 1.124 2.195zm-1.124 10.195c.4-.599.8-1.33 1.124-2.195h-4.584c.324.865.725 1.596 1.124 2.195.422.633.842 1.117 1.168 1.452.326-.335.746-.82 1.168-1.452zm-8.098-2.195h2.525a12.802 12.802 0 0 0 1.737 3.544 8.025 8.025 0 0 1-4.262-3.544zm9.762 3.305a12.9 12.9 0 0 1-.164.24 8.025 8.025 0 0 0 4.262-3.545h-2.525a12.805 12.805 0 0 1-1.573 3.305zm7.168-7.305c0 5.52-4.472 9.994-9.99 10h-.022c-5.518-.006-9.988-4.481-9.988-10 0-5.523 4.477-10 10-10s10 4.477 10 10z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Country</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                               
                                             </div>
                                         </div>
                                     </div>
@@ -2582,119 +2183,18 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <h3 class="subheading">Static text</h3>
                                         <div>
                                             <div class="setvalue_element_static">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M9 0c-.6 0-1.1.4-1.4 1l-5.6 16.3a1 1 0 0 1-.9.7 1 1 0 1 0 0 2h4a1 1 0 1 0 0-2 1 1 0 0 1-.9-1.2l.8-2.8h7l.9 2.8a1 1 0 0 1-.9 1.2 1 1 0 1 0 0 2h7a1 1 0 1 0 0-2 1 1 0 0 1-1-.7l-5.5-16.3c-.3-.6-.8-1-1.5-1h-2zm-.5 4.3-2.7 7.7h5.4l-2.7-7.7z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Heading</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M3 3h14a1 1 0 1 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 1 1 0 2h-10a1 1 0 0 1 0-2zm0 4h14a1 1 0 0 1 0 2h-14a1 1 0 0 1 0-2zm0 4h10a1 1 0 0 1 0 2h-10a1 1 0 0 1 0-2z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Paragraph</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="builder-item-wrapper ">
-                                    <div class="">
-                                        <h3 class="subheading">Rating</h3>
-                                        <div>
-                                            <div class="">
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="m6.71 15.116 3.357-1.658.892.452 2.327 1.178-.56-3.912.708-.707 1.29-1.29-3.235-.576-.445-.915-1.059-2.176-1.585 3.171-1.005.168-2.098.35 1.975 1.975-.141.99-.422 2.95zm-1.51 2.884a.8.8 0 0 1-.792-.914l.743-5.203-2.917-2.917a.8.8 0 0 1 .434-1.355l4.398-.733 2.218-4.435a.8.8 0 0 1 1.435.008l2.123 4.361 4.498.801a.8.8 0 0 1 .425 1.353l-2.917 2.917.744 5.203a.8.8 0 0 1-1.154.828l-4.382-2.22-4.502 2.223a.792.792 0 0 1-.354.083z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Rating star</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
+                              
                                 <div class="builder-item-wrapper ">
                                     <div class="">
                                         <h3 class="subheading">Structure</h3>
                                         <div>
                                             <div class="setvalue_element_structure">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M19 17.5v-13a1.5 1.5 0 0 0-1.5-1.5h-6.879a1.5 1.5 0 0 1-1.06-.44l-1.122-1.12a1.5 1.5 0 0 0-1.059-.44h-4.88a1.5 1.5 0 0 0-1.5 1.5v15a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Group</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M14.167 9h-8.334c-.46 0-.833.448-.833 1s.372 1 .833 1h8.334c.46 0 .833-.448.833-1s-.373-1-.833-1">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Divider</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -2704,25 +2204,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <h3 class="subheading">Customization</h3>
                                         <div>
                                             <div class="setvalue_element_customization">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item">
-                                                        <div class="row">
-                                                            <div class="icon"><span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M2.707 9.707a.996.996 0 0 0 .293-.707v-4a1 1 0 0 1 1-1 1 1 0 0 0 0-2c-1.654 0-3 1.346-3 3v3.586l-.707.707a.999.999 0 0 0 0 1.414l.707.707v3.586c0 1.654 1.346 3 3 3a1 1 0 0 0 0-2 1 1 0 0 1-1-1v-4a.996.996 0 0 0-.293-.707l-.293-.293.293-.293zm17.217-.09a1.001 1.001 0 0 0-.217-.324l-.707-.707v-3.586c0-1.654-1.346-3-3-3a1 1 0 1 0 0 2 1 1 0 0 1 1 1v4a.997.997 0 0 0 .293.707l.293.293-.293.293a.996.996 0 0 0-.293.707v4a1 1 0 0 1-1 1 1 1 0 1 0 0 2c1.654 0 3-1.346 3-3v-3.586l.707-.707a1.001 1.001 0 0 0 .217-1.09zm-7.227-4.333a1.002 1.002 0 0 0-1.63.346l-3.996 8a.999.999 0 0 0 .56 1.299 1.006 1.006 0 0 0 1.302-.557l3.995-8a.997.997 0 0 0-.23-1.088z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>HTML</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                               
                                             </div>
                                         </div>
                                     </div>

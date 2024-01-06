@@ -135,9 +135,9 @@ $(document).ready(function(){
         })
 
         $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
-            console.log("HRRRRR");
+            // console.log("HRRRRR");
             var slideTo = $(this).data("owl");
-            console.log(slideTo);
+            // console.log(slideTo);
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
         });
     
@@ -145,7 +145,7 @@ $(document).ready(function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [0, 40, true]);
         });
         $('.editor').each(function(index,item){
-            console.log(index);
+            // console.log(index);
             ClassicEditor.create(item)
             .catch( error => {
                 console.error( error );
@@ -166,13 +166,13 @@ $(document).ready(function(){
 
         // column width changes 
         
-        $(document).on('click','.chooseItems .chooseItem ', function(){
-            $('.chooseItems .chooseItem ').removeClass('active');
-            $(this).addClass('active');
-            var content = $('.chooseItem.active').text();
-            var additionalClassName = "choose" + content;
-            $(".form_content").find(".contact-form  .g-container .code-form-control").addClass(additionalClassName);
-        });
+        // $(document).on('click','.chooseItems .chooseItem ', function(){
+        //     $('.chooseItems .chooseItem ').removeClass('active');
+        //     $(this).addClass('active');
+        //     var content = $('.chooseItem.active').text();
+        //     var additionalClassName = "choose" + content;
+        //     $(".form_content").find(".contact-form  .g-container .code-form-control").addClass(additionalClassName);
+        // });
 
         // Width of footer button in footer element
         $("#PolarisCheckbox7 ").change(function() {	
@@ -257,9 +257,9 @@ $(document).ready(function(){
      i=1;
     	$(document).on("click","#add",function(){
         	i++;
-            console.log("clickee");
+            // console.log("clickee");
             var textarea_value = $(".mainskill").val();
-            console.log(textarea_value);
+            // console.log(textarea_value);
             if(textarea_value.length >= 1){
              var inputValue = $('.mainskill').val(); 
              $('#optionText').append('<div id="main'+i+'" class="addskildy"> <div style="display:flex;margin-bottom: 5px;" > <input type="text" class="mainskill" style="width:85%;" id="Skill'+i+'" name="Skill[' + inputValue + ']" ><button type="button" name="remove" id="Skillremove'+i+'" class="btn_add11" style="width:15%;padding: 10px 20px;">X</button></div>   </div>');
@@ -269,7 +269,7 @@ $(document).ready(function(){
             }
             var optionHtml = '';
             $( ".mainskill" ).each(function( index ) {
-                console.log("value");
+                // console.log("value");
                 var optionval =$(this).val();
                 optionHtml += "<option>"+optionval+"</option>";
             });
@@ -292,4 +292,61 @@ $(document).ready(function(){
         // });
 });
 
+// today
+
+$(document).ready(function () {
+    $(".code-form-control").each(function (index) {           
+        $(this).css("display", "none");
+    });
+    var formId = $(".element_start").find(".owl-item #tab-1 .tabContent .elementroot .selected_element_set").html();
+    console.log(formId); 
+    // var newId1 = (formId - 1);
+    // console.log(newId1); 
+    // var formId1 = "element" + newId;
+    // console.log(formId1);
+    // var elementWithDataId = $(".preview-box").find(".g-container .code-form-control[data-id='" + formId1 + "']");
+    // elementWithDataId.css("display", "block");     
+    $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
+        var elementId = $(this).data("elementid");
+        console.log(elementId); 
+        var newId = (elementId - 1);
+        console.log(newId); 
+        var elementId1 = "element" + newId;
+        console.log(elementId1);
+        var elementWithDataId = $(".preview-box").find(".g-container .code-form-control[data-id='" + elementId1 + "']");
+        elementWithDataId.css("display", "block");     
+    });
+});
+// width change
+$(document).on("click",".chooseItems .chooseItem ",function(){
+    $('.chooseItem').removeClass("active");
+    $(this).addClass("active");
+    var htmlContent = $(".chooseItem.active").html();
+  
+  // Log the HTML content to the console
+  console.log(htmlContent);
+       if (htmlContent === "33%") {
+            var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+           aaaaa.addClass("layout-3-column");
+           aaaaa.removeClass("layout-1-column layout-2-column")
+       }
+       else if(htmlContent === "100%") {
+            var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+          aaaaa.addClass("layout-1-column");
+          aaaaa.removeClass("layout-3-column layout-2-column")
+       }
+       else{
+        var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+          aaaaa.addClass("layout-2-column");
+          aaaaa.removeClass("layout-1-column layout-3-column")
+       }
+  }); 
+  $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
+    var info_Value = $('#PolarisTextField25').val();
+    var infoSubValue = $('#PolarisTextField26').val();
+    var infoBtnValue = $('#PolarisTextField27').val();
+    $('.label-content').html(info_Value);$('.classic-input').attr("placeholder", infoSubValue);
+    $('.messages  ').html(infoBtnValue);
+
+});
 

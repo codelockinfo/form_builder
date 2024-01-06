@@ -1382,7 +1382,7 @@ $shopinfo = $this->current_store_obj;
             foreach($comeback_client['data'] as $templates){
                     $category = ($templates['element_category']);
                 if($category == 1){
-                    $html .= '<div class="builder-item-wrapper element_coppy_to">
+                    $html .= '<div class="builder-item-wrapper element_coppy_to input">
                     <input type="hidden" class="get_element_hidden" name="get_element_hidden" value='.$templates['id'].'>
                     <div class="list-item">
                         <div class="row">
@@ -1695,7 +1695,7 @@ $shopinfo = $this->current_store_obj;
             
             foreach($element_data['data'] as $elements){
 
-                $html .= '<div class="builder-item-wrapper clsselected_element">
+                $html .= '<div class="builder-item-wrapper clsselected_element" data-formid='.$elements['id'].'>
                
                 <div class="list-item" data-owl="3" data-elementid='.$elements['id'].'>
                     <div class="row">
@@ -1953,7 +1953,7 @@ function form_element_data_html(){
                                                     <input id="PolarisTextField25" placeholder="Your '.$comebackdata['element_title'].'"
                                                         class="Polaris-TextField__Input" type="text"
                                                         aria-labelledby="PolarisTextField25Label"
-                                                        aria-invalid="false" value="">
+                                                        aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -1966,14 +1966,14 @@ function form_element_data_html(){
                                     <div class="">
                                         <div class="Polaris-Labelled__LabelWrapper">
                                             <div class="Polaris-Label"><label id="PolarisTextField26Label"
-                                                    for="PolarisTextField26" class="Polaris-Label__Text">
+                                                     class="Polaris-Label__Text">
                                                     <div>Placeholder</div>
                                                 </label></div>
                                         </div>
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input id="PolarisTextField26" placeholder=""
+                                                    <input id="PolarisTextField26" placeholder="Your Name"
                                                         class="Polaris-TextField__Input" type="text"
                                                         aria-labelledby="PolarisTextField26Label"
                                                         aria-invalid="false" value="">
@@ -2128,8 +2128,8 @@ function form_element_data_html(){
                                 <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
-                                        <div class="chooseItem active">33%</div>
-                                        <div class="chooseItem ">50%</div>
+                                        <div class="chooseItem ">33%</div>
+                                        <div class="chooseItem active">50%</div>
                                         <div class="chooseItem ">100%</div>
                                     </div>
                                 </div>
@@ -2187,7 +2187,7 @@ function form_element_data_html(){
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="">
+                                                <input id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -2199,7 +2199,7 @@ function form_element_data_html(){
                             <div class="textfield-wrapper">
                                 <div class="">
                                     <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label id="PolarisTextField26Label" for="PolarisTextField26" class="Polaris-Label__Text">
+                                        <div class="Polaris-Label"><label id="PolarisTextField26Label" class="Polaris-Label__Text">
                                                 <div>Placeholder</div>
                                             </label></div>
                                     </div>
@@ -2284,8 +2284,8 @@ function form_element_data_html(){
                             <div class="chooseInput">
                                 <div class="label">Column width</div>
                                 <div class="chooseItems">
-                                    <div class="chooseItem active">33%</div>
-                                    <div class="chooseItem ">50%</div>
+                                    <div class="chooseItem ">33%</div>
+                                    <div class="chooseItem active ">50%</div>
                                     <div class="chooseItem ">100%</div>
                                 </div>
                             </div>
@@ -2775,7 +2775,7 @@ function form_element_data_html(){
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                <input id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="">
+                                                <input id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -3180,8 +3180,8 @@ function form_element_data_html(){
                                     <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
-                                        <div class="chooseItem active">33%</div>
-                                        <div class="chooseItem ">50%</div>
+                                        <div class="chooseItem ">33%</div>
+                                        <div class="chooseItem active">50%</div>
                                         <div class="chooseItem ">100%</div>
                                     </div>
                                     </div>
@@ -4581,55 +4581,7 @@ function form_element_data_html(){
                                     </div>
                                     </div>
                                 </div>
-                                <div class="form-control">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox12">
-                                    <span class="Polaris-Choice__Control">
-                                        <span class="Polaris-Checkbox">
-                                            <input id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                            <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                                </span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Conditional field</span>
-                                    </label>
-                                </div>
-                                <div class="form-control">
-                                    <div class="">
-                                    <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Only show element if</label></div>
-                                    </div>
-                                    <div class="Polaris-Select">
-                                        <select class="selectDates" >
-                                            <option value="false">Please select</option>
-                                            <option value="select">Dropdown</option>
-                                        </select>
-                                       
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="">
-                                    <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label id="PolarisSelect7Label" for="PolarisSelect7" class="Polaris-Label__Text">is</label></div>
-                                    </div>
-                                    <div class="Polaris-Select">
-                                        <select  class="selectDates">
-                                            <option value="false">Please select</option>
-                                            <option value="Option 1">Option 1</option>
-                                            <option value="Option 2">Option 2</option>
-                                            <option value="option 3">option 3</option>
-                                            <option value=" option4"> option4</option>
-                                        </select>
-                                     
-                                    </div>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
@@ -4652,8 +4604,8 @@ function form_element_data_html(){
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
-                                            <div class="chooseItem active">33%</div>
-                                            <div class="chooseItem ">55%</div>
+                                            <div class="chooseItem ">33%</div>
+                                            <div class="chooseItem active">55%</div>
                                             <div class="chooseItem ">100%</div>
                                         </div>
                                     </div>
@@ -4863,12 +4815,12 @@ function form_element_data_html(){
                                     <div class="textarea-wrapper">
                                     <div class="">
                                         <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisTextField8Label" for="PolarisTextField8" class="Polaris-Label__Text">HTML code</label></div>
+                                            <div class="Polaris-Label"><label id="  class="Polaris-Label__Text">HTML code</label></div>
                                         </div>
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                <textarea id="PolarisTextField8" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField8Label" aria-invalid="false" aria-multiline="true" style="height: 34px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
+                                                <textarea id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                                 <div aria-hidden="true" class="Polaris-TextField__Resizer">
                                                     <div class="Polaris-TextField__DummyInput">&lt;div&gt;Enter your code&lt;/div&gt;<br></div>
