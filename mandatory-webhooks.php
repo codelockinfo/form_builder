@@ -1,8 +1,6 @@
 <?php
 
 include_once 'append/connection.php';
-
-generate_log('shop-redact-----' , "Mendoroty Webbook call root");
 /* include main client function file */
 include_once ABS_PATH . '/user/cls_functions.php';
 
@@ -11,7 +9,6 @@ if(MODE == 'local'){
 }else{
     $shop_info = file_get_contents('php://input');
 }
-generate_log('shop-redact-----' , $shop_info);
 
 /* shop info array */
 $shop_info = json_decode($shop_info, TRUE);
@@ -23,7 +20,6 @@ $selected_field = 'store_name,email';
 $where = array(['', 'store_name', '=', $shop_info['store_name']]);
 
 $table_shop_info = $CF_obj->select_result(TABLE_USER_SHOP, $selected_field, $where);
-generate_log('shop-redact-----' , json_encode($table_shop_info));
 if($table_shop_info['status'] == 1 && !empty($table_shop_info['data'])){
     $table_shop_info = $table_shop_info['data'];
     
@@ -46,7 +42,6 @@ if($table_shop_info['status'] == 1 && !empty($table_shop_info['data'])){
     
     $where = array(['', 'store_name', '=', $table_shop_info->store_name]);
     $returrnn = $CF_obj->put_data(TABLE_USER_SHOP, $fields, $where);
-    // generate_log('shop-redact-----' , json_encode($returrnn));
     
 }
 

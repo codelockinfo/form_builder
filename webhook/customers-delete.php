@@ -20,15 +20,15 @@ function verify_webhook($data, $hmac_header, $cls_functions)
 }
 
 $data = file_get_contents('php://input');
-$product = json_decode($data);
+$customer = json_decode($data);
 $verified = verify_webhook($data, $hmac_header, $cls_functions);
 
 if($verified == true){
-    if( $topic_header == "products/delete" ) {
+    if( $topic_header == "customer/delete" ) {
         $shopinfo = $cls_functions->get_store_detail_obj();
         $store_user_id = $shopinfo["store_user_id"];
-        $where_query = array(['', 'product_id', '=', $product->id, ' ', 'store_user_id', '=', $store_user_id]);
-        $data = $cls_functions->delete_data(TABLE_PRODUCT_MASTER, $where_query);
+        $where_query = array(['', 'customer_id', '=', $customer->id, ' ', 'store_user_id', '=', $store_user_id]);
+        $data = $cls_functions->delete_data(TABLE_CUSTOMER_MASTER, $where_query);
         echo $cls_functions->last_query();
     }
     else {

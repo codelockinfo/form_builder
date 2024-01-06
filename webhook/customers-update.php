@@ -23,26 +23,26 @@ $verified = verify_webhook($data, $hmac_header,$cls_functions);
 $topic_header = $_SERVER['HTTP_X_SHOPIFY_TOPIC'];
 
 if($verified == true){
-    if( $topic_header == "products/update" ) {
-        $product = json_decode($data);
-			if(!empty($product) && isset($product->id)){
-				$shopinfo = $cls_functions->get_store_detail_obj();
+    if( $topic_header == "customers/update" ) {
+        $customer = json_decode($data);
+			if(!empty($customer) && isset($customer->id)){
 				$field_array = array();
-				$p_id = '';
-				foreach ($product->variants as $i => $variants) {
-					  $main_price = ($variants->price != '') ? $variants->price : "";
-				}
-				$img_src = ($product->image == '') ? '' : $product->image->src;  
-				$fields = array(
-					'`title`' => $product->title,
-					'`image`' =>$img_src,
-					'`description`' =>str_replace("'", "\'",$product->body_html),
-					'`price`' =>$main_price,
-					'`vendor`' =>$product->vendor,
-					'`handle`' =>$product->handle,
+				$field_array = array(
+					'`email`' =>$customer->email,
+				  	'`first_name`' =>$customer->first_name,
+				  	'`last_name`' =>$customer->last_name,
+				  	'`phone`' =>$customer->phone,
+				  	'`orders_count`' =>$customer->orders_count,
+				  	'`currency`' =>$customer->currency,
+				  	'`address1`' =>$customer->default_address->address1,
+				  	'`address2`' =>$customer->default_address->address2,
+				  	'`city`' =>$customer->default_address->city,
+				  	'`province`' =>$customer->default_address->Jharkhand,
+				  	'`country`' =>$customer->default_address->India,
+				  	'`zip`' =>$customer->default_address->zip,
 				);
-				$where_query = array(["", "product_id", "=", $product->id]);
-						  $comeback = $cls_functions->put_data(TABLE_PRODUCT_MASTER, $fields, $where_query);
+				$where_query = array(["", "customer_id", "=", $customer->id]);
+				$comeback = $cls_functions->put_data(TABLE_CUSTOMER_MASTER, $field_array, $where_query);
 			}
     }
     else {
@@ -51,7 +51,7 @@ if($verified == true){
     }    
 }
 else {
-    generate_log('product_update-webhook', json_encode($verified) . "  not verified"); 
+    generate_log('customer_update-webhook', json_encode($verified) . "  not verified"); 
     echo "Access Denied main ";
 }
 
