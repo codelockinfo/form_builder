@@ -417,8 +417,9 @@ include_once('cls_header.php');
 
     <div id="myModal_new" class="modal">
         <form id="createNewForm" class="create_new_frm" name="create_new_form" method="POST"  enctype="multipart/form-data">
-        <input type="hidden" class="selectedType" name="selectedType" data-val="1">
-        <input type="hidden" class="formnamehide" name="formnamehide" data-val="Blank Form">
+        <input type="hidden" class="selectedType" name="selectedType"  value="1">
+        <input type="hidden" class="formnamehide" name="formnamehide"  value="Blank Form">
+        <input type="hidden" class="formnamedescriptionhide" name="formdeswcriptionhide"  value="Leave your message and we'll get back to you shortly.">
             <div class="modal-content">
                 <div class="Polaris-Modal-Dialog__Modal">
                     <div class="Polaris-Box" style="

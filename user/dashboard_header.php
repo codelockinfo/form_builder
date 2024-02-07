@@ -35,12 +35,12 @@ $store = (isset($_GET['store']) && $_GET['store'] != '') ? $_GET['store'] : "man
           </div>
           <div class="Polaris-TopBar__Contents">
           <div class="Polaris-TopBar__SearchField">
-            <button class="Polaris-Button Polaris-Button--primary" type="button">
+            <!-- <button class="Polaris-Button Polaris-Button--primary" type="button">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Shopify Admin</span>
                 </span>
-            </button>
-             <button class="Polaris-Button" type="button">
+            </button> -->
+             <button class="Polaris-Button Polaris-Button--primary" type="button">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Home</span>
                 </span>

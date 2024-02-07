@@ -686,6 +686,9 @@ ul {
 .code-form-control .globo-heading {
     color: #000;
 }
+.backtoindex.Polaris-Link:focus:not(:active){
+    outline:unset;
+}
 /* heading end */
 @media screen and (max-width: 870px) {
     .context .context-inner .item{

@@ -16,8 +16,8 @@
                 $(this).find(".text_image_list").addClass("first_txt_image");
                 var getval = $(this).data("val");
                 var formname = $(this).find(".text_image_list").html();
-                $(".selectedType").attr("data-val",getval);
-                $(".formnamehide").attr("data-val",formname);
+                $(".selectedType").val(getval);
+                $(".formnamehide").val(formname);
             });
          });
 

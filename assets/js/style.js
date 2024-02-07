@@ -295,11 +295,11 @@ $(document).ready(function(){
 // today
 
 $(document).ready(function () {
-    $(".code-form-control").each(function (index) {           
-        $(this).css("display", "none");
-    });
-    var formId = $(".element_start").find(".owl-item #tab-1 .tabContent .elementroot .selected_element_set").html();
-    console.log(formId); 
+    // $(".code-form-control").each(function (index) {           
+    //     $(this).css("display", "none");
+    // });
+    // var formId = $(".element_start").find(".owl-item #tab-1 .tabContent .elementroot .selected_element_set").html();
+    // console.log(formId); 
     // var newId1 = (formId - 1);
     // console.log(newId1); 
     // var formId1 = "element" + newId;

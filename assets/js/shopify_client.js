@@ -787,12 +787,12 @@ var BACKTO = 0;
             });
         });
 
-        function insertDefaultElements(form_id,selectedType){       
+        function insertDefaultElements(form_id,selectedType){   
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
-                data: {'routine_name': 'get_three_element_fun' , store: store, "form_id":form_id, "form_type":selectedType},
+                data: {'routine_name': 'insertDefaultElements' , store: store, "form_id":form_id, "form_type":selectedType},
                 success: function (comeback) {
                     var comeback = JSON.parse(comeback);
                     if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -809,12 +809,43 @@ var BACKTO = 0;
                     dataType: "json",
                     data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store },
                     success: function (comeback) {
-                        var comeback = JSON.parse(comeback);
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
                             redirect403();
                         } else{
-                        $(".selected_element_set").html(comeback['outcome']);
+                            console.log(comeback['form_footer_data']);
+                            console.log(comeback['form_header_data']);
+                            console.log(comeback['form_header_data']['1']);
+                            if(comeback['form_header_data']['0'] == 1){
+                                $(".headerData .showHeader").prop("checked", true);
+                            }else{
+                                $(".headerData .showHeader").prop("checked", false);
+                            }
+                            $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
+                            $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
+                            $(".form_name_form_design").val(comeback['form_header_data']['1'])
+                            $(".selected_element_set").html(comeback['outcome']);
+                            $(".code-form-app").html(comeback['form_html']);
 
+                            $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
+                            $('.footerData .submitText').val(comeback['form_footer_data']['1']);
+                            if(comeback['form_footer_data']['2'] == 1){
+                                $(".footerData .resetButton").prop("checked", true);
+                            }else{
+                                $(".footerData .resetButton").prop("checked", false);
+                            }
+                            $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
+                            if(comeback['form_footer_data']['4'] == 1){
+                                $(".footerData .fullFooterButton").prop("checked", true);
+                            }else{
+                                $(".footerData .fullFooterButton").prop("checked", false);
+                            }
+                            $( ".footerData .chooseItem" ).each(function() {
+                                    if(comeback['form_footer_data']['5'] == $(this).data('value')){
+                                        $(".footerData .chooseItem").removeClass("active");
+                                        $(this).addClass("active");
+                                    }
+                            });
+                         
                         }
                     }
                 });
@@ -877,34 +908,34 @@ var BACKTO = 0;
             });
         });
 
-        $(document).on("click", ".clsselected_element", function(event) {
-            var formid=$(".formid").val();
-            var element_id=$(this).find(".get_element_hidden").val();
-            var form_data_id=$(this).find(".form_data_id").val();
+        // $(document).on("click", ".clsselected_element", function(event) {
+        //     var formid=$(".formid").val();
+        //     var element_id=$(this).find(".get_element_hidden").val();
+        //     var form_data_id=$(this).find(".form_data_id").val();
             
-            event.preventDefault();  
-            $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {'routine_name': 'getElementdetails', store: store,'formid':formid,'element_id':element_id },
-                beforeSend: function () {
-                    loading_show('.save_loader_show');
-                },
-                success: function (comeback) {
-                    var comeback = JSON.parse(comeback);
-                    if (comeback['code'] != undefined && comeback['code'] == '403') {
-                        redirect403();
-                    } else{  
-                    // $(".clsname_of_element").html(comeback['outcome']);
-                    // $(".clsname_of_element_val").val(comeback['outcome']);
-                    $(".element_id_in_form").val(element_id);
-                    $(".form_data_id_second").val(form_data_id);
-                    }
-                    loading_hide('.save_loader_show', 'Save');
-                }
-            });
-        });
+        //     event.preventDefault();  
+        //     $.ajax({
+        //         url: "ajax_call.php",
+        //         type: "post",
+        //         dataType: "json",
+        //         data: {'routine_name': 'getElementdetails', store: store,'formid':formid,'element_id':element_id },
+        //         beforeSend: function () {
+        //             loading_show('.save_loader_show');
+        //         },
+        //         success: function (comeback) {
+        //             var comeback = JSON.parse(comeback);
+        //             if (comeback['code'] != undefined && comeback['code'] == '403') {
+        //                 redirect403();
+        //             } else{  
+        //             // $(".clsname_of_element").html(comeback['outcome']);
+        //             // $(".clsname_of_element_val").val(comeback['outcome']);
+        //             $(".element_id_in_form").val(element_id);
+        //             $(".form_data_id_second").val(form_data_id);
+        //             }
+        //             loading_hide('.save_loader_show', 'Save');
+        //         }
+        //     });
+        // });
         $(document).on("click", ".remove_this_element", function(event) {
             event.preventDefault();
             var thisObj = $(this);
@@ -951,12 +982,10 @@ var BACKTO = 0;
         }  
         
         $(document).on("click", ".btncreate_new", function(event) {
-            event.preventDefault();    
+            event.preventDefault(); 
+            var selectedType = $(".selectedType").val();  
             var form_data = $("#createNewForm")[0];
             var form_data = new FormData(form_data);
-            var selectedType = $(".selectedType").attr("data-val");
-            form_data.append('selectedTypes',selectedType);
-            form_data.append('formnamehiden',$(".formnamehide").attr("data-val"));
             form_data.append('store',store); 
             form_data.append('routine_name','function_create_form');      
             $.ajax({
@@ -987,12 +1016,13 @@ var BACKTO = 0;
             // console.log("element click ");
             var slideTo = $(this).data("owl");
             var elementId = $(this).data("elementid");
+            var formId = $(this).closest(".clsselected_element").data("formid");
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
-                data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId },
+                data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId },
                 success: function (comeback) {
                     // console.log(comeback);
                     var comeback = JSON.parse(comeback);
@@ -1006,7 +1036,27 @@ var BACKTO = 0;
                 }
             });
         });
-        // index page checkbox selected        
+        // index page checkbox selected    
+
+        $(document).on("change",".switch input[name='checkbox']",function(){
+            console.log("Input checkboc table");
+            var formId = $(this).closest(".Polaris-ResourceList__HeaderWrapper").find(".form_id_main").val();
+            var ischecked= $(this).is(':checked');
+            var ischecked_value = 1;
+            if(!ischecked){
+                var ischecked_value = 0;
+            }
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                data: {'routine_name': 'change_form_status', store: store,"formid":formId, "ischecked_value":ischecked_value },
+                success: function (comeback) {
+                    var comeback = JSON.parse(comeback);
+                }
+            });
+
+        });
         $(document).on("click","#checkAll",function(){
             
             var checked = $(this).is(":checked");
@@ -1018,6 +1068,8 @@ var BACKTO = 0;
                 $(".selectedCheck").each(function() {
                 $(this).prop("checked", false);
                 });
+                $(".bultActionss").css("display","none");
+                $(".selectedshow,.sortBy").css("display","block");
             }
         });
         $(document).on("click",".selectedCheck",function() {

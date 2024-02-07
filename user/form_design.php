@@ -27,7 +27,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
             <div class="context">
                 <div class="context-inner">
                     <div class="item form-name-wrapper">
-                        <div class="Polaris-Labelled--hidden">
+                        <div class="Polaris-Labelled--hidden sortBy">
                             <div class="Polaris-Connected">
                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary disp_flex_input">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
@@ -37,14 +37,14 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             value="">
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
-                                    <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"
+                                    <!-- <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
                                             <span class="Polaris-Button__Text">
                                                 <span>Save</span>
                                             </span>
                                         </span>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             </div>
                             <div class="Polaris-ButtonGroup__Item">
                                 <div>
-                                    <button class="Polaris-Button Polaris-Button--primary" aria-disabled="false"
+                                    <button class="Polaris-Button Polaris-Button--primary saveForm" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
                                             <span class="Polaris-Button__Text">
@@ -104,16 +104,18 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
             </div>
             <div class="brand desktop">
                 <div class="logo">
-                    <button type="button" class="Polaris-Link">
-                        <span class="Polaris-Icon">
-                            <span class="Polaris-VisuallyHidden"></span>
-                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                <path
-                                    d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
-                                </path>
-                            </svg>
-                        </span>
-                    </button>
+                    <a href="index.php?store=<?php echo $store; ?>">
+                        <button type="button" class="Polaris-Link backtoindex">
+                            <span class="Polaris-Icon">
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path
+                                        d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </button>
+                    </a>
                 </div>
                 <!-- <div class="title">
                     <button type="button" class="Polaris-Link">
@@ -140,463 +142,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                 <div class="preview-box iframe-wrapper desktop">
                     <div class="contact-form">
                         <div class="code-form-app boxed-layout">
-                            <div class="header dismiss hidden" onclick="Globo.FormBuilder.closeModalForm(this)">
-                                <svg width="20" height="20" viewBox="0 0 20 20" class="" focusable="false" aria-hidden="true"><path d="M11.414 10l4.293-4.293a.999.999 0 1 0-1.414-1.414L10 8.586 5.707 4.293a.999.999 0 1 0-1.414 1.414L8.586 10l-4.293 4.293a.999.999 0 1 0 1.414 1.414L10 11.414l4.293 4.293a.997.997 0 0 0 1.414 0 .999.999 0 0 0 0-1.414L11.414 10z" fill-rule="evenodd"></path></svg>
-                            </div>
-                            <div class="g-container" novalidate="" action="/api/front/form/false/send" method="POST" enctype="multipart/form-data" data-id="false">
-                                <div class="header">
-                                    <h3 class="title globo-heading">Contact us</h3>
-                                        <div class="description globo-description">Leave your message and we'll get back to you shortly.</div>
-                                </div>         
-                                <div class="content flex-wrap block-container" data-id="false">
-                                    <div class="code-form-control layout-2-column" data-id="element0">
-                                            <label for="false-text" class="classic-label globo-label ">
-                                            <span class="label-content" data-label="Your Name">Your Name</span><span class="text-danger text-smaller"> *</span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input" id="false-text" name="text" placeholder="Your Name" value="">
-                                        </div>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column" data-id="element1">
-                                        <label for="false-email" class="classic-label globo-label "><span class="label-content" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="email" class="classic-input" id="false-email" name="email" placeholder="Email" value="">
-                                        </div>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-1-column" data-id="element4">
-                                        <label for="false-textarea" class="classic-label globo-label "><span class="label-content" data-label="Message">Message</span><span class="text-danger text-smaller"> *</span></label>
-                                        <textarea id="false-textarea" data-type="textarea" class="classic-input" rows="3" name="textarea" placeholder="Message" value=""></textarea>
-                                        
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element3">
-                                        <label for="false-text-1" class="classic-label globo-label "><span class="label-content" data-label="Text">Text</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input" id="false-text-1" name="text-1" placeholder="">
-                                        </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element2">
-                                        <label for="false-email-1" class="classic-label globo-label "><span class="label-content" data-label="Email">Email</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="email" class="classic-input" id="false-email-1" name="email-1" placeholder="">
-                                        </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element5">
-                                        <label for="false-name-1" class="classic-label globo-label "><span class="label-content" data-label="Name">Name</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="name" class="classic-input" id="false-name-1" name="name-1" placeholder="">
-                                        </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element6">
-                                        <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content" data-label="Textarea">Textarea</span><span></span></label>
-                                        <textarea id="false-textarea-1" data-type="textarea" class="classic-input" rows="3" name="textarea-1" placeholder=""></textarea>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element4">
-                                        <label for="false-url-1" class="classic-label globo-label "><span class="label-content" data-label="Url">Url</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="url" class="classic-input" id="false-url-1" name="url-1" placeholder="">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element8">
-                                        <label for="false-phone-1" class="classic-label globo-label "><span class="label-content" data-label="Phone">Phone</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" data-type="phone" class="classic-input" id="false-phone-1" name="phone-1" placeholder="" default-country-code="us">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element9">
-                                        <label for="false-password-1" class="classic-label globo-label  "><span class="label-content" data-label="Password">Password</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="password" data-type="password" class="classic-input" id="false-password-1" name="password-1" placeholder="Enter your password">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element10">
-                                        <label for="false-number-1" class="classic-label globo-label "><span class="label-content" data-label="Number">Number</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="number" class="classic-input" id="false-number-1" name="number-1" placeholder="" onkeypress="if(this.value.length == 100) return false;" onchange="if(this.value.length > 100) this.value = this.value - 1">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element11">
-                                        <label for="false-datetime-1" class="classic-label globo-label "><span class="label-content" data-label="Date time">Date time</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input" id="false-datetime-1" name="datetime-1" placeholder="" data-format="date" datadateformat="Y-m-d" datatimeformat="12h" readonly="readonly">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element12">
-                                        <label for="false-file-1" class="classic-label globo-label "><span class="label-content" data-label="File">File</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <input type="file" data-type="file" class="classic-input" id="false-file-1" name="file-1" placeholder="" data-allowed-extensions="jpg,jpeg,png">
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element13" data-default-value="">
-                                        <div class="checkbox-wrapper">
-                                            <input class="checkbox-input" id="false-acceptTerms-1" type="checkbox" data-type="acceptTerms" name="acceptTerms-1[]" value="">
-                                            <label class="checkbox-label globo-option classic-label globo-label" for="false-acceptTerms-1"><span class="label-content" data-label="I agree Terms and Conditions">I agree <a href="/" target="_blank">Terms and Conditions</a></span></label>
-                                                <small class="help-text globo-description"></small>
-                                                <small class="messages"></small>
-                                        </div>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element14" data-default-value="">
-                                        <label class="classic-label globo-label "><span class="label-content" data-label="Checkbox">Checkbox</span><span></span>
-                                        </label>
-                                        <ul class="flex-wrap">
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input" id="false-checkbox-1-Option 1-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 1">
-                                                    <label class="checkbox-label globo-option" for="false-checkbox-1-Option 1-">Option 1</label>
-                                                </div>
-                                            </li>
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input" id="false-checkbox-1-Option 2-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 2">
-                                                    <label class="checkbox-label globo-option" for="false-checkbox-1-Option 2-">Option 2</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element15" data-default-value="">
-                                        <label for="false-select-1" class="classic-label globo-label "><span class="label-content" data-label="Dropdown">Dropdown</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <select name="select-1" id="false-select-1" class="classic-input">
-                                                <option value="" disabled="disabled">Please select</option>
-                                                <option value="Option 1">Option 1</option>
-                                                <option value="Option 2">Option 2</option>
-                                            </select>
-                                        </div>
-                                            <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element16" data-default-value="">
-                                        <label class="classic-label globo-label "><span class="label-content" data-label="Radio">Radio</span><span></span></label>
-                                        <ul class="flex-wrap">
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="radio-wrapper">
-                                                    <input class="radio-input" id="false-radio-1-Option 1-" type="radio" data-type="radio" name="radio-1" value="Option 1">
-                                                    <label class="radio-label globo-option" for="false-radio-1-Option 1-">Option 1</label>
-                                                </div>
-                                            </li>
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="radio-wrapper">
-                                                    <input class="radio-input" id="false-radio-1-Option 2-" type="radio" data-type="radio" name="radio-1" value="Option 2">
-                                                    <label class="radio-label globo-option" for="false-radio-1-Option 2-">Option 2</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element17" data-default-value="">
-                                        <label for="false-country-1" class="classic-label globo-label "><span class="label-content" data-label="Country">Country</span><span></span></label>
-                                        <div class="globo-form-input">
-                                            <select name="country-1" id="false-country-1" class="classic-input">
-                                                <option value="" disabled="disabled">Please select</option>
-                                                <option value="Afghanistan">Afghanistan</option>
-                                                <option value="Aland Islands">Aland Islands</option>
-                                                <option value="Albania">Albania</option>
-                                                <option value="Algeria">Algeria</option>
-                                                <option value="Andorra">Andorra</option>
-                                                <option value="Angola">Angola</option>
-                                                <option value="Anguilla">Anguilla</option>
-                                                <option value="Antigua And Barbuda">Antigua And Barbuda</option>
-                                                <option value="Argentina">Argentina</option>
-                                                <option value="Armenia">Armenia</option>
-                                                <option value="Aruba">Aruba</option>
-                                                <option value="Australia">Australia</option>
-                                                <option value="Austria">Austria</option>
-                                                <option value="Azerbaijan">Azerbaijan</option>
-                                                <option value="Bahamas">Bahamas</option>
-                                                <option value="Bahrain">Bahrain</option>
-                                                <option value="Bangladesh">Bangladesh</option>
-                                                <option value="Barbados">Barbados</option>
-                                                <option value="Belarus">Belarus</option>
-                                                <option value="Belgium">Belgium</option>
-                                                <option value="Belize">Belize</option>
-                                                <option value="Benin">Benin</option>
-                                                <option value="Bermuda">Bermuda</option>
-                                                <option value="Bhutan">Bhutan</option>
-                                                <option value="Bolivia">Bolivia</option>
-                                                <option value="Bosnia And Herzegovina">Bosnia And Herzegovina</option>
-                                                <option value="Botswana">Botswana</option>
-                                                <option value="Bouvet Island">Bouvet Island</option>
-                                                <option value="Brazil">Brazil</option>
-                                                <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
-                                                <option value="Virgin Islands, British">Virgin Islands, British</option>
-                                                <option value="Brunei">Brunei</option>
-                                                <option value="Bulgaria">Bulgaria</option>
-                                                <option value="Burkina Faso">Burkina Faso</option>
-                                               <option value="Burundi">Burundi</option>
-                                                <option value="Cambodia">Cambodia</option>
-                                                <option value="Republic of Cameroon">Republic of Cameroon</option>
-                                                <option value="Canada">Canada</option>
-                                                <option value="Cape Verde">Cape Verde</option>
-                                                <option value="Caribbean Netherlands">Caribbean Netherlands</option>
-                                                <option value="Cayman Islands">Cayman Islands</option>
-                                                <option value="Central African Republic">Central African Republic</option>
-                                                <option value="Chad">Chad</option>
-                                                <option value="Chile">Chile</option>
-                                                <option value="China">China</option>
-                                                <option value="Christmas Island">Christmas Island</option>
-                                                <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
-                                                <option value="Colombia">Colombia</option>
-                                                <option value="Comoros">Comoros</option>
-                                                <option value="Congo">Congo</option>
-                                                <option value="Congo, The Democratic Republic Of The">Congo, The Democratic Republic Of The</option>
-                                                <option value="Cook Islands">Cook Islands</option>
-                                                <option value="Costa Rica">Costa Rica</option>
-                                                <option value="Croatia">Croatia</option>
-                                                <option value="Cuba">Cuba</option>
-                                                <option value="Curaçao">Curaçao</option>
-                                                <option value="Cyprus">Cyprus</option>
-                                                <option value="Czech Republic">Czech Republic</option>
-                                                <option value="Côte d'Ivoire">Côte d'Ivoire</option>
-                                                <option value="Denmark">Denmark</option>
-                                                <option value="Djibouti">Djibouti</option>
-                                                <option value="Dominica">Dominica</option>
-                                                <option value="Dominican Republic">Dominican Republic</option>
-                                                <option value="Ecuador">Ecuador</option>
-                                                <option value="Egypt">Egypt</option>
-                                                <option value="El Salvador">El Salvador</option>
-                                                <option value="Equatorial Guinea">Equatorial Guinea</option>
-                                                <option value="Eritrea">Eritrea</option>
-                                                <option value="Estonia">Estonia</option>
-                                                <option value="Eswatini">Eswatini</option>
-                                                <option value="Ethiopia">Ethiopia</option>
-                                                <option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option>
-                                                <option value="Faroe Islands">Faroe Islands</option>
-                                                <option value="Fiji">Fiji</option>
-                                                <option value="Finland">Finland</option>
-                                                <option value="France">France</option>
-                                                <option value="French Guiana">French Guiana</option>
-                                                <option value="French Polynesia">French Polynesia</option>
-                                                <option value="French Southern Territories">French Southern Territories</option>
-                                                <option value="Gabon">Gabon</option>
-                                                <option value="Gambia">Gambia</option>
-                                                <option value="Georgia">Georgia</option>
-                                                <option value="Germany">Germany</option>
-                                                <option value="Ghana">Ghana</option>
-                                                <option value="Gibraltar">Gibraltar</option>
-                                                <option value="Greece">Greece</option>
-                                                <option value="Greenland">Greenland</option>
-                                                <option value="Grenada">Grenada</option>
-                                                <option value="Guadeloupe">Guadeloupe</option>
-                                               <option value="Guatemala">Guatemala</option>
-                                                <option value="Guernsey">Guernsey</option>
-                                                <option value="Guinea">Guinea</option>
-                                                <option value="Guinea Bissau">Guinea Bissau</option>
-                                                <option value="Guyana">Guyana</option>
-                                                <option value="Haiti">Haiti</option>
-                                                <option value="Heard Island And Mcdonald Islands">Heard Island And Mcdonald Islands</option>
-                                                <option value="Honduras">Honduras</option>
-                                                <option value="Hong Kong">Hong Kong</option>
-                                                <option value="Hungary">Hungary</option>
-                                                <option value="Iceland">Iceland</option>
-                                                <option value="India">India</option>
-                                                <option value="Indonesia">Indonesia</option>
-                                                <option value="Iran, Islamic Republic Of">Iran, Islamic Republic Of</option>
-                                                <option value="Iraq">Iraq</option>
-                                                <option value="Ireland">Ireland</option>
-                                                <option value="Isle Of Man">Isle Of Man</option>
-                                                <option value="Israel">Israel</option>
-                                                <option value="Italy">Italy</option>
-                                                <option value="Jamaica">Jamaica</option>
-                                                <option value="Japan">Japan</option>
-                                                <option value="Jersey">Jersey</option>
-                                                <option value="Jordan">Jordan</option>
-                                                <option value="Kazakhstan">Kazakhstan</option>
-                                                <option value="Kenya">Kenya</option>
-                                                <option value="Kiribati">Kiribati</option>
-                                                <option value="Kosovo">Kosovo</option>
-                                                <option value="Kuwait">Kuwait</option>
-                                                <option value="Kyrgyzstan">Kyrgyzstan</option>
-                                                <option value="Lao People's Democratic Republic">Lao People's Democratic Republic</option>
-                                                <option value="Latvia">Latvia</option>
-                                                <option value="Lebanon">Lebanon</option>
-                                                <option value="Lesotho">Lesotho</option>
-                                                <option value="Liberia">Liberia</option>
-                                                <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
-                                                <option value="Liechtenstein">Liechtenstein</option>
-                                                <option value="Lithuania">Lithuania</option>
-                                                <option value="Luxembourg">Luxembourg</option>
-                                                <option value="Macao">Macao</option>
-                                                <option value="Madagascar">Madagascar</option>
-                                                <option value="Malawi">Malawi</option>
-                                                <option value="Malaysia">Malaysia</option>
-                                                <option value="Maldives">Maldives</option>
-                                                <option value="Mali">Mali</option>
-                                                <option value="Malta">Malta</option>
-                                                <option value="Martinique">Martinique</option>
-                                                <option value="Mauritania">Mauritania</option>
-                                                <option value="Mauritius">Mauritius</option>
-                                                <option value="Mayotte">Mayotte</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Moldova, Republic of">Moldova, Republic of</option>
-                                                <option value="Monaco">Monaco</option>
-                                                <option value="Mongolia">Mongolia</option>
-                                                <option value="Montenegro">Montenegro</option>
-                                                <option value="Montserrat">Montserrat</option>
-                                                <option value="Morocco">Morocco</option>
-                                                <option value="Mozambique">Mozambique</option>
-                                                <option value="Myanmar">Myanmar</option>
-                                                <option value="Namibia">Namibia</option>
-                                                <option value="Nauru">Nauru</option>
-                                                <option value="Nepal">Nepal</option>
-                                                <option value="Netherlands">Netherlands</option>
-                                                <option value="Netherlands Antilles">Netherlands Antilles</option>
-                                                <option value="New Caledonia">New Caledonia</option>
-                                                <option value="New Zealand">New Zealand</option>
-                                                <option value="Nicaragua">Nicaragua</option>
-                                                <option value="Niger">Niger</option>
-                                                <option value="Nigeria">Nigeria</option>
-                                                <option value="Niue">Niue</option>
-                                                <option value="Norfolk Island">Norfolk Island</option>
-                                                <option value="Korea, Democratic People's Republic Of">Korea, Democratic People's Republic Of</option>
-                                                <option value="North Macedonia">North Macedonia</option>
-                                                <option value="Norway">Norway</option>
-                                                <option value="Oman">Oman</option>
-                                                <option value="Pakistan">Pakistan</option>
-                                                <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
-                                                <option value="Panama">Panama</option>
-                                                <option value="Papua New Guinea">Papua New Guinea</option>
-                                                <option value="Paraguay">Paraguay</option>
-                                                <option value="Peru">Peru</option>
-                                                <option value="Philippines">Philippines</option>
-                                                <option value="Pitcairn">Pitcairn</option>
-                                                <option value="Poland">Poland</option>
-                                                <option value="Portugal">Portugal</option>
-                                                <option value="Qatar">Qatar</option>
-                                                <option value="Reunion">Reunion</option>
-                                                <option value="Romania">Romania</option>
-                                                <option value="Russia">Russia</option>
-                                                <option value="Rwanda">Rwanda</option>
-                                                <option value="Samoa">Samoa</option>
-                                                <option value="San Marino">San Marino</option>
-                                                <option value="Sao Tome And Principe">Sao Tome And Principe</option>
-                                                <option value="Saudi Arabia">Saudi Arabia</option>
-                                                <option value="Senegal">Senegal</option>
-                                                <option value="Serbia">Serbia</option>
-                                                <option value="Seychelles">Seychelles</option>
-                                                <option value="Sierra Leone">Sierra Leone</option>
-                                                <option value="Singapore">Singapore</option>
-                                                <option value="Sint Maarten">Sint Maarten</option>
-                                                <option value="Slovakia">Slovakia</option>
-                                                <option value="Slovenia">Slovenia</option>
-                                                <option value="Solomon Islands">Solomon Islands</option>
-                                                <option value="Somalia">Somalia</option>
-                                                <option value="South Africa">South Africa</option>
-                                                <option value="South Georgia And The South Sandwich Islands">South Georgia And The South Sandwich Islands</option>
-                                                <option value="South Korea">South Korea</option>
-                                                <option value="South Sudan">South Sudan</option>
-                                                <option value="Spain">Spain</option>
-                                                <option value="Sri Lanka">Sri Lanka</option>
-                                                <option value="Saint Barthélemy">Saint Barthélemy</option>
-                                                <option value="Saint Helena">Saint Helena</option>
-                                                <option value="Saint Kitts And Nevis">Saint Kitts And Nevis</option>
-                                                <option value="Saint Lucia">Saint Lucia</option>
-                                                <option value="Saint Martin">Saint Martin</option>
-                                                <option value="Saint Pierre And Miquelon">Saint Pierre And Miquelon</option>
-                                                <option value="St. Vincent">St. Vincent</option>
-                                                <option value="Sudan">Sudan</option>
-                                                <option value="Suriname">Suriname</option>
-                                                <option value="Svalbard And Jan Mayen">Svalbard And Jan Mayen</option>
-                                                <option value="Sweden">Sweden</option>
-                                                <option value="Switzerland">Switzerland</option>
-                                                <option value="Syria">Syria</option>
-                                                <option value="Taiwan">Taiwan</option>
-                                                <option value="Tajikistan">Tajikistan</option>
-                                                <option value="Tanzania, United Republic Of">Tanzania, United Republic Of</option>
-                                                <option value="Thailand">Thailand</option>
-                                                <option value="Timor Leste">Timor Leste</option>
-                                                <option value="Togo">Togo</option>
-                                                <option value="Tokelau">Tokelau</option>
-                                                <option value="Tonga">Tonga</option>
-                                                <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                                                <option value="Tunisia">Tunisia</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="Turkmenistan">Turkmenistan</option>
-                                                <option value="Turks and Caicos Islands">Turks and Caicos Islands</option>
-                                                <option value="Tuvalu">Tuvalu</option>
-                                                <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
-                                                <option value="Uganda">Uganda</option>
-                                                <option value="Ukraine">Ukraine</option>
-                                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                                <option value="United Kingdom">United Kingdom</option>
-                                                <option value="United States">United States</option>
-                                                <option value="Uruguay">Uruguay</option>
-                                                <option value="Uzbekistan">Uzbekistan</option>
-                                                <option value="Vanuatu">Vanuatu</option>
-                                                <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
-                                                <option value="Venezuela">Venezuela</option>
-                                                <option value="Vietnam">Vietnam</option>
-                                                <option value="Wallis And Futuna">Wallis And Futuna</option>
-                                                <option value="Western Sahara">Western Sahara</option>
-                                                <option value="Yemen">Yemen</option>
-                                                <option value="Zambia">Zambia</option>
-                                                <option value="Zimbabwe">Zimbabwe</option>
-                                            </select>
-                                        </div>
-                                        <small class="help-text globo-description"></small>
-                                            <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element18">
-                                        <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content" data-label="Rating">Rating</span><span></span></label>
-                                        <div class="star-rating">
-                                            <fieldset>
-                                                <input type="radio" data-type="rating-star" id="false-rating-star-1-5-stars" name="rating-star-1" value="5"><label for="false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
-                                                <input type="radio" data-type="rating-star" id="false-rating-star-1-4-stars" name="rating-star-1" value="4"><label for="false-rating-star-1-4-stars" title="4 Stars">4 stars</label>
-                                                <input type="radio" data-type="rating-star" id="false-rating-star-1-3-stars" name="rating-star-1" value="3"><label for="false-rating-star-1-3-stars" title="3 Stars">3 stars</label>
-                                                <input type="radio" data-type="rating-star" id="false-rating-star-1-2-stars" name="rating-star-1" value="2"><label for="false-rating-star-1-2-stars" title="2 Stars">2 stars</label>
-                                                <input type="radio" data-type="rating-star" id="false-rating-star-1-1-star" name="rating-star-1" value="1"><label for="false-rating-star-1-1-star" title="1 Star">1 star</label>
-                                            </fieldset>
-                                        </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages"></small>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element19">
-                                        <h3 class="heading-title globo-heading">Heading</h3>
-                                        <p class="heading-caption"></p>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element20">
-                                        <div class="globo-paragraph">Paragraph</div>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element21">
-                                        <div>Enter your code</div>
-                                    </div>
-                                    <div class="code-form-control layout-2-column"data-id="element22">
-                                        <!-- <hr> -->
-                                    </div>
-                                </div>
-                            </div>   
-                            <div class="footer fleft">
-                                <button class="action submit classic-button">
-                                    <span class="spinner"></span>
-                                    Submit
-                                </button>
-                                <button class="action reset classic-button hidden" type="button" onclick="Globo.FormBuilder.handleResetForm(this)">Reset</button>
-                            </div>
+                         
+                            
                         </div> 
-                               
                     </div>
                 </div>
             </div>
@@ -682,144 +230,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <h3 class="subheading">Elements</h3>
                                         <div>
                                             <div class="selected_element_set">
-                                                <!-- <div class="builder-item-wrapper ">
-                                                    <div class="list-item" data-owl="3">
-                                                        <div class="row">
-                                                            <div class="icon">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="m8.24 9 .816 2.33a1 1 0 0 0 1.888-.66l-3.335-9.528a1.705 1.705 0 0 0-3.218 0l-3.335 9.528a1 1 0 0 0 1.888.66l.815-2.33h4.482zm-.7-2-1.54-4.401-1.54 4.401h3.08zm7.96-2c.608 0 1.18.155 1.68.428a.999.999 0 0 1 1.82.572v5a1 1 0 0 1-1.82.572 3.5 3.5 0 1 1-1.68-6.572zm0 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z">
-                                                                        </path>
-                                                                        <path
-                                                                            d="M2 14a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2h-16zm0 4a1 1 0 1 0 0 2h12a1 1 0 1 0 0-2h-12z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Your Name</div>
-                                                                </div>
-                                                            </div>
-                                                            <div title="Duplicate this element" class="duplicate">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div title="Sort this element" class="softable">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm6-8a2 2 0 1 0-.001-4.001 2 2 0 0 0 .001 4.001zm0 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item" data-owl="4">
-                                                        <div class="row">
-                                                            <div class="icon">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M0 5.324v10.176a1.5 1.5 0 0 0 1.5 1.5h17a1.5 1.5 0 0 0 1.5-1.5v-10.176l-9.496 5.54a1 1 0 0 1-1.008 0l-9.496-5.54z">
-                                                                        </path>
-                                                                        <path
-                                                                            d="M19.443 3.334a1.494 1.494 0 0 0-.943-.334h-17a1.49 1.49 0 0 0-.943.334l9.443 5.508 9.443-5.508z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Email</div>
-                                                                </div>
-                                                            </div>
-                                                            <div title="Duplicate this element" class="duplicate">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div title="Sort this element" class="softable">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm6-8a2 2 0 1 0-.001-4.001 2 2 0 0 0 .001 4.001zm0 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="builder-item-wrapper ">
-                                                    <div class="list-item" data-owl="5">
-                                                        <div class="row">
-                                                            <div class="icon">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M2.5 1a1.5 1.5 0 0 0-1.5 1.5v15a1.5 1.5 0 0 0 1.5 1.5h15a1.5 1.5 0 0 0 1.5-1.5v-15a1.5 1.5 0 0 0-1.5-1.5h-15zm13.5 4h-12v2h12v-2zm-12 4h12v2h-12v-2zm6 4h-6v2h6v-2z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div class="title">
-                                                                <div>
-                                                                    <div>Message</div>
-                                                                </div>
-                                                            </div>
-                                                            <div title="Duplicate this element" class="duplicate">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                            <div title="Sort this element" class="softable">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm6-8a2 2 0 1 0-.001-4.001 2 2 0 0 0 .001 4.001zm0 2a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001zm0 6a2 2 0 1 0 .001 4.001 2 2 0 0 0-.001-4.001z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
+                                              
                                             </div>
                                         </div>
                                     </div>
@@ -1577,7 +988,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         </div>
                     </div>
                 </div>
-                <div class="polarisformcontrol">
+                <div class="polarisformcontrol  headerData">
                     <div class="header backheader">
 
                         <button class="ui-btn back-icon">
@@ -1595,7 +1006,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     <div class="">
                         <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox12"><span
                                     class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                            id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input"
+                                            id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input showHeader"
                                             aria-invalid="false" role="checkbox" aria-checked="true" value=""
                                             checked=""><span class="Polaris-Checkbox__Backdrop"></span><span
                                             class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
@@ -1619,9 +1030,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue"><input
                                                     id="PolarisTextField58" placeholder=""
-                                                    class="Polaris-TextField__Input" type="text"
+                                                    class="Polaris-TextField__Input headerTitle" type="text"
                                                     aria-labelledby="PolarisTextField58Label" aria-invalid="false"
-                                                    value="Contact us">
+                                                    >
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -1635,7 +1046,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <label id=":R1n6:Label" for=":R1n6:" class="Polaris-Label__Text">Description</label>
                                 </div>
                             </div>
-                            <textarea name="content" class="editor">
+                            <textarea name="content" class="editor headerDescription">
                                 &lt;p&gt;This is some sample content.&lt;/p&gt;
                             </textarea>
                         </div>
@@ -1871,9 +1282,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
-                                        <div class="chooseItem ">33%</div>
-                                        <div class="chooseItem active">50%</div>
-                                        <div class="chooseItem ">100%</div>
+                                        <div class="chooseItem " data-value="3">33%</div>
+                                        <div class="chooseItem active" data-value="2">50%</div>
+                                        <div class="chooseItem " data-value="1">100%</div>
                                     </div>
                                 </div>
                             </div>
@@ -2125,9 +1536,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
-                                            <div class="chooseItem ">33%</div>
-                                            <div class="chooseItem ">50%</div>
-                                            <div class="chooseItem active">100%</div>
+                                            <div class="chooseItem " data-value="3">33%</div>
+                                            <div class="chooseItem " data-value="2">50%</div>
+                                            <div class="chooseItem active" data-value="1">100%</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2239,7 +1650,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     <div class="">
                         <div class="container tabContent">
                             <div class="container">
-                                <div class="">
+                                <div class="footerData">
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
                                             <div class="">
@@ -2262,7 +1673,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                         class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
                                                             <input id="PolarisTextField17" placeholder=""
-                                                                class="Polaris-TextField__Input" type="text"
+                                                                class="Polaris-TextField__Input submitText" type="text"
                                                                 aria-labelledby="PolarisTextField17Label"
                                                                 aria-invalid="false" value="Submit">
                                                             <div class="Polaris-TextField__Backdrop"></div>
@@ -2275,7 +1686,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <div class="form-control"><label class="Polaris-Choice"
                                             for="PolarisCheckbox6"><span class="Polaris-Choice__Control"><span
                                                     class="Polaris-Checkbox"><input id="PolarisCheckbox6"
-                                                        type="checkbox" class="Polaris-Checkbox__Input"
+                                                        type="checkbox" class="Polaris-Checkbox__Input resetButton"
                                                         aria-invalid="false" role="checkbox" aria-checked="false"
                                                         value=""><span
                                                         class="Polaris-Checkbox__Backdrop"></span><span
@@ -2303,7 +1714,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                         class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
                                                             <input id="PolarisTextField18" placeholder=""
-                                                                class="Polaris-TextField__Input" type="text"
+                                                                class="Polaris-TextField__Input resetbuttonText" type="text"
                                                                 aria-labelledby="PolarisTextField18Label"
                                                                 aria-invalid="false" value="Reset">
                                                             <div class="Polaris-TextField__Backdrop"></div>
@@ -2316,7 +1727,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <div class="form-control"><label class="Polaris-Choice"
                                             for="PolarisCheckbox7"><span class="Polaris-Choice__Control"><span
                                                     class="Polaris-Checkbox"><input id="PolarisCheckbox7"
-                                                        type="checkbox" class="Polaris-Checkbox__Input"
+                                                        type="checkbox" class="Polaris-Checkbox__Input fullFooterButton"
                                                         aria-invalid="false" role="checkbox" aria-checked="false"
                                                         value=""><span
                                                         class="Polaris-Checkbox__Backdrop"></span><span
@@ -2335,9 +1746,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <div class="chooseInput">
                                             <div class="label">Alignment</div>
                                             <div class="chooseItems">
-                                                <div class="chooseItem active">Left</div>
-                                                <div class="chooseItem ">Center</div>
-                                                <div class="chooseItem ">Right</div>
+                                                <div class="chooseItem active" data-value="0">Left</div>
+                                                <div class="chooseItem" data-value="1">Center</div>
+                                                <div class="chooseItem" data-value="2">Right</div>
                                             </div>
                                         </div>
                                     </div>
@@ -3776,7 +3187,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input id="PolarisTextField85" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField85Label" aria-invalid="false" value="Contact us form">
+                                                    <input id="PolarisTextField85" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField85Label" aria-invalid="false" >
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -4991,7 +4402,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
         <script>
     $(document).ready(function() {
         get_selected_elements(<?php echo $form_id; ?>);
-        getFormTitle(<?php echo $form_id; ?>);
+        // getFormTitle(<?php echo $form_id; ?>);
     });
 
 </script>
