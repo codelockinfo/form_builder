@@ -1730,7 +1730,7 @@ class Client_functions extends common_function {
                                             <div class="globo-form-input">
                                                 <input type="text" data-type="text" class="classic-input '.$elementtitle.'__placeholder" id="false-text'.$elements['id'].'" name="text" placeholder="'.$elements['element_title'].'" value="">
                                             </div>
-                                            <small class="messages"></small>
+                                            <small class="messages '.$elementtitle.'__description"></small>
                                         </div>';
                     }
                     if($elements['id'] == 2){
@@ -1739,7 +1739,7 @@ class Client_functions extends common_function {
                             <div class="globo-form-input">
                                 <input type="text" data-type="email" class="classic-input '.$elementtitle.'__placeholder" id="false-email" name="email" placeholder="Email" value="">
                             </div>
-                            <small class="messages"></small>
+                            <small class="messages '.$elementtitle.'__description"></small>
                         </div>';
                     }
                     if($elements['id'] == 21){
@@ -1749,7 +1749,7 @@ class Client_functions extends common_function {
                                             <div class="globo-form-input">
                                                 <input type="text" data-type="text" class="classic-input '.$elementtitle.'__placeholder" id="false-text'.$elements['id'].'" name="text" placeholder="Last Name" value="">
                                             </div>
-                                            <small class="messages"></small>
+                                            <small class="messages '.$elementtitle.'__description"></small>
                                         </div>';
                     }
                     if($elements['id'] == 22 || $elements['id'] == 4){
@@ -1757,7 +1757,7 @@ class Client_functions extends common_function {
                                             <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.'__label" data-label="Textarea">Textarea</span><span></span></label>
                                             <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.'__placeholder" rows="3" name="textarea-1" placeholder=""></textarea>
                                                 <small class="help-text globo-description"></small>
-                                                <small class="messages"></small>
+                                                <small class="messages '.$elementtitle.'__description"></small>
                                         </div>';
                     }
                     if($elements['id'] == 6){
@@ -1767,7 +1767,7 @@ class Client_functions extends common_function {
                                 <input type="text" data-type="phone" class="classic-input" id="false-phone-1" name="phone-1" placeholder="" default-country-code="us">
                             </div>
                                 <small class="help-text globo-description"></small>
-                                <small class="messages"></small>
+                                <small class="messages '.$elementtitle.'__description"></small>
                         </div>';
                     }
                     if($elements['id'] == 8){
@@ -1777,7 +1777,7 @@ class Client_functions extends common_function {
                                 <input type="password" data-type="password" class="classic-input '.$elementtitle.'__placeholder" id="false-password-1" name="password-1" placeholder="Enter your password">
                             </div>
                                 <small class="help-text globo-description"></small>
-                                <small class="messages"></small>
+                                <small class="messages '.$elementtitle.'__description"></small>
                         </div>';
                     }
                     if($elements['id'] == 20){
@@ -1787,7 +1787,7 @@ class Client_functions extends common_function {
                                         <div class="globo-form-input">
                                             <input type="text" data-type="text" class="classic-input '.$elementtitle.'__placeholder" id="false-text'.$elements['id'].'" name="text" placeholder="First Name" value="">
                                         </div>
-                                        <small class="messages"></small>
+                                        <small class="messages '.$elementtitle.'__description"></small>
                                     </div>';
                     }
                 }  
@@ -2181,11 +2181,13 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                                 <div class="form-control">
-                                    <button
-                                        class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth"
-                                        type="button"><span class="Polaris-Button__Content"><span
-                                                class="Polaris-Button__Text"><span>Remove this
-                                                    element</span></span></span></button>
+                                    <button  class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                                        <span class="Polaris-Button__Content">
+                                            <span class="Polaris-Button__Text">
+                                                <span>Remove this element</span>
+                                            </span>
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>';

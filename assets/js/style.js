@@ -357,18 +357,17 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     //    }
   }); 
   $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
-    $mainContainer = $(this).closest(".container").attr("class");
-    var classArray = $mainContainer.split(" ");
-    var containerClass = classArray.find(className => className.startsWith("container_"));
-    console.log(containerClass);
-    
-    
+    $inputVal = $(this).val();
+    $attrName = $(this).attr('name');
+    $nameExlode = $attrName.split("__");
 
-    var info_Value = $('#PolarisTextField25').val();
-    var infoSubValue = $('#PolarisTextField26').val();
-    var infoBtnValue = $('#PolarisTextField27').val();
-    $('.label-content').html(info_Value);$('.classic-input').attr("placeholder", infoSubValue);
-    $('.messages  ').html(infoBtnValue);
+    if($nameExlode[1] == "label"){
+        $("."+$attrName).html($inputVal);
+    }else if($nameExlode[1] == "placeholder"){
+        $("."+$attrName).attr('placeholder', $inputVal);
+    }else if($nameExlode[1] == "description"){
+        $("."+$attrName).html($inputVal);
+    }
 
 });
 
