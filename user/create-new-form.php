@@ -483,10 +483,10 @@ include_once('cls_header.php');
                                             <img src="../assets/images/form_img/floating_contact_us_form.jpg" alt="" />
                                             <p class="text_image_list">Floating contact form</p>
                                         </div>
-                                        <div class="main_list_" data-val="5">
+                                        <!-- <div class="main_list_" data-val="5">
                                             <img src="../assets/images/form_img/multi_step_form.jpg" alt="" />
                                             <p class="text_image_list">Multi-Step Form</p>
-                                        </div>
+                                        </div> -->
                                         <div class="main_list_" data-val="6">
                                             <img src="../assets/images/form_img/application_form.jpg" alt="" />
                                             <p class="text_image_list">Application form</p>

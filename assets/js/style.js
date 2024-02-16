@@ -59,18 +59,22 @@ $(document).ready(function(){
         });
 
         $(document).on("change",".passLimitcar" ,function(){
+            $mainContainer = $(this).closest(".container").find(".limitCaracters");
+
             if(this.checked) {
-                $(".limitCar").removeClass("hidden");
+
+                $mainContainer.removeClass("hidden");
             }
             else
             {   
-                $(".limitCar").addClass("hidden");
+                $mainContainer.addClass("hidden");
             }
         });
 
         $('.selectval').hide();
         //show the first tab content
         $('#embedCode').show();
+
         $('#PolarisSelect18').change(function(){
             $('.selectval').hide();
             $('#' + $(this).val()).show();
@@ -101,6 +105,7 @@ $(document).ready(function(){
             var inputValue = input.val();
             input.val(parseInt(inputValue) + 1);
         });
+
         $('.min').on('click', function () {
             var inputValue = input.val();
             input.val(parseInt(inputValue) - 1);
@@ -321,27 +326,44 @@ $(document).ready(function () {
 $(document).on("click",".chooseItems .chooseItem ",function(){
     $('.chooseItem').removeClass("active");
     $(this).addClass("active");
-    var htmlContent = $(".chooseItem.active").html();
-  
-  // Log the HTML content to the console
-  console.log(htmlContent);
-       if (htmlContent === "33%") {
-            var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-           aaaaa.addClass("layout-3-column");
-           aaaaa.removeClass("layout-1-column layout-2-column")
-       }
-       else if(htmlContent === "100%") {
-            var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-          aaaaa.addClass("layout-1-column");
-          aaaaa.removeClass("layout-3-column layout-2-column")
-       }
-       else{
-        var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-          aaaaa.addClass("layout-2-column");
-          aaaaa.removeClass("layout-1-column layout-3-column")
-       }
+    $dataValue = $(this).attr("data-value");    
+    $(this).closest(".form-control").find(".input_columnwidth").val($dataValue);
+    $mainContainer = $(this).closest(".container").attr("class");
+    var classArray = $mainContainer.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    console.log(containerClass);
+    $(".block-container ."+containerClass).removeClass("layout-1-column layout-2-column layout-3-column").addClass("layout-" + $dataValue + "-column");
+
+
+    //    if (htmlContent === "33%") {
+    //         console.log($mainContainer);
+    //         var classArray = $mainContainer.split(" ");
+    //         var containerClass = classArray.find(className => className.startsWith("container_"));
+    //         console.log(containerClass);
+
+    //         var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+    //        aaaaa.addClass("layout-3-column");
+    //        aaaaa.removeClass("layout-1-column layout-2-column")
+    //    }
+    //    else if(htmlContent === "100%") {
+    //      var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+    //       aaaaa.addClass("layout-1-column");
+    //       aaaaa.removeClass("layout-3-column layout-2-column")
+    //    }
+    //    else{
+    //         var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
+    //       aaaaa.addClass("layout-2-column");
+    //       aaaaa.removeClass("layout-1-column layout-3-column")
+    //    }
   }); 
   $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
+    $mainContainer = $(this).closest(".container").attr("class");
+    var classArray = $mainContainer.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    console.log(containerClass);
+    
+    
+
     var info_Value = $('#PolarisTextField25').val();
     var infoSubValue = $('#PolarisTextField26').val();
     var infoBtnValue = $('#PolarisTextField27').val();
