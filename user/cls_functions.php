@@ -1673,13 +1673,14 @@ class Client_functions extends common_function {
             }
 
             $html = '';
-            $i=3;
+            $i= $layoutColumn = 3;
             $form_html .= '<div class="content flex-wrap block-container" data-id="false">';
             foreach($comeback_client['data'] as $templates){
                 $form_element_no = $templates['element_id'];
                 $form_element_data = unserialize($templates['element_data']);
-                $layoutColumn = end($form_element_data);
-                
+                if (is_array($form_element_data) && count($form_element_data) > 0) {
+                    $layoutColumn = end($form_element_data);
+                }            
 
                 $where_query = array(["", "id", "=", "$form_element_no"] );
                 $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
@@ -1754,7 +1755,7 @@ class Client_functions extends common_function {
                     }
                     if($elements['id'] == 22 || $elements['id'] == 4){
                         $form_html .= '<div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.'__label" data-label="Textarea">Textarea</span><span></span></label>
+                                            <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.'__label" data-label="Textarea">Textarea</span><span class="text-danger text-smaller"></span></label>
                                             <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.'__placeholder" rows="3" name="textarea-1" placeholder=""></textarea>
                                                 <small class="help-text globo-description"></small>
                                                 <small class="messages '.$elementtitle.'__description"></small>
@@ -1762,7 +1763,7 @@ class Client_functions extends common_function {
                     }
                     if($elements['id'] == 6){
                         $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.'" data-id="element'.$elements['id'].'">
-                            <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.'__label" data-label="Phone">Phone</span><span></span></label>
+                            <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.'__label" data-label="Phone">Phone</span><span class="text-danger text-smaller"></span></label>
                             <div class="globo-form-input">
                                 <input type="text" data-type="phone" class="classic-input" id="false-phone-1" name="phone-1" placeholder="" default-country-code="us">
                             </div>
@@ -1772,7 +1773,7 @@ class Client_functions extends common_function {
                     }
                     if($elements['id'] == 8){
                         $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.'" data-id="element'.$elements['id'].'">
-                            <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.'__label" data-label="Password">Password</span><span></span></label>
+                            <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.'__label" data-label="Password">Password</span><span class="text-danger text-smaller"></span></label>
                             <div class="globo-form-input">
                                 <input type="password" data-type="password" class="classic-input '.$elementtitle.'__placeholder" id="false-password-1" name="password-1" placeholder="Enter your password">
                             </div>
@@ -1797,11 +1798,12 @@ class Client_functions extends common_function {
             $form_html .= '</div>';
             if($formData != ''){
                 $form_html .= '<div class="footer '.$btnalign.'">
-                        <button class="action submit  classic-button">
+                        <div class="messages footer-data__footerdescription"></div>
+                        <button class="action submit  classic-button footer-data__submittext">
                             <span class="spinner"></span>
                             Submit
                         </button>
-                        <!-- <button class="action reset classic-button" type="button">Reset</button> -->
+                        <button class="action reset classic-button hidden footer-data__resetbuttontext" type="button">Reset</button>
                     </div>';
             }
            
@@ -1966,1232 +1968,905 @@ class Client_functions extends common_function {
 
                 $comeback = '';
                 $comeback .= '<div class="header backheader">
-                            <button class="ui-btn back-icon">
-                                <span class="Polaris-Icon backBtn" data-id="0">
-                                    <span class="Polaris-VisuallyHidden"></span>
-                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                        <path
-                                            d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
-                                        </path>
-                                    </svg>
-                                </span>
-                            </button>
-                            <div class="title">'.$comebackdata['element_title'].'</div>
-                        </div>';
+                                <button class="ui-btn back-icon">
+                                    <span class="Polaris-Icon backBtn" data-id="0">
+                                        <span class="Polaris-VisuallyHidden"></span>
+                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path
+                                                d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                                <div class="title">'.$comebackdata['element_title'].'</div>
+                            </div>';
                 if(in_array($elementid,$element_ids_array)){
                         $comeback .= '<div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                           <div class="">
+                              <div class="form-control">
+                                 <div class="textfield-wrapper">
+                                    <div class="">
+                                       <div class="Polaris-Labelled__LabelWrapper">
+                                          <div class="Polaris-Label">
+                                             <label id="PolarisTextField25Label"
+                                                for="PolarisTextField25" class="Polaris-Label__Text">
+                                                <div>Label</div>
+                                             </label>
+                                          </div>
+                                       </div>
+                                       <div class="Polaris-Connected">
+                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField25" placeholder="Your '.$comebackdata['element_title'].'"
+                                                   class="Polaris-TextField__Input" type="text"
+                                                   aria-labelledby="PolarisTextField25Label"
+                                                   aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="form-control">
+                                 <div class="textfield-wrapper">
+                                    <div class="">
+                                       <div class="Polaris-Labelled__LabelWrapper">
+                                          <div class="Polaris-Label">
+                                             <label id="PolarisTextField26Label"
+                                                class="Polaris-Label__Text">
+                                                <div>Placeholder</div>
+                                             </label>
+                                          </div>
+                                       </div>
+                                       <div class="Polaris-Connected">
+                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField26" placeholder="Your Name"
+                                                   class="Polaris-TextField__Input" type="text"
+                                                   aria-labelledby="PolarisTextField26Label"
+                                                   aria-invalid="false" value="">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="form-control">
+                                 <div class="textfield-wrapper">
+                                    <div class="">
+                                       <div class="Polaris-Labelled__LabelWrapper">
+                                          <div class="Polaris-Label">
+                                             <label id="PolarisTextField27Label"
+                                                for="PolarisTextField27" class="Polaris-Label__Text">
+                                                <div>Description</div>
+                                             </label>
+                                          </div>
+                                       </div>
+                                       <div class="Polaris-Connected">
+                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                             <div class="Polaris-TextField">
+                                                <input id="PolarisTextField27"
+                                                   placeholder="" class="Polaris-TextField__Input" type="text"
+                                                   aria-labelledby="PolarisTextField27Label"
+                                                   aria-invalid="false" value="">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="form-control">
+                                 <label class="Polaris-Choice" for="PolarisCheckbox20">
+                                    <span
+                                       class="Polaris-Choice__Control">
+                                       <span class="Polaris-Checkbox">
+                                          <input
+                                             id="PolarisCheckbox20" type="checkbox"
+                                             class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox"
+                                             aria-checked="false" value=""><span
+                                             class="Polaris-Checkbox__Backdrop"></span>
+                                          <span
+                                             class="Polaris-Checkbox__Icon">
+                                             <span class="Polaris-Icon">
+                                                <span
+                                                   class="Polaris-VisuallyHidden"></span>
+                                                <svg
+                                                   viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                   focusable="false" aria-hidden="true">
+                                                   <path
+                                                      d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                   </path>
+                                                </svg>
+                                             </span>
+                                          </span>
+                                       </span>
+                                    </span>
+                                    <span
+                                       class="Polaris-Choice__Label">Limit characters</span>
+                                 </label>
+                              </div>
+                              <div class="form-control limitCaracters hidden">
+                                 <div class="">
+                                    <div class="Polaris-Connected">
+                                       <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                          <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                             <input
+                                                id="PolarisTextField28" class="Polaris-TextField__Input"
+                                                type="number" aria-labelledby="PolarisTextField28Label"
+                                                aria-invalid="false" value="100">
+                                             <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                <div role="button" class="Polaris-TextField__Segment"
+                                                   tabindex="-1">
+                                                   <div class="Polaris-TextField__SpinnerIcon">
+                                                      <span
+                                                         class="Polaris-Icon">
+                                                         <span
+                                                            class="Polaris-VisuallyHidden"></span>
+                                                         <svg
+                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                            focusable="false" aria-hidden="true">
+                                                            <path
+                                                               d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
+                                                            </path>
+                                                         </svg>
+                                                      </span>
+                                                   </div>
+                                                </div>
+                                                <div role="button" class="Polaris-TextField__Segment"
+                                                   tabindex="-1">
+                                                   <div class="Polaris-TextField__SpinnerIcon">
+                                                      <span
+                                                         class="Polaris-Icon">
+                                                         <span
+                                                            class="Polaris-VisuallyHidden"></span>
+                                                         <svg
+                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                            focusable="false" aria-hidden="true">
+                                                            <path
+                                                               d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                            </path>
+                                                         </svg>
+                                                      </span>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                             <div class="Polaris-TextField__Backdrop"></div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="form-control">
+                                 <label class="Polaris-Choice" for="PolarisCheckbox21">
+                                    <span
+                                       class="Polaris-Choice__Control">
+                                       <span class="Polaris-Checkbox">
+                                          <input
+                                             id="PolarisCheckbox21" type="checkbox"
+                                             class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox"
+                                             aria-checked="false" value=""><span
+                                             class="Polaris-Checkbox__Backdrop"></span>
+                                          <span
+                                             class="Polaris-Checkbox__Icon">
+                                             <span class="Polaris-Icon">
+                                                <span
+                                                   class="Polaris-VisuallyHidden"></span>
+                                                <svg
+                                                   viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                   focusable="false" aria-hidden="true">
+                                                   <path
+                                                      d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                   </path>
+                                                </svg>
+                                             </span>
+                                          </span>
+                                       </span>
+                                    </span>
+                                    <span
+                                       class="Polaris-Choice__Label">Hide label</span>
+                                 </label>
+                              </div>
+                              <div class="form-control hidden passhideLabel">
+                                 <label class="Polaris-Choice"
+                                    for="PolarisCheckbox22">
+                                    <span class="Polaris-Choice__Control">
+                                       <span
+                                          class="Polaris-Checkbox">
+                                          <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox22"  type="checkbox"
+                                             class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox"
+                                             aria-checked="false" value=""><span
+                                             class="Polaris-Checkbox__Backdrop"></span>
+                                          <span
+                                             class="Polaris-Checkbox__Icon">
+                                             <span class="Polaris-Icon">
+                                                <span
+                                                   class="Polaris-VisuallyHidden"></span>
+                                                <svg
+                                                   viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                   focusable="false" aria-hidden="true">
+                                                   <path
+                                                      d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                   </path>
+                                                </svg>
+                                             </span>
+                                          </span>
+                                       </span>
+                                    </span>
+                                    <span
+                                       class="Polaris-Choice__Label">Keep position of label</span>
+                                 </label>
+                              </div>
+                              <div class="form-control">
+                                 <label class="Polaris-Choice" for="PolarisCheckbox23">
+                                    <span
+                                       class="Polaris-Choice__Control">
+                                       <span class="Polaris-Checkbox">
+                                          <input
+                                             id="PolarisCheckbox23" type="checkbox" name="'.$elementtitle.'__required"
+                                             class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox"
+                                             aria-checked="true" value="" checked=""><span
+                                             class="Polaris-Checkbox__Backdrop"></span>
+                                          <span
+                                             class="Polaris-Checkbox__Icon">
+                                             <span class="Polaris-Icon">
+                                                <span
+                                                   class="Polaris-VisuallyHidden"></span>
+                                                <svg
+                                                   viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                   focusable="false" aria-hidden="true">
+                                                   <path
+                                                      d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                   </path>
+                                                </svg>
+                                             </span>
+                                          </span>
+                                       </span>
+                                    </span>
+                                    <span
+                                       class="Polaris-Choice__Label">Required</span>
+                                 </label>
+                              </div>
+                              <div class="form-control Requiredpass hidden">
+                                 <label class="Polaris-Choice" for="PolarisCheckbox24">
+                                    <span
+                                       class="Polaris-Choice__Control">
+                                       <span class="Polaris-Checkbox">
+                                          <input name="'.$elementtitle.'__required__hidelabel"
+                                             id="PolarisCheckbox24" type="checkbox"
+                                             class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox"
+                                             aria-checked="false" value=""><span
+                                             class="Polaris-Checkbox__Backdrop"></span>
+                                          <span
+                                             class="Polaris-Checkbox__Icon">
+                                             <span class="Polaris-Icon">
+                                                <span
+                                                   class="Polaris-VisuallyHidden"></span>
+                                                <svg
+                                                   viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                   focusable="false" aria-hidden="true">
+                                                   <path
+                                                      d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                   </path>
+                                                </svg>
+                                             </span>
+                                          </span>
+                                       </span>
+                                    </span>
+                                    <span  class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                 </label>
+                              </div>
+                              <div class="form-control">
+                                 <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                 <div class="chooseInput">
+                                    <div class="label">Column width</div>
+                                    <div class="chooseItems">
+                                       <div class="chooseItem " data-value="3">33%</div>
+                                       <div class="chooseItem active" data-value="2">50%</div>
+                                       <div class="chooseItem " data-value="1">100%</div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="form-control">
+                              <button  class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                              <span class="Polaris-Button__Content">
+                              <span class="Polaris-Button__Text">
+                              <span>Remove this element</span>
+                              </span>
+                              </span>
+                              </button>
+                           </div>
+                        </div>
+                     </div>';
+                }else if(in_array($elementid,$element_ids_array_2)){
+                    $comeback .= '<div class="container tabContent container_'.$elementtitle.'">
+                    <div class="">
+                        <div class="form-control">
+                            <div class="hidden">
                                 <div class="">
-                                    <div class="form-control">
-                                        <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField25Label"
-                                                            for="PolarisTextField25" class="Polaris-Label__Text">
-                                                            <div>Label</div>
-                                                        </label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input id="PolarisTextField25" placeholder="Your '.$comebackdata['element_title'].'"
-                                                                class="Polaris-TextField__Input" type="text"
-                                                                aria-labelledby="PolarisTextField25Label"
-                                                                aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
-                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField26Label"
-                                                            class="Polaris-Label__Text">
-                                                            <div>Placeholder</div>
-                                                        </label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input id="PolarisTextField26" placeholder="Your Name"
-                                                                class="Polaris-TextField__Input" type="text"
-                                                                aria-labelledby="PolarisTextField26Label"
-                                                                aria-invalid="false" value="">
-                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField27Label"
-                                                            for="PolarisTextField27" class="Polaris-Label__Text">
-                                                            <div>Description</div>
-                                                        </label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField"><input id="PolarisTextField27"
-                                                                placeholder="" class="Polaris-TextField__Input" type="text"
-                                                                aria-labelledby="PolarisTextField27Label"
-                                                                aria-invalid="false" value="">
-                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox20"><span
-                                                class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                        id="PolarisCheckbox20" type="checkbox"
-                                                        class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox"
-                                                        aria-checked="false" value=""><span
-                                                        class="Polaris-Checkbox__Backdrop"></span><span
-                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                                class="Polaris-VisuallyHidden"></span><svg
-                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg></span></span></span></span><span
-                                                class="Polaris-Choice__Label">Limit characters</span></label></div>
-                                    <div class="form-control limitCaracters hidden">
-                                        <div class="">
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue"><input
-                                                            id="PolarisTextField28" class="Polaris-TextField__Input"
-                                                            type="number" aria-labelledby="PolarisTextField28Label"
-                                                            aria-invalid="false" value="100">
-                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                            <div role="button" class="Polaris-TextField__Segment"
-                                                                tabindex="-1">
-                                                                <div class="Polaris-TextField__SpinnerIcon"><span
-                                                                        class="Polaris-Icon"><span
-                                                                            class="Polaris-VisuallyHidden"></span><svg
-                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                            focusable="false" aria-hidden="true">
-                                                                            <path
-                                                                                d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
-                                                                            </path>
-                                                                        </svg></span></div>
-                                                            </div>
-                                                            <div role="button" class="Polaris-TextField__Segment"
-                                                                tabindex="-1">
-                                                                <div class="Polaris-TextField__SpinnerIcon"><span
-                                                                        class="Polaris-Icon"><span
-                                                                            class="Polaris-VisuallyHidden"></span><svg
-                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                            focusable="false" aria-hidden="true">
-                                                                            <path
-                                                                                d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
-                                                                            </path>
-                                                                        </svg></span></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox21"><span
-                                                class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                        id="PolarisCheckbox21" type="checkbox"
-                                                        class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
-                                                        aria-checked="false" value=""><span
-                                                        class="Polaris-Checkbox__Backdrop"></span><span
-                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                                class="Polaris-VisuallyHidden"></span><svg
-                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg></span></span></span></span><span
-                                                class="Polaris-Choice__Label">Hide label</span></label></div>
-                                    <div class="form-control hidden"><label class="Polaris-Choice"
-                                            for="PolarisCheckbox22"><span class="Polaris-Choice__Control"><span
-                                                    class="Polaris-Checkbox"><input id="PolarisCheckbox22" type="checkbox"
-                                                        class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
-                                                        aria-checked="false" value=""><span
-                                                        class="Polaris-Checkbox__Backdrop"></span><span
-                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                                class="Polaris-VisuallyHidden"></span><svg
-                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg></span></span></span></span><span
-                                                class="Polaris-Choice__Label">Keep position of label</span></label>
-                                    </div>
-                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox23"><span
-                                                class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                        id="PolarisCheckbox23" type="checkbox"
-                                                        class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
-                                                        aria-checked="true" value="" checked=""><span
-                                                        class="Polaris-Checkbox__Backdrop"></span><span
-                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                                class="Polaris-VisuallyHidden"></span><svg
-                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg></span></span></span></span><span
-                                                class="Polaris-Choice__Label">Required</span></label></div>
-                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox24"><span
-                                                class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                        id="PolarisCheckbox24" type="checkbox"
-                                                        class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
-                                                        aria-checked="false" value=""><span
-                                                        class="Polaris-Checkbox__Backdrop"></span><span
-                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                                class="Polaris-VisuallyHidden"></span><svg
-                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg></span></span></span></span><span
-                                                class="Polaris-Choice__Label">Show required note if hide
-                                                label?</span></label></div>
-
-                                    <div class="form-control">
-                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
-                                        <div class="chooseInput">
-                                            <div class="label">Column width</div>
-                                            <div class="chooseItems">
-                                                <div class="chooseItem " data-value="3">33%</div>
-                                                <div class="chooseItem active" data-value="2">50%</div>
-                                                <div class="chooseItem " data-value="1">100%</div>
-                                            </div>
+                                <div class="Polaris-Connected">
+                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="text">
+                                            <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-control">
-                                    <button  class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
-                                        <span class="Polaris-Button__Content">
-                                            <span class="Polaris-Button__Text">
-                                                <span>Remove this element</span>
-                                            </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <div class="hidden">
+                                <div class="">
+                                <div class="Polaris-Connected">
+                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input id="PolarisTextField24" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="text">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <div class="textfield-wrapper">
+                                <div class="">
+                                <div class="Polaris-Labelled__LabelWrapper">
+                                    <div class="Polaris-Label">
+                                        <label id="PolarisTextField25Label" for="PolarisTextField25" class="Polaris-Label__Text">
+                                            <div>Label</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="Polaris-Connected">
+                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input name="'.$elementtitle.'__label" id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <div class="textfield-wrapper">
+                                <div class="">
+                                <div class="Polaris-Labelled__LabelWrapper">
+                                    <div class="Polaris-Label">
+                                        <label id="PolarisTextField26Label" class="Polaris-Label__Text">
+                                            <div>Placeholder</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="Polaris-Connected">
+                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input name="'.$elementtitle.'__placeholder" id="PolarisTextField26" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <div class="textfield-wrapper">
+                                <div class="">
+                                <div class="Polaris-Labelled__LabelWrapper">
+                                    <div class="Polaris-Label">
+                                        <label id="PolarisTextField27Label" for="PolarisTextField27" class="Polaris-Label__Text">
+                                            <div>Description</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="Polaris-Connected">
+                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                        <div class="Polaris-TextField">
+                                            <input name="'.$elementtitle.'__description" id="PolarisTextField27" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField27Label" aria-invalid="false" value="">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label class="Polaris-Choice" for="PolarisCheckbox20">
+                                <span class="Polaris-Choice__Control">
+                                <span class="Polaris-Checkbox">
+                                    <input name="'.$elementtitle.'__limitcharacter" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <span class="Polaris-Checkbox__Icon">
+                                        <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                            </path>
+                                            </svg>
                                         </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>';
-                    }else if(in_array($elementid,$element_ids_array_2)){
-                        $comeback .= '<div class="container tabContent container_'.$elementtitle.'">
+                                    </span>
+                                </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Limit characters</span>
+                            </label>
+                        </div>
+                        <div class="form-control limitCaracters  hidden">
                             <div class="">
-                                <div class="form-control">
-                                    <div class="hidden">
-                                        <div class="">
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="text">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="hidden">
-                                        <div class="">
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField24" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="text">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField25Label" for="PolarisTextField25" class="Polaris-Label__Text">
-                                                        <div>Label</div>
-                                                    </label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input name="'.$elementtitle.'__label" id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField26Label" class="Polaris-Label__Text">
-                                                        <div>Placeholder</div>
-                                                    </label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input name="'.$elementtitle.'__placeholder" id="PolarisTextField26" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField27Label" for="PolarisTextField27" class="Polaris-Label__Text">
-                                                        <div>Description</div>
-                                                    </label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField"><input name="'.$elementtitle.'__description" id="PolarisTextField27" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField27Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox20"><span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="'.$elementtitle.'__limitcharacter" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span><span class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span class="Polaris-Choice__Label">Limit characters</span></label></div>
-                                <div class="form-control limitCaracters  hidden">
-                                    <div class="">
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue"><input name="'.$elementtitle.'__limitcharactervalue" id="PolarisTextField28" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField28Label" aria-invalid="false" value="100">
-                                                    <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                        <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                        <path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                        </div>
-                                                        <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                        <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
-                                                                        </path>
-                                                                    </svg></span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox21"><span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="'.$elementtitle.'__hidelabel" id="PolarisCheckbox21" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span><span class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span class="Polaris-Choice__Label">Hide label</span></label></div>
-                                <div class="form-control hidden"><label class="Polaris-Choice" for="PolarisCheckbox22"><span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox22" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span><span class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span class="Polaris-Choice__Label">Keep position of label</span></label>
-                                </div>
-                                <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox23"><span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="'.$elementtitle.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value="" checked=""><span class="Polaris-Checkbox__Backdrop"></span><span class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span class="Polaris-Choice__Label">Required</span></label></div>
-                                <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox24"><span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="'.$elementtitle.'__required__hidelabel" id="PolarisCheckbox24" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span><span class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span class="Polaris-Choice__Label">Show required note if hide
-                                            label?</span></label></div>
-
-                                <div class="form-control">
-                                    <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                    <div class="chooseInput">
-                                        <div class="label">Column width</div>
-                                        <div class="chooseItems">
-                                            <div class="chooseItem " data-value="3">33%</div>
-                                            <div class="chooseItem active" data-value="2">50%</div>
-                                            <div class="chooseItem " data-value="1">100%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
-                            </div>
-                        </div>';
-                    }else if($elementid == 8){
-                        $comeback .= '<div class="">
-                                <div class="container container_'.$elementtitle.'">
-                                    <div>
-                                        <div class="">
-                                            <div class="form-control">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
-                                                                <div>Label</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                <input name="'.$elementtitle.'__label"  id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Password">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField6Label" for="PolarisTextField6" class="Polaris-Label__Text">
-                                                                <div>Placeholder</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                <input name="'.$elementtitle.'__placeholder" id="PolarisTextField6" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Enter your password">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">
-                                                                <div>Description</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField">
-                                                                <input name="'.$elementtitle.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox3">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input name="'.$elementtitle.'__limitcharacter" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input passLimitcar " aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Limit characters</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control limitCaracters  hidden">
-                                                <div class="">
-                                                    <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="'.$elementtitle.'__limitcharacter__value" id="PolarisTextField8" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="100">
-                                                            <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                                <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
-                                                                <div class="Polaris-TextField__SpinnerIcon">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                            <path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </div>
-                                                                </div>
-                                                                <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
-                                                                <div class="Polaris-TextField__SpinnerIcon">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                            <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control">
-                                                <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Validate</label></div>
-                                                    </div>
-                                                    <div class="Polaris-Select">
-                                                    <select name="'.$elementtitle.'__validate" id="PolarisSelect2" class="Polaris-Select__Input" aria-invalid="false">
-                                                        <option value="false">None</option>
-                                                        <option value="^.{6,}$">Minimum 6 characters</option>
-                                                        <option value="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">Minimum 6 characters, at least one letter and one number</option>
-                                                        <option value="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&amp;])[A-Za-z\d@$!%*#?&amp;]{6,}$">Minimum 6 characters, at least one letter, one number and one special character</option>
-                                                        <option value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$">Minimum 6 characters, at least one uppercase letter, one lowercase letter and one number</option>
-                                                        <option value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{6,}$">Minimum 6 characters, at least one uppercase letter, one lowercase letter, one number and one special character</option>
-                                                        <option value="advancedValidateRule">Advanced validate rule</option>
-                                                    </select>
-                                                    <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                        <span class="Polaris-Select__SelectedOption">None</span>
-                                                        <span class="Polaris-Select__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </div>
-                                                    <div class="Polaris-Select__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control hidden ">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField9Label" for="PolarisTextField9" class="Polaris-Label__Text">
-                                                                <div>Advanced validate regex rule</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField">
-                                                                <input  name="'.$elementtitle.'__validate__regexrule"  id="PolarisTextField9" placeholder="Enter your custom validate regex here" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox4">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input  name="'.$elementtitle.'__hidelabel"  id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input  passLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Hide label</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control passhideLabel hidden">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox5">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input  name="'.$elementtitle.'__keepposition__label"  id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Keep position of label</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox6">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input name="'.$elementtitle.'__required" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input pass_required" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Required</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control Requiredpass hidden">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox7">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input name="'.$elementtitle.'__required__hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox111">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input name="'.$elementtitle.'__confirmpassword" id="PolarisCheckbox111" type="checkbox" class="Polaris-Checkbox__Input confirmpass" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Also create confirm password input</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control">
-                                                <label class="Polaris-Choice" for="PolarisCheckbox9">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input  name="'.$elementtitle.'__storepassword" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                            <span class="Polaris-Icon">
-                                                                <span class="Polaris-VisuallyHidden"></span>
-                                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                </svg>
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label">Storing password for purpose</span>
-                                                </label>
-                                            </div>
-                                            <div class="form-control conpass hidden">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField10Label" for="PolarisTextField10" class="Polaris-Label__Text">
-                                                                <div>Label confirm</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                <input name="'.$elementtitle.'__confirmpasswordlabel" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="Confirm password">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control conpass hidden">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">
-                                                                <div>Placeholder confirm</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                <input name="'.$elementtitle.'__confirmpasswordplaceholder" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Confirm your password">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control conpass hidden">
-                                                <div class="textfield-wrapper">
-                                                    <div class="">
-                                                    <div class="Polaris-Labelled__LabelWrapper">
-                                                        <div class="Polaris-Label">
-                                                            <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">
-                                                                <div>Description confirm</div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="Polaris-Connected">
-                                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                            <div class="Polaris-TextField">
-                                                                <input name="'.$elementtitle.'__confirmpassworddescription" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
-                                                                <div class="Polaris-TextField__Backdrop"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="form-control">
-                                                <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                                <div class="chooseInput">
-                                                    <div class="label">Column width</div>
-                                                    <div class="chooseItems">
-                                                        <div class="chooseItem " data-value="3">33%</div>
-                                                        <div class="chooseItem active" data-value="2">50%</div>
-                                                        <div class="chooseItem " data-value="1">100%</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                    <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
-                                    </div>
-                                </div>
-                        </div>';
-                    }else if($elementid == 9){
-                        $comeback .= '<div class="">
-                            <div class="container container_'.$elementtitle.'">
-                                <div>
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField21" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField21Label" aria-invalid="false" value="datetime">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField22" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField22Label" aria-invalid="false" value="datetime">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField23Label" for="PolarisTextField23" class="Polaris-Label__Text">
-                                                        <div>Label</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField23" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="Date time">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField24Label" for="PolarisTextField24" class="Polaris-Label__Text">
-                                                        <div>Placeholder</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField24" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField25Label" for="PolarisTextField25" class="Polaris-Label__Text">
-                                                        <div>Description</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox12">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
+                                <div class="Polaris-Connected">
+                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                        <input name="'.$elementtitle.'__limitcharactervalue" id="PolarisTextField28" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField28Label" aria-invalid="false" value="100">
+                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
+                                                        </path>
+                                                    </svg>
                                                 </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Hide label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox13">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Keep position of label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox14">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox15">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="chooseInput">
-                                            <div class="label">Format</div>
-                                            <div class="chooseItems">
-                                                <div class="chooseItem ">Date &amp; time</div>
-                                                <div class="chooseItem active">Date</div>
-                                                <div class="chooseItem ">Time</div>
                                             </div>
                                             </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox16">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Other language</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisSelect7Label" for="PolarisSelect7" class="Polaris-Label__Text">Localization</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                                <select id="PolarisSelect7" class="Polaris-Select__Input" aria-invalid="false">
-                                                    <option value="ar">Arabic</option>
-                                                    <option value="at">Austria</option>
-                                                    <option value="az">Azerbaijan</option>
-                                                    <option value="be">Belarusian</option>
-                                                    <option value="bs">Bosnian</option>
-                                                    <option value="bg">Bulgarian</option>
-                                                    <option value="bn">Bangla</option>
-                                                    <option value="cat">Catalan</option>
-                                                    <option value="cs">Czech</option>
-                                                    <option value="cy">Welsh</option>
-                                                    <option value="da">Danish</option>
-                                                    <option value="de">German</option>
-                                                    <option value="eo">Esperanto</option>
-                                                    <option value="es">Spanish</option>
-                                                    <option value="et">Estonian</option>
-                                                    <option value="fa">Persian</option>
-                                                    <option value="fi">Finnish</option>
-                                                    <option value="fo">Faroese</option>
-                                                    <option value="fr">French</option>
-                                                    <option value="gr">Greek</option>
-                                                    <option value="he">Hebrew</option>
-                                                    <option value="hi">Hindi</option>
-                                                    <option value="hr">Croatian</option>
-                                                    <option value="hu">Hungarian</option>
-                                                    <option value="id">Indonesian</option>
-                                                    <option value="is">Icelandic</option>
-                                                    <option value="it">Italian</option>
-                                                    <option value="ja">Japanese</option>
-                                                    <option value="ka">Georgian</option>
-                                                    <option value="ko">Korean</option>
-                                                    <option value="km">Khmer</option>
-                                                    <option value="kz">Kazakh</option>
-                                                    <option value="lt">Lithuanian</option>
-                                                    <option value="lv">Latvian</option>
-                                                    <option value="mk">Macedonian</option>
-                                                    <option value="mn">Mongolian</option>
-                                                    <option value="ms">Malaysian</option>
-                                                    <option value="my">Burmese</option>
-                                                    <option value="nl">Dutch</option>
-                                                    <option value="no">Norwegian</option>
-                                                    <option value="pa">Punjabi</option>
-                                                    <option value="pl">Polish</option>
-                                                    <option value="pt">Portuguese</option>
-                                                    <option value="ro">Romanian</option>
-                                                    <option value="ru">Russian</option>
-                                                    <option value="si">Sinhala</option>
-                                                    <option value="sk">Slovak</option>
-                                                    <option value="sl">Slovenian</option>
-                                                    <option value="sq">Albanian</option>
-                                                    <option value="sr">Serbian</option>
-                                                    <option value="sv">Swedish</option>
-                                                    <option value="th">Thai</option>
-                                                    <option value="tr">Turkish</option>
-                                                    <option value="uk">Ukrainian</option>
-                                                    <option value="uz">Uzbek</option>
-                                                    <option value="vn">Vietnamese</option>
-                                                    <option value="zh">Mandarin</option>
-                                                </select>
-                                                <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                    <span class="Polaris-Select__SelectedOption">Spanish</span>
-                                                    <span class="Polaris-Select__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                                <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisSelect8Label" for="PolarisSelect8" class="Polaris-Label__Text">Date format</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                                <select id="PolarisSelect8" class="Polaris-Select__Input" aria-invalid="false">
-                                                    <option value="Y-m-d">Y-m-d</option>
-                                                    <option value="d-m-Y">d-m-Y</option>
-                                                    <option value="m-d-Y">m-d-Y</option>
-                                                    <option value="d-m">d-m</option>
-                                                    <option value="m-d">m-d</option>
-                                                    <option value="Y/m/d">Y/m/d</option>
-                                                    <option value="d/m/Y">d/m/Y</option>
-                                                    <option value="m/d/Y">m/d/Y</option>
-                                                    <option value="d/m">d/m</option>
-                                                    <option value="m/d">m/d</option>
-                                                </select>
-                                                <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                    <span class="Polaris-Select__SelectedOption">Y-m-d</span>
-                                                    <span class="Polaris-Select__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                                <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Time format</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                                <select id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
-                                                    <option value="12h">12h</option>
-                                                    <option value="24h">24h</option>
-                                                </select>
-                                                <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                    <span class="Polaris-Select__SelectedOption">12h</span>
-                                                    <span class="Polaris-Select__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                                <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox17">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Limit date picker</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisSelect10Label" for="PolarisSelect10" class="Polaris-Label__Text">Limit date type</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                                <select id="PolarisSelect10" class="Polaris-Select__Input" aria-invalid="false">
-                                                    <option value="disablingDates">Disabling dates</option>
-                                                    <option value="enablingDates">Enabling dates</option>
-                                                </select>
-                                                <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                    <span class="Polaris-Select__SelectedOption">Disabling dates</span>
-                                                    <span class="Polaris-Select__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                                <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control hidden ">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox18">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Specific dates</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">Select specific dates</label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField4" class="Polaris-TextField__Input flatpickr-input" aria-labelledby="PolarisTextField4Label" aria-invalid="false" aria-multiline="false" value="Jaded Pixel" type="text" readonly="readonly">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox19">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Range dates</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">Select range dates</label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField4" class="Polaris-TextField__Input flatpickr-input" aria-labelledby="PolarisTextField4Label" aria-invalid="false" aria-multiline="false" value="Jaded Pixel" type="text" readonly="readonly">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox20">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Days of week</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <div class="uikit select multiple" tabindex="0">
-                                            <label class="label">Target days of week</label>
-                                            <div class="selection">
-                                                <span class="multiple value">
-                                                    saturday
-                                                    <span data-value="saturday" class="delete">
-                                                        <svg viewBox="0 0 16 16">
-                                                        <path d="M2 .594l-1.406 1.406.688.719 5.281 5.281-5.281 5.281-.688.719 1.406 1.406.719-.688 5.281-5.281 5.281 5.281.719.688 1.406-1.406-.688-.719-5.281-5.281 5.281-5.281.688-.719-1.406-1.406-.719.688-5.281 5.281-5.281-5.281-.719-.688z"></path>
-                                                        </svg>
-                                                    </span>
-                                                </span>
-                                                <span class="multiple value">
-                                                    sunday
-                                                    <span data-value="sunday" class="delete">
-                                                        <svg viewBox="0 0 16 16">
-                                                        <path d="M2 .594l-1.406 1.406.688.719 5.281 5.281-5.281 5.281-.688.719 1.406 1.406.719-.688 5.281-5.281 5.281 5.281.719.688 1.406-1.406-.688-.719-5.281-5.281 5.281-5.281.688-.719-1.406-1.406-.719.688-5.281 5.281-5.281-5.281-.719-.688z"></path>
-                                                        </svg>
-                                                    </span>
-                                                </span>
-                                                <span class="arrow">
-                                                    <svg viewBox="0 0 10 7">
-                                                        <path d="M2.08578644,6.5 C1.69526215,6.89052429 1.69526215,7.52368927 2.08578644,7.91421356 C2.47631073,8.30473785 3.10947571,8.30473785 3.5,7.91421356 L8.20710678,3.20710678 L3.5,-1.5 C3.10947571,-1.89052429 2.47631073,-1.89052429 2.08578644,-1.5 C1.69526215,-1.10947571 1.69526215,-0.476310729 2.08578644,-0.0857864376 L5.37867966,3.20710678 L2.08578644,6.5 Z" transform="translate(5.000000, 3.207107) rotate(90.000000) translate(-5.000000, -3.207107) "></path>
+                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                        </path>
                                                     </svg>
                                                 </span>
                                             </div>
                                             </div>
                                         </div>
+                                        <div class="Polaris-TextField__Backdrop"></div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label class="Polaris-Choice" for="PolarisCheckbox21">
+                                <span class="Polaris-Choice__Control">
+                                <span class="Polaris-Checkbox">
+                                    <input name="'.$elementtitle.'__hidelabel" id="PolarisCheckbox21" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <span class="Polaris-Checkbox__Icon">
+                                        <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                            </path>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Hide label</span>
+                            </label>
+                        </div>
+                        <div class="form-control hidden passhideLabel">
+                            <label class="Polaris-Choice" for="PolarisCheckbox22">
+                                <span class="Polaris-Choice__Control">
+                                <span class="Polaris-Checkbox">
+                                    <input name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox22" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <span class="Polaris-Checkbox__Icon">
+                                        <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                            </path>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Keep position of label</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="Polaris-Choice" for="PolarisCheckbox23">
+                                <span class="Polaris-Choice__Control">
+                                <span class="Polaris-Checkbox">
+                                    <input name="'.$elementtitle.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="true" value="" checked=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <span class="Polaris-Checkbox__Icon">
+                                        <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                            </path>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Required</span>
+                            </label>
+                        </div>
+                        <div class="form-control Requiredpass hidden">
+                            <label class="Polaris-Choice" for="PolarisCheckbox24">
+                                <span class="Polaris-Choice__Control">
+                                <span class="Polaris-Checkbox">
+                                    <input name="'.$elementtitle.'__required__hidelabel" id="PolarisCheckbox24" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <span class="Polaris-Checkbox__Icon">
+                                        <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                            </path>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Show required note if hide
+                                label?</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                            <div class="chooseInput">
+                                <div class="label">Column width</div>
+                                <div class="chooseItems">
+                                <div class="chooseItem " data-value="3">33%</div>
+                                <div class="chooseItem active" data-value="2">50%</div>
+                                <div class="chooseItem " data-value="1">100%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-control">
+                        <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                    </div>
+                    </div>';
+                }else if($elementid == 8){
+                    $comeback .= '<div class="">
+                            <div class="container container_'.$elementtitle.'">
+                                <div>
+                                    <div class="">
+                                        <div class="form-control">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
+                                                            <div>Label</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input name="'.$elementtitle.'__label"  id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Password">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField6Label" for="PolarisTextField6" class="Polaris-Label__Text">
+                                                            <div>Placeholder</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input name="'.$elementtitle.'__placeholder" id="PolarisTextField6" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Enter your password">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">
+                                                            <div>Description</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField">
+                                                            <input name="'.$elementtitle.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox3">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="'.$elementtitle.'__limitcharacter" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input passLimitcar " aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Limit characters</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control limitCaracters  hidden">
+                                            <div class="">
+                                                <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                        <input name="'.$elementtitle.'__limitcharacter__value" id="PolarisTextField8" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="100">
+                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                        <path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </div>
+                                                            </div>
+                                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                        <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Validate</label></div>
+                                                </div>
+                                                <div class="Polaris-Select">
+                                                <select name="'.$elementtitle.'__validate" id="PolarisSelect2" class="Polaris-Select__Input" aria-invalid="false">
+                                                    <option value="false">None</option>
+                                                    <option value="^.{6,}$">Minimum 6 characters</option>
+                                                    <option value="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">Minimum 6 characters, at least one letter and one number</option>
+                                                    <option value="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&amp;])[A-Za-z\d@$!%*#?&amp;]{6,}$">Minimum 6 characters, at least one letter, one number and one special character</option>
+                                                    <option value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$">Minimum 6 characters, at least one uppercase letter, one lowercase letter and one number</option>
+                                                    <option value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{6,}$">Minimum 6 characters, at least one uppercase letter, one lowercase letter, one number and one special character</option>
+                                                    <option value="advancedValidateRule">Advanced validate rule</option>
+                                                </select>
+                                                <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                    <span class="Polaris-Select__SelectedOption">None</span>
+                                                    <span class="Polaris-Select__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <div class="Polaris-Select__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control hidden ">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField9Label" for="PolarisTextField9" class="Polaris-Label__Text">
+                                                            <div>Advanced validate regex rule</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField">
+                                                            <input  name="'.$elementtitle.'__validate__regexrule"  id="PolarisTextField9" placeholder="Enter your custom validate regex here" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox4">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input  name="'.$elementtitle.'__hidelabel"  id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input  hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Hide label</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control passhideLabel hidden">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox5">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input  name="'.$elementtitle.'__keepposition__label"  id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Keep position of label</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox6">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="'.$elementtitle.'__required" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Required</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control Requiredpass hidden">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox7">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="'.$elementtitle.'__required__hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox111">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="'.$elementtitle.'__confirmpassword" id="PolarisCheckbox111" type="checkbox" class="Polaris-Checkbox__Input confirmpass" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Also create confirm password input</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox9">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input  name="'.$elementtitle.'__storepassword" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Storing password for purpose</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control conpass hidden">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField10Label" for="PolarisTextField10" class="Polaris-Label__Text">
+                                                            <div>Label confirm</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input name="'.$elementtitle.'__confirmpasswordlabel" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="Confirm password">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control conpass hidden">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">
+                                                            <div>Placeholder confirm</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input name="'.$elementtitle.'__confirmpasswordplaceholder" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Confirm your password">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control conpass hidden">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">
+                                                            <div>Description confirm</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField">
+                                                            <input name="'.$elementtitle.'__confirmpassworddescription" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="form-control">
                                             <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                             <div class="chooseInput">
@@ -3205,1220 +2880,1005 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                            </div>
-                        </div>';    
-                    }else if($elementid == 10){
-                        $comeback .= '<div class="">
-                        <div class="container tabContent container_'.$elementtitle.'">
-                        <div>
-                           <div class="">
-                              <div class="form-control">
-                                 <div class="hidden">
-                                    <div class="">
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input id="PolarisTextField8" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="file">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div class="hidden">
-                                    <div class="">
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input id="PolarisTextField9" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="file">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div class="textfield-wrapper">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label">
-                                             <label id="PolarisTextField10Label" for="PolarisTextField10" class="Polaris-Label__Text">
-                                                <div>Label</div>
-                                             </label>
-                                          </div>
-                                       </div>
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="File">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div class="hidden">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label">
-                                             <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">Button text</label>
-                                          </div>
-                                       </div>
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input id="PolarisTextField11" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Choose file">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div class="hidden">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label">
-                                             <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">Placeholder</label>
-                                          </div>
-                                       </div>
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField">
-                                                <input id="PolarisTextField12" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <label class="Polaris-Choice" >
-                                    <span class="Polaris-Choice__Control">
-                                       <span class="Polaris-Checkbox">
-                                          <input id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                          <span class="Polaris-Checkbox__Icon">
-                                             <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                   <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                             </span>
-                                          </span>
-                                       </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Allow multiple</span>
-                                 </label>
-                              </div>
-                              <div class="form-control">
-                                 <div class="uikit select multiple" tabindex="0">
-                                    <label class="label">Allowed extensions</label>
-                                    <select class="selectFile"style="width:100% "  multiple="multiple">
-                                       <option></option>
-                                       <option value="1">csv</option>
-                                       <option value="2">pdf</option>
-                                       <option value="3">jpg</option>
-                                       <option value="4">jpeg</option>
-                                       <option value="5">gif</option>
-                                       <option value="6">svg</option>
-                                       <option value="7">png</option>
-                                       <option value="8">ai</option>
-                                       <option value="9">psd</option>
-                                       <option value="10">stl</option>
-                                       <option value="11">stp</option>
-                                       <option value="12">step</option>
-                                       <option value="13">doc</option>
-                                       <option value="14">docx</option>
-                                       <option value="15">ppt</option>
-                                       <option value="16">pptx</option>
-                                       <option value="17">txt</option>
-                                       <option value="18">ex2</option>
-                                       <option value="19">dxf</option>
-                                       <option value="20">gbr</option>
-                                       <option value="21">eps</option>
-                                       <option value="22">mov</option>
-                                       <option value="23">mp4</option>
-                                       <option value="24">xls</option>
-                                       <option value="25">xlsx</option>
-                                       <option value="26">ods</option>
-                                       <option value="27">numbers</option>
-                                       <option value="28">xlsm</option>
-                                       <option value="29">zip</option>
-                                       <option value="30">heic</option>
-                                       <option value="31">heif</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div class="textfield-wrapper">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label">
-                                             <label id="PolarisTextField13Label" for="PolarisTextField13" class="Polaris-Label__Text">
-                                                <div>Description</div>
-                                             </label>
-                                          </div>
-                                       </div>
-                                       <div class="Polaris-Connected">
-                                          <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                             <div class="Polaris-TextField">
-                                                <input id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="form-control">
-                                 <div></div>
-                              </div>
-                              <div class="form-control">
-                                 <div></div>
-                              </div>
-                              <div class="form-control">
-                                 <label class="Polaris-Choice" for="PolarisCheckbox13">
-                                    <span class="Polaris-Choice__Control">
-                                       <span class="Polaris-Checkbox">
-                                          <input id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                          <span class="Polaris-Checkbox__Icon">
-                                             <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                   <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                             </span>
-                                          </span>
-                                       </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Hide label</span>
-                                 </label>
-                              </div>
-                              <div class="form-control hidden hideLabel">
-                                 <label class="Polaris-Choice" for="PolarisCheckbox14">
-                                    <span class="Polaris-Choice__Control">
-                                       <span class="Polaris-Checkbox">
-                                          <input id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                          <span class="Polaris-Checkbox__Icon">
-                                             <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                   <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                             </span>
-                                          </span>
-                                       </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Keep position of label</span>
-                                 </label>
-                              </div>
-                              <div class="form-control">
-                                 <label class="Polaris-Choice" for="PolarisCheckbox15">
-                                    <span class="Polaris-Choice__Control">
-                                       <span class="Polaris-Checkbox">
-                                          <input id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                          <span class="Polaris-Checkbox__Icon">
-                                             <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                   <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                             </span>
-                                          </span>
-                                       </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Required</span>
-                                 </label>
-                              </div>
-                              <div class="form-control hidden required_Content">
-                                 <label class="Polaris-Choice" for="PolarisCheckbox16">
-                                    <span class="Polaris-Choice__Control">
-                                       <span class="Polaris-Checkbox">
-                                          <input id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                          <span class="Polaris-Checkbox__Icon">
-                                             <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                   <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                </svg>
-                                             </span>
-                                          </span>
-                                       </span>
-                                    </span>
-                                    <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                 </label>
-                              </div>
-                              <div class="form-control">
-                                <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                <div class="chooseInput">
-                                    <div class="label">Column width</div>
-                                    <div class="chooseItems">
-                                        <div class="chooseItem " data-value="3">33%</div>
-                                        <div class="chooseItem active" data-value="2">50%</div>
-                                        <div class="chooseItem " data-value="1">100%</div>
-                                    </div>
+                                <div class="form-control">
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                                 </div>
                             </div>
-                              <div class="form-control">
-                                 <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
-                                 <span class="Polaris-Button__Content">
-                                 <span class="Polaris-Button__Text">
-                                 <span>Remove this element</span>
-                                 </span>
-                                 </span>
-                                 </button>
-                              </div>
-                           </div>
-                        </div>';
-                    }else if($elementid == 11){
-                        $comeback .= '  <div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField14" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField14Label" aria-invalid="false" value="checkbox">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField15" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="checkbox">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField16Label" for="PolarisTextField16" class="Polaris-Label__Text">
-                                                        <div>Label</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField16" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="Checkbox">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textarea-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField17Label" for="PolarisTextField17" class="Polaris-Label__Text">Options</label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea id="PolarisTextField17" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField17Label" aria-invalid="false" aria-multiline="true" style="height: 82px;">Option 1
-                                                    </textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                            <div class="Polaris-TextField__DummyInput">Option 1</div>
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField18Label" for="PolarisTextField18" class="Polaris-Label__Text">Options</label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField18" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textarea-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField19Label" for="PolarisTextField19" class="Polaris-Label__Text">Enter default value</label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                            <div class="Polaris-TextField__DummyInput">dfdf<br></div>
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField20Label" for="PolarisTextField20" class="Polaris-Label__Text">
-                                                        <div>Description</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField20" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField20Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox17">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Hide label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox18">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Keep position of label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox19">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox20">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="chooseInput">
-                                            <div class="label">Number of options per line</div>
-                                            <div class="chooseItems">
-                                                <div class="chooseItem ">5</div>
-                                                <div class="chooseItem ">4</div>
-                                                <div class="chooseItem ">3</div>
-                                                <div class="chooseItem ">2</div>
-                                                <div class="chooseItem active">1</div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
-                                            <div class="chooseInput">
-                                                <div class="label">Column width</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem " data-value="3">33%</div>
-                                                    <div class="chooseItem active" data-value="2">50%</div>
-                                                    <div class="chooseItem " data-value="1">100%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                            </div>
-                        </div>';
-                    }else if($elementid == 13){
-                        $comeback .= '  <div class="">
-                        <div class="container tabContent container_'.$elementtitle.'">
-                           <div>
-                              <div class="">
-                                 <div class="form-control">
-                                    <div class="hidden">
-                                       <div class="">
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                   <input id="PolarisTextField56" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField56Label" aria-invalid="false" value="radio">
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="hidden">
-                                       <div class="">
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                   <input id="PolarisTextField57" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField57Label" aria-invalid="false" value="radio">
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                       <div class="">
-                                          <div class="Polaris-Labelled__LabelWrapper">
-                                             <div class="Polaris-Label">
-                                                <label id="PolarisTextField58Label" for="PolarisTextField58" class="Polaris-Label__Text">
-                                                   <div>Label</div>
-                                                </label>
-                                             </div>
-                                          </div>
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                   <input id="PolarisTextField58" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="Radio">
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="textarea-wrapper">
-                                       <div class="">
-                                          <div class="Polaris-Labelled__LabelWrapper">
-                                             <div class="Polaris-Label"><label id="PolarisTextField59Label" for="PolarisTextField59" class="Polaris-Label__Text">Options</label></div>
-                                          </div>
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                   <textarea id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">Option 1
-                                                     Option 2</textarea>
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                   <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                      <div class="Polaris-TextField__DummyInput">Option 1<br>Option 2<br></div>
-                                                      <div class="Polaris-TextField__DummyInput"><br></div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="hidden">
-                                       <div class="">
-                                          <div class="Polaris-Labelled__LabelWrapper">
-                                             <div class="Polaris-Label"><label id="PolarisTextField60Label" for="PolarisTextField60" class="Polaris-Label__Text">Options</label></div>
-                                          </div>
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                   <input id="PolarisTextField60" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField60Label" aria-invalid="false" value="">
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label">
-                                             <label class="Polaris-Label__Text">Select default value</label>
-                                          </div>
-                                       </div>
-                                       <div class="Polaris-Select">
-                                          <select class="selectDates" >
-                                             <option value="">Please select</option>
-                                             <option value="Option 1">Option 1</option>
-                                             <option value="Option 2">Option 2</option>
-                                          </select>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                       <div class="">
-                                          <div class="Polaris-Labelled__LabelWrapper">
-                                             <div class="Polaris-Label">
-                                                <label id="PolarisTextField61Label" for="PolarisTextField61" class="Polaris-Label__Text">
-                                                   <div>Description</div>
-                                                </label>
-                                             </div>
-                                          </div>
-                                          <div class="Polaris-Connected">
-                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                   <input id="PolarisTextField61" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField61Label" aria-invalid="false" value="">
-                                                   <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox50">
-                                       <span class="Polaris-Choice__Control">
-                                          <span class="Polaris-Checkbox">
-                                             <input id="PolarisCheckbox50" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                             <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </span>
-                                       </span>
-                                       <span class="Polaris-Choice__Label">Hide label</span>
-                                    </label>
-                                 </div>
-                                 <div class="form-control hidden">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox51">
-                                       <span class="Polaris-Choice__Control">
-                                          <span class="Polaris-Checkbox">
-                                             <input id="PolarisCheckbox51" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                             <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </span>
-                                       </span>
-                                       <span class="Polaris-Choice__Label">Keep position of label</span>
-                                    </label>
-                                 </div>
-                                 <div class="form-control">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox52">
-                                       <span class="Polaris-Choice__Control">
-                                          <span class="Polaris-Checkbox">
-                                             <input id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                             <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </span>
-                                       </span>
-                                       <span class="Polaris-Choice__Label">Required</span>
-                                    </label>
-                                 </div>
-                                 <div class="form-control hidden">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox53">
-                                       <span class="Polaris-Choice__Control">
-                                          <span class="Polaris-Checkbox">
-                                             <input id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                             <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </span>
-                                       </span>
-                                       <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                    </label>
-                                 </div>
-                                 <div class="form-control">
-                                    <div class="chooseInput">
-                                       <div class="label">Number of options per line</div>
-                                       <div class="chooseItems">
-                                          <div class="chooseItem ">5</div>
-                                          <div class="chooseItem ">4</div>
-                                          <div class="chooseItem ">3</div>
-                                          <div class="chooseItem ">2</div>
-                                          <div class="chooseItem active">1</div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control">
-                                    <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
-                                    <div class="chooseInput">
-                                        <div class="label">Column width</div>
-                                        <div class="chooseItems">
-                                            <div class="chooseItem " data-value="3">33%</div>
-                                            <div class="chooseItem active" data-value="2">50%</div>
-                                            <div class="chooseItem " data-value="1">100%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                 <div class="form-control">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox54">
-                                       <span class="Polaris-Choice__Control">
-                                          <span class="Polaris-Checkbox">
-                                             <input id="PolarisCheckbox54" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                             <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </span>
-                                       </span>
-                                       <span class="Polaris-Choice__Label">Conditional field</span>
-                                    </label>
-                                 </div>
-                                 <div class="form-control hidden">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label"><label id="PolarisSelect19Label" for="PolarisSelect19" class="Polaris-Label__Text">Only show element if</label></div>
-                                       </div>
-                                       <div class="Polaris-Select">
-                                          <select id="PolarisSelect19" class="Polaris-Select__Input" aria-invalid="false">
-                                             <option value="false">Please select</option>
-                                             <option value="checkbox">Checkbox</option>
-                                             <option value="checkbox-2">Checkbox</option>
-                                          </select>
-                                          <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                             <span class="Polaris-Select__SelectedOption">Please select</span>
-                                             <span class="Polaris-Select__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </div>
-                                          <div class="Polaris-Select__Backdrop"></div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control hidden">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label"><label id="PolarisSelect20Label" for="PolarisSelect20" class="Polaris-Label__Text">is</label></div>
-                                       </div>
-                                       <div class="Polaris-Select">
-                                          <select id="PolarisSelect20" class="Polaris-Select__Input" aria-invalid="false">
-                                             <option value="false">Please select</option>
-                                             <option value="Option 1">Option 1</option>
-                                             <option value="Option 2">Option 2</option>
-                                             <option value="option 3">option 3</option>
-                                          </select>
-                                          <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                             <span class="Polaris-Select__SelectedOption">Please select</span>
-                                             <span class="Polaris-Select__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </div>
-                                          <div class="Polaris-Select__Backdrop"></div>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="form-control hidden">
-                                    <div class="">
-                                       <div class="Polaris-Labelled__LabelWrapper">
-                                          <div class="Polaris-Label"><label id="PolarisSelect21Label" for="PolarisSelect21" class="Polaris-Label__Text">is</label></div>
-                                       </div>
-                                       <div class="Polaris-Select">
-                                          <select id="PolarisSelect21" class="Polaris-Select__Input" aria-invalid="false">
-                                             <option value="false">Please select</option>
-                                             <option value="Option 1">Option 1</option>
-                                             <option value="Option 2">Option 2</option>
-                                             <option value="option 3">option 3</option>
-                                          </select>
-                                          <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                             <span class="Polaris-Select__SelectedOption">Please select</span>
-                                             <span class="Polaris-Select__Icon">
-                                                <span class="Polaris-Icon">
-                                                   <span class="Polaris-VisuallyHidden"></span>
-                                                   <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                      <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                   </svg>
-                                                </span>
-                                             </span>
-                                          </div>
-                                          <div class="Polaris-Select__Backdrop"></div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="form-control">
-                              <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
-                              <span class="Polaris-Button__Content">
-                              <span class="Polaris-Button__Text">
-                              <span>Remove this element</span>
-                              </span>
-                              </span>
-                              </button>
-                           </div>
-                        </div>
-                     </div>';
-                    }else if($elementid == 12){
-                        $comeback .= '<div class="">
-                                        <div class="container tabContent container_'.$elementtitle.'">
-                                            <div>
-                                                <div class="">
-                                                    <div class="form-control">
-                                                        <div class="hidden">
-                                                            <div class="">
-                                                            <div class="Polaris-Connected">
-                                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                        <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="acceptTerms">
-                                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <div class="hidden">
-                                                            <div class="">
-                                                            <div class="Polaris-Connected">
-                                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                        <input id="PolarisTextField4" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="acceptTerms">
-                                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <div class="textfield-wrapper">
-                                                            <div class="">
-                                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                                <div class="Polaris-Label">
-                                                                    <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
-                                                                        <div>Label</div>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="Polaris-Connected">
-                                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                        <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="I agree Terms and Conditions">
-                                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <div class="hidden">
-                                                            <div class="">
-                                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                                <div class="Polaris-Label"><label   class="Polaris-Label__Text">rawOption</label></div>
-                                                            </div>
-                                                            <div class="Polaris-Connected">
-                                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                        <input id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Yes">
-                                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <label class="Polaris-Choice" for="PolarisCheckbox3">
-                                                            <span class="Polaris-Choice__Control">
-                                                            <span class="Polaris-Checkbox">
-                                                                <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                                <span class="Polaris-Checkbox__Icon">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </span>
-                                                            </span>
-                                                            </span>
-                                                            <span class="Polaris-Choice__Label">Default is selected</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <div class="textfield-wrapper">
-                                                            <div class="">
-                                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                                <div class="Polaris-Label">
-                                                                    <label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">
-                                                                        <div>Description</div>
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="Polaris-Connected">
-                                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                    <div class="Polaris-TextField">
-                                                                        <input id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
-                                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <label class="Polaris-Choice" for="PolarisCheckbox4">
-                                                            <span class="Polaris-Choice__Control">
-                                                            <span class="Polaris-Checkbox">
-                                                                <input id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                                <span class="Polaris-Checkbox__Icon">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </span>
-                                                            </span>
-                                                            </span>
-                                                            <span class="Polaris-Choice__Label">Required</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-control">
-                                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
-                                                        <div class="chooseInput">
-                                                            <div class="label">Column width</div>
-                                                            <div class="chooseItems">
-                                                                <div class="chooseItem " data-value="3">33%</div>
-                                                                <div class="chooseItem active" data-value="2">50%</div>
-                                                                <div class="chooseItem " data-value="1">100%</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                                        </div>
-                                    </div>';
-                    }else if($elementid == 14){
-                        $comeback .= '  <div class="">
-                                <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
+                    </div>';
+                }else if($elementid == 9){
+                    $comeback .= '<div class="">
+                        <div class="container container_'.$elementtitle.'">
+                            <div>
                                 <div class="">
                                     <div class="form-control">
                                         <div class="hidden">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="select">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField21" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField21Label" aria-invalid="false" value="datetime">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="hidden">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="select">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField22" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField22Label" aria-invalid="false" value="datetime">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">
-                                                        <div>Label</div>
+                                                    <label id="PolarisTextField23Label" for="PolarisTextField23" class="Polaris-Label__Text">
+                                                    <div>Label</div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Dropdown">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField23" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="Date time">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
-                                                        <div>Placeholder</div>
+                                                    <label id="PolarisTextField24Label" for="PolarisTextField24" class="Polaris-Label__Text">
+                                                    <div>Placeholder</div>
                                                     </label>
                                                 </div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Please select">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="textarea-wrapper">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField6Label"  class="Polaris-Label__Text">Options</label>
-                                                    </div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        
-                                                    <div  style="display:flex;width:100%;">
-                                                        <input type="text" id="Skill" name="Main" class="mainskill" style="width:85%;" required>
-                                                        <button type="button" name="add" id="add" class="btn btn-primary" style=" padding: 10px 20px;width:15%;">+</button>
-                                                    </div>
-                                                    <div id="optionText"></div>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">Options</label></div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField7" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField24" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField25Label" for="PolarisTextField25" class="Polaris-Label__Text">
+                                                    <div>Description</div>
+                                                    </label>
+                                                </div>
                                             </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox12">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Hide label</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden passhideLabel">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox13">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Keep position of label</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox14">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input name="'.$elementtitle.'__required" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Required</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control Requiredpass hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox15">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="chooseInput">
+                                        <div class="label">Format</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem ">Date &amp; time</div>
+                                            <div class="chooseItem active">Date</div>
+                                            <div class="chooseItem ">Time</div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox16">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Other language</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisSelect7Label" for="PolarisSelect7" class="Polaris-Label__Text">Localization</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                            <select id="PolarisSelect7" class="Polaris-Select__Input" aria-invalid="false">
+                                                <option value="ar">Arabic</option>
+                                                <option value="at">Austria</option>
+                                                <option value="az">Azerbaijan</option>
+                                                <option value="be">Belarusian</option>
+                                                <option value="bs">Bosnian</option>
+                                                <option value="bg">Bulgarian</option>
+                                                <option value="bn">Bangla</option>
+                                                <option value="cat">Catalan</option>
+                                                <option value="cs">Czech</option>
+                                                <option value="cy">Welsh</option>
+                                                <option value="da">Danish</option>
+                                                <option value="de">German</option>
+                                                <option value="eo">Esperanto</option>
+                                                <option value="es">Spanish</option>
+                                                <option value="et">Estonian</option>
+                                                <option value="fa">Persian</option>
+                                                <option value="fi">Finnish</option>
+                                                <option value="fo">Faroese</option>
+                                                <option value="fr">French</option>
+                                                <option value="gr">Greek</option>
+                                                <option value="he">Hebrew</option>
+                                                <option value="hi">Hindi</option>
+                                                <option value="hr">Croatian</option>
+                                                <option value="hu">Hungarian</option>
+                                                <option value="id">Indonesian</option>
+                                                <option value="is">Icelandic</option>
+                                                <option value="it">Italian</option>
+                                                <option value="ja">Japanese</option>
+                                                <option value="ka">Georgian</option>
+                                                <option value="ko">Korean</option>
+                                                <option value="km">Khmer</option>
+                                                <option value="kz">Kazakh</option>
+                                                <option value="lt">Lithuanian</option>
+                                                <option value="lv">Latvian</option>
+                                                <option value="mk">Macedonian</option>
+                                                <option value="mn">Mongolian</option>
+                                                <option value="ms">Malaysian</option>
+                                                <option value="my">Burmese</option>
+                                                <option value="nl">Dutch</option>
+                                                <option value="no">Norwegian</option>
+                                                <option value="pa">Punjabi</option>
+                                                <option value="pl">Polish</option>
+                                                <option value="pt">Portuguese</option>
+                                                <option value="ro">Romanian</option>
+                                                <option value="ru">Russian</option>
+                                                <option value="si">Sinhala</option>
+                                                <option value="sk">Slovak</option>
+                                                <option value="sl">Slovenian</option>
+                                                <option value="sq">Albanian</option>
+                                                <option value="sr">Serbian</option>
+                                                <option value="sv">Swedish</option>
+                                                <option value="th">Thai</option>
+                                                <option value="tr">Turkish</option>
+                                                <option value="uk">Ukrainian</option>
+                                                <option value="uz">Uzbek</option>
+                                                <option value="vn">Vietnamese</option>
+                                                <option value="zh">Mandarin</option>
+                                            </select>
+                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                <span class="Polaris-Select__SelectedOption">Spanish</span>
+                                                <span class="Polaris-Select__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Select default value</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                            <select id="optionSelect"  class="selectDates" >
-                                                <option value="">Please select</option>
-                                                <option value="Option 1">Option 1</option>
-                                                <option value="Option 2">Option 2</option>
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisSelect8Label" for="PolarisSelect8" class="Polaris-Label__Text">Date format</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                            <select id="PolarisSelect8" class="Polaris-Select__Input" aria-invalid="false">
+                                                <option value="Y-m-d">Y-m-d</option>
+                                                <option value="d-m-Y">d-m-Y</option>
+                                                <option value="m-d-Y">m-d-Y</option>
+                                                <option value="d-m">d-m</option>
+                                                <option value="m-d">m-d</option>
+                                                <option value="Y/m/d">Y/m/d</option>
+                                                <option value="d/m/Y">d/m/Y</option>
+                                                <option value="m/d/Y">m/d/Y</option>
+                                                <option value="d/m">d/m</option>
+                                                <option value="m/d">m/d</option>
                                             </select>
-                                            
-                                            
+                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                <span class="Polaris-Select__SelectedOption">Y-m-d</span>
+                                                <span class="Polaris-Select__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
                                             </div>
+                                            <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Time format</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                            <select id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
+                                                <option value="12h">12h</option>
+                                                <option value="24h">24h</option>
+                                            </select>
+                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                <span class="Polaris-Select__SelectedOption">12h</span>
+                                                <span class="Polaris-Select__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox17">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Limit date picker</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisSelect10Label" for="PolarisSelect10" class="Polaris-Label__Text">Limit date type</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                            <select id="PolarisSelect10" class="Polaris-Select__Input" aria-invalid="false">
+                                                <option value="disablingDates">Disabling dates</option>
+                                                <option value="enablingDates">Enabling dates</option>
+                                            </select>
+                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                <span class="Polaris-Select__SelectedOption">Disabling dates</span>
+                                                <span class="Polaris-Select__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden ">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox18">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Specific dates</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">Select specific dates</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
+                                                    <input id="PolarisTextField4" class="Polaris-TextField__Input flatpickr-input" aria-labelledby="PolarisTextField4Label" aria-invalid="false" aria-multiline="false" value="Jaded Pixel" type="text" readonly="readonly">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox19">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Range dates</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">Select range dates</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
+                                                    <input id="PolarisTextField4" class="Polaris-TextField__Input flatpickr-input" aria-labelledby="PolarisTextField4Label" aria-invalid="false" aria-multiline="false" value="Jaded Pixel" type="text" readonly="readonly">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox20">
+                                        <span class="Polaris-Choice__Control">
+                                            <span class="Polaris-Checkbox">
+                                                <input id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <span class="Polaris-Checkbox__Icon">
+                                                    <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Days of week</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden">
+                                        <div class="uikit select multiple" tabindex="0">
+                                        <label class="label">Target days of week</label>
+                                        <div class="selection">
+                                            <span class="multiple value">
+                                                saturday
+                                                <span data-value="saturday" class="delete">
+                                                    <svg viewBox="0 0 16 16">
+                                                    <path d="M2 .594l-1.406 1.406.688.719 5.281 5.281-5.281 5.281-.688.719 1.406 1.406.719-.688 5.281-5.281 5.281 5.281.719.688 1.406-1.406-.688-.719-5.281-5.281 5.281-5.281.688-.719-1.406-1.406-.719.688-5.281 5.281-5.281-5.281-.719-.688z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                            <span class="multiple value">
+                                                sunday
+                                                <span data-value="sunday" class="delete">
+                                                    <svg viewBox="0 0 16 16">
+                                                    <path d="M2 .594l-1.406 1.406.688.719 5.281 5.281-5.281 5.281-.688.719 1.406 1.406.719-.688 5.281-5.281 5.281 5.281.719.688 1.406-1.406-.688-.719-5.281-5.281 5.281-5.281.688-.719-1.406-1.406-.719.688-5.281 5.281-5.281-5.281-.719-.688z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                            <span class="arrow">
+                                                <svg viewBox="0 0 10 7">
+                                                    <path d="M2.08578644,6.5 C1.69526215,6.89052429 1.69526215,7.52368927 2.08578644,7.91421356 C2.47631073,8.30473785 3.10947571,8.30473785 3.5,7.91421356 L8.20710678,3.20710678 L3.5,-1.5 C3.10947571,-1.89052429 2.47631073,-1.89052429 2.08578644,-1.5 C1.69526215,-1.10947571 1.69526215,-0.476310729 2.08578644,-0.0857864376 L5.37867966,3.20710678 L2.08578644,6.5 Z" transform="translate(5.000000, 3.207107) rotate(90.000000) translate(-5.000000, -3.207107) "></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <div class="chooseInput">
+                                            <div class="label">Column width</div>
+                                            <div class="chooseItems">
+                                                <div class="chooseItem " data-value="3">33%</div>
+                                                <div class="chooseItem active" data-value="2">50%</div>
+                                                <div class="chooseItem " data-value="1">100%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';    
+                }else if($elementid == 10){
+                    $comeback .= '<div class="">
+                    <div class="container tabContent container_'.$elementtitle.'">
+                    <div>
+                        <div class="">
+                            <div class="form-control">
+                                <div class="hidden">
+                                <div class="">
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input id="PolarisTextField8" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="file">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="hidden">
+                                <div class="">
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input id="PolarisTextField9" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="file">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label">
+                                            <label id="PolarisTextField10Label" for="PolarisTextField10" class="Polaris-Label__Text">
+                                            <div>Label</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="File">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="hidden">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label">
+                                            <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">Button text</label>
+                                        </div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                            <input id="PolarisTextField11" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Choose file">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="hidden">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label">
+                                            <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">Placeholder</label>
+                                        </div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                            <input id="PolarisTextField12" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <label class="Polaris-Choice" >
+                                <span class="Polaris-Choice__Control">
+                                    <span class="Polaris-Checkbox">
+                                        <input id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                            </svg>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Allow multiple</span>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <div class="uikit select multiple" tabindex="0">
+                                <label class="label">Allowed extensions</label>
+                                <select class="selectFile"style="width:100% "  multiple="multiple">
+                                    <option></option>
+                                    <option value="1">csv</option>
+                                    <option value="2">pdf</option>
+                                    <option value="3">jpg</option>
+                                    <option value="4">jpeg</option>
+                                    <option value="5">gif</option>
+                                    <option value="6">svg</option>
+                                    <option value="7">png</option>
+                                    <option value="8">ai</option>
+                                    <option value="9">psd</option>
+                                    <option value="10">stl</option>
+                                    <option value="11">stp</option>
+                                    <option value="12">step</option>
+                                    <option value="13">doc</option>
+                                    <option value="14">docx</option>
+                                    <option value="15">ppt</option>
+                                    <option value="16">pptx</option>
+                                    <option value="17">txt</option>
+                                    <option value="18">ex2</option>
+                                    <option value="19">dxf</option>
+                                    <option value="20">gbr</option>
+                                    <option value="21">eps</option>
+                                    <option value="22">mov</option>
+                                    <option value="23">mp4</option>
+                                    <option value="24">xls</option>
+                                    <option value="25">xlsx</option>
+                                    <option value="26">ods</option>
+                                    <option value="27">numbers</option>
+                                    <option value="28">xlsm</option>
+                                    <option value="29">zip</option>
+                                    <option value="30">heic</option>
+                                    <option value="31">heif</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label">
+                                            <label id="PolarisTextField13Label" for="PolarisTextField13" class="Polaris-Label__Text">
+                                            <div>Description</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                            <input id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="">
+                                            <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div></div>
+                            </div>
+                            <div class="form-control">
+                                <div></div>
+                            </div>
+                            <div class="form-control">
+                                <label class="Polaris-Choice" for="PolarisCheckbox13">
+                                <span class="Polaris-Choice__Control">
+                                    <span class="Polaris-Checkbox">
+                                        <input id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                            </svg>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Hide label</span>
+                                </label>
+                            </div>
+                            <div class="form-control hidden passhideLabel">
+                                <label class="Polaris-Choice" for="PolarisCheckbox14">
+                                <span class="Polaris-Choice__Control">
+                                    <span class="Polaris-Checkbox">
+                                        <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                            </svg>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Keep position of label</span>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                                <label class="Polaris-Choice" for="PolarisCheckbox15">
+                                <span class="Polaris-Choice__Control">
+                                    <span class="Polaris-Checkbox">
+                                        <input name="'.$elementtitle.'__required" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                            </svg>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Required</span>
+                                </label>
+                            </div>
+                            <div class="form-control Requiredpass hidden">
+                                <label class="Polaris-Choice" for="PolarisCheckbox16">
+                                <span class="Polaris-Choice__Control">
+                                    <span class="Polaris-Checkbox">
+                                        <input id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                            <span class="Polaris-VisuallyHidden"></span>
+                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                            </svg>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                </label>
+                            </div>
+                            <div class="form-control">
+                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                            <div class="chooseInput">
+                                <div class="label">Column width</div>
+                                <div class="chooseItems">
+                                    <div class="chooseItem " data-value="3">33%</div>
+                                    <div class="chooseItem active" data-value="2">50%</div>
+                                    <div class="chooseItem " data-value="1">100%</div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="form-control">
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                                <span class="Polaris-Button__Content">
+                                <span class="Polaris-Button__Text">
+                                <span>Remove this element</span>
+                                </span>
+                                </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>';
+                }else if($elementid == 11){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div>
+                                <div class="">
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField14" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField14Label" aria-invalid="false" value="checkbox">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField15" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="checkbox">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label id="PolarisTextField8Label" for="PolarisTextField8" class="Polaris-Label__Text">
-                                                        <div>Description</div>
+                                                    <label id="PolarisTextField16Label" for="PolarisTextField16" class="Polaris-Label__Text">
+                                                    <div>Label</div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField8" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField16" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="Checkbox">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox3">
-                                            <span class="Polaris-Choice__Control">
+                                        <div class="textarea-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label"><label id="PolarisTextField17Label" for="PolarisTextField17" class="Polaris-Label__Text">Options</label></div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    <textarea id="PolarisTextField17" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField17Label" aria-invalid="false" aria-multiline="true" style="height: 82px;">Option 1
+                                                </textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
+                                                        <div class="Polaris-TextField__DummyInput">Option 1</div>
+                                                        <div class="Polaris-TextField__DummyInput"><br></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label"><label id="PolarisTextField18Label" for="PolarisTextField18" class="Polaris-Label__Text">Options</label></div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField18" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textarea-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label"><label id="PolarisTextField19Label" for="PolarisTextField19" class="Polaris-Label__Text">Enter default value</label></div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    <textarea id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
+                                                        <div class="Polaris-TextField__DummyInput">dfdf<br></div>
+                                                        <div class="Polaris-TextField__DummyInput"><br></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField20Label" for="PolarisTextField20" class="Polaris-Label__Text">
+                                                    <div>Description</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField20" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField20Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox17">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Hide label</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Hide label</span>
                                         </label>
                                     </div>
-                                    <div class="form-control hidden hideLabel">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox4">
-                                            <span class="Polaris-Choice__Control">
+                                    <div class="form-control hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox18">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Keep position of label</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Keep position of label</span>
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox5">
-                                            <span class="Polaris-Choice__Control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox19">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.'__required" id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Required</span>
                                         </label>
                                     </div>
-                                    <div class="form-control hidden hideRequired">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox6">
-                                            <span class="Polaris-Choice__Control">
+                                    <div class="form-control Requiredpass hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox20">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Show required note if hide label?</span>
                                         </label>
                                     </div>
-                                    
+                                    <div class="form-control">
+                                        <div class="chooseInput">
+                                        <div class="label">Number of options per line</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem ">5</div>
+                                            <div class="chooseItem ">4</div>
+                                            <div class="chooseItem ">3</div>
+                                            <div class="chooseItem ">2</div>
+                                            <div class="chooseItem active">1</div>
+                                        </div>
+                                        </div>
+                                    </div>
                                     <div class="form-control">
                                         <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                         <div class="chooseInput">
@@ -4431,468 +3891,1543 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                 </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                             </div>
-                        </div>';
-                    }else if($elementid == 15){
-                        $comeback .= '  <div class="">
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }else if($elementid == 13){
+                    $comeback .= '  <div class="">
+                    <div class="container tabContent container_'.$elementtitle.'">
+                        <div>
+                            <div class="">
+                                <div class="form-control">
+                                <div class="hidden">
+                                    <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField56" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField56Label" aria-invalid="false" value="radio">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="hidden">
+                                    <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField57" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField57Label" aria-invalid="false" value="radio">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                            <label id="PolarisTextField58Label" for="PolarisTextField58" class="Polaris-Label__Text">
+                                                <div>Label</div>
+                                            </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                <input id="PolarisTextField58" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="Radio">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="textarea-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField59Label" for="PolarisTextField59" class="Polaris-Label__Text">Options</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                <textarea id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">Option 1
+                                                    Option 2</textarea>
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                                <div aria-hidden="true" class="Polaris-TextField__Resizer">
+                                                    <div class="Polaris-TextField__DummyInput">Option 1<br>Option 2<br></div>
+                                                    <div class="Polaris-TextField__DummyInput"><br></div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="hidden">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField60Label" for="PolarisTextField60" class="Polaris-Label__Text">Options</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input id="PolarisTextField60" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField60Label" aria-invalid="false" value="">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label">
+                                            <label class="Polaris-Label__Text">Select default value</label>
+                                        </div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select class="selectDates" >
+                                            <option value="">Please select</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                            <label id="PolarisTextField61Label" for="PolarisTextField61" class="Polaris-Label__Text">
+                                                <div>Description</div>
+                                            </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input id="PolarisTextField61" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField61Label" aria-invalid="false" value="">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <label class="Polaris-Choice" for="PolarisCheckbox50">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox50" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Hide label</span>
+                                </label>
+                                </div>
+                                <div class="form-control hidden">
+                                <label class="Polaris-Choice" for="PolarisCheckbox51">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox51" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Keep position of label</span>
+                                </label>
+                                </div>
+                                <div class="form-control">
+                                <label class="Polaris-Choice" for="PolarisCheckbox52">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false requiredCheck" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Required</span>
+                                </label>
+                                </div>
+                                <div class="form-control Requiredpass hidden">
+                                <label class="Polaris-Choice" for="PolarisCheckbox53">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                </label>
+                                </div>
+                                <div class="form-control">
+                                <div class="chooseInput">
+                                    <div class="label">Number of options per line</div>
+                                    <div class="chooseItems">
+                                        <div class="chooseItem ">5</div>
+                                        <div class="chooseItem ">4</div>
+                                        <div class="chooseItem ">3</div>
+                                        <div class="chooseItem ">2</div>
+                                        <div class="chooseItem active">1</div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control">
+                                <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                <div class="chooseInput">
+                                    <div class="label">Column width</div>
+                                    <div class="chooseItems">
+                                        <div class="chooseItem " data-value="3">33%</div>
+                                        <div class="chooseItem active" data-value="2">50%</div>
+                                        <div class="chooseItem " data-value="1">100%</div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="form-control">
+                                <label class="Polaris-Choice" for="PolarisCheckbox54">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox54" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Conditional field</span>
+                                </label>
+                                </div>
+                                <div class="form-control hidden">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect19Label" for="PolarisSelect19" class="Polaris-Label__Text">Only show element if</label></div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select id="PolarisSelect19" class="Polaris-Select__Input" aria-invalid="false">
+                                            <option value="false">Please select</option>
+                                            <option value="checkbox">Checkbox</option>
+                                            <option value="checkbox-2">Checkbox</option>
+                                        </select>
+                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                            <span class="Polaris-Select__SelectedOption">Please select</span>
+                                            <span class="Polaris-Select__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </div>
+                                        <div class="Polaris-Select__Backdrop"></div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control hidden">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect20Label" for="PolarisSelect20" class="Polaris-Label__Text">is</label></div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select id="PolarisSelect20" class="Polaris-Select__Input" aria-invalid="false">
+                                            <option value="false">Please select</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                            <option value="option 3">option 3</option>
+                                        </select>
+                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                            <span class="Polaris-Select__SelectedOption">Please select</span>
+                                            <span class="Polaris-Select__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </div>
+                                        <div class="Polaris-Select__Backdrop"></div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="form-control hidden">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect21Label" for="PolarisSelect21" class="Polaris-Label__Text">is</label></div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select id="PolarisSelect21" class="Polaris-Select__Input" aria-invalid="false">
+                                            <option value="false">Please select</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                            <option value="option 3">option 3</option>
+                                        </select>
+                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                            <span class="Polaris-Select__SelectedOption">Please select</span>
+                                            <span class="Polaris-Select__Icon">
+                                            <span class="Polaris-Icon">
+                                                <span class="Polaris-VisuallyHidden"></span>
+                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                </svg>
+                                            </span>
+                                            </span>
+                                        </div>
+                                        <div class="Polaris-Select__Backdrop"></div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                            <span class="Polaris-Button__Content">
+                            <span class="Polaris-Button__Text">
+                            <span>Remove this element</span>
+                            </span>
+                            </span>
+                            </button>
+                        </div>
+                    </div>
+                    </div>';
+                }else if($elementid == 12){
+                    $comeback .= '<div class="">
+                                    <div class="container tabContent container_'.$elementtitle.'">
+                                        <div>
+                                            <div class="">
+                                                <div class="form-control">
+                                                    <div class="hidden">
+                                                        <div class="">
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                                    <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="acceptTerms">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-control">
+                                                    <div class="hidden">
+                                                        <div class="">
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                                    <input id="PolarisTextField4" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="acceptTerms">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-control">
+                                                    <div class="textfield-wrapper">
+                                                        <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
+                                                                    <div>Label</div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                                    <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="I agree Terms and Conditions">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-control">
+                                                    <div class="hidden">
+                                                        <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label"><label   class="Polaris-Label__Text">rawOption</label></div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                                    <input id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Yes">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-control">
+                                                    <label class="Polaris-Choice" for="PolarisCheckbox3">
+                                                        <span class="Polaris-Choice__Control">
+                                                        <span class="Polaris-Checkbox">
+                                                            <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                            <span class="Polaris-Checkbox__Icon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                        </span>
+                                                        <span class="Polaris-Choice__Label">Default is selected</span>
+                                                    </label>
+                                                </div>
+                                                <div class="form-control">
+                                                    <div class="textfield-wrapper">
+                                                        <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">
+                                                                    <div>Description</div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-control">
+                                                    <label class="Polaris-Choice" for="PolarisCheckbox4">
+                                                        <span class="Polaris-Choice__Control">
+                                                        <span class="Polaris-Checkbox">
+                                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                            <span class="Polaris-Checkbox__Icon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                        </span>
+                                                        <span class="Polaris-Choice__Label">Required</span>
+                                                    </label>
+                                                </div>
+                                                <div class="form-control">
+                                                    <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                                    <div class="chooseInput">
+                                                        <div class="label">Column width</div>
+                                                        <div class="chooseItems">
+                                                            <div class="chooseItem " data-value="3">33%</div>
+                                                            <div class="chooseItem active" data-value="2">50%</div>
+                                                            <div class="chooseItem " data-value="1">100%</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                                    </div>
+                                </div>';
+                }else if($elementid == 14){
+                    $comeback .= '  <div class="">
                             <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
+                            <div>
+                            <div class="">
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="select">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="select">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">
+                                                    <div>Label</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Dropdown">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
+                                                    <div>Placeholder</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Please select">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textarea-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField6Label"  class="Polaris-Label__Text">Options</label>
+                                                </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    
+                                                <div  style="display:flex;width:100%;">
+                                                    <input type="text" id="Skill" name="Main" class="mainskill" style="width:85%;" required>
+                                                    <button type="button" name="add" id="add" class="btn btn-primary" style=" padding: 10px 20px;width:15%;">+</button>
+                                                </div>
+                                                <div id="optionText"></div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField7Label" for="PolarisTextField7" class="Polaris-Label__Text">Options</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField7" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Select default value</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                        <select id="optionSelect"  class="selectDates" >
+                                            <option value="">Please select</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                        </select>
+                                        
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField8Label" for="PolarisTextField8" class="Polaris-Label__Text">
+                                                    <div>Description</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField8" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox3">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Hide label</span>
+                                    </label>
+                                </div>
+                                <div class="form-control hidden hideLabel">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox4">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Keep position of label</span>
+                                    </label>
+                                </div>
+                                <div class="form-control">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox5">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Required</span>
+                                    </label>
+                                </div>
+                                <div class="form-control Requiredpass hidden">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox6">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-control">
+                                    <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                    <div class="chooseInput">
+                                        <div class="label">Column width</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem " data-value="3">33%</div>
+                                            <div class="chooseItem active" data-value="2">50%</div>
+                                            <div class="chooseItem " data-value="1">100%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }else if($elementid == 15){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div>
+                            <div class="">
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField9" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="country">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField10" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="country">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">
+                                                    <div>Label</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Country">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">
+                                                    <div>Placeholder</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="Please select">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control hidden">
+                                    <div class="textarea-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField13Label" for="PolarisTextField13" class="Polaris-Label__Text">Options</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    <textarea id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField13Label" aria-invalid="false" aria-multiline="true">Afghanistan
+                        
+                                                    </textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="hidden">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextField14Label" for="PolarisTextField14" class="Polaris-Label__Text">Options</label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField14" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField14Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label id="PolarisTextField15Label" for="PolarisTextField15" class="Polaris-Label__Text">
+                                                    <div>Description</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField15" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect3Label" for="PolarisSelect3" class="Polaris-Label__Text">Select default value</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                        <select  class="selectDates" >
+                                            <option value="">Please select</option>
+                                            <option value="Afghanistan">Afghanistan</option>
+                                            <option value="Aland Islands">Aland Islands</option>
+                                            <option value="Albania">Albania</option>
+                                            <option value="Algeria">Algeria</option>
+                                            <option value="Andorra">Andorra</option>
+                                            <option value="Angola">Angola</option>
+                                            <option value="Anguilla">Anguilla</option>
+                                            <option value="Antigua And Barbuda">Antigua And Barbuda</option>
+                                            <option value="Argentina">Argentina</option>
+                                            <option value="Armenia">Armenia</option>
+                                            <option value="Aruba">Aruba</option>
+                                            <option value="Australia">Australia</option>
+                                            <option value="Austria">Austria</option>
+                                            <option value="Azerbaijan">Azerbaijan</option>
+                                            <option value="Bahamas">Bahamas</option>
+                                            <option value="Bahrain">Bahrain</option>
+                                            <option value="Bangladesh">Bangladesh</option>
+                                            <option value="Barbados">Barbados</option>
+                                            <option value="Belarus">Belarus</option>
+                                            <option value="Belgium">Belgium</option>
+                                            <option value="Belize">Belize</option>
+                                            <option value="Benin">Benin</option>
+                                            <option value="Bermuda">Bermuda</option>
+                                            <option value="Bhutan">Bhutan</option>
+                                            <option value="Bolivia">Bolivia</option>
+                                            <option value="Bosnia And Herzegovina">Bosnia And Herzegovina</option>
+                                            <option value="Botswana">Botswana</option>
+                                            <option value="Bouvet Island">Bouvet Island</option>
+                                            <option value="Brazil">Brazil</option>
+                                            <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
+                                            <option value="Virgin Islands, British">Virgin Islands, British</option>
+                                            <option value="Brunei">Brunei</option>
+                                            <option value="Bulgaria">Bulgaria</option>
+                                            <option value="Burkina Faso">Burkina Faso</option>
+                                            <option value="Burundi">Burundi</option>
+                                            <option value="Cambodia">Cambodia</option>
+                                            <option value="Republic of Cameroon">Republic of Cameroon</option>
+                                            <option value="Canada">Canada</option>
+                                            <option value="Cape Verde">Cape Verde</option>
+                                            <option value="Caribbean Netherlands">Caribbean Netherlands</option>
+                                            <option value="Cayman Islands">Cayman Islands</option>
+                                            <option value="Central African Republic">Central African Republic</option>
+                                            <option value="Chad">Chad</option>
+                                            <option value="Chile">Chile</option>
+                                            <option value="China">China</option>
+                                            <option value="Christmas Island">Christmas Island</option>
+                                            <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
+                                            <option value="Colombia">Colombia</option>
+                                            <option value="Comoros">Comoros</option>
+                                            <option value="Congo">Congo</option>
+                                            <option value="Congo, The Democratic Republic Of The">Congo, The Democratic Republic Of The</option>
+                                            <option value="Cook Islands">Cook Islands</option>
+                                            <option value="Costa Rica">Costa Rica</option>
+                                            <option value="Croatia">Croatia</option>
+                                            <option value="Cuba">Cuba</option>
+                                            <option value="Curaçao">Curaçao</option>
+                                            <option value="Cyprus">Cyprus</option>
+                                            <option value="Czech Republic">Czech Republic</option>
+                                            <option value="Côte d Ivoire">Côte d Ivoire</option>
+                                            <option value="Denmark">Denmark</option>
+                                            <option value="Djibouti">Djibouti</option>
+                                            <option value="Dominica">Dominica</option>
+                                            <option value="Dominican Republic">Dominican Republic</option>
+                                            <option value="Ecuador">Ecuador</option>
+                                            <option value="Egypt">Egypt</option>
+                                            <option value="El Salvador">El Salvador</option>
+                                            <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                            <option value="Eritrea">Eritrea</option>
+                                            <option value="Estonia">Estonia</option>
+                                            <option value="Eswatini">Eswatini</option>
+                                            <option value="Ethiopia">Ethiopia</option>
+                                            <option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option>
+                                            <option value="Faroe Islands">Faroe Islands</option>
+                                            <option value="Fiji">Fiji</option>
+                                            <option value="Finland">Finland</option>
+                                            <option value="France">France</option>
+                                            <option value="French Guiana">French Guiana</option>
+                                            <option value="French Polynesia">French Polynesia</option>
+                                            <option value="French Southern Territories">French Southern Territories</option>
+                                            <option value="Gabon">Gabon</option>
+                                            <option value="Gambia">Gambia</option>
+                                            <option value="Georgia">Georgia</option>
+                                            <option value="Germany">Germany</option>
+                                            <option value="Ghana">Ghana</option>
+                                            <option value="Gibraltar">Gibraltar</option>
+                                            <option value="Greece">Greece</option>
+                                            <option value="Greenland">Greenland</option>
+                                            <option value="Grenada">Grenada</option>
+                                            <option value="Guadeloupe">Guadeloupe</option>
+                                            <option value="Guatemala">Guatemala</option>
+                                            <option value="Guernsey">Guernsey</option>
+                                            <option value="Guinea">Guinea</option>
+                                            <option value="Guinea Bissau">Guinea Bissau</option>
+                                            <option value="Guyana">Guyana</option>
+                                            <option value="Haiti">Haiti</option>
+                                            <option value="Heard Island And Mcdonald Islands">Heard Island And Mcdonald Islands</option>
+                                            <option value="Honduras">Honduras</option>
+                                            <option value="Hong Kong">Hong Kong</option>
+                                            <option value="Hungary">Hungary</option>
+                                            <option value="Iceland">Iceland</option>
+                                            <option value="India">India</option>
+                                            <option value="Indonesia">Indonesia</option>
+                                            <option value="Iran, Islamic Republic Of">Iran, Islamic Republic Of</option>
+                                            <option value="Iraq">Iraq</option>
+                                            <option value="Ireland">Ireland</option>
+                                            <option value="Isle Of Man">Isle Of Man</option>
+                                            <option value="Israel">Israel</option>
+                                            <option value="Italy">Italy</option>
+                                            <option value="Jamaica">Jamaica</option>
+                                            <option value="Japan">Japan</option>
+                                            <option value="Jersey">Jersey</option>
+                                            <option value="Jordan">Jordan</option>
+                                            <option value="Kazakhstan">Kazakhstan</option>
+                                            <option value="Kenya">Kenya</option>
+                                            <option value="Kiribati">Kiribati</option>
+                                            <option value="Kosovo">Kosovo</option>
+                                            <option value="Kuwait">Kuwait</option>
+                                            <option value="Kyrgyzstan">Kyrgyzstan</option>
+                                            <option value="Lao People s Democratic Republic">Lao People s Democratic Republic</option>
+                                            <option value="Latvia">Latvia</option>
+                                            <option value="Lebanon">Lebanon</option>
+                                            <option value="Lesotho">Lesotho</option>
+                                            <option value="Liberia">Liberia</option>
+                                            <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
+                                            <option value="Liechtenstein">Liechtenstein</option>
+                                            <option value="Lithuania">Lithuania</option>
+                                            <option value="Luxembourg">Luxembourg</option>
+                                            <option value="Macao">Macao</option>
+                                            <option value="Madagascar">Madagascar</option>
+                                            <option value="Malawi">Malawi</option>
+                                            <option value="Malaysia">Malaysia</option>
+                                            <option value="Maldives">Maldives</option>
+                                            <option value="Mali">Mali</option>
+                                            <option value="Malta">Malta</option>
+                                            <option value="Martinique">Martinique</option>
+                                            <option value="Mauritania">Mauritania</option>
+                                            <option value="Mauritius">Mauritius</option>
+                                            <option value="Mayotte">Mayotte</option>
+                                            <option value="Mexico">Mexico</option>
+                                            <option value="Moldova, Republic of">Moldova, Republic of</option>
+                                            <option value="Monaco">Monaco</option>
+                                            <option value="Mongolia">Mongolia</option>
+                                            <option value="Montenegro">Montenegro</option>
+                                            <option value="Montserrat">Montserrat</option>
+                                            <option value="Morocco">Morocco</option>
+                                            <option value="Mozambique">Mozambique</option>
+                                            <option value="Myanmar">Myanmar</option>
+                                            <option value="Namibia">Namibia</option>
+                                            <option value="Nauru">Nauru</option>
+                                            <option value="Nepal">Nepal</option>
+                                            <option value="Netherlands">Netherlands</option>
+                                            <option value="Netherlands Antilles">Netherlands Antilles</option>
+                                            <option value="New Caledonia">New Caledonia</option>
+                                            <option value="New Zealand">New Zealand</option>
+                                            <option value="Nicaragua">Nicaragua</option>
+                                            <option value="Niger">Niger</option>
+                                            <option value="Nigeria">Nigeria</option>
+                                            <option value="Niue">Niue</option>
+                                            <option value="Norfolk Island">Norfolk Island</option>
+                                            <option value="Korea, Democratic Peoples Republic Of">Korea, Democratic People s Republic Of</option>
+                                            <option value="North Macedonia">North Macedonia</option>
+                                            <option value="Norway">Norway</option>
+                                            <option value="Oman">Oman</option>
+                                            <option value="Pakistan">Pakistan</option>
+                                            <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
+                                            <option value="Panama">Panama</option>
+                                            <option value="Papua New Guinea">Papua New Guinea</option>
+                                            <option value="Paraguay">Paraguay</option>
+                                            <option value="Peru">Peru</option>
+                                            <option value="Philippines">Philippines</option>
+                                            <option value="Pitcairn">Pitcairn</option>
+                                            <option value="Poland">Poland</option>
+                                            <option value="Portugal">Portugal</option>
+                                            <option value="Qatar">Qatar</option>
+                                            <option value="Reunion">Reunion</option>
+                                            <option value="Romania">Romania</option>
+                                            <option value="Russia">Russia</option>
+                                            <option value="Rwanda">Rwanda</option>
+                                            <option value="Samoa">Samoa</option>
+                                            <option value="San Marino">San Marino</option>
+                                            <option value="Sao Tome And Principe">Sao Tome And Principe</option>
+                                            <option value="Saudi Arabia">Saudi Arabia</option>
+                                            <option value="Senegal">Senegal</option>
+                                            <option value="Serbia">Serbia</option>
+                                            <option value="Seychelles">Seychelles</option>
+                                            <option value="Sierra Leone">Sierra Leone</option>
+                                            <option value="Singapore">Singapore</option>
+                                            <option value="Sint Maarten">Sint Maarten</option>
+                                            <option value="Slovakia">Slovakia</option>
+                                            <option value="Slovenia">Slovenia</option>
+                                            <option value="Solomon Islands">Solomon Islands</option>
+                                            <option value="Somalia">Somalia</option>
+                                            <option value="South Africa">South Africa</option>
+                                            <option value="South Georgia And The South Sandwich Islands">South Georgia And The South Sandwich Islands</option>
+                                            <option value="South Korea">South Korea</option>
+                                            <option value="South Sudan">South Sudan</option>
+                                            <option value="Spain">Spain</option>
+                                            <option value="Sri Lanka">Sri Lanka</option>
+                                            <option value="Saint Barthélemy">Saint Barthélemy</option>
+                                            <option value="Saint Helena">Saint Helena</option>
+                                            <option value="Saint Kitts And Nevis">Saint Kitts And Nevis</option>
+                                            <option value="Saint Lucia">Saint Lucia</option>
+                                            <option value="Saint Martin">Saint Martin</option>
+                                            <option value="Saint Pierre And Miquelon">Saint Pierre And Miquelon</option>
+                                            <option value="St. Vincent">St. Vincent</option>
+                                            <option value="Sudan">Sudan</option>
+                                            <option value="Suriname">Suriname</option>
+                                            <option value="Svalbard And Jan Mayen">Svalbard And Jan Mayen</option>
+                                            <option value="Sweden">Sweden</option>
+                                            <option value="Switzerland">Switzerland</option>
+                                            <option value="Syria">Syria</option>
+                                            <option value="Taiwan">Taiwan</option>
+                                            <option value="Tajikistan">Tajikistan</option>
+                                            <option value="Tanzania, United Republic Of">Tanzania, United Republic Of</option>
+                                            <option value="Thailand">Thailand</option>
+                                            <option value="Timor Leste">Timor Leste</option>
+                                            <option value="Togo">Togo</option>
+                                            <option value="Tokelau">Tokelau</option>
+                                            <option value="Tonga">Tonga</option>
+                                            <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                                            <option value="Tunisia">Tunisia</option>
+                                            <option value="Turkey">Turkey</option>
+                                            <option value="Turkmenistan">Turkmenistan</option>
+                                            <option value="Turks and Caicos Islands">Turks and Caicos Islands</option>
+                                            <option value="Tuvalu">Tuvalu</option>
+                                            <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
+                                            <option value="Uganda">Uganda</option>
+                                            <option value="Ukraine">Ukraine</option>
+                                            <option value="United Arab Emirates">United Arab Emirates</option>
+                                            <option value="United Kingdom">United Kingdom</option>
+                                            <option value="United States">United States</option>
+                                            <option value="Uruguay">Uruguay</option>
+                                            <option value="Uzbekistan">Uzbekistan</option>
+                                            <option value="Vanuatu">Vanuatu</option>
+                                            <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
+                                            <option value="Venezuela">Venezuela</option>
+                                            <option value="Vietnam">Vietnam</option>
+                                            <option value="Wallis And Futuna">Wallis And Futuna</option>
+                                            <option value="Western Sahara">Western Sahara</option>
+                                            <option value="Yemen">Yemen</option>
+                                            <option value="Zambia">Zambia</option>
+                                            <option value="Zimbabwe">Zimbabwe</option>
+                                        </select>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox7">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Hide label</span>
+                                    </label>
+                                </div>
+                                <div class="form-control hidden">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox8">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox8" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Keep position of label</span>
+                                    </label>
+                                </div>
+                                <div class="form-control">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox9">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Required</span>
+                                    </label>
+                                </div>
+                                <div class="form-control Requiredpass hidden">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox10">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox10" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                    </label>
+                                </div>
+                                <div class="form-control">
+                                    <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                    <div class="chooseInput">
+                                        <div class="label">Column width</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem " data-value="3">33%</div>
+                                            <div class="chooseItem active" data-value="2">50%</div>
+                                            <div class="chooseItem " data-value="1">100%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="Polaris-Choice" for="PolarisCheckbox11">
+                                        <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Conditional field</span>
+                                    </label>
+                                </div>
+                                <div class="form-control hidden">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect4Label" for="PolarisSelect4" class="Polaris-Label__Text">Only show element if</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                        <select id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
+                                            <option value="false">Please select</option>
+                                            <option value="select">Dropdown</option>
+                                        </select>
+                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                            <span class="Polaris-Select__SelectedOption">Please select</span>
+                                            <span class="Polaris-Select__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control hidden">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label id="PolarisSelect5Label" for="PolarisSelect5" class="Polaris-Label__Text">is</label></div>
+                                        </div>
+                                        <div class="Polaris-Select">
+                                        <select id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
+                                            <option value="false">Please select</option>
+                                            <option value="Option 1">Option 1</option>
+                                            <option value="Option 2">Option 2</option>
+                                            <option value="option 3">option 3</option>
+                                            <option value=" option4"> option4</option>
+                                        </select>
+                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                            <span class="Polaris-Select__SelectedOption">Please select</span>
+                                            <span class="Polaris-Select__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }else if($elementid == 16){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div>
                                 <div class="">
                                     <div class="form-control">
                                         <div class="hidden">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField9" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="country">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField16" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="heading">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="hidden">
-                                            <div class="">
+                                        <div class="">
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField10" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="country">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    <input id="PolarisTextField17" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField17Label" aria-invalid="false" value="heading">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label">
-                                                    <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">
-                                                        <div>Label</div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Country">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="textfield-wrapper">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label">
-                                                    <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">
-                                                        <div>Placeholder</div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="Please select">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control hidden">
-                                        <div class="textarea-wrapper">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField13Label" for="PolarisTextField13" class="Polaris-Label__Text">Options</label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField13Label" aria-invalid="false" aria-multiline="true">Afghanistan
-                            
-                                                        </textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="hidden">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField14Label" for="PolarisTextField14" class="Polaris-Label__Text">Options</label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField14" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField14Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
-                                        <div class="textfield-wrapper">
-                                            <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label">
-                                                    <label id="PolarisTextField15Label" for="PolarisTextField15" class="Polaris-Label__Text">
-                                                        <div>Description</div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField15" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-control">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisSelect3Label" for="PolarisSelect3" class="Polaris-Label__Text">Select default value</label></div>
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField18Label" for="PolarisTextField18" class="Polaris-Label__Text">
+                                                    <div>Heading</div>
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="Polaris-Select">
-                                            <select  class="selectDates" >
-                                                <option value="">Please select</option>
-                                                <option value="Afghanistan">Afghanistan</option>
-                                                <option value="Aland Islands">Aland Islands</option>
-                                                <option value="Albania">Albania</option>
-                                                <option value="Algeria">Algeria</option>
-                                                <option value="Andorra">Andorra</option>
-                                                <option value="Angola">Angola</option>
-                                                <option value="Anguilla">Anguilla</option>
-                                                <option value="Antigua And Barbuda">Antigua And Barbuda</option>
-                                                <option value="Argentina">Argentina</option>
-                                                <option value="Armenia">Armenia</option>
-                                                <option value="Aruba">Aruba</option>
-                                                <option value="Australia">Australia</option>
-                                                <option value="Austria">Austria</option>
-                                                <option value="Azerbaijan">Azerbaijan</option>
-                                                <option value="Bahamas">Bahamas</option>
-                                                <option value="Bahrain">Bahrain</option>
-                                                <option value="Bangladesh">Bangladesh</option>
-                                                <option value="Barbados">Barbados</option>
-                                                <option value="Belarus">Belarus</option>
-                                                <option value="Belgium">Belgium</option>
-                                                <option value="Belize">Belize</option>
-                                                <option value="Benin">Benin</option>
-                                                <option value="Bermuda">Bermuda</option>
-                                                <option value="Bhutan">Bhutan</option>
-                                                <option value="Bolivia">Bolivia</option>
-                                                <option value="Bosnia And Herzegovina">Bosnia And Herzegovina</option>
-                                                <option value="Botswana">Botswana</option>
-                                                <option value="Bouvet Island">Bouvet Island</option>
-                                                <option value="Brazil">Brazil</option>
-                                                <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
-                                                <option value="Virgin Islands, British">Virgin Islands, British</option>
-                                                <option value="Brunei">Brunei</option>
-                                                <option value="Bulgaria">Bulgaria</option>
-                                                <option value="Burkina Faso">Burkina Faso</option>
-                                                <option value="Burundi">Burundi</option>
-                                                <option value="Cambodia">Cambodia</option>
-                                                <option value="Republic of Cameroon">Republic of Cameroon</option>
-                                                <option value="Canada">Canada</option>
-                                                <option value="Cape Verde">Cape Verde</option>
-                                                <option value="Caribbean Netherlands">Caribbean Netherlands</option>
-                                                <option value="Cayman Islands">Cayman Islands</option>
-                                                <option value="Central African Republic">Central African Republic</option>
-                                                <option value="Chad">Chad</option>
-                                                <option value="Chile">Chile</option>
-                                                <option value="China">China</option>
-                                                <option value="Christmas Island">Christmas Island</option>
-                                                <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
-                                                <option value="Colombia">Colombia</option>
-                                                <option value="Comoros">Comoros</option>
-                                                <option value="Congo">Congo</option>
-                                                <option value="Congo, The Democratic Republic Of The">Congo, The Democratic Republic Of The</option>
-                                                <option value="Cook Islands">Cook Islands</option>
-                                                <option value="Costa Rica">Costa Rica</option>
-                                                <option value="Croatia">Croatia</option>
-                                                <option value="Cuba">Cuba</option>
-                                                <option value="Curaçao">Curaçao</option>
-                                                <option value="Cyprus">Cyprus</option>
-                                                <option value="Czech Republic">Czech Republic</option>
-                                                <option value="Côte d Ivoire">Côte d Ivoire</option>
-                                                <option value="Denmark">Denmark</option>
-                                                <option value="Djibouti">Djibouti</option>
-                                                <option value="Dominica">Dominica</option>
-                                                <option value="Dominican Republic">Dominican Republic</option>
-                                                <option value="Ecuador">Ecuador</option>
-                                                <option value="Egypt">Egypt</option>
-                                                <option value="El Salvador">El Salvador</option>
-                                                <option value="Equatorial Guinea">Equatorial Guinea</option>
-                                                <option value="Eritrea">Eritrea</option>
-                                                <option value="Estonia">Estonia</option>
-                                                <option value="Eswatini">Eswatini</option>
-                                                <option value="Ethiopia">Ethiopia</option>
-                                                <option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option>
-                                                <option value="Faroe Islands">Faroe Islands</option>
-                                                <option value="Fiji">Fiji</option>
-                                                <option value="Finland">Finland</option>
-                                                <option value="France">France</option>
-                                                <option value="French Guiana">French Guiana</option>
-                                                <option value="French Polynesia">French Polynesia</option>
-                                                <option value="French Southern Territories">French Southern Territories</option>
-                                                <option value="Gabon">Gabon</option>
-                                                <option value="Gambia">Gambia</option>
-                                                <option value="Georgia">Georgia</option>
-                                                <option value="Germany">Germany</option>
-                                                <option value="Ghana">Ghana</option>
-                                                <option value="Gibraltar">Gibraltar</option>
-                                                <option value="Greece">Greece</option>
-                                                <option value="Greenland">Greenland</option>
-                                                <option value="Grenada">Grenada</option>
-                                                <option value="Guadeloupe">Guadeloupe</option>
-                                                <option value="Guatemala">Guatemala</option>
-                                                <option value="Guernsey">Guernsey</option>
-                                                <option value="Guinea">Guinea</option>
-                                                <option value="Guinea Bissau">Guinea Bissau</option>
-                                                <option value="Guyana">Guyana</option>
-                                                <option value="Haiti">Haiti</option>
-                                                <option value="Heard Island And Mcdonald Islands">Heard Island And Mcdonald Islands</option>
-                                                <option value="Honduras">Honduras</option>
-                                                <option value="Hong Kong">Hong Kong</option>
-                                                <option value="Hungary">Hungary</option>
-                                                <option value="Iceland">Iceland</option>
-                                                <option value="India">India</option>
-                                                <option value="Indonesia">Indonesia</option>
-                                                <option value="Iran, Islamic Republic Of">Iran, Islamic Republic Of</option>
-                                                <option value="Iraq">Iraq</option>
-                                                <option value="Ireland">Ireland</option>
-                                                <option value="Isle Of Man">Isle Of Man</option>
-                                                <option value="Israel">Israel</option>
-                                                <option value="Italy">Italy</option>
-                                                <option value="Jamaica">Jamaica</option>
-                                                <option value="Japan">Japan</option>
-                                                <option value="Jersey">Jersey</option>
-                                                <option value="Jordan">Jordan</option>
-                                                <option value="Kazakhstan">Kazakhstan</option>
-                                                <option value="Kenya">Kenya</option>
-                                                <option value="Kiribati">Kiribati</option>
-                                                <option value="Kosovo">Kosovo</option>
-                                                <option value="Kuwait">Kuwait</option>
-                                                <option value="Kyrgyzstan">Kyrgyzstan</option>
-                                                <option value="Lao People s Democratic Republic">Lao People s Democratic Republic</option>
-                                                <option value="Latvia">Latvia</option>
-                                                <option value="Lebanon">Lebanon</option>
-                                                <option value="Lesotho">Lesotho</option>
-                                                <option value="Liberia">Liberia</option>
-                                                <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
-                                                <option value="Liechtenstein">Liechtenstein</option>
-                                                <option value="Lithuania">Lithuania</option>
-                                                <option value="Luxembourg">Luxembourg</option>
-                                                <option value="Macao">Macao</option>
-                                                <option value="Madagascar">Madagascar</option>
-                                                <option value="Malawi">Malawi</option>
-                                                <option value="Malaysia">Malaysia</option>
-                                                <option value="Maldives">Maldives</option>
-                                                <option value="Mali">Mali</option>
-                                                <option value="Malta">Malta</option>
-                                                <option value="Martinique">Martinique</option>
-                                                <option value="Mauritania">Mauritania</option>
-                                                <option value="Mauritius">Mauritius</option>
-                                                <option value="Mayotte">Mayotte</option>
-                                                <option value="Mexico">Mexico</option>
-                                                <option value="Moldova, Republic of">Moldova, Republic of</option>
-                                                <option value="Monaco">Monaco</option>
-                                                <option value="Mongolia">Mongolia</option>
-                                                <option value="Montenegro">Montenegro</option>
-                                                <option value="Montserrat">Montserrat</option>
-                                                <option value="Morocco">Morocco</option>
-                                                <option value="Mozambique">Mozambique</option>
-                                                <option value="Myanmar">Myanmar</option>
-                                                <option value="Namibia">Namibia</option>
-                                                <option value="Nauru">Nauru</option>
-                                                <option value="Nepal">Nepal</option>
-                                                <option value="Netherlands">Netherlands</option>
-                                                <option value="Netherlands Antilles">Netherlands Antilles</option>
-                                                <option value="New Caledonia">New Caledonia</option>
-                                                <option value="New Zealand">New Zealand</option>
-                                                <option value="Nicaragua">Nicaragua</option>
-                                                <option value="Niger">Niger</option>
-                                                <option value="Nigeria">Nigeria</option>
-                                                <option value="Niue">Niue</option>
-                                                <option value="Norfolk Island">Norfolk Island</option>
-                                                <option value="Korea, Democratic Peoples Republic Of">Korea, Democratic People s Republic Of</option>
-                                                <option value="North Macedonia">North Macedonia</option>
-                                                <option value="Norway">Norway</option>
-                                                <option value="Oman">Oman</option>
-                                                <option value="Pakistan">Pakistan</option>
-                                                <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
-                                                <option value="Panama">Panama</option>
-                                                <option value="Papua New Guinea">Papua New Guinea</option>
-                                                <option value="Paraguay">Paraguay</option>
-                                                <option value="Peru">Peru</option>
-                                                <option value="Philippines">Philippines</option>
-                                                <option value="Pitcairn">Pitcairn</option>
-                                                <option value="Poland">Poland</option>
-                                                <option value="Portugal">Portugal</option>
-                                                <option value="Qatar">Qatar</option>
-                                                <option value="Reunion">Reunion</option>
-                                                <option value="Romania">Romania</option>
-                                                <option value="Russia">Russia</option>
-                                                <option value="Rwanda">Rwanda</option>
-                                                <option value="Samoa">Samoa</option>
-                                                <option value="San Marino">San Marino</option>
-                                                <option value="Sao Tome And Principe">Sao Tome And Principe</option>
-                                                <option value="Saudi Arabia">Saudi Arabia</option>
-                                                <option value="Senegal">Senegal</option>
-                                                <option value="Serbia">Serbia</option>
-                                                <option value="Seychelles">Seychelles</option>
-                                                <option value="Sierra Leone">Sierra Leone</option>
-                                                <option value="Singapore">Singapore</option>
-                                                <option value="Sint Maarten">Sint Maarten</option>
-                                                <option value="Slovakia">Slovakia</option>
-                                                <option value="Slovenia">Slovenia</option>
-                                                <option value="Solomon Islands">Solomon Islands</option>
-                                                <option value="Somalia">Somalia</option>
-                                                <option value="South Africa">South Africa</option>
-                                                <option value="South Georgia And The South Sandwich Islands">South Georgia And The South Sandwich Islands</option>
-                                                <option value="South Korea">South Korea</option>
-                                                <option value="South Sudan">South Sudan</option>
-                                                <option value="Spain">Spain</option>
-                                                <option value="Sri Lanka">Sri Lanka</option>
-                                                <option value="Saint Barthélemy">Saint Barthélemy</option>
-                                                <option value="Saint Helena">Saint Helena</option>
-                                                <option value="Saint Kitts And Nevis">Saint Kitts And Nevis</option>
-                                                <option value="Saint Lucia">Saint Lucia</option>
-                                                <option value="Saint Martin">Saint Martin</option>
-                                                <option value="Saint Pierre And Miquelon">Saint Pierre And Miquelon</option>
-                                                <option value="St. Vincent">St. Vincent</option>
-                                                <option value="Sudan">Sudan</option>
-                                                <option value="Suriname">Suriname</option>
-                                                <option value="Svalbard And Jan Mayen">Svalbard And Jan Mayen</option>
-                                                <option value="Sweden">Sweden</option>
-                                                <option value="Switzerland">Switzerland</option>
-                                                <option value="Syria">Syria</option>
-                                                <option value="Taiwan">Taiwan</option>
-                                                <option value="Tajikistan">Tajikistan</option>
-                                                <option value="Tanzania, United Republic Of">Tanzania, United Republic Of</option>
-                                                <option value="Thailand">Thailand</option>
-                                                <option value="Timor Leste">Timor Leste</option>
-                                                <option value="Togo">Togo</option>
-                                                <option value="Tokelau">Tokelau</option>
-                                                <option value="Tonga">Tonga</option>
-                                                <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                                                <option value="Tunisia">Tunisia</option>
-                                                <option value="Turkey">Turkey</option>
-                                                <option value="Turkmenistan">Turkmenistan</option>
-                                                <option value="Turks and Caicos Islands">Turks and Caicos Islands</option>
-                                                <option value="Tuvalu">Tuvalu</option>
-                                                <option value="United States Minor Outlying Islands">United States Minor Outlying Islands</option>
-                                                <option value="Uganda">Uganda</option>
-                                                <option value="Ukraine">Ukraine</option>
-                                                <option value="United Arab Emirates">United Arab Emirates</option>
-                                                <option value="United Kingdom">United Kingdom</option>
-                                                <option value="United States">United States</option>
-                                                <option value="Uruguay">Uruguay</option>
-                                                <option value="Uzbekistan">Uzbekistan</option>
-                                                <option value="Vanuatu">Vanuatu</option>
-                                                <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
-                                                <option value="Venezuela">Venezuela</option>
-                                                <option value="Vietnam">Vietnam</option>
-                                                <option value="Wallis And Futuna">Wallis And Futuna</option>
-                                                <option value="Western Sahara">Western Sahara</option>
-                                                <option value="Yemen">Yemen</option>
-                                                <option value="Zambia">Zambia</option>
-                                                <option value="Zimbabwe">Zimbabwe</option>
-                                            </select>
-                                            
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField18" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="Heading">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textarea-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label"><label id="PolarisTextField19Label" for="PolarisTextField19" class="Polaris-Label__Text">Caption</label></div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--multiline">
+                                                    <textarea id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
+                                                        <div class="Polaris-TextField__DummyInput"><br></div>
+                                                        <div class="Polaris-TextField__DummyInput"><br></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <div class="chooseInput">
+                                            <div class="label">Column width</div>
+                                            <div class="chooseItems">
+                                                <div class="chooseItem " data-value="3">33%</div>
+                                                <div class="chooseItem active" data-value="2">50%</div>
+                                                <div class="chooseItem " data-value="1">100%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }else if($elementid == 17){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div class="container">
+                                <div class="">
+                                    <div class="form-control">
+                                        <div class="textfield-wrapper">
+                                            <div class="">
+                                                <textarea name="content" class="editor" style="display: none;"></textarea><div class="ck ck-reset ck-editor ck-rounded-corners" role="application" dir="ltr" lang="en" aria-labelledby="ck-editor__aria-label_e292c262362f2faaad1b3ec68a69644d3"><label class="ck ck-label ck-voice-label" id="ck-editor__aria-label_e292c262362f2faaad1b3ec68a69644d3">Rich Text Editor</label><div class="ck ck-editor__top ck-reset_all" role="presentation"><div class="ck ck-sticky-panel"><div class="ck ck-sticky-panel__placeholder" style="display: none;"></div><div class="ck ck-sticky-panel__content"><div class="ck ck-toolbar"><div class="ck ck-dropdown ck-heading-dropdown"><button class="ck ck-button ck-off ck-button_with-text ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e33907c8100d8afbb1af7739182988862" aria-haspopup="true"><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Heading</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e33907c8100d8afbb1af7739182988862">Paragraph</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><ul class="ck ck-reset ck-list"><li class="ck ck-list__item"><button class="ck ck-button ck-heading_paragraph ck-on ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e3a28a8a1d51d7688e45d61618e84ba7f" aria-pressed="true"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e3a28a8a1d51d7688e45d61618e84ba7f">Paragraph</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading1 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e3e96b4fb9381d2f4853b3a26e6d70236"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e3e96b4fb9381d2f4853b3a26e6d70236">Heading 1</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading2 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_ec561787fc387d59a214ac7863398b649"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_ec561787fc387d59a214ac7863398b649">Heading 2</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading3 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e2b4811352a65a67a94bf691c82043080"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e2b4811352a65a67a94bf691c82043080">Heading 3</span></button></li></ul></div></div><span class="ck ck-toolbar__separator"></span><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e1263aaa395c2aeb4d138eda10470596e"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M10.187 17H5.773c-.637 0-1.092-.138-1.364-.415-.273-.277-.409-.718-.409-1.323V4.738c0-.617.14-1.062.419-1.332.279-.27.73-.406 1.354-.406h4.68c.69 0 1.288.041 1.793.124.506.083.96.242 1.36.478.341.197.644.447.906.75a3.262 3.262 0 0 1 .808 2.162c0 1.401-.722 2.426-2.167 3.075C15.05 10.175 16 11.315 16 13.01a3.756 3.756 0 0 1-2.296 3.504 6.1 6.1 0 0 1-1.517.377c-.571.073-1.238.11-2 .11zm-.217-6.217H7v4.087h3.069c1.977 0 2.965-.69 2.965-2.072 0-.707-.256-1.22-.768-1.537-.512-.319-1.277-.478-2.296-.478zM7 5.13v3.619h2.606c.729 0 1.292-.067 1.69-.2a1.6 1.6 0 0 0 .91-.765c.165-.267.247-.566.247-.897 0-.707-.26-1.176-.778-1.409-.519-.232-1.31-.348-2.375-.348H7z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Bold (CTRL+B)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e1263aaa395c2aeb4d138eda10470596e">Bold</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e71a8510ccaa911fa2a71aafcde9b8585"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M9.586 14.633l.021.004c-.036.335.095.655.393.962.082.083.173.15.274.201h1.474a.6.6 0 1 1 0 1.2H5.304a.6.6 0 0 1 0-1.2h1.15c.474-.07.809-.182 1.005-.334.157-.122.291-.32.404-.597l2.416-9.55a1.053 1.053 0 0 0-.281-.823 1.12 1.12 0 0 0-.442-.296H8.15a.6.6 0 0 1 0-1.2h6.443a.6.6 0 1 1 0 1.2h-1.195c-.376.056-.65.155-.823.296-.215.175-.423.439-.623.79l-2.366 9.347z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Italic (CTRL+I)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e71a8510ccaa911fa2a71aafcde9b8585">Italic</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e72edfb430fe28e29a6990b9d1e693963"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M11.077 15l.991-1.416a.75.75 0 1 1 1.229.86l-1.148 1.64a.748.748 0 0 1-.217.206 5.251 5.251 0 0 1-8.503-5.955.741.741 0 0 1 .12-.274l1.147-1.639a.75.75 0 1 1 1.228.86L4.933 10.7l.006.003a3.75 3.75 0 0 0 6.132 4.294l.006.004zm5.494-5.335a.748.748 0 0 1-.12.274l-1.147 1.639a.75.75 0 1 1-1.228-.86l.86-1.23a3.75 3.75 0 0 0-6.144-4.301l-.86 1.229a.75.75 0 0 1-1.229-.86l1.148-1.64a.748.748 0 0 1 .217-.206 5.251 5.251 0 0 1 8.503 5.955zm-4.563-2.532a.75.75 0 0 1 .184 1.045l-3.155 4.505a.75.75 0 1 1-1.229-.86l3.155-4.506a.75.75 0 0 1 1.045-.184z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Link (Ctrl+K)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e72edfb430fe28e29a6990b9d1e693963">Link</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_ec117e48d2cc6bf7a391a035d1ce58897"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M7 5.75c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zm-6 0C1 4.784 1.777 4 2.75 4c.966 0 1.75.777 1.75 1.75 0 .966-.777 1.75-1.75 1.75C1.784 7.5 1 6.723 1 5.75zm6 9c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zm-6 0c0-.966.777-1.75 1.75-1.75.966 0 1.75.777 1.75 1.75 0 .966-.777 1.75-1.75 1.75-.966 0-1.75-.777-1.75-1.75z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Bulleted List</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_ec117e48d2cc6bf7a391a035d1ce58897">Bulleted List</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e6d484ef9d4098578fcbb2963869c4bff"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M7 5.75c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zM3.5 3v5H2V3.7H1v-1h2.5V3zM.343 17.857l2.59-3.257H2.92a.6.6 0 1 0-1.04 0H.302a2 2 0 1 1 3.995 0h-.001c-.048.405-.16.734-.333.988-.175.254-.59.692-1.244 1.312H4.3v1h-4l.043-.043zM7 14.75a.75.75 0 0 1 .75-.75h9.5a.75.75 0 1 1 0 1.5h-9.5a.75.75 0 0 1-.75-.75z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Numbered List</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e6d484ef9d4098578fcbb2963869c4bff">Numbered List</span></button><span class="ck-file-dialog-button"><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e5709656838cf9952127b96faf15a526b"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M6.91 10.54c.26-.23.64-.21.88.03l3.36 3.14 2.23-2.06a.64.64 0 0 1 .87 0l2.52 2.97V4.5H3.2v10.12l3.71-4.08zm10.27-7.51c.6 0 1.09.47 1.09 1.05v11.84c0 .59-.49 1.06-1.09 1.06H2.79c-.6 0-1.09-.47-1.09-1.06V4.08c0-.58.49-1.05 1.1-1.05h14.38zm-5.22 5.56a1.96 1.96 0 1 1 3.4-1.96 1.96 1.96 0 0 1-3.4 1.96z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert image</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e5709656838cf9952127b96faf15a526b">Insert image</span></button><input class="ck-hidden" type="file" tabindex="-1" accept="image/*" multiple="true"></span><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_efa558b892d3fa9be02b0786d5df2a4f5"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M3 10.423a6.5 6.5 0 0 1 6.056-6.408l.038.67C6.448 5.423 5.354 7.663 5.22 10H9c.552 0 .5.432.5.986v4.511c0 .554-.448.503-1 .503h-5c-.552 0-.5-.449-.5-1.003v-4.574zm8 0a6.5 6.5 0 0 1 6.056-6.408l.038.67c-2.646.739-3.74 2.979-3.873 5.315H17c.552 0 .5.432.5.986v4.511c0 .554-.448.503-1 .503h-5c-.552 0-.5-.449-.5-1.003v-4.574z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Block quote</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_efa558b892d3fa9be02b0786d5df2a4f5">Block quote</span></button><div class="ck ck-dropdown"><button class="ck ck-button ck-off ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_edb7a241f94d646703577b5bc583bc3c8" aria-haspopup="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M3 6v3h4V6H3zm0 4v3h4v-3H3zm0 4v3h4v-3H3zm5 3h4v-3H8v3zm5 0h4v-3h-4v3zm4-4v-3h-4v3h4zm0-4V6h-4v3h4zm1.5 8a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 17V4c.222-.863 1.068-1.5 2-1.5h13c.932 0 1.778.637 2 1.5v13zM12 13v-3H8v3h4zm0-4V6H8v3h4z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert table</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_edb7a241f94d646703577b5bc583bc3c8">Insert table</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><div class="ck"><div class="ck-insert-table-dropdown__grid"><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div></div><div class="ck-insert-table-dropdown__label">0 x 0</div></div></div></div><div class="ck ck-dropdown"><button class="ck ck-button ck-off ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e62bffe889c685cbf927371786ee9bf68" aria-haspopup="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M18.68 2.53c.6 0 .59-.03.59.55v12.84c0 .59.01.56-.59.56H1.29c-.6 0-.59.03-.59-.56V3.08c0-.58-.01-.55.6-.55h17.38zM15.77 14.5v-10H4.2v10h11.57zM2 4v1h1V4H2zm0 2v1h1V6H2zm0 2v1h1V8H2zm0 2v1h1v-1H2zm0 2v1h1v-1H2zm0 2v1h1v-1H2zM17 4v1h1V4h-1zm0 2v1h1V6h-1zm0 2v1h1V8h-1zm0 2v1h1v-1h-1zm0 2v1h1v-1h-1zm0 2v1h1v-1h-1zM7.5 6.677a.4.4 0 0 1 .593-.351l5.133 2.824a.4.4 0 0 1 0 .7l-5.133 2.824a.4.4 0 0 1-.593-.35V6.676z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert media</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e62bffe889c685cbf927371786ee9bf68">Insert media</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><form class="ck ck-media-form" tabindex="-1"><div class="ck ck-labeled-input"><label class="ck ck-label" for="ck-input-eba12a612cfd66f6a8d223cfe6107ba28">Media URL</label><input type="text" class="ck ck-input ck-input-text" id="ck-input-eba12a612cfd66f6a8d223cfe6107ba28" placeholder="https://example.com" aria-describedby="ck-status-ecd01394cf48dfd69b7d92cbc7f681f77"><div class="ck ck-labeled-input__status" id="ck-status-ecd01394cf48dfd69b7d92cbc7f681f77">Paste the media URL in the input.</div></div><button class="ck ck-button ck-off ck-button-save" type="submit" tabindex="-1" aria-labelledby="ck-editor__aria-label_e554112692b6b375dd5085c0886ce7869"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M6.972 16.615a.997.997 0 0 1-.744-.292l-4.596-4.596a1 1 0 1 1 1.414-1.414l3.926 3.926 9.937-9.937a1 1 0 0 1 1.414 1.415L7.717 16.323a.997.997 0 0 1-.745.292z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Save</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e554112692b6b375dd5085c0886ce7869">Save</span></button><button class="ck ck-button ck-off ck-button-cancel" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e64a5b21a98ebc269402b2aa768e166ba"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M11.591 10.177l4.243 4.242a1 1 0 0 1-1.415 1.415l-4.242-4.243-4.243 4.243a1 1 0 0 1-1.414-1.415l4.243-4.242L4.52 5.934A1 1 0 0 1 5.934 4.52l4.243 4.243 4.242-4.243a1 1 0 1 1 1.415 1.414l-4.243 4.243z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Cancel</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e64a5b21a98ebc269402b2aa768e166ba">Cancel</span></button></form></div></div><button class="ck ck-button ck-disabled ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e7a9103cae8574fa6a1055aaa4476adef" aria-disabled="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M5.042 9.367l2.189 1.837a.75.75 0 0 1-.965 1.149l-3.788-3.18a.747.747 0 0 1-.21-.284.75.75 0 0 1 .17-.945L6.23 4.762a.75.75 0 1 1 .964 1.15L4.863 7.866h8.917A.75.75 0 0 1 14 7.9a4 4 0 1 1-1.477 7.718l.344-1.489a2.5 2.5 0 1 0 1.094-4.73l.008-.032H5.042z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Undo (CTRL+Z)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e7a9103cae8574fa6a1055aaa4476adef">Undo</span></button><button class="ck ck-button ck-disabled ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e92f3815d7c6b34f8fc463230a2c32fcf" aria-disabled="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M14.958 9.367l-2.189 1.837a.75.75 0 0 0 .965 1.149l3.788-3.18a.747.747 0 0 0 .21-.284.75.75 0 0 0-.17-.945L13.77 4.762a.75.75 0 1 0-.964 1.15l2.331 1.955H6.22A.75.75 0 0 0 6 7.9a4 4 0 1 0 1.477 7.718l-.344-1.489A2.5 2.5 0 1 1 6.039 9.4l-.008-.032h8.927z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Redo (CTRL+Y)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e92f3815d7c6b34f8fc463230a2c32fcf">Redo</span></button></div></div></div></div><div class="ck ck-editor__main" role="presentation"><div class="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline" role="textbox" aria-label="Rich Text Editor, main" contenteditable="true"><p><br data-cke-filler="true"></p></div></div></div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox7">
-                                            <span class="Polaris-Choice__Control">
+                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <div class="chooseInput">
+                                            <div class="label">Column width</div>
+                                            <div class="chooseItems">
+                                                <div class="chooseItem " data-value="3">33%</div>
+                                                <div class="chooseItem active" data-value="2">50%</div>
+                                                <div class="chooseItem " data-value="1">100%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }else if($elementid == 18){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div>
+                                <div class="">
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="rating-star">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="rating-star">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">
+                                                    <div>Label</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Rating">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
+                                                    <div>Description</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                    <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox3">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Hide label</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Hide label</span>
                                         </label>
                                     </div>
                                     <div class="form-control hidden">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox8">
-                                            <span class="Polaris-Choice__Control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox4">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox8" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input  name="'.$elementtitle.'__keepposition__label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Keep position of label</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Keep position of label</span>
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox9">
-                                            <span class="Polaris-Choice__Control">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox5">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Required</span>
                                         </label>
                                     </div>
-                                    <div class="form-control hidden">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox10">
-                                            <span class="Polaris-Choice__Control">
+                                    <div class="form-control Requiredpass hidden">
+                                        <label class="Polaris-Choice" for="PolarisCheckbox6">
+                                        <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox10" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
                                                         <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
+                                                    </svg>
                                                     </span>
                                                 </span>
                                             </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                        </span>
+                                        <span class="Polaris-Choice__Label">Show required note if hide label?</span>
                                         </label>
                                     </div>
                                     <div class="form-control">
@@ -4906,439 +5441,86 @@ class Client_functions extends common_function {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                        </div>
+                    </div>';
+                }else if($elementid == 19){
+                    $comeback .= '  <div class="">
+                        <div class="container tabContent container_'.$elementtitle.'">
+                            <div>
+                                <div class="">
                                     <div class="form-control">
-                                        <label class="Polaris-Choice" for="PolarisCheckbox11">
-                                            <span class="Polaris-Choice__Control">
-                                            <span class="Polaris-Checkbox">
-                                                <input id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                <span class="Polaris-Checkbox__Icon">
-                                                    <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Conditional field</span>
-                                        </label>
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="html">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
                                     </div>
-                                    <div class="form-control hidden">
+                                    <div class="form-control">
+                                        <div class="hidden">
+                                        <div class="">
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input id="PolarisTextField7" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="html">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control">
+                                        <div class="textarea-wrapper">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisSelect4Label" for="PolarisSelect4" class="Polaris-Label__Text">Only show element if</label></div>
+                                                <div class="Polaris-Label"><label id="  class="Polaris-Label__Text">HTML code</label></div>
                                             </div>
-                                            <div class="Polaris-Select">
-                                            <select id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
-                                                <option value="false">Please select</option>
-                                                <option value="select">Dropdown</option>
-                                            </select>
-                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                <span class="Polaris-Select__SelectedOption">Please select</span>
-                                                <span class="Polaris-Select__Icon">
-                                                    <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                    </span>
-                                                </span>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    <textarea id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
+                                                        <div class="Polaris-TextField__DummyInput">&lt;div&gt;Enter your code&lt;/div&gt;<br></div>
+                                                        <div class="Polaris-TextField__DummyInput"><br></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
+                                        </div>
                                         </div>
                                     </div>
-                                    <div class="form-control hidden">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisSelect5Label" for="PolarisSelect5" class="Polaris-Label__Text">is</label></div>
-                                            </div>
-                                            <div class="Polaris-Select">
-                                            <select id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
-                                                <option value="false">Please select</option>
-                                                <option value="Option 1">Option 1</option>
-                                                <option value="Option 2">Option 2</option>
-                                                <option value="option 3">option 3</option>
-                                                <option value=" option4"> option4</option>
-                                            </select>
-                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                                <span class="Polaris-Select__SelectedOption">Please select</span>
-                                                <span class="Polaris-Select__Icon">
-                                                    <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                        </svg>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                            <div class="Polaris-Select__Backdrop"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                            </div>
-                        </div>';
-                    }else if($elementid == 16){
-                        $comeback .= '  <div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField16" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="heading">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField17" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField17Label" aria-invalid="false" value="heading">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField18Label" for="PolarisTextField18" class="Polaris-Label__Text">
-                                                        <div>Heading</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField18" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="Heading">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textarea-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="PolarisTextField19Label" for="PolarisTextField19" class="Polaris-Label__Text">Caption</label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--multiline">
-                                                        <textarea id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                            <div class="chooseInput">
-                                                <div class="label">Column width</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem " data-value="3">33%</div>
-                                                    <div class="chooseItem active" data-value="2">50%</div>
-                                                    <div class="chooseItem " data-value="1">100%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                            </div>
-                        </div>';
-                    }else if($elementid == 17){
-                        $comeback .= '  <div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
-                                <div class="container">
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                                <div class="">
-                                                    <textarea name="content" class="editor" style="display: none;"></textarea><div class="ck ck-reset ck-editor ck-rounded-corners" role="application" dir="ltr" lang="en" aria-labelledby="ck-editor__aria-label_e292c262362f2faaad1b3ec68a69644d3"><label class="ck ck-label ck-voice-label" id="ck-editor__aria-label_e292c262362f2faaad1b3ec68a69644d3">Rich Text Editor</label><div class="ck ck-editor__top ck-reset_all" role="presentation"><div class="ck ck-sticky-panel"><div class="ck ck-sticky-panel__placeholder" style="display: none;"></div><div class="ck ck-sticky-panel__content"><div class="ck ck-toolbar"><div class="ck ck-dropdown ck-heading-dropdown"><button class="ck ck-button ck-off ck-button_with-text ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e33907c8100d8afbb1af7739182988862" aria-haspopup="true"><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Heading</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e33907c8100d8afbb1af7739182988862">Paragraph</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><ul class="ck ck-reset ck-list"><li class="ck ck-list__item"><button class="ck ck-button ck-heading_paragraph ck-on ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e3a28a8a1d51d7688e45d61618e84ba7f" aria-pressed="true"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e3a28a8a1d51d7688e45d61618e84ba7f">Paragraph</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading1 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e3e96b4fb9381d2f4853b3a26e6d70236"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e3e96b4fb9381d2f4853b3a26e6d70236">Heading 1</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading2 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_ec561787fc387d59a214ac7863398b649"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_ec561787fc387d59a214ac7863398b649">Heading 2</span></button></li><li class="ck ck-list__item"><button class="ck ck-button ck-heading_heading3 ck-off ck-button_with-text" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e2b4811352a65a67a94bf691c82043080"><span class="ck ck-tooltip ck-tooltip_s ck-hidden"><span class="ck ck-tooltip__text"></span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e2b4811352a65a67a94bf691c82043080">Heading 3</span></button></li></ul></div></div><span class="ck ck-toolbar__separator"></span><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e1263aaa395c2aeb4d138eda10470596e"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M10.187 17H5.773c-.637 0-1.092-.138-1.364-.415-.273-.277-.409-.718-.409-1.323V4.738c0-.617.14-1.062.419-1.332.279-.27.73-.406 1.354-.406h4.68c.69 0 1.288.041 1.793.124.506.083.96.242 1.36.478.341.197.644.447.906.75a3.262 3.262 0 0 1 .808 2.162c0 1.401-.722 2.426-2.167 3.075C15.05 10.175 16 11.315 16 13.01a3.756 3.756 0 0 1-2.296 3.504 6.1 6.1 0 0 1-1.517.377c-.571.073-1.238.11-2 .11zm-.217-6.217H7v4.087h3.069c1.977 0 2.965-.69 2.965-2.072 0-.707-.256-1.22-.768-1.537-.512-.319-1.277-.478-2.296-.478zM7 5.13v3.619h2.606c.729 0 1.292-.067 1.69-.2a1.6 1.6 0 0 0 .91-.765c.165-.267.247-.566.247-.897 0-.707-.26-1.176-.778-1.409-.519-.232-1.31-.348-2.375-.348H7z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Bold (CTRL+B)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e1263aaa395c2aeb4d138eda10470596e">Bold</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e71a8510ccaa911fa2a71aafcde9b8585"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M9.586 14.633l.021.004c-.036.335.095.655.393.962.082.083.173.15.274.201h1.474a.6.6 0 1 1 0 1.2H5.304a.6.6 0 0 1 0-1.2h1.15c.474-.07.809-.182 1.005-.334.157-.122.291-.32.404-.597l2.416-9.55a1.053 1.053 0 0 0-.281-.823 1.12 1.12 0 0 0-.442-.296H8.15a.6.6 0 0 1 0-1.2h6.443a.6.6 0 1 1 0 1.2h-1.195c-.376.056-.65.155-.823.296-.215.175-.423.439-.623.79l-2.366 9.347z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Italic (CTRL+I)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e71a8510ccaa911fa2a71aafcde9b8585">Italic</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e72edfb430fe28e29a6990b9d1e693963"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M11.077 15l.991-1.416a.75.75 0 1 1 1.229.86l-1.148 1.64a.748.748 0 0 1-.217.206 5.251 5.251 0 0 1-8.503-5.955.741.741 0 0 1 .12-.274l1.147-1.639a.75.75 0 1 1 1.228.86L4.933 10.7l.006.003a3.75 3.75 0 0 0 6.132 4.294l.006.004zm5.494-5.335a.748.748 0 0 1-.12.274l-1.147 1.639a.75.75 0 1 1-1.228-.86l.86-1.23a3.75 3.75 0 0 0-6.144-4.301l-.86 1.229a.75.75 0 0 1-1.229-.86l1.148-1.64a.748.748 0 0 1 .217-.206 5.251 5.251 0 0 1 8.503 5.955zm-4.563-2.532a.75.75 0 0 1 .184 1.045l-3.155 4.505a.75.75 0 1 1-1.229-.86l3.155-4.506a.75.75 0 0 1 1.045-.184z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Link (Ctrl+K)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e72edfb430fe28e29a6990b9d1e693963">Link</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_ec117e48d2cc6bf7a391a035d1ce58897"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M7 5.75c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zm-6 0C1 4.784 1.777 4 2.75 4c.966 0 1.75.777 1.75 1.75 0 .966-.777 1.75-1.75 1.75C1.784 7.5 1 6.723 1 5.75zm6 9c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zm-6 0c0-.966.777-1.75 1.75-1.75.966 0 1.75.777 1.75 1.75 0 .966-.777 1.75-1.75 1.75-.966 0-1.75-.777-1.75-1.75z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Bulleted List</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_ec117e48d2cc6bf7a391a035d1ce58897">Bulleted List</span></button><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e6d484ef9d4098578fcbb2963869c4bff"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M7 5.75c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zM3.5 3v5H2V3.7H1v-1h2.5V3zM.343 17.857l2.59-3.257H2.92a.6.6 0 1 0-1.04 0H.302a2 2 0 1 1 3.995 0h-.001c-.048.405-.16.734-.333.988-.175.254-.59.692-1.244 1.312H4.3v1h-4l.043-.043zM7 14.75a.75.75 0 0 1 .75-.75h9.5a.75.75 0 1 1 0 1.5h-9.5a.75.75 0 0 1-.75-.75z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Numbered List</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e6d484ef9d4098578fcbb2963869c4bff">Numbered List</span></button><span class="ck-file-dialog-button"><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e5709656838cf9952127b96faf15a526b"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M6.91 10.54c.26-.23.64-.21.88.03l3.36 3.14 2.23-2.06a.64.64 0 0 1 .87 0l2.52 2.97V4.5H3.2v10.12l3.71-4.08zm10.27-7.51c.6 0 1.09.47 1.09 1.05v11.84c0 .59-.49 1.06-1.09 1.06H2.79c-.6 0-1.09-.47-1.09-1.06V4.08c0-.58.49-1.05 1.1-1.05h14.38zm-5.22 5.56a1.96 1.96 0 1 1 3.4-1.96 1.96 1.96 0 0 1-3.4 1.96z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert image</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e5709656838cf9952127b96faf15a526b">Insert image</span></button><input class="ck-hidden" type="file" tabindex="-1" accept="image/*" multiple="true"></span><button class="ck ck-button ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_efa558b892d3fa9be02b0786d5df2a4f5"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M3 10.423a6.5 6.5 0 0 1 6.056-6.408l.038.67C6.448 5.423 5.354 7.663 5.22 10H9c.552 0 .5.432.5.986v4.511c0 .554-.448.503-1 .503h-5c-.552 0-.5-.449-.5-1.003v-4.574zm8 0a6.5 6.5 0 0 1 6.056-6.408l.038.67c-2.646.739-3.74 2.979-3.873 5.315H17c.552 0 .5.432.5.986v4.511c0 .554-.448.503-1 .503h-5c-.552 0-.5-.449-.5-1.003v-4.574z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Block quote</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_efa558b892d3fa9be02b0786d5df2a4f5">Block quote</span></button><div class="ck ck-dropdown"><button class="ck ck-button ck-off ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_edb7a241f94d646703577b5bc583bc3c8" aria-haspopup="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M3 6v3h4V6H3zm0 4v3h4v-3H3zm0 4v3h4v-3H3zm5 3h4v-3H8v3zm5 0h4v-3h-4v3zm4-4v-3h-4v3h4zm0-4V6h-4v3h4zm1.5 8a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 17V4c.222-.863 1.068-1.5 2-1.5h13c.932 0 1.778.637 2 1.5v13zM12 13v-3H8v3h4zm0-4V6H8v3h4z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert table</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_edb7a241f94d646703577b5bc583bc3c8">Insert table</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><div class="ck"><div class="ck-insert-table-dropdown__grid"><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div><div class="ck-insert-table-dropdown-grid-box"></div></div><div class="ck-insert-table-dropdown__label">0 x 0</div></div></div></div><div class="ck ck-dropdown"><button class="ck ck-button ck-off ck-dropdown__button" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e62bffe889c685cbf927371786ee9bf68" aria-haspopup="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M18.68 2.53c.6 0 .59-.03.59.55v12.84c0 .59.01.56-.59.56H1.29c-.6 0-.59.03-.59-.56V3.08c0-.58-.01-.55.6-.55h17.38zM15.77 14.5v-10H4.2v10h11.57zM2 4v1h1V4H2zm0 2v1h1V6H2zm0 2v1h1V8H2zm0 2v1h1v-1H2zm0 2v1h1v-1H2zm0 2v1h1v-1H2zM17 4v1h1V4h-1zm0 2v1h1V6h-1zm0 2v1h1V8h-1zm0 2v1h1v-1h-1zm0 2v1h1v-1h-1zm0 2v1h1v-1h-1zM7.5 6.677a.4.4 0 0 1 .593-.351l5.133 2.824a.4.4 0 0 1 0 .7l-5.133 2.824a.4.4 0 0 1-.593-.35V6.676z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Insert media</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e62bffe889c685cbf927371786ee9bf68">Insert media</span><svg class="ck ck-icon ck-dropdown__arrow" viewBox="0 0 10 10"><path d="M.941 4.523a.75.75 0 1 1 1.06-1.06l3.006 3.005 3.005-3.005a.75.75 0 1 1 1.06 1.06l-3.549 3.55a.75.75 0 0 1-1.168-.136L.941 4.523z"></path></svg></button><div class="ck ck-reset ck-dropdown__panel ck-dropdown__panel_se"><form class="ck ck-media-form" tabindex="-1"><div class="ck ck-labeled-input"><label class="ck ck-label" for="ck-input-eba12a612cfd66f6a8d223cfe6107ba28">Media URL</label><input type="text" class="ck ck-input ck-input-text" id="ck-input-eba12a612cfd66f6a8d223cfe6107ba28" placeholder="https://example.com" aria-describedby="ck-status-ecd01394cf48dfd69b7d92cbc7f681f77"><div class="ck ck-labeled-input__status" id="ck-status-ecd01394cf48dfd69b7d92cbc7f681f77">Paste the media URL in the input.</div></div><button class="ck ck-button ck-off ck-button-save" type="submit" tabindex="-1" aria-labelledby="ck-editor__aria-label_e554112692b6b375dd5085c0886ce7869"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M6.972 16.615a.997.997 0 0 1-.744-.292l-4.596-4.596a1 1 0 1 1 1.414-1.414l3.926 3.926 9.937-9.937a1 1 0 0 1 1.414 1.415L7.717 16.323a.997.997 0 0 1-.745.292z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Save</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e554112692b6b375dd5085c0886ce7869">Save</span></button><button class="ck ck-button ck-off ck-button-cancel" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e64a5b21a98ebc269402b2aa768e166ba"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M11.591 10.177l4.243 4.242a1 1 0 0 1-1.415 1.415l-4.242-4.243-4.243 4.243a1 1 0 0 1-1.414-1.415l4.243-4.242L4.52 5.934A1 1 0 0 1 5.934 4.52l4.243 4.243 4.242-4.243a1 1 0 1 1 1.415 1.414l-4.243 4.243z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Cancel</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e64a5b21a98ebc269402b2aa768e166ba">Cancel</span></button></form></div></div><button class="ck ck-button ck-disabled ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e7a9103cae8574fa6a1055aaa4476adef" aria-disabled="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M5.042 9.367l2.189 1.837a.75.75 0 0 1-.965 1.149l-3.788-3.18a.747.747 0 0 1-.21-.284.75.75 0 0 1 .17-.945L6.23 4.762a.75.75 0 1 1 .964 1.15L4.863 7.866h8.917A.75.75 0 0 1 14 7.9a4 4 0 1 1-1.477 7.718l.344-1.489a2.5 2.5 0 1 0 1.094-4.73l.008-.032H5.042z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Undo (CTRL+Z)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e7a9103cae8574fa6a1055aaa4476adef">Undo</span></button><button class="ck ck-button ck-disabled ck-off" type="button" tabindex="-1" aria-labelledby="ck-editor__aria-label_e92f3815d7c6b34f8fc463230a2c32fcf" aria-disabled="true"><svg class="ck ck-icon ck-button__icon" viewBox="0 0 20 20"><path d="M14.958 9.367l-2.189 1.837a.75.75 0 0 0 .965 1.149l3.788-3.18a.747.747 0 0 0 .21-.284.75.75 0 0 0-.17-.945L13.77 4.762a.75.75 0 1 0-.964 1.15l2.331 1.955H6.22A.75.75 0 0 0 6 7.9a4 4 0 1 0 1.477 7.718l-.344-1.489A2.5 2.5 0 1 1 6.039 9.4l-.008-.032h8.927z"></path></svg><span class="ck ck-tooltip ck-tooltip_s"><span class="ck ck-tooltip__text">Redo (CTRL+Y)</span></span><span class="ck ck-button__label" id="ck-editor__aria-label_e92f3815d7c6b34f8fc463230a2c32fcf">Redo</span></button></div></div></div></div><div class="ck ck-editor__main" role="presentation"><div class="ck-blurred ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline" role="textbox" aria-label="Rich Text Editor, main" contenteditable="true"><p><br data-cke-filler="true"></p></div></div></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                            <div class="chooseInput">
-                                                <div class="label">Column width</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem " data-value="3">33%</div>
-                                                    <div class="chooseItem active" data-value="2">50%</div>
-                                                    <div class="chooseItem " data-value="1">100%</div>
-                                                </div>
+                                    <div class="form-control">
+                                        <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <div class="chooseInput">
+                                            <div class="label">Column width</div>
+                                            <div class="chooseItems">
+                                                <div class="chooseItem " data-value="3">33%</div>
+                                                <div class="chooseItem active" data-value="2">50%</div>
+                                                <div class="chooseItem " data-value="1">100%</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>';
-                    }else if($elementid == 18){
-                        $comeback .= '  <div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField2" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField2Label" aria-invalid="false" value="rating-star">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField3" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField3Label" aria-invalid="false" value="rating-star">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField4Label" for="PolarisTextField4" class="Polaris-Label__Text">
-                                                        <div>Label</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Rating">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textfield-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField5Label" for="PolarisTextField5" class="Polaris-Label__Text">
-                                                        <div>Description</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField">
-                                                        <input id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox3">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Hide label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox4">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Keep position of label</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox5">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control hidden">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox6">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                        </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Show required note if hide label?</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control">
-                                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                            <div class="chooseInput">
-                                                <div class="label">Column width</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem " data-value="3">33%</div>
-                                                    <div class="chooseItem active" data-value="2">50%</div>
-                                                    <div class="chooseItem " data-value="1">100%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                             </div>
-                        </div>';
-                    }else if($elementid == 19){
-                        $comeback .= '  <div class="">
-                            <div class="container tabContent container_'.$elementtitle.'">
-                                <div>
-                                    <div class="">
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="html">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="hidden">
-                                            <div class="">
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input id="PolarisTextField7" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="html">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <div class="textarea-wrapper">
-                                            <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label"><label id="  class="Polaris-Label__Text">HTML code</label></div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                        <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                            <div class="Polaris-TextField__DummyInput">&lt;div&gt;Enter your code&lt;/div&gt;<br></div>
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control">
-                                            <input name="'.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
-                                            <div class="chooseInput">
-                                                <div class="label">Column width</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem " data-value="3">33%</div>
-                                                    <div class="chooseItem active" data-value="2">50%</div>
-                                                    <div class="chooseItem " data-value="1">100%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
-                                </div>
-                            </div>
-                        </div>';
-                    }else{
-                        $comeback .= 'Working in progress ';
-                    }
-                    $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
+                        </div>
+                    </div>';
+                }else{
+                    $comeback .= 'Working in progress ';
+                }
+                $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
             }else{
 
                 $response_data = array('data' => 'fail', 'msg' => 'No Element found');

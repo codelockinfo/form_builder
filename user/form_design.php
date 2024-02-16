@@ -1648,7 +1648,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         <div class="title">Footer</div>
                     </div>
                     <div class="">
-                        <div class="container tabContent">
+                        <div class="container tabContent footerData">
                             <div class="container">
                                 <div class="footerData">
                                     <div class="form-control">
@@ -1672,7 +1672,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                     <div
                                                         class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input id="PolarisTextField17" placeholder=""
+                                                            <input id="PolarisTextField17" placeholder="" name="footer-data__submittext"
                                                                 class="Polaris-TextField__Input submitText" type="text"
                                                                 aria-labelledby="PolarisTextField17Label"
                                                                 aria-invalid="false" value="Submit">
@@ -1713,7 +1713,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                     <div
                                                         class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input id="PolarisTextField18" placeholder=""
+                                                            <input id="PolarisTextField18" placeholder=""   name="footer-data__resetbuttontext"
                                                                 class="Polaris-TextField__Input resetbuttonText" type="text"
                                                                 aria-labelledby="PolarisTextField18Label"
                                                                 aria-invalid="false" value="Reset">

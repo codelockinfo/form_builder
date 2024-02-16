@@ -38,38 +38,38 @@ $(document).ready(function(){
             }
         });
 
-        $(document).on("change",".pass_required" ,function(){
-            if(this.checked) {
-                $(".Requiredpass").removeClass("hidden");
-            }
-            else
-            {   
-                $(".Requiredpass").addClass("hidden");
-            }
-        });
+        // $(document).on("change",".pass_required" ,function(){
+        //     if(this.checked) {
+        //         $(".Requiredpass").removeClass("hidden");
+        //     }
+        //     else
+        //     {   
+        //         $(".Requiredpass").addClass("hidden");
+        //     }
+        // });
 
-        $(document).on("change",".passLabel" ,function(){
-            if(this.checked) {
-                $(".passhideLabel").removeClass("hidden");
-            }
-            else
-            {   
-                $(".passhideLabel").addClass("hidden");
-            }
-        });
+        // $(document).on("change",".passLabel" ,function(){
+        //     if(this.checked) {
+        //         $(".passhideLabel").removeClass("hidden");
+        //     }
+        //     else
+        //     {   
+        //         $(".passhideLabel").addClass("hidden");
+        //     }
+        // });
 
-        $(document).on("change",".passLimitcar" ,function(){
-            $mainContainer = $(this).closest(".container").find(".limitCaracters");
+        // $(document).on("change",".passLimitcar" ,function(){
+        //     $mainContainer = $(this).closest(".container").find(".limitCaracters");
 
-            if(this.checked) {
+        //     if(this.checked) {
 
-                $mainContainer.removeClass("hidden");
-            }
-            else
-            {   
-                $mainContainer.addClass("hidden");
-            }
-        });
+        //         $mainContainer.removeClass("hidden");
+        //     }
+        //     else
+        //     {   
+        //         $mainContainer.addClass("hidden");
+        //     }
+        // });
 
         $('.selectval').hide();
         //show the first tab content
@@ -158,16 +158,16 @@ $(document).ready(function(){
         
     });
         // Reset button  in footer element
-        $("#PolarisCheckbox6 ").change(function() {	
-            if(this.checked) {	
-                $(".reset").removeClass("hidden");	
-                $(".reset.classic-button").removeClass("hidden");	
-            } 	
-            else{	
-                $(".reset").addClass("hidden");
-                $(".reset.classic-button").addClass("hidden");		
-            }	        
-        });
+        // $("#PolarisCheckbox6 ").change(function() {	
+        //     if(this.checked) {	
+        //         $(".reset").removeClass("hidden");	
+        //         $(".reset.classic-button").removeClass("hidden");	
+        //     } 	
+        //     else{	
+        //         $(".reset").addClass("hidden");
+        //         $(".reset.classic-button").addClass("hidden");		
+        //     }	        
+        // });
 
         // column width changes 
         
@@ -180,16 +180,16 @@ $(document).ready(function(){
         // });
 
         // Width of footer button in footer element
-        $("#PolarisCheckbox7 ").change(function() {	
-            if(this.checked) {	
-                $(".alignment").addClass("hidden");	
-                $(".submit.classic-button").addClass("w100");	
-            } 	
-            else{	
-                $(".alignment").removeClass("hidden");
-                $(".submit.classic-button").removeClass("w100");	
-            }		
-        });
+        // $("#PolarisCheckbox7 ").change(function() {	
+        //     if(this.checked) {	
+        //         $(".alignment").addClass("hidden");	
+        //         $(".classic-button").addClass("w100");	
+        //     } 	
+        //     else{	
+        //         $(".alignment").removeClass("hidden");
+        //         $(".classic-button").removeClass("w100");	
+        //     }		
+        // });
 
     // footer submit button alignment
         $(".chooseItem").click(function(event){
@@ -285,16 +285,6 @@ $(document).ready(function(){
                 $(this).closest(".addskildy").remove();
             
     });
-       
-
-        // $(document).on("click","#PolarisSelect2",function(){
-        //     var textarea_value = $("#PolarisTextField6").val();
-        //     var line = textarea_value.replace(')', ') <br>');
-        //     console.log(textarea_value);
-        //     console.log(line);
-            
-        //     $('#PolarisSelect2').html(new Option(textarea_value, line));
-        // });
 });
 
 // today
@@ -333,31 +323,11 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     var containerClass = classArray.find(className => className.startsWith("container_"));
     console.log(containerClass);
     $(".block-container ."+containerClass).removeClass("layout-1-column layout-2-column layout-3-column").addClass("layout-" + $dataValue + "-column");
-
-
-    //    if (htmlContent === "33%") {
-    //         console.log($mainContainer);
-    //         var classArray = $mainContainer.split(" ");
-    //         var containerClass = classArray.find(className => className.startsWith("container_"));
-    //         console.log(containerClass);
-
-    //         var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-    //        aaaaa.addClass("layout-3-column");
-    //        aaaaa.removeClass("layout-1-column layout-2-column")
-    //    }
-    //    else if(htmlContent === "100%") {
-    //      var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-    //       aaaaa.addClass("layout-1-column");
-    //       aaaaa.removeClass("layout-3-column layout-2-column")
-    //    }
-    //    else{
-    //         var aaaaa= $(".preview-box").find(".code-form-app .g-container .block-container .code-form-control");
-    //       aaaaa.addClass("layout-2-column");
-    //       aaaaa.removeClass("layout-1-column layout-3-column")
-    //    }
   }); 
+
   $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
     $inputVal = $(this).val();
+    console.log($inputVal);
     $attrName = $(this).attr('name');
     $nameExlode = $attrName.split("__");
 
@@ -367,7 +337,129 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
         $("."+$attrName).attr('placeholder', $inputVal);
     }else if($nameExlode[1] == "description"){
         $("."+$attrName).html($inputVal);
+    }else if($nameExlode[1] == "submittext"){
+        $("."+$attrName).text($inputVal);
+    }else if($nameExlode[1] == "resetbuttontext"){
+        $("."+$attrName).text($inputVal);
+    }else if($nameExlode[1] == "limitcharactervalue"){
+        $("."+$nameExlode[0]+"__placeholder").attr("maxlength",$inputVal);
     }
 
 });
 
+$(document).on("change ",".resetButton" ,function() {
+    if(this.checked) {	
+        $(".reset").removeClass("hidden");	
+        $(".reset.classic-button").removeClass("hidden");	  
+    } 	
+    else{	
+        $(".reset").addClass("hidden");
+        $(".reset.classic-button").addClass("hidden");		
+    }	
+});
+
+$(document).on('keydown, keyup',".ck-content" ,function() {
+    $inputVal = $(this).html();
+    $footerData = $(this).closest(".tabContent").hasClass("footerData");
+
+    if($footerData){
+        $(".footer-data__footerdescription").html($inputVal);
+    }
+});
+$(document).on("change",".passLimitcar" ,function(){
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+
+    $mainContainer = $(this).closest(".container").find(".limitCaracters");
+    $inputVal = $mainContainer.find(".Polaris-TextField__Input").val();
+    if(this.checked) {
+        $mainContainer.removeClass("hidden");
+        $(".block-container").find("."+containerClass + " .classic-input").attr("maxlength",$inputVal);
+    }else{   
+        $mainContainer.addClass("hidden");
+        $(".block-container").find("."+containerClass + " .classic-input").attr("maxlength",'');
+    }
+});
+
+$(document).on("change",".hideLabel" ,function(){
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $classExlode = containerClass.split("_");
+
+    $mainContainer = $(".block-container");
+    $requiredCheckbox = $("input[name='" + $classExlode[1] + "__required']");
+    $showRequiredLabel = $("input[name='" + $classExlode[1] + "__required__hidelabel']");
+    if(this.checked) {
+        $(".passhideLabel").removeClass("hidden");
+        console.log(containerClass);
+        $mainContainer.find("." +containerClass +" .label-content").html(" ");
+        $mainContainer.find("." +containerClass +" .text-smaller").html(" ");
+        if($showRequiredLabel.prop('checked')) {
+            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+        }
+    }else{   
+        $(".passhideLabel").addClass("hidden");
+        $labelVal = $("input[name='" + $classExlode[1] + "__label']").val();
+        $mainContainer.find("." +containerClass +" .label-content").html($labelVal);
+        if($requiredCheckbox.prop('checked')) {
+            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+        }
+    }
+});
+
+$(document).on("change",".keePositionLabel" ,function(){
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+
+    if(this.checked) {
+        $(".block-container").find("."+ containerClass + " .classic-label").addClass("position--label");
+    }else{
+        $(".block-container").find("."+ containerClass + " .classic-label").removeClass("position--label");
+    }
+
+});
+
+$(document).on("change",".requiredCheck" ,function(){
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    console.log(containerClass);
+
+    if(this.checked) {
+        $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+        $(this).closest("."+containerClass).find(".Requiredpass").removeClass("hidden");
+    }else{   
+        $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+        $(this).closest("."+containerClass).find(".Requiredpass").addClass("hidden");
+    }
+});
+
+$(document).on("change",".showRequireHideLabel" ,function(){
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    console.log(containerClass);
+
+    if(this.checked) {
+        $requiredCheckbox = $(this).closest(".tabContent").find(".hideLabel");
+        if($requiredCheckbox.prop('checked')) {
+            $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+        }
+    }else{
+        $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+    }
+});
+
+
+$(document).on("change",".fullFooterButton" ,function(){
+    console.log("HHHHHHHHH");
+    if(this.checked) {
+        console.log("innnn");
+        $(".footer .classic-button").addClass("w100");	
+    }else{
+        $(".footer .classic-button").removeClass("w100");	 
+    }
+});
