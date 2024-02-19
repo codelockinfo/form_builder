@@ -941,13 +941,13 @@ var BACKTO = 0;
             var thisObj = $(this);
             var formid=$(".formid").val();
             var element_id=$(".element_id_in_form").val();
-            var form_data_id=$(".form_data_id_second").val();
+            var form_data_id=$(".form_data_id_second").val(); 
             event.preventDefault();  
-            $.ajax({
+             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
-                data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id },
+                data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id }, 
                 beforeSend: function () {
                     loading_show('.save_loader_show');
                 },
@@ -1105,5 +1105,55 @@ var BACKTO = 0;
             }
            
         });
-
+        
+        $(document).on("click", ".Polaris-Button--destructive", function(event) {
+            console.log("delete form element  .....");
+            var thisObj = $(this);
+            var formid=$(".form_id").val();
+            var form_data = $(".add_elementdata")[0];
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','remove_form_field');   
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: form_data, 
+                success: function (response) {
+                    console.log(response['result']);
+                    if (response['code'] != undefined && response['code'] == '403') {
+                        redirect403();
+                    } else{
+                        $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
+                        get_selected_elements(formid); 
+                    }
+                }
+            });
+            
+        });
+        $(document).on("click", ".saveForm", function(event) {
+            console.log("savform .....");
+            var form_data = $(".add_elementdata")[0];
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','add_elementdata');   
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: form_data, 
+                    beforeSend: function () {
+                    loading_show('.save_loader_show');
+                },
+                success: function (response) {
+                    var response = JSON.parse(response);
+                  console.log(response + "..............");
+                    loading_hide('.save_loader_show', 'Save');
+                }
+            });
+        });
 

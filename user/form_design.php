@@ -88,7 +88,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             </div>
                             <div class="Polaris-ButtonGroup__Item">
                                 <div>
-                                    <button class="Polaris-Button Polaris-Button--primary saveForm" aria-disabled="false"
+                                    <button class="Polaris-Button Polaris-Button--primary saveForm save_loader_show" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
                                             <span class="Polaris-Button__Text">

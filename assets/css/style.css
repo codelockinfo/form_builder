@@ -323,3 +323,10 @@ input:focus-visible {
 .position--label{
   height: 20.91px;
 }
+.Polaris-Spinner--colorInkLightest {
+  fill: #919eab;
+}
+.Polaris-Spinner--sizeSmall {
+  height: 20px;
+  width: 20px;
+}

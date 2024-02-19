@@ -192,14 +192,14 @@ $(document).ready(function(){
         // });
 
     // footer submit button alignment
-        $(".chooseItem").click(function(event){
-            event.preventDefault();
-            $(".active").removeClass("active");
-            $(this).addClass("active");
-            $(".footer").removeClass("btnRight btnLeft btnCenter");
-            var buttonClass = $(this).text();
-            $(".footer").addClass("btn"+buttonClass);
-        });
+        // $(".chooseItem").click(function(event){
+        //     event.preventDefault();
+        //     $(".active").removeClass("active");
+        //     $(this).addClass("active");
+        //     $(".footer").removeClass("btnRight btnLeft btnCenter");
+        //     var buttonClass = $(this).text();
+        //     $(".footer").addClass("btn"+buttonClass);
+        // });
 
     //footer submit button text change
         $(document).on('keydown, keyup','#PolarisTextField17', function () {
@@ -317,12 +317,20 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     $('.chooseItem').removeClass("active");
     $(this).addClass("active");
     $dataValue = $(this).attr("data-value");    
-    $(this).closest(".form-control").find(".input_columnwidth").val($dataValue);
     $mainContainer = $(this).closest(".container").attr("class");
     var classArray = $mainContainer.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
-    console.log(containerClass);
-    $(".block-container ."+containerClass).removeClass("layout-1-column layout-2-column layout-3-column").addClass("layout-" + $dataValue + "-column");
+    
+    $columnWidth = $(this).closest(".form-control").find(".input_columnwidth");
+    console.log($columnWidth.length);
+    if($columnWidth.length > 0){
+        $columnWidth.val($dataValue);
+        $(".block-container ."+containerClass).removeClass("layout-1-column layout-2-column layout-3-column").addClass("layout-" + $dataValue + "-column");
+    }
+    $inputFormate = $(this).closest(".form-control").find(".input_formate");
+    if($inputFormate.length > 0){
+        $inputFormate.val($dataValue);
+    }
   }); 
 
   $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
