@@ -1522,24 +1522,70 @@ class Client_functions extends common_function {
     function set_element() {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            $shopinfo = $this->current_store_obj;
-            if (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') {
-                $where_query = array(["", "id", "=", $_POST['get_element_hidden']]);
-                $comeback_client = $this->select_result(TABLE_ELEMENTS, 'id', $where_query);
-                $value_res = $comeback_client['data'][0];
-                $mysql_date = date('Y-m-d H:i:s');
-                $fields_arr = array(
-                    '`id`' => '',
-                    '`form_id`' => $_POST['formid'],
-                    '`element_id`' => $value_res['id'],
-                    '`element_data`' => "",
-                    '`status`' => "1",
-                    '`created`' => $mysql_date,
-                    '`updated`' => $mysql_date
-                );
-                $result = $this->post_data(TABLE_FORM_DATA, array($fields_arr));
-                $response_data = array('data' => 'success', 'msg' => 'Element added successfully');
-            }
+                $shopinfo = $this->current_store_obj;
+                $elementid = (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') ? $_POST['get_element_hidden'] : "";
+                if($elementid != ""){
+
+                    $where_query = array(["", "id", "=", $elementid]);
+                    $element_result_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
+                    $comeback_client = isset($element_result_data["data"]) ?  $element_result_data["data"] : '';
+                    $comeback_client = $comeback_client[0];
+                        
+                        $element_type = array("1","2","3","4","6","7");
+                        $element_type2 = array("5");
+                        $element_type3 = array("8");
+                        $element_type4 = array("9");
+                        $element_type5 = array("10");
+                        $element_type6 = array("11");
+                        $element_type7 = array("12");
+                        $element_type8 = array("13");
+                        $element_type9 = array("15");
+                        $element_type10 = array("16");
+                        $element_type11 = array("17");
+                        $element_type12 = array("18");
+                        $element_type13 = array("19");
+                        $element_type14 = array("20","21","22","23");
+
+                        if(in_array($elementid,$element_type)){
+                            $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type2)){
+                            $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type3)){
+                            $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                        }else if(in_array($elementid,$element_type4)){
+                            $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                        }else if(in_array($elementid,$element_type5)){
+                            $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type6)){
+                            $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                        }else if(in_array($elementid,$element_type7)){
+                            $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
+                        }else if(in_array($elementid,$element_type8)){
+                            $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                        }else if(in_array($elementid,$element_type9)){
+                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                        }else if(in_array($elementid,$element_type10)){
+                            $element_data = serialize(array("Heading", "", "2"));
+                        }else if(in_array($elementid,$element_type11)){
+                            $element_data = serialize(array("Paragraph", "2"));
+                        }else if(in_array($elementid,$element_type12)){
+                            $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                        }else if(in_array($elementid,$element_type13)){
+                            $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                        }else if(in_array($elementid,$element_type14)){
+                            $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        $mysql_date = date('Y-m-d H:i:s');
+                        $fields_arr = array(
+                            '`id`' => '',
+                            '`form_id`' => $_POST['formid'],
+                            '`element_id`' => $comeback_client['id'],
+                            '`element_data`' => $element_data,
+                            '`created`' => $mysql_date,
+                            '`updated`' => $mysql_date
+                        );
+                        $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr)); 
+                }
         }else{
             $response_data = array('data' => 'fail', 'msg' => $error_array);
         }
@@ -1591,33 +1637,33 @@ class Client_functions extends common_function {
                     $element_type14 = array("20","21","22","23");
 
                     if(in_array($elementid,$element_type)){
-                        $element_data = serialize(array($comeback_client['element_title'],$comeback_client['element_title'], "","0","100","0","0","1","0","2"));
+                        $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
                     }else if(in_array($elementid,$element_type2)){
-                        $element_data = serialize(array("Url", "", "","0","100","0","0","1","0","2"));
+                        $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
                     }else if(in_array($elementid,$element_type3)){
-                        $element_data = serialize(array("Password", "", "","0", "100","false","","0","0","0","0","0","0","Confirm password","Confirm password","","2"));
+                        $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
                     }else if(in_array($elementid,$element_type4)){
-                        $element_data = serialize(array("Date time", "Date time", "","0", "0","0","0","2","0","Y-m-d","12h","0","2"));
+                        $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
                     }else if(in_array($elementid,$element_type5)){
-                        $element_data = serialize(array("File", "0","", "","0","0","2"));
+                        $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
                     }else if(in_array($elementid,$element_type6)){
-                        $element_data = serialize(array("Checkbox", "Option 1,Option 2","", "","0","0","1","2"));
+                        $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
                     }else if(in_array($elementid,$element_type7)){
-                        $element_data = serialize(array("I agree Terms and Conditions", "","", "","2"));
+                        $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
                     }else if(in_array($elementid,$element_type8)){
-                        $element_data = serialize(array("Checkbox", "Option 1,Option 2","", "","0","0","1","2","0"));
+                        $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
                     }else if(in_array($elementid,$element_type9)){
-                        $element_data = serialize(array("Country", "Please select","", "","0","0","2","0"));
+                        $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
                     }else if(in_array($elementid,$element_type10)){
-                        $element_data = serialize(array("Heading", "","1"));
+                        $element_data = serialize(array("Heading", "", "2"));
                     }else if(in_array($elementid,$element_type11)){
-                        $element_data = serialize(array("","1"));
+                        $element_data = serialize(array("Paragraph", "2"));
                     }else if(in_array($elementid,$element_type12)){
-                        $element_data = serialize(array($comeback_client['element_title'],"","0","0","2"));
+                        $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
                     }else if(in_array($elementid,$element_type13)){
-                        $element_data = serialize(array("","1"));
+                        $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
                     }else if(in_array($elementid,$element_type14)){
-                        $element_data = serialize(array($comeback_client['element_title'], "", "", "0","0","1","0","2"));
+                        $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
                     }
 
                     $mysql_date = date('Y-m-d H:i:s');
@@ -3686,7 +3732,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Hide label</span>
                                         </label>
                                     </div>
-                                    <div class="form-control hidden">
+                                    <div class="form-control hidden passhideLabel">
                                         <label class="Polaris-Choice" for="PolarisCheckbox18">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
@@ -3872,7 +3918,7 @@ class Client_functions extends common_function {
                                     <span class="Polaris-Choice__Label">Hide label</span>
                                 </label>
                                 </div>
-                                <div class="form-control hidden">
+                                <div class="form-control hidden passhideLabel">
                                 <label class="Polaris-Choice" for="PolarisCheckbox51">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -3894,7 +3940,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox52">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false requiredCheck" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.'__required" id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false requiredCheck" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -3950,7 +3996,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                                <div class="form-control">
+                                <div class="form-control hidden">
                                 <label class="Polaris-Choice" for="PolarisCheckbox54">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -4301,7 +4347,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Hide label</span>
                                     </label>
                                 </div>
-                                <div class="form-control hidden hideLabel">
+                                <div class="form-control hidden passhideLabel">
                                     <label class="Polaris-Choice" for="PolarisCheckbox4">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -4732,7 +4778,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Hide label</span>
                                     </label>
                                 </div>
-                                <div class="form-control hidden">
+                                <div class="form-control hidden passhideLabel">
                                     <label class="Polaris-Choice" for="PolarisCheckbox8">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -4797,7 +4843,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-control">
+                                <div class="form-control hidden">
                                     <label class="Polaris-Choice" for="PolarisCheckbox11">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -5029,7 +5075,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Hide label</span>
                                         </label>
                                     </div>
-                                    <div class="form-control hidden">
+                                    <div class="form-control hidden passhideLabel">
                                         <label class="Polaris-Choice" for="PolarisCheckbox4">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">

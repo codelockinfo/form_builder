@@ -1018,23 +1018,25 @@ var BACKTO = 0;
             var elementId = $(this).data("elementid");
             var formId = $(this).closest(".clsselected_element").data("formid");
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
-            $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId },
-                success: function (comeback) {
-                    // console.log(comeback);
-                    var comeback = JSON.parse(comeback);
-                    // console.log(comeback);
-                    if (comeback['code'] != undefined && comeback['code'] == '403') {
-                    //   redirect403();
-                    } else{
-                    // console.log("return get all form ");
-                    $(".elementAppend").html(comeback.outcome);
+            if(elementId != undefined){
+                $.ajax({
+                    url: "ajax_call.php",
+                    type: "post",
+                    dataType: "json",
+                    data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId },
+                    success: function (comeback) {
+                        // console.log(comeback);
+                        var comeback = JSON.parse(comeback);
+                        // console.log(comeback);
+                        if (comeback['code'] != undefined && comeback['code'] == '403') {
+                        //   redirect403();
+                        } else{
+                        // console.log("return get all form ");
+                        $(".elementAppend").html(comeback.outcome);
+                        }
                     }
-                }
-            });
+                });
+            }
         });
         // index page checkbox selected    
 
