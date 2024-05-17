@@ -1,22 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-    
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../assets/css/polaris_style.css" type="text/css">
-    <link rel="stylesheet" href="../assets/css/customstyle.css" type="text/css">
-    <link rel="stylesheet" href="../assets/css/owl.carousel.css" type="text/css">
-    <link rel="stylesheet" href="../assets/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="../assets/css/owl.theme.default.min.css" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="../assets/js/style.js" type="text/javascript"></script>
-    <script src="../assets/js/owl.carousel.js" type="text/javascript"></script>
-    <script src="../assets/js/owl.carousel.min.js" type="text/javascript"></script>
-    <script src="../assets/js/ckeditor.js" type="text/javascript"></script>
-</head> -->
 <?php 
 include_once('cls_header.php'); 
 $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
@@ -1029,7 +1010,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue"><input
-                                                    id="PolarisTextField58" placeholder=""
+                                                   placeholder=""
                                                     class="Polaris-TextField__Input headerTitle" type="text"
                                                     aria-labelledby="PolarisTextField58Label" aria-invalid="false"
                                                     >
@@ -1743,6 +1724,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                 class="Polaris-Choice__Label">Full width footer
                                                 button</span></label></div>
                                     <div class="form-control alignment" >
+                                        <input name="footer-button__alignment" type="hidden" value="2" class="footer-button__alignment">
                                         <div class="chooseInput">
                                             <div class="label">Alignment</div>
                                             <div class="chooseItems">
@@ -1996,7 +1978,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                    <input id="PolarisTextField58" placeholder="https://" class="Polaris-TextField__Input" type="text" aria-describedby="PolarisTextField58HelpText" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="">
+                                                    <input placeholder="https://" class="Polaris-TextField__Input" type="text" aria-describedby="PolarisTextField58HelpText" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>

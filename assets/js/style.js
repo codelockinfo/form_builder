@@ -351,6 +351,8 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
         $("."+$attrName).text($inputVal);
     }else if($nameExlode[1] == "limitcharactervalue"){
         $("."+$nameExlode[0]+"__placeholder").attr("maxlength",$inputVal);
+    }else if($nameExlode[1] == "html-code"){
+        $("."+$attrName).html($inputVal);
     }
 
 });

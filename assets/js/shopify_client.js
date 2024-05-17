@@ -769,19 +769,21 @@ var BACKTO = 0;
             event.preventDefault();  
             var thisObj = $(this);
             var formid= $(".formid").val();
-            var get_val= $(this).find(".get_element_hidden").val();
+            var elementid= $(this).find(".get_element_hidden").val();
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
-                data: {'routine_name': 'set_element' , store: store,'get_element_hidden':get_val,'formid':formid},
+                data: {'routine_name': 'set_element' , store: store,'get_element_hidden':elementid,'formid':formid},
                 success: function (comeback) {
                     var comeback = JSON.parse(comeback);
+                    var formdata_id = comeback["last_id"] !== undefined ? comeback["last_id"] : "";
                     if (comeback['code'] != undefined && comeback['code'] == '403') {
                         redirect403();
                     } else{
                         $('.owl-carousel').trigger('to.owl.carousel',  [BACKTO, 40, true]);
                         get_selected_elements(formid);
+                        // get_selected_element_preview(formid,elementid,formdata_id);
                     }
                 }
             });
@@ -807,7 +809,55 @@ var BACKTO = 0;
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
-                    data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store },
+                    data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store},
+                    success: function (comeback) {
+                        if (comeback['code'] != undefined && comeback['code'] == '403') {
+                            redirect403();
+                        } else{
+                            console.log(comeback['form_footer_data']);
+                            console.log(comeback['form_header_data']);
+                            console.log(comeback['form_header_data']['1']);
+                            if(comeback['form_header_data']['0'] == 1){
+                                $(".headerData .showHeader").prop("checked", true);
+                            }else{
+                                $(".headerData .showHeader").prop("checked", false);
+                            }
+                            $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
+                            $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
+                            $(".form_name_form_design").val(comeback['form_header_data']['1'])
+                            $(".selected_element_set").html(comeback['outcome']);
+                            $(".code-form-app").html(comeback['form_html']);
+
+                            $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
+                            $('.footerData .submitText').val(comeback['form_footer_data']['1']);
+                            if(comeback['form_footer_data']['2'] == 1){
+                                $(".footerData .resetButton").prop("checked", true);
+                            }else{
+                                $(".footerData .resetButton").prop("checked", false);
+                            }
+                            $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
+                            if(comeback['form_footer_data']['4'] == 1){
+                                $(".footerData .fullFooterButton").prop("checked", true);
+                            }else{
+                                $(".footerData .fullFooterButton").prop("checked", false);
+                            }
+                            $( ".footerData .chooseItem" ).each(function() {
+                                    if(comeback['form_footer_data']['5'] == $(this).data('value')){
+                                        $(".footerData .chooseItem").removeClass("active");
+                                        $(this).addClass("active");
+                                    }
+                            });
+                         
+                        }
+                    }
+                });
+        }
+        function get_selected_element_preview(formId,elementId,formdataId){
+            $.ajax({
+                    url: "ajax_call.php",
+                    type: "post",
+                    dataType: "json",
+                    data: {'routine_name': 'get_selected_element_preview','form_id': formId, store: store,"element_id":elementId,"formdata_id" :formdataId},
                     success: function (comeback) {
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
                             redirect403();
@@ -936,33 +986,33 @@ var BACKTO = 0;
         //         }
         //     });
         // });
-        $(document).on("click", ".remove_this_element", function(event) {
-            event.preventDefault();
-            var thisObj = $(this);
-            var formid=$(".formid").val();
-            var element_id=$(".element_id_in_form").val();
-            var form_data_id=$(".form_data_id_second").val(); 
-            event.preventDefault();  
-             $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id }, 
-                beforeSend: function () {
-                    loading_show('.save_loader_show');
-                },
-                success: function (comeback) {
-                    var comeback = JSON.parse(comeback);
-                    if (comeback['code'] != undefined && comeback['code'] == '403') {
-                        redirect403();
-                    } else{
-                    $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-                    get_selected_elements(formid); 
-                    }
-                    loading_hide('.save_loader_show', 'Save');
-                }
-            });
-        });
+        // $(document).on("click", ".remove_this_element", function(event) {
+        //     event.preventDefault();
+        //     var thisObj = $(this);
+        //     var formid=$(".formid").val();
+        //     var element_id=$(".element_id_in_form").val();
+        //     var form_data_id=$(".form_data_id_second").val(); 
+        //     event.preventDefault();  
+        //      $.ajax({
+        //         url: "ajax_call.php",
+        //         type: "post",
+        //         dataType: "json",
+        //         data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id }, 
+        //         beforeSend: function () {
+        //             loading_show('.save_loader_show');
+        //         },
+        //         success: function (comeback) {
+        //             var comeback = JSON.parse(comeback);
+        //             if (comeback['code'] != undefined && comeback['code'] == '403') {
+        //                 redirect403();
+        //             } else{
+        //             $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
+        //             get_selected_elements(formid); 
+        //             }
+        //             loading_hide('.save_loader_show', 'Save');
+        //         }
+        //     });
+        // });
         function getAllForm(){
             $.ajax({
                     url: "ajax_call.php",
@@ -1017,13 +1067,14 @@ var BACKTO = 0;
             var slideTo = $(this).data("owl");
             var elementId = $(this).data("elementid");
             var formId = $(this).closest(".clsselected_element").data("formid");
+            var formdataId = $(this).closest(".clsselected_element").data("formdataid");
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
             if(elementId != undefined){
                 $.ajax({
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
-                    data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId },
+                    data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId ,"formdataid":formdataId },
                     success: function (comeback) {
                         // console.log(comeback);
                         var comeback = JSON.parse(comeback);
