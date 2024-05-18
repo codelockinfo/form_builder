@@ -1784,7 +1784,7 @@ class Client_functions extends common_function {
                             if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Name">Your '.$elementtitle.'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Name">'.$elementtitle.'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
                                                         <input type="text" data-type="text" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="text" placeholder="'.$elements['element_title'].'" value="">
                                                     </div>
@@ -2353,7 +2353,7 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__label"  id="PolarisTextField25" placeholder="Your '.$comebackdata['element_title'].'"
+                                                <input  name="'.$form_data_id.''.$elementtitle.'__label"  id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'"
                                                    class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField25Label"
                                                    aria-invalid="false" value="Your '.$comebackdata['element_title'].'">

@@ -103,7 +103,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         <span>Back to list</span>
                     </button>
                 </div> -->
-                <div style="color: rgb(0, 128, 96); padding: 0px 0.8rem;">
+                <!-- <div style="color: rgb(0, 128, 96); padding: 0px 0.8rem;">
                     <button class="Polaris-Button Polaris-Button--outline Polaris-Button--monochrome" type="button">
                         <span class="Polaris-Button__Content">
                             <span class="Polaris-Button__Text">
@@ -111,7 +111,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             </span>
                         </span>
                     </button>
-                </div>
+                </div> -->
             </div>
 
         </div>

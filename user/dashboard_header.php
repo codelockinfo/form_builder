@@ -34,7 +34,7 @@ $store = (isset($_GET['store']) && $_GET['store'] != '') ? $_GET['store'] : "man
             <span>Easy form builder</span>
           </div>
           <div class="Polaris-TopBar__Contents">
-          <div class="Polaris-TopBar__SearchField">
+          <div class="Polaris-TopBar__SearchField text-end">
             <!-- <button class="Polaris-Button Polaris-Button--primary" type="button">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Shopify Admin</span>
@@ -53,7 +53,7 @@ $store = (isset($_GET['store']) && $_GET['store'] != '') ? $_GET['store'] : "man
             </button>
            
         </div>
-        <div class="Polaris-TopBar__SecondaryMenu">
+        <!-- <div class="Polaris-TopBar__SecondaryMenu">
             <div class="Polaris-ButtonGroup">
                 <div class="Polaris-ButtonGroup__Item">
                     <button class="Polaris-Button" type="button">
@@ -71,7 +71,7 @@ $store = (isset($_GET['store']) && $_GET['store'] != '') ? $_GET['store'] : "man
                 </button>
             </div>
             </div>
-        </div>
+        </div> -->
            
     </div>
     </div>
