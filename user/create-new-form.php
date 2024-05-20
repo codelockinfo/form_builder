@@ -28,8 +28,8 @@ include_once('cls_header.php');
                 <div class="Polaris-Page-Header__TitleWrapper">
                     <h1 class="Polaris-Header-Title">Forms</h1>
                 </div>
-                <!-- <div class="Polaris-Page-Header__RightAlign">
-                    <div class="Polaris-ActionMenu">
+                <div class="Polaris-Page-Header__RightAlign">
+                    <!-- <div class="Polaris-ActionMenu">
                         <div class="Polaris-ActionMenu-Actions__ActionsLayout">
                             <div class="Polaris-ButtonGroup Polaris-ButtonGroup--extraTight">
                                 <div class="Polaris-ButtonGroup__Item">
@@ -53,13 +53,13 @@ include_once('cls_header.php');
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div id="myBtn_new" class="Polaris-Page-Header__PrimaryActionWrapper">
                         <button class="Polaris-Button Polaris-Button--primary" type="button">
                             <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Create new form</span></span>
                         </button>
                     </div>
-                </div> -->
+                </div>
             </div>
             <div class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
                 <div class="Polaris-ResourceList__HeaderContentWrapper">

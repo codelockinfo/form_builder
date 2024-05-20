@@ -337,7 +337,10 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     $inputVal = $(this).val();
     console.log($inputVal);
     $attrName = $(this).attr('name');
-    $nameExlode = $attrName.split("__");
+    $nameExlode = "";
+    if($attrName != undefined){
+        $nameExlode = $attrName.split("__");
+    }
 
     if($nameExlode[1] == "label"){
         $("."+$attrName).html($inputVal);
@@ -439,7 +442,17 @@ $(document).on("change",".requiredCheck" ,function(){
     console.log(containerClass);
 
     if(this.checked) {
-        $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+        $showRequiredLabel = $("."+containerClass).find(".showRequireHideLabel");
+        $hideLabel = $("."+containerClass).find(".hideLabel");
+
+        if($hideLabel.prop('checked')) {
+            if($showRequiredLabel.prop('checked')) {
+                console.log("-------------");
+                $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+            }
+        }else{
+            $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+        }
         $(this).closest("."+containerClass).find(".Requiredpass").removeClass("hidden");
     }else{   
         $(".block-container").find("." +containerClass +" .text-smaller").html(" ");

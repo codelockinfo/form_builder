@@ -878,8 +878,8 @@ class Client_functions extends common_function {
         return $response;
     }
 
-   function make_table_data_blogpostData($table_data_arr, $pageno, $table_name) {
-     $shopinfo = $this->current_store_obj;
+    function make_table_data_blogpostData($table_data_arr, $pageno, $table_name) {
+        $shopinfo = $this->current_store_obj;
         $total_record = $table_data_arr->num_rows;
         $tr_html = '<tr class="Polaris-ResourceList__ItemWrapper"> <td colspan="7"><center><p class="Polaris-ResourceList__AttributeOne Records-Not-Found">Records not found</p></center></td></tr>';
         if ($table_data_arr->num_rows > 0) {
@@ -913,37 +913,37 @@ class Client_functions extends common_function {
 
                 $tr_html.='
                     <td>
-            <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented highlight-text">                   
-             <div class="Polaris-ButtonGroup__Item highlight-text">
-                <span class="Polaris-Button Polaris-Button--sizeSlim tip loader_show" data-hover="' . $data_hover . '">
-               <a href="https://'.$shopinfo->shop_name.'/blogs/'. $data_blog->blog->handle .'/' . $dataObj->handle . '"  target="_blank">
-                        <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop">
-                            ' . $svg_icon_status . '
+                    <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented highlight-text">                   
+                    <div class="Polaris-ButtonGroup__Item highlight-text">
+                        <span class="Polaris-Button Polaris-Button--sizeSlim tip loader_show" data-hover="' . $data_hover . '">
+                    <a href="https://'.$shopinfo->shop_name.'/blogs/'. $data_blog->blog->handle .'/' . $dataObj->handle . '"  target="_blank">
+                                <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop">
+                                    ' . $svg_icon_status . '
+                                </span>
+                            </a>
                         </span>
-                    </a>
-                </span>
-            </div>
-            <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented highlight-text">                   
-              <div class="Polaris-ButtonGroup__Item highlight-text">
-                <span class="Polaris-Button Polaris-Button--sizeSlim tip loader_show" data-hover="Edit">
-                      <a href="blogpost_edit.php?blogpost_id=' . $dataObj->blogpost_id . '&store=' . $shopinfo->shop_name . '" >
-                        <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop">
-                            ' . CLS_SVG_EDIT . '
+                    </div>
+                    <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented highlight-text">                   
+                    <div class="Polaris-ButtonGroup__Item highlight-text">
+                        <span class="Polaris-Button Polaris-Button--sizeSlim tip loader_show" data-hover="Edit">
+                            <a href="blogpost_edit.php?blogpost_id=' . $dataObj->blogpost_id . '&store=' . $shopinfo->shop_name . '" >
+                                <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop">
+                                    ' . CLS_SVG_EDIT . '
+                                </span>
+                            </a>
                         </span>
-                    </a>
-                </span>
-            </div>
-              <div class="Polaris-ButtonGroup__Item highlight-text">
-                    <span class="Polaris-Button Polaris-Button--sizeSlim tip " data-hover="Delete" onclick="removeFromTable(\'' . TABLE_BLOGPOST_MASTER . '\',' . $dataObj->blogpost_id . ',' . $dataObj->id . ',' . $after_delete_pageno . ', \'blogpostData\',\'articles\' ,this)">
-                        <a class="history-link" href="javascript:void(0)">
-                            <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop save_loader_show' . $dataObj->blogpost_id . '    ">
-                                ' . CLS_SVG_DELETE . '
+                    </div>
+                    <div class="Polaris-ButtonGroup__Item highlight-text">
+                            <span class="Polaris-Button Polaris-Button--sizeSlim tip " data-hover="Delete" onclick="removeFromTable(\'' . TABLE_BLOGPOST_MASTER . '\',' . $dataObj->blogpost_id . ',' . $dataObj->id . ',' . $after_delete_pageno . ', \'blogpostData\',\'articles\' ,this)">
+                                <a class="history-link" href="javascript:void(0)">
+                                    <span class="Polaris-custom-icon Polaris-Icon Polaris-Icon--hasBackdrop save_loader_show' . $dataObj->blogpost_id . '    ">
+                                        ' . CLS_SVG_DELETE . '
+                                    </span>
+                                </a>
                             </span>
-                        </a>
-                    </span>
-                </div>';
-                $tr_html.='</div></td></tr>';
-                }
+                        </div>';
+                        $tr_html.='</div></td></tr>';
+            }
         }
     
         return $tr_html;
@@ -1095,7 +1095,7 @@ class Client_functions extends common_function {
     }
 
     function make_table_data_productData($table_data_arr, $pageno, $table_name) {
-  $shopinfo = $this->current_store_obj;
+        $shopinfo = $this->current_store_obj;
         $total_record = $table_data_arr->num_rows;
         $tr_html = '<tr class="Polaris-ResourceList__ItemWrapper"> <td colspan="7"><center><p class="Polaris-ResourceList__AttributeOne Records-Not-Found">Records not found</p></center></td></tr>';
         if ($table_data_arr->num_rows > 0) {
@@ -2585,7 +2585,7 @@ class Client_functions extends common_function {
                                        class="Polaris-Choice__Label">Required</span>
                                  </label>
                               </div>
-                              <div class="form-control Requiredpass hidden">
+                              <div class="form-control Requiredpass">
                                  <label class="Polaris-Choice" for="PolarisCheckbox24">
                                     <span
                                        class="Polaris-Choice__Control">
@@ -2800,7 +2800,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox23">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="true" value="" checked=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="true" value="" ><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2815,7 +2815,7 @@ class Client_functions extends common_function {
                                 <span class="Polaris-Choice__Label">Required</span>
                             </label>
                         </div>
-                        <div class="form-control Requiredpass hidden">
+                        <div class="form-control Requiredpass">
                             <label class="Polaris-Choice" for="PolarisCheckbox24">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
@@ -3076,7 +3076,7 @@ class Client_functions extends common_function {
                                                 <span class="Polaris-Choice__Label">Required</span>
                                             </label>
                                         </div>
-                                        <div class="form-control Requiredpass hidden">
+                                        <div class="form-control Requiredpass">
                                             <label class="Polaris-Choice" for="PolarisCheckbox7">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
@@ -3335,7 +3335,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Required</span>
                                         </label>
                                     </div>
-                                    <div class="form-control Requiredpass hidden">
+                                    <div class="form-control Requiredpass">
                                         <label class="Polaris-Choice" for="PolarisCheckbox15">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
@@ -3883,7 +3883,7 @@ class Client_functions extends common_function {
                                 <span class="Polaris-Choice__Label">Required</span>
                                 </label>
                             </div>
-                            <div class="form-control Requiredpass hidden">
+                            <div class="form-control Requiredpass">
                                 <label class="Polaris-Choice" for="PolarisCheckbox16">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
@@ -4067,7 +4067,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Required</span>
                                         </label>
                                     </div>
-                                    <div class="form-control Requiredpass hidden">
+                                    <div class="form-control Requiredpass">
                                         <label class="Polaris-Choice" for="PolarisCheckbox20">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
@@ -4253,7 +4253,7 @@ class Client_functions extends common_function {
                                     <span class="Polaris-Choice__Label">Required</span>
                                 </label>
                                 </div>
-                                <div class="form-control Requiredpass hidden">
+                                <div class="form-control Requiredpass">
                                 <label class="Polaris-Choice" for="PolarisCheckbox53">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -4682,7 +4682,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Required</span>
                                     </label>
                                 </div>
-                                <div class="form-control Requiredpass hidden">
+                                <div class="form-control Requiredpass">
                                     <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -5113,7 +5113,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Required</span>
                                     </label>
                                 </div>
-                                <div class="form-control Requiredpass hidden">
+                                <div class="form-control Requiredpass">
                                     <label class="Polaris-Choice" for="PolarisCheckbox10">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
@@ -5538,7 +5538,7 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Required</span>
                                         </label>
                                     </div>
-                                    <div class="form-control Requiredpass hidden">
+                                    <div class="form-control Requiredpass">
                                         <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
