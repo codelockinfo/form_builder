@@ -58,7 +58,7 @@ include dirname(dirname(__FILE__)). "/base_function.php";
     public function select_result($tbl_name, $columns, $where_query_arr = array(), $options_arr = array()) {
         $format = isset($options_arr['format']) ? $options_arr['format'] : 'array';
         $skip = isset($options_arr['skip']) ? $options_arr['skip'] : 0;
-        $limit = isset($options_arr['limit']) ? $options_arr['limit'] : 20;
+        $limit = isset($options_arr['limit']) ? $options_arr['limit'] : 25;
         $single = isset($options_arr['single']) ? $options_arr['single'] : false;
         $status = '1';
         $return_data = array();

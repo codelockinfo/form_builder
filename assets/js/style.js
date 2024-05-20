@@ -318,12 +318,14 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     $(this).addClass("active");
     $dataValue = $(this).attr("data-value");    
     $mainContainer = $(this).closest(".container").attr("class");
+    console.log($mainContainer);
     var classArray = $mainContainer.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
     
     $columnWidth = $(this).closest(".form-control").find(".input_columnwidth");
     console.log($columnWidth.length);
     if($columnWidth.length > 0){
+        console.log(containerClass);
         $columnWidth.val($dataValue);
         $(".block-container ."+containerClass).removeClass("layout-1-column layout-2-column layout-3-column").addClass("layout-" + $dataValue + "-column");
     }

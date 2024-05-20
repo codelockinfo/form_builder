@@ -1784,150 +1784,150 @@ class Client_functions extends common_function {
                             if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Name">'.$elementtitle.'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="text" placeholder="'.$elements['element_title'].'" value="">
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$elements['element_title'].'" value="">
                                                     </div>
-                                                    <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
                             }
                             if($elements['id'] == 2){
                                 $form_html .= '<div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
+                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="email" placeholder="Email" value="">
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="Email" value="">
                                     </div>
-                                    <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
-                            if($elements['id'] == 22 || $elements['id'] == 4){
+                            if($elements['id'] == 22 || $elements['id'] == 23 || $elements['id'] == 4){
                                 $form_html .= '<div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Textarea">'.$elementtitle.'</span><span class="text-danger text-smaller"></span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder" rows="3" name="textarea-1" placeholder=""></textarea>
+                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label=>'.$elements['element_title'].'</span><span class="text-danger text-smaller"></span></label>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$elements['element_title'].'"></textarea>
                                                         <small class="help-text globo-description"></small>
-                                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
                             }
                             if($elements['id'] == 6){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Phone">Phone</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Phone">Phone</span><span class="text-danger text-smaller"></span></label>
                                     <div class="globo-form-input">
                                         <input type="text" data-type="phone" class="classic-input" name="phone-1" placeholder="" default-country-code="us">
                                     </div>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 7){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Name">Your '.$elementtitle.'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="number" placeholder="'.$elements['element_title'].'" value="">
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$elements['element_title'].'" value="">
                                                     </div>
-                                                    <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
                             }                            
                             if($elements['id'] == 8){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Password">Password</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Password">Password</span><span class="text-danger text-smaller"></span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="password-1" placeholder="Enter your password">
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="Enter your password">
                                     </div>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 9){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Date time">Date time</span><span></span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">Date time</span><span></span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$form_data_id.''.$elementtitle.'__placeholder"  name="datetime-1" placeholder="" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
+                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
                                         </div>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 10){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="File">File</span><span></span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">File</span><span></span></label>
                                         <div class="globo-form-input">
-                                            <input type="file" data-type="file" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder" name="file-1" placeholder="">
+                                            <input type="file" data-type="file" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="file-1" placeholder="">
                                         </div>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 11){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Checkbox">Checkbox</span><span></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">Checkbox</span><span></span>
                                         </label>
                                         <ul class="flex-wrap">
                                             <li class="globo-list-control option-1-column">
                                                 <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input '.$form_data_id.''.$elementtitle.'__checkbox" id="false-checkbox-1-Option 1-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 1">
-                                                    <label class="checkbox-label globo-option '.$form_data_id.''.$elementtitle.'__checkbox" for="false-checkbox-1-Option 1-">Option 1</label>
+                                                    <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__checkbox" id="false-checkbox-1-Option 1-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 1">
+                                                    <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__checkbox" for="false-checkbox-1-Option 1-">Option 1</label>
                                                 </div>
                                             </li>
                                             <li class="globo-list-control option-1-column">
                                                 <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input '.$form_data_id.''.$elementtitle.'__checkbox" id="false-checkbox-1-Option 2-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 2">
-                                                    <label class="checkbox-label globo-option '.$form_data_id.''.$elementtitle.'__checkbox" for="false-checkbox-1-Option 2-">Option 2</label>
+                                                    <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__checkbox" id="false-checkbox-1-Option 2-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 2">
+                                                    <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__checkbox" for="false-checkbox-1-Option 2-">Option 2</label>
                                                 </div>
                                             </li>
                                         </ul>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 12){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <div class="checkbox-wrapper">
-                                                <input class="checkbox-input '.$form_data_id.''.$elementtitle.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1">
-                                                <label class="checkbox-label globo-option '.$form_data_id.''.$elementtitle.'__label">I agree Terms and Conditions</label>
+                                                <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1">
+                                                <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label">I agree Terms and Conditions</label>
                                             </div>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 13){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="radio">Radio</span><span></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="radio">Radio</span><span></span>
                                         </label>
                                         <ul class="flex-wrap">
                                             <li class="globo-list-control option-1-column">
                                                 <div class="radio-wrapper">
-                                                    <input class="radio-input  '.$form_data_id.''.$elementtitle.'__radio" id="false-radio-1-Option 1-" type="radio" data-type="radio" name="radio-1" value="Option 1">
-                                                    <label class="radio-label globo-option '.$form_data_id.''.$elementtitle.'__radio" for="false-radio-1-Option 1-">Option 1</label>
+                                                    <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-Option 1-" type="radio" data-type="radio" name="radio-1" value="Option 1">
+                                                    <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-Option 1-">Option 1</label>
                                                 </div>
                                             </li>
                                             <li class="globo-list-control option-1-column">
                                                 <div class="radio-wrapper">
-                                                    <input class="radio-input  '.$form_data_id.''.$elementtitle.'__radio" id="false-radio-1-Option 2-" type="radio" data-type="radio" name="radio-1" value="Option 2">
-                                                    <label class="radio-label globo-option '.$form_data_id.''.$elementtitle.'__radio" for="false-radio-1-Option 2-">Option 2</label>
+                                                    <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-Option 2-" type="radio" data-type="radio" name="radio-1" value="Option 2">
+                                                    <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-Option 2-">Option 2</label>
                                                 </div>
                                             </li>
                                         </ul>
                                         <small class="help-text globo-description"></small>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
                             }
                             if($elements['id'] == 14){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Dropdown">Dropdown</span><span></span></label>
+                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">Dropdown</span><span></span></label>
                                                 <div class="globo-form-input">
-                                                    <select name="select-1" id="false-select-1" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder">
+                                                    <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
                                                         <option value="" disabled="disabled">Please select</option>
                                                         <option value="Option 1">Option 1</option>
                                                         <option value="Option 2">Option 2</option>
                                                     </select>
                                                 </div>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                     </div>';
                             }
                             if($elements['id'] == 15){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Country">Country</span><span></span></label>
+                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">Country</span><span></span></label>
                                             <div class="globo-form-input">
                                                 <select name="country-1" id="false-country-1" class="classic-input">
                                                     <option value="" disabled="disabled">Please select</option>
@@ -2073,24 +2073,24 @@ class Client_functions extends common_function {
                                                     <option value="Zimbabwe">Zimbabwe</option>
                                                 </select>
                                             </div>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                     </div>';
                             }
                             if($elements['id'] == 16){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                        <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Heading">Heading</span><span class="text-danger text-smaller"> *</span></label>
-                                        <p class="heading-caption '.$form_data_id.''.$elementtitle.'__description"></p>
+                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Heading">Heading</span><span class="text-danger text-smaller"> *</span></label>
+                                        <p class="heading-caption '.$elementtitle.''.$form_data_id.'__description"></p>
                                     </div>';
                             }
                             if($elements['id'] == 17){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <div class="globo-paragraph '.$form_data_id.''.$elementtitle.'__description">Paragraph</div>
+                                                <div class="globo-paragraph '.$elementtitle.''.$form_data_id.'__description">Paragraph</div>
                                     </div>';
                             }
                             if($elements['id'] == 18){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Rating">Rating</span><span></span></label>
+                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">Rating</span><span></span></label>
                                                 <div class="star-rating">
                                                     <fieldset>
                                                         <input type="radio" data-type="rating-star" id="false-rating-star-1-5-stars" name="rating-star-1" value="5"><label for="false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
@@ -2100,32 +2100,32 @@ class Client_functions extends common_function {
                                                         <input type="radio" data-type="rating-star" id="false-rating-star-1-1-star" name="rating-star-1" value="1"><label for="false-rating-star-1-1-star" title="1 Star">1 star</label>
                                                     </fieldset>
                                                 </div>
-                                                <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                                <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                     </div>';
                             }
                             if($elements['id'] == 19){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <div id="htmlbox" class="classic-input '.$form_data_id.''.$elementtitle.'__html-code">Enter your code</div>
+                                                <div id="htmlbox" class="classic-input '.$elementtitle.''.$form_data_id.'__html-code">Enter your code</div>
                                     </div>';
                             }
                             if($elements['id'] == 20){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                        <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="First Name">First Name</span><span class="text-danger text-smaller"> *</span></label>
+                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="First Name">First Name</span><span class="text-danger text-smaller"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="text" placeholder="First Name" value="">
+                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="First Name" value="">
                                         </div>
-                                        <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                     </div>';
                             }
                             if($elements['id'] == 21){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                            <span class="label-content '.$form_data_id.''.$elementtitle.'__label" data-label="Last Name">Last Name</span><span class="text-danger text-smaller"> *</span></label>
+                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Last Name">Last Name</span><span class="text-danger text-smaller"> *</span></label>
                                             <div class="globo-form-input">
-                                                <input type="text" data-type="text" class="classic-input '.$form_data_id.''.$elementtitle.'__placeholder"  name="text" placeholder="Last Name" value="">
+                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="Last Name" value="">
                                             </div>
-                                            <small class="messages '.$form_data_id.''.$elementtitle.'__description"></small>
+                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                         </div>';
                             }
                         }  
@@ -2353,10 +2353,10 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__label"  id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'"
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__label"  id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'"
                                                    class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField25Label"
-                                                   aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
+                                                   aria-invalid="false" value="'.$comebackdata['element_title'].'">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                              </div>
                                           </div>
@@ -2378,7 +2378,7 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__placeholder"  id="PolarisTextField26" placeholder="Your Name"
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__placeholder"  id="PolarisTextField26" placeholder="Name"
                                                    class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField26Label"
                                                    aria-invalid="false" value="">
@@ -2403,7 +2403,7 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__description"  id="PolarisTextField27"
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__description"  id="PolarisTextField27"
                                                    placeholder="" class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField27Label"
                                                    aria-invalid="false" value="">
@@ -2419,7 +2419,7 @@ class Client_functions extends common_function {
                                     <span
                                        class="Polaris-Choice__Control">
                                        <span class="Polaris-Checkbox">
-                                          <input  name="'.$form_data_id.''.$elementtitle.'__limitcharacter" 
+                                          <input  name="'.$elementtitle.''.$form_data_id.'__limitcharacter" 
                                              id="PolarisCheckbox20" type="checkbox"
                                              class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox"
                                              aria-checked="false" value=""><span
@@ -2449,7 +2449,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                           <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                             <input  name="'.$form_data_id.''.$elementtitle.'__limitcharactervalue" 
+                                             <input  name="'.$elementtitle.''.$form_data_id.'__limitcharactervalue" 
                                                 id="PolarisTextField28" class="Polaris-TextField__Input"
                                                 type="number" aria-labelledby="PolarisTextField28Label"
                                                 aria-invalid="false" value="100">
@@ -2500,7 +2500,7 @@ class Client_functions extends common_function {
                                     <span
                                        class="Polaris-Choice__Control">
                                        <span class="Polaris-Checkbox">
-                                          <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" 
+                                          <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" 
                                              id="PolarisCheckbox21" type="checkbox"
                                              class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox"
                                              aria-checked="false" value=""><span
@@ -2531,7 +2531,7 @@ class Client_functions extends common_function {
                                     <span class="Polaris-Choice__Control">
                                        <span
                                           class="Polaris-Checkbox">
-                                          <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox22"  type="checkbox"
+                                          <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox22"  type="checkbox"
                                              class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox"
                                              aria-checked="false" value=""><span
                                              class="Polaris-Checkbox__Backdrop"></span>
@@ -2561,7 +2561,7 @@ class Client_functions extends common_function {
                                        class="Polaris-Choice__Control">
                                        <span class="Polaris-Checkbox">
                                           <input
-                                             id="PolarisCheckbox23" type="checkbox" name="'.$form_data_id.''.$elementtitle.'__required"
+                                             id="PolarisCheckbox23" type="checkbox" name="'.$elementtitle.''.$form_data_id.'__required"
                                              class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox"
                                              aria-checked="true" value="" checked=""><span
                                              class="Polaris-Checkbox__Backdrop"></span>
@@ -2590,7 +2590,7 @@ class Client_functions extends common_function {
                                     <span
                                        class="Polaris-Choice__Control">
                                        <span class="Polaris-Checkbox">
-                                          <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel"
+                                          <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel"
                                              id="PolarisCheckbox24" type="checkbox"
                                              class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox"
                                              aria-checked="false" value=""><span
@@ -2615,7 +2615,7 @@ class Client_functions extends common_function {
                                  </label>
                               </div>
                               <div class="form-control">
-                                 <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                 <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                  <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
@@ -2653,7 +2653,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
@@ -2674,7 +2674,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField26" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField26" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
@@ -2695,7 +2695,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                         <div class="Polaris-TextField">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField27" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField27Label" aria-invalid="false" value="">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField27" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField27Label" aria-invalid="false" value="">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
@@ -2707,7 +2707,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox20">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__limitcharacter" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__limitcharacter" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input passLimitcar" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2727,7 +2727,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__limitcharactervalue" id="PolarisTextField28" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField28Label" aria-invalid="false" value="100">
+                                        <input name="'.$elementtitle.''.$form_data_id.'__limitcharactervalue" id="PolarisTextField28" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField28Label" aria-invalid="false" value="100">
                                         <div class="Polaris-TextField__Spinner" aria-hidden="true">
                                             <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
                                             <div class="Polaris-TextField__SpinnerIcon">
@@ -2762,7 +2762,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox21">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox21" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox21" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2781,7 +2781,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox22">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox22" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox22" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2800,7 +2800,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox23">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="true" value="" ><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox23" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="true" value="" ><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2819,7 +2819,7 @@ class Client_functions extends common_function {
                             <label class="Polaris-Choice" for="PolarisCheckbox24">
                                 <span class="Polaris-Choice__Control">
                                 <span class="Polaris-Checkbox">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox24" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox24" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                     <span class="Polaris-Checkbox__Icon">
                                         <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2836,7 +2836,7 @@ class Client_functions extends common_function {
                             </label>
                         </div>
                         <div class="form-control">
-                            <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                            <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                             <div class="chooseInput">
                                 <div class="label">Column width</div>
                                 <div class="chooseItems">
@@ -2869,7 +2869,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__label"  id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Password">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__label"  id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Password">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -2890,7 +2890,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField6" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Enter your password">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField6" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Enter your password">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -2911,7 +2911,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -2923,7 +2923,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox3">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__limitcharacter" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input passLimitcar " aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__limitcharacter" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input passLimitcar " aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -2942,7 +2942,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                        <input name="'.$form_data_id.''.$elementtitle.'__limitcharacter" id="PolarisTextField8" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="100">
+                                                        <input name="'.$elementtitle.''.$form_data_id.'__limitcharacter" id="PolarisTextField8" class="Polaris-TextField__Input" type="number" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="100">
                                                         <div class="Polaris-TextField__Spinner" aria-hidden="true">
                                                             <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
                                                             <div class="Polaris-TextField__SpinnerIcon">
@@ -2977,7 +2977,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Validate</label></div>
                                                 </div>
                                                 <div class="Polaris-Select">
-                                                <select name="'.$form_data_id.''.$elementtitle.'__validate" id="PolarisSelect2" class="Polaris-Select__Input" aria-invalid="false">
+                                                <select name="'.$elementtitle.''.$form_data_id.'__validate" id="PolarisSelect2" class="Polaris-Select__Input" aria-invalid="false">
                                                     <option value="false">None</option>
                                                     <option value="^.{6,}$">Minimum 6 characters</option>
                                                     <option value="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$">Minimum 6 characters, at least one letter and one number</option>
@@ -3014,7 +3014,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField">
-                                                            <input  name="'.$form_data_id.''.$elementtitle.'__validate-regexrule"  id="PolarisTextField9" placeholder="Enter your custom validate regex here" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
+                                                            <input  name="'.$elementtitle.''.$form_data_id.'__validate-regexrule"  id="PolarisTextField9" placeholder="Enter your custom validate regex here" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -3026,7 +3026,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox4">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input  name="'.$form_data_id.''.$elementtitle.'__hidelabel"  id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input  hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input  name="'.$elementtitle.''.$form_data_id.'__hidelabel"  id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input  hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3044,7 +3044,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox5">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label"  id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label"  id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3062,7 +3062,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox6">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3080,7 +3080,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox7">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3098,7 +3098,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox111">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__confirmpassword" id="PolarisCheckbox111" type="checkbox" class="Polaris-Checkbox__Input confirmpass" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__confirmpassword" id="PolarisCheckbox111" type="checkbox" class="Polaris-Checkbox__Input confirmpass" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3116,7 +3116,7 @@ class Client_functions extends common_function {
                                             <label class="Polaris-Choice" for="PolarisCheckbox9">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
-                                                    <input  name="'.$form_data_id.''.$elementtitle.'__storepassword" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <input  name="'.$elementtitle.''.$form_data_id.'__storepassword" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                     <span class="Polaris-Checkbox__Icon">
                                                         <span class="Polaris-Icon">
                                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3143,7 +3143,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__confirmpasswordlabel" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="Confirm password">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__confirmpasswordlabel" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="Confirm password">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -3164,7 +3164,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__confirmpasswordplaceholder" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Confirm your password">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__confirmpasswordplaceholder" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Confirm your password">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -3185,7 +3185,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__confirmpassworddescription" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__confirmpassworddescription" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -3195,7 +3195,7 @@ class Client_functions extends common_function {
                                         </div>
                                         
                                         <div class="form-control">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                             <div class="chooseInput">
                                                 <div class="label">Column width</div>
                                                 <div class="chooseItems">
@@ -3230,7 +3230,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label"  id="PolarisTextField23" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="Date time">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label"  id="PolarisTextField23" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField23Label" aria-invalid="false" value="Date time">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -3251,7 +3251,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField24" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField24" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField24Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -3272,7 +3272,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="Your '.$comebackdata['element_title'].'">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -3284,7 +3284,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" >
                                             <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                         <span class="Polaris-VisuallyHidden"></span>
@@ -3303,7 +3303,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox13">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3321,7 +3321,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox14">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3339,7 +3339,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox15">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3354,7 +3354,7 @@ class Client_functions extends common_function {
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__formate" type="hidden" value="2" class="input_formate">
+                                    <input name="'.$elementtitle.''.$form_data_id.'__formate" type="hidden" value="2" class="input_formate">
                                         <div class="chooseInput">
                                         <div class="label">Format</div>
                                         <div class="chooseItems">
@@ -3368,7 +3368,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox16">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__otherlanguage" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__otherlanguage" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3388,7 +3388,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Label"><label id="PolarisSelect7Label" for="PolarisSelect7" class="Polaris-Label__Text">Localization</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                            <select id="PolarisSelect7" class="Polaris-Select__Input" aria-invalid="false" name="'.$form_data_id.''.$elementtitle.'__localization">
+                                            <select id="PolarisSelect7" class="Polaris-Select__Input" aria-invalid="false" name="'.$elementtitle.''.$form_data_id.'__localization">
                                                 <option value="ar">Arabic</option>
                                                 <option value="at">Austria</option>
                                                 <option value="az">Azerbaijan</option>
@@ -3468,7 +3468,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Label"><label id="PolarisSelect8Label" for="PolarisSelect8" class="Polaris-Label__Text">Date format</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                            <select name="'.$form_data_id.''.$elementtitle.'__dateformat" id="PolarisSelect8" class="Polaris-Select__Input" aria-invalid="false">
+                                            <select name="'.$elementtitle.''.$form_data_id.'__dateformat" id="PolarisSelect8" class="Polaris-Select__Input" aria-invalid="false">
                                                 <option value="Y-m-d">Y-m-d</option>
                                                 <option value="d-m-Y">d-m-Y</option>
                                                 <option value="m-d-Y">m-d-Y</option>
@@ -3501,7 +3501,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Time format</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                            <select name="'.$form_data_id.''.$elementtitle.'__timeformat" id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
+                                            <select name="'.$elementtitle.''.$form_data_id.'__timeformat" id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
                                                 <option value="12h">12h</option>
                                                 <option value="24h">24h</option>
                                             </select>
@@ -3524,7 +3524,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox17">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__limitdatepicker" id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__limitdatepicker" id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3544,7 +3544,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Label"><label id="PolarisSelect10Label" for="PolarisSelect10" class="Polaris-Label__Text">Limit date type</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                            <select id="PolarisSelect10" class="Polaris-Select__Input" aria-invalid="false"  name="'.$form_data_id.''.$elementtitle.'__limitdatetype">
+                                            <select id="PolarisSelect10" class="Polaris-Select__Input" aria-invalid="false"  name="'.$elementtitle.''.$form_data_id.'__limitdatetype">
                                                 <option value="disablingDates">Disabling dates</option>
                                                 <option value="enablingDates">Enabling dates</option>
                                             </select>
@@ -3676,7 +3676,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -3709,7 +3709,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input  name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="File">
+                                            <input  name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="File">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -3727,7 +3727,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__buttontext" id="PolarisTextField11" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Choose file">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__buttontext" id="PolarisTextField11" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Choose file">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -3744,7 +3744,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField12" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField12" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -3755,7 +3755,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" >
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__allowmultiple" id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__allowmultiple" id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3772,7 +3772,7 @@ class Client_functions extends common_function {
                             <div class="form-control">
                                 <div class="uikit select multiple" tabindex="0">
                                 <label class="label">Allowed extensions</label>
-                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$form_data_id.''.$elementtitle.'__allowextention">
+                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention">
                                     <option></option>
                                     <option value="1">csv</option>
                                     <option value="2">pdf</option>
@@ -3821,7 +3821,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -3833,7 +3833,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox13">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input  name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input  name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox13" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3851,7 +3851,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox14">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox14" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3869,7 +3869,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox15">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3887,7 +3887,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox16">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3902,7 +3902,7 @@ class Client_functions extends common_function {
                                 </label>
                             </div>
                             <div class="form-control">
-                            <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                            <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                             <div class="chooseInput">
                                 <div class="label">Column width</div>
                                 <div class="chooseItems">
@@ -3941,7 +3941,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField16" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="Checkbox">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField16" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField16Label" aria-invalid="false" value="Checkbox">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -3958,7 +3958,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$form_data_id.''.$elementtitle.'__option" id="PolarisTextField17" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField17Label" aria-invalid="false" aria-multiline="true" style="height: 82px;">Option 1
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__option" id="PolarisTextField17" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField17Label" aria-invalid="false" aria-multiline="true" style="height: 82px;">Option 1
                                                 </textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     <div aria-hidden="true" class="Polaris-TextField__Resizer">
@@ -3980,7 +3980,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$form_data_id.''.$elementtitle.'__defaultvalue" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__defaultvalue" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     <div aria-hidden="true" class="Polaris-TextField__Resizer">
                                                         <div class="Polaris-TextField__DummyInput">dfdf<br></div>
@@ -4005,7 +4005,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField20" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField20Label" aria-invalid="false" value="">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField20" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField20Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -4017,7 +4017,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox17">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox17" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4035,7 +4035,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox18">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox18" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4053,7 +4053,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox19">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox19" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4071,7 +4071,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox20">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4086,7 +4086,7 @@ class Client_functions extends common_function {
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__no-perline" type="hidden" value="2" class="input_no-perline">
+                                        <input name="'.$elementtitle.''.$form_data_id.'__no-perline" type="hidden" value="2" class="input_no-perline">
                                         <div class="chooseInput">
                                         <div class="label">Number of options per line</div>
                                         <div class="chooseItems">
@@ -4099,7 +4099,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -4132,7 +4132,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__label"  placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="Radio">
+                                                <input name="'.$elementtitle.''.$form_data_id.'__label"  placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false" value="Radio">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                             </div>
@@ -4149,7 +4149,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                <textarea name="'.$form_data_id.''.$elementtitle.'__options" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">Option 1
+                                                <textarea name="'.$elementtitle.''.$form_data_id.'__options" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">Option 1
                                                     Option 2</textarea>
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                                 <div aria-hidden="true" class="Polaris-TextField__Resizer">
@@ -4170,7 +4170,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="Polaris-Select">
-                                        <select class="selectDates" name="'.$form_data_id.''.$elementtitle.'__optionselect">
+                                        <select class="selectDates" name="'.$elementtitle.''.$form_data_id.'__optionselect">
                                             <option value="">Please select</option>
                                             <option value="Option 1">Option 1</option>
                                             <option value="Option 2">Option 2</option>
@@ -4191,7 +4191,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField61" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField61Label" aria-invalid="false" value="">
+                                                <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField61" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField61Label" aria-invalid="false" value="">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                             </div>
@@ -4203,7 +4203,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox50">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox50" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox50" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4221,7 +4221,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox51">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox51" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox51" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4239,7 +4239,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox52">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false requiredCheck" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox52" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false requiredCheck" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4257,7 +4257,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox53">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4273,7 +4273,7 @@ class Client_functions extends common_function {
                                 </div>
                                 <div class="form-control">
                                 <div class="chooseInput">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__no-perline"  type="hidden" value="2" class="input_no-perline">
+                                    <input name="'.$elementtitle.''.$form_data_id.'__no-perline"  type="hidden" value="2" class="input_no-perline">
                                     <div class="label">Number of options per line</div>
                                     <div class="chooseItems">
                                         <div class="chooseItem" data-value="5">5</div>
@@ -4285,7 +4285,7 @@ class Client_functions extends common_function {
                                 </div>
                                 </div>
                                 <div class="form-control">
-                                <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                 <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
@@ -4299,7 +4299,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox54">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__conditionalfield" id="PolarisCheckbox54" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__conditionalfield" id="PolarisCheckbox54" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4319,7 +4319,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect19Label" for="PolarisSelect19" class="Polaris-Label__Text">Only show element if</label></div>
                                     </div>
                                     <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__show-element-if" id="PolarisSelect19" class="Polaris-Select__Input" aria-invalid="false">
+                                        <select name="'.$elementtitle.''.$form_data_id.'__show-element-if" id="PolarisSelect19" class="Polaris-Select__Input" aria-invalid="false">
                                             <option value="false">Please select</option>
                                             <option value="checkbox">Checkbox</option>
                                             <option value="checkbox-2">Checkbox</option>
@@ -4345,7 +4345,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect20Label" for="PolarisSelect20" class="Polaris-Label__Text">is</label></div>
                                     </div>
                                     <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__select-is1" id="PolarisSelect20" class="Polaris-Select__Input" aria-invalid="false">
+                                        <select name="'.$elementtitle.''.$form_data_id.'__select-is1" id="PolarisSelect20" class="Polaris-Select__Input" aria-invalid="false">
                                             <option value="false">Please select</option>
                                             <option value="Option 1">Option 1</option>
                                             <option value="Option 2">Option 2</option>
@@ -4372,7 +4372,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect21Label" for="PolarisSelect21" class="Polaris-Label__Text">is</label></div>
                                     </div>
                                     <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__select-is2" id="PolarisSelect21" class="Polaris-Select__Input" aria-invalid="false">
+                                        <select name="'.$elementtitle.''.$form_data_id.'__select-is2" id="PolarisSelect21" class="Polaris-Select__Input" aria-invalid="false">
                                             <option value="false">Please select</option>
                                             <option value="Option 1">Option 1</option>
                                             <option value="Option 2">Option 2</option>
@@ -4424,7 +4424,7 @@ class Client_functions extends common_function {
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="I agree Terms and Conditions">
+                                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="I agree Terms and Conditions">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -4441,7 +4441,7 @@ class Client_functions extends common_function {
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                                    <input name="'.$form_data_id.''.$elementtitle.'__rawoption" id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Yes">
+                                                                    <input name="'.$elementtitle.''.$form_data_id.'__rawoption" id="PolarisTextField6" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField6Label" aria-invalid="false" value="Yes">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -4453,7 +4453,7 @@ class Client_functions extends common_function {
                                                     <label class="Polaris-Choice" for="PolarisCheckbox3">
                                                         <span class="Polaris-Choice__Control">
                                                         <span class="Polaris-Checkbox">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__default-select" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__default-select" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                             <span class="Polaris-Checkbox__Icon">
                                                                 <span class="Polaris-Icon">
                                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4480,7 +4480,7 @@ class Client_functions extends common_function {
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
+                                                                    <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField7" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField7Label" aria-invalid="false" value="">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -4492,7 +4492,7 @@ class Client_functions extends common_function {
                                                     <label class="Polaris-Choice" for="PolarisCheckbox4">
                                                         <span class="Polaris-Choice__Control">
                                                         <span class="Polaris-Checkbox">
-                                                            <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                             <span class="Polaris-Checkbox__Icon">
                                                                 <span class="Polaris-Icon">
                                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4507,7 +4507,7 @@ class Client_functions extends common_function {
                                                     </label>
                                                 </div>
                                                 <div class="form-control">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                                     <div class="chooseInput">
                                                         <div class="label">Column width</div>
                                                         <div class="chooseItems">
@@ -4540,7 +4540,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Dropdown">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Dropdown">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4561,7 +4561,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Please select">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="Please select">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4582,7 +4582,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
                                                     
                                                 <div  style="display:flex;width:100%;">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__options" type="text" id="Skill" name="Main" class="mainskill" style="width:85%;" required>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__options" type="text" id="Skill" name="Main" class="mainskill" style="width:85%;" required>
                                                     <button type="button" name="add" id="add" class="btn btn-primary" style=" padding: 10px 20px;width:15%;">+</button>
                                                 </div>
                                                 <div id="optionText"></div>
@@ -4599,7 +4599,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Select default value</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                        <select id="optionSelect"  class="selectDates" name="'.$form_data_id.''.$elementtitle.'__default-value">
+                                        <select id="optionSelect"  class="selectDates" name="'.$elementtitle.''.$form_data_id.'__default-value">
                                             <option value="">Please select</option>
                                             <option value="Option 1">Option 1</option>
                                             <option value="Option 2">Option 2</option>
@@ -4620,7 +4620,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__decsription" id="PolarisTextField8" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__decsription" id="PolarisTextField8" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField8Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4632,7 +4632,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox3">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input  name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input  name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4650,7 +4650,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox4">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4668,7 +4668,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox5">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4686,7 +4686,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4702,7 +4702,7 @@ class Client_functions extends common_function {
                                 </div>
                                 
                                 <div class="form-control">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
@@ -4735,7 +4735,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Country">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="Country">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4756,7 +4756,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__placeholder" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="Please select">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="Please select">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4773,7 +4773,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$form_data_id.''.$elementtitle.'__options" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField13Label" aria-invalid="false" aria-multiline="true">Afghanistan
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__options" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField13Label" aria-invalid="false" aria-multiline="true">Afghanistan
                         
                                                     </textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
@@ -4796,7 +4796,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField15" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField15" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField15Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -4810,7 +4810,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect3Label" for="PolarisSelect3" class="Polaris-Label__Text">Select default value</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__select-defualt-value" class="selectDates" >
+                                        <select name="'.$elementtitle.''.$form_data_id.'__select-defualt-value" class="selectDates" >
                                             <option value="">Please select</option>
                                             <option value="Afghanistan">Afghanistan</option>
                                             <option value="Aland Islands">Aland Islands</option>
@@ -5063,7 +5063,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox7">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox7" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5081,7 +5081,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox8">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox8" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox8" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5099,7 +5099,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox9">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5132,7 +5132,7 @@ class Client_functions extends common_function {
                                     </label>
                                 </div>
                                 <div class="form-control">
-                                    <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
@@ -5146,7 +5146,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox11">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$form_data_id.''.$elementtitle.'__conditional-field" id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__conditional-field" id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5166,7 +5166,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect4Label" for="PolarisSelect4" class="Polaris-Label__Text">Only show element if</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__select" id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
+                                        <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
                                             <option value="false">Please select</option>
                                             <option value="select">Dropdown</option>
                                         </select>
@@ -5191,7 +5191,7 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Label"><label id="PolarisSelect5Label" for="PolarisSelect5" class="Polaris-Label__Text">is</label></div>
                                         </div>
                                         <div class="Polaris-Select">
-                                        <select name="'.$form_data_id.''.$elementtitle.'__select" id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
+                                        <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
                                             <option value="false">Please select</option>
                                             <option value="Option 1">Option 1</option>
                                             <option value="Option 2">Option 2</option>
@@ -5236,7 +5236,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField18" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="Heading">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField18" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField18Label" aria-invalid="false" value="Heading">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -5253,7 +5253,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--multiline">
-                                                    <textarea name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;"></textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     <div aria-hidden="true" class="Polaris-TextField__Resizer">
                                                         <div class="Polaris-TextField__DummyInput"><br></div>
@@ -5266,7 +5266,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5285,7 +5285,7 @@ class Client_functions extends common_function {
                 }else if($elementid == 17){
                     $comeback .= '  <div class="">
                         <div class="container tabContent container_'.$elementtitle.''.$form_data_id.'">
-                            <div class="container">
+                            <div class="">
                                     <div class="form-control">
                                         <div class="textfield-wrapper">
                                             <div class="ck ck-reset ck-editor ck-rounded-corners" role="application" dir="ltr" lang="en" aria-labelledby="ck-editor__aria-label_e292c262362f2faaad1b3ec68a69644d3">
@@ -5424,7 +5424,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5455,7 +5455,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="'.$form_data_id.''.$elementtitle.'__label" id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Rating">
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField4" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField4Label" aria-invalid="false" value="Rating">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -5476,7 +5476,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                    <input  name="'.$form_data_id.''.$elementtitle.'__description" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="">
+                                                    <input  name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField5" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField5Label" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -5488,7 +5488,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox3">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__hidelabel" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__hidelabel" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5506,7 +5506,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox4">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input  name="'.$form_data_id.''.$elementtitle.'__keepposition-label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__keepposition-label" id="PolarisCheckbox4" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5524,7 +5524,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox5">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required" id="PolarisCheckbox5" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5542,7 +5542,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$form_data_id.''.$elementtitle.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5557,7 +5557,7 @@ class Client_functions extends common_function {
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5586,7 +5586,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$form_data_id.''.$elementtitle.'__html-code" id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__html-code" id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">&lt;div&gt;Enter your code&lt;/div&gt;</textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     <div aria-hidden="true" class="Polaris-TextField__Resizer">
                                                         <div class="Polaris-TextField__DummyInput">&lt;div&gt;Enter your code&lt;/div&gt;<br></div>
@@ -5599,7 +5599,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$form_data_id.''.$elementtitle.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
