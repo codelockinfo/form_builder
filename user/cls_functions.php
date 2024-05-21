@@ -1786,7 +1786,7 @@ class Client_functions extends common_function {
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$elements['element_title'].'" value="">
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
@@ -1795,7 +1795,7 @@ class Client_functions extends common_function {
                                 $form_html .= '<div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                     <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="Email" value="">
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="" value="">
                                     </div>
                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                 </div>';
@@ -1803,7 +1803,7 @@ class Client_functions extends common_function {
                             if($elements['id'] == 22 || $elements['id'] == 23 || $elements['id'] == 4){
                                 $form_html .= '<div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label=>'.$elements['element_title'].'</span><span class="text-danger text-smaller"></span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$elements['element_title'].'"></textarea>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder=""></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
@@ -1823,7 +1823,7 @@ class Client_functions extends common_function {
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$elements['element_title'].'" value="">
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="" value="">
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                                 </div>';
@@ -1832,7 +1832,7 @@ class Client_functions extends common_function {
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                     <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Password">Password</span><span class="text-danger text-smaller"></span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="Enter your password">
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="">
                                     </div>
                                         <small class="help-text globo-description"></small>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
@@ -1840,7 +1840,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 9){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">Date time</span><span></span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">Date time</span><span class="text-danger text-smaller"> </span></label>
                                         <div class="globo-form-input">
                                             <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
                                         </div>
@@ -1850,7 +1850,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 10){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">File</span><span></span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">File</span><span class="text-danger text-smaller"> </span></label>
                                         <div class="globo-form-input">
                                             <input type="file" data-type="file" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="file-1" placeholder="">
                                         </div>
@@ -1860,7 +1860,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 11){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">Checkbox</span><span></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">Checkbox</span><span class="text-danger text-smaller"></span>
                                         </label>
                                         <ul class="flex-wrap">
                                             <li class="globo-list-control option-1-column">
@@ -1914,7 +1914,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 14){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">Dropdown</span><span></span></label>
+                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">Dropdown</span><span  class="text-danger text-smaller"></span></label>
                                                 <div class="globo-form-input">
                                                     <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
                                                         <option value="" disabled="disabled">Please select</option>
@@ -1927,7 +1927,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 15){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">Country</span><span></span></label>
+                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">Country</span><span  class="text-danger text-smaller"></span></label>
                                             <div class="globo-form-input">
                                                 <select name="country-1" id="false-country-1" class="classic-input">
                                                     <option value="" disabled="disabled">Please select</option>
@@ -2090,7 +2090,7 @@ class Client_functions extends common_function {
                             }
                             if($elements['id'] == 18){
                                 $form_html .= ' <div class="code-form-control layout-'.$layoutColumn.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">Rating</span><span></span></label>
+                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">Rating</span><span class="text-danger text-smaller"></span></label>
                                                 <div class="star-rating">
                                                     <fieldset>
                                                         <input type="radio" data-type="rating-star" id="false-rating-star-1-5-stars" name="rating-star-1" value="5"><label for="false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
@@ -2113,7 +2113,7 @@ class Client_functions extends common_function {
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
                                         <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="First Name">First Name</span><span class="text-danger text-smaller"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="First Name" value="">
+                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                     </div>';
@@ -2123,7 +2123,7 @@ class Client_functions extends common_function {
                                             <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
                                             <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Last Name">Last Name</span><span class="text-danger text-smaller"> *</span></label>
                                             <div class="globo-form-input">
-                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="Last Name" value="">
+                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
                                             </div>
                                             <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
                                         </div>';
@@ -2353,7 +2353,7 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input  name="'.$elementtitle.''.$form_data_id.'__label"  id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'"
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__label"  id="PolarisTextField25" placeholder=""
                                                    class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField25Label"
                                                    aria-invalid="false" value="'.$comebackdata['element_title'].'">
@@ -2378,7 +2378,7 @@ class Client_functions extends common_function {
                                        <div class="Polaris-Connected">
                                           <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                              <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                <input  name="'.$elementtitle.''.$form_data_id.'__placeholder"  id="PolarisTextField26" placeholder="Name"
+                                                <input  name="'.$elementtitle.''.$form_data_id.'__placeholder"  id="PolarisTextField26" placeholder=""
                                                    class="Polaris-TextField__Input" type="text"
                                                    aria-labelledby="PolarisTextField26Label"
                                                    aria-invalid="false" value="">
@@ -2653,7 +2653,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField25" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__label" id="PolarisTextField25" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField25Label" aria-invalid="false" value="'.$comebackdata['element_title'].'">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
@@ -2674,7 +2674,7 @@ class Client_functions extends common_function {
                                 <div class="Polaris-Connected">
                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField26" placeholder="'.$comebackdata['element_title'].'" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__placeholder" id="PolarisTextField26" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField26Label" aria-invalid="false" value="">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                         </div>
                                     </div>
@@ -2848,7 +2848,7 @@ class Client_functions extends common_function {
                         </div>
                     </div>
                     <div class="form-control">
-                        <button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                        <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                     </div>
                     </div>';
                 }else if($elementid == 8){
@@ -3014,7 +3014,7 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField">
-                                                            <input  name="'.$elementtitle.''.$form_data_id.'__validate-regexrule"  id="PolarisTextField9" placeholder="Enter your custom validate regex here" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
+                                                            <input  name="'.$elementtitle.''.$form_data_id.'__validate-regexrule"  id="PolarisTextField9" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField9Label" aria-invalid="false" value="">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -3208,7 +3208,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                                 <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                                 </div>
                             </div>
                     </div>';
@@ -3339,7 +3339,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox15">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox15" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -3688,7 +3688,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';    
                 }else if($elementid == 10){
@@ -3887,7 +3887,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox16">
                                 <span class="Polaris-Choice__Control">
                                     <span class="Polaris-Checkbox">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox16" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                         <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                             <span class="Polaris-VisuallyHidden"></span>
@@ -3913,7 +3913,7 @@ class Client_functions extends common_function {
                             </div>
                         </div>
                             <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                                <button class="Polaris-Button Polaris-Button--destructive  Polaris-Button--plain Polaris-Button--fullWidth" type="button">
                                 <span class="Polaris-Button__Content">
                                 <span class="Polaris-Button__Text">
                                 <span>Remove this element</span>
@@ -4071,7 +4071,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox20">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox20" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4257,7 +4257,7 @@ class Client_functions extends common_function {
                                 <label class="Polaris-Choice" for="PolarisCheckbox53">
                                     <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox53" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                             <span class="Polaris-Icon">
                                                 <span class="Polaris-VisuallyHidden"></span>
@@ -4396,7 +4396,7 @@ class Client_functions extends common_function {
                             </div>
                         </div>
                         <div class="form-control">
-                            <button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                            <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
                             <span class="Polaris-Button__Content">
                             <span class="Polaris-Button__Text">
                             <span>Remove this element</span>
@@ -4519,7 +4519,7 @@ class Client_functions extends common_function {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                                     </div>
                                 </div>';
                 }else if($elementid == 14){
@@ -4686,7 +4686,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4714,7 +4714,7 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 15){
@@ -5117,7 +5117,7 @@ class Client_functions extends common_function {
                                     <label class="Polaris-Choice" for="PolarisCheckbox10">
                                         <span class="Polaris-Choice__Control">
                                         <span class="Polaris-Checkbox">
-                                            <input id="PolarisCheckbox10" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                            <input id="PolarisCheckbox10" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                             <span class="Polaris-Checkbox__Icon">
                                                 <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5542,7 +5542,7 @@ class Client_functions extends common_function {
                                         <label class="Polaris-Choice" for="PolarisCheckbox6">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
-                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                <input name="'.$elementtitle.''.$form_data_id.'__required-hidelabel" id="PolarisCheckbox6" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
                                                 <span class="Polaris-Checkbox__Icon">
                                                     <span class="Polaris-Icon">
                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -5569,7 +5569,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 19){
@@ -5611,7 +5611,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                             </div>
                         </div>
                     </div>';

@@ -405,13 +405,13 @@ $(document).on("change",".hideLabel" ,function(){
 
     $mainContainer = $(".block-container");
     $requiredCheckbox = $("input[name='" + $classExlode[1] + "__required']");
-    $showRequiredLabel = $("input[name='" + $classExlode[1] + "__required__hidelabel']");
+    $showRequiredLabel = $("input[name='" + $classExlode[1] + "__required-hidelabel']");
     if(this.checked) {
         $(".passhideLabel").removeClass("hidden");
         console.log(containerClass);
         $mainContainer.find("." +containerClass +" .label-content").html(" ");
         $mainContainer.find("." +containerClass +" .text-smaller").html(" ");
-        if($showRequiredLabel.prop('checked')) {
+        if($showRequiredLabel.prop('checked') && $requiredCheckbox.prop('checked')) {
             $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
         }
     }else{   
@@ -441,23 +441,24 @@ $(document).on("change",".requiredCheck" ,function(){
     $mainContainerClass = $(this).closest(".container").attr("class");
     var classArray = $mainContainerClass.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
+    $classExlode = containerClass.split("_");
     console.log(containerClass);
 
-    if(this.checked) {
-        $showRequiredLabel = $("."+containerClass).find(".showRequireHideLabel");
-        $hideLabel = $("."+containerClass).find(".hideLabel");
+    $mainContainer = $(".block-container");
+    $showRequiredLabel = $("input[name='" + $classExlode[1] + "__required-hidelabel']");
+    $hideLabel = $("input[name='" + $classExlode[1] + "__hidelabel']");
 
+    if(this.checked) {
         if($hideLabel.prop('checked')) {
             if($showRequiredLabel.prop('checked')) {
-                console.log("-------------");
-                $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+                $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
             }
         }else{
-            $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
         }
         $(this).closest("."+containerClass).find(".Requiredpass").removeClass("hidden");
     }else{   
-        $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+        $mainContainer.find("." +containerClass +" .text-smaller").html(" ");
         $(this).closest("."+containerClass).find(".Requiredpass").addClass("hidden");
     }
 });
@@ -466,23 +467,26 @@ $(document).on("change",".showRequireHideLabel" ,function(){
     $mainContainerClass = $(this).closest(".container").attr("class");
     var classArray = $mainContainerClass.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
+    $classExlode = containerClass.split("_");
     console.log(containerClass);
 
+    $mainContainer = $(".block-container");
+    $requiredCheckbox = $("input[name='" + $classExlode[1] + "__required']");
+    $hideLabel = $("input[name='" + $classExlode[1] + "__hidelabel']");
     if(this.checked) {
-        $requiredCheckbox = $(this).closest(".tabContent").find(".hideLabel");
         if($requiredCheckbox.prop('checked')) {
-            $(".block-container").find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
         }
     }else{
-        $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+        if($hideLabel.prop('checked')){
+            $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+        }
     }
 });
 
 
 $(document).on("change",".fullFooterButton" ,function(){
-    console.log("HHHHHHHHH");
     if(this.checked) {
-        console.log("innnn");
         $(".footer .classic-button").addClass("w100");	
     }else{
         $(".footer .classic-button").removeClass("w100");	 

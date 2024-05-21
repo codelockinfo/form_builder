@@ -143,7 +143,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     <span class="Polaris-Tabs__Title">Elements</span>
                                 </button>
                             </li>
-                            <li class="Polaris-Tabs__TabContainer" role="presentation" data-tab="2">
+                            <li class="Polaris-Tabs__TabContainer hidden" role="presentation" data-tab="2">
                                 <button id="settings" role="tab" type="button" tabindex="-1"
                                     class="Polaris-Tabs__Tab settingsbtn" aria-selected="false"
                                     aria-controls="settings-fitted-content">

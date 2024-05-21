@@ -267,7 +267,7 @@ include_once('cls_header.php');
                 </div>
             </div>
             <div class="set_all_form"></div>
-            
+<!--             
             <div class="DataRange">
   <div class="Polaris-Labelled__LabelWrapper">
     <div class="Polaris-Label">
@@ -410,7 +410,7 @@ include_once('cls_header.php');
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     

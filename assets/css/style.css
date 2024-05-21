@@ -116,6 +116,9 @@ button.action.submit.classic-button {
   cursor: pointer;
   position: relative;
 }
+.classic-button{
+  margin: 10px 0;
+}
 .btnLeft{
   text-align: left;
 }
