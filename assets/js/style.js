@@ -21,19 +21,14 @@ $(document).ready(function(){
         $("#required_login").change(function() {
             if(this.checked) {
                 $(".required_message").removeClass("hidden");
-            }
-        else
-            {
+            }else{
                 $(".required_message").addClass("hidden");
-            
             }
         });
         $(document).on("change",".confirmpass" ,function(){
             if(this.checked) {
                 $(".conpass").removeClass("hidden");
-            }
-            else
-            {   
+            }else{   
                 $(".conpass").addClass("hidden");
             }
         });
@@ -79,18 +74,16 @@ $(document).ready(function(){
             $('.selectval').hide();
             $('#' + $(this).val()).show();
             if($('#PolarisSelect18').val() == "lightbox"){
-                    $("#lightbox2").removeClass("hidden");
-            }
-            else{
-                    $("#lightbox2").addClass("hidden");
+                $("#lightbox2").removeClass("hidden");
+            }else{
+                $("#lightbox2").addClass("hidden");
             }
         });
 
         $("#PolarisCheckbox27 ").change(function() {
             if(this.checked) {
                 $(".shortcode").removeClass("hidden");
-            } else
-            {
+            }else{
                 $(".shortcode").addClass("hidden");
             }
         });
@@ -209,16 +202,14 @@ $(document).ready(function(){
         $(document).on("change "," #PolarisCheckbox13 " ,function() {	
             if(this.checked) {	
                 $(".hideLabel").removeClass("hidden");	
-            } 	
-            else{	
+            }else{	
                 $(".hideLabel").addClass("hidden");	
             }	    
         });
         $(document).on("change "," #PolarisCheckbox15 " ,function() {	
             if(this.checked) {	
                 $(".required_Content").removeClass("hidden");	
-            } 	
-            else{	
+            }else{	
                 $(".required_Content").addClass("hidden");	
             }	
                 
@@ -229,15 +220,13 @@ $(document).ready(function(){
         });
         
         $(document).click(".close_icon" , function(){
-
             $(this).find(".pickerList").removeClass("show");
         });
         // Dropdown hide show checkbox
         $(document).on("change "," #PolarisCheckbox3 " ,function() {	
             if(this.checked) {	
                 $(".hideLabel").removeClass("hidden");	
-            } 	
-            else{	
+            }else{	
                 $(".hideLabel").addClass("hidden");	
             }	
                 
@@ -245,8 +234,7 @@ $(document).ready(function(){
         $(document).on("change "," #PolarisCheckbox5 " ,function() {	
             if(this.checked) {	
                 $(".hideRequired").removeClass("hidden");	
-            } 	
-            else{	
+            }else{	
                 $(".hideRequired").addClass("hidden");	
             }	
                 
@@ -268,8 +256,7 @@ $(document).ready(function(){
             if(textarea_value.length >= 1){
              var inputValue = $('.mainskill').val(); 
              $('#optionText').append('<div id="main'+i+'" class="addskildy"> <div style="display:flex;margin-bottom: 5px;" > <input type="text" class="mainskill" style="width:85%;" id="Skill'+i+'" name="Skill[' + inputValue + ']" ><button type="button" name="remove" id="Skillremove'+i+'" class="btn_add11" style="width:15%;padding: 10px 20px;">X</button></div>   </div>');
-            }
-            else{
+            }else{
              alert("Skill does not value");
             }
             var optionHtml = '';
@@ -280,11 +267,10 @@ $(document).ready(function(){
             });
             $('#optionSelect').html(optionHtml);
     	});
-            $(document).on('click', '.btn_add11', function(){
-                var button_id = $(this).attr("id"); 
-                $(this).closest(".addskildy").remove();
-            
-    });
+        $(document).on('click', '.btn_add11', function(){
+            var button_id = $(this).attr("id"); 
+            $(this).closest(".addskildy").remove();
+        });
 });
 
 // today
@@ -322,7 +308,7 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     var classArray = $mainContainer.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
     
-    $columnWidth = $(this).closest(".form-control").find(".input_columnwidth");
+    $columnWidth = $(this).closest(".form-control").find("input");
     console.log($columnWidth.length);
     if($columnWidth.length > 0){
         console.log(containerClass);
@@ -366,8 +352,7 @@ $(document).on("change ",".resetButton" ,function() {
     if(this.checked) {	
         $(".reset").removeClass("hidden");	
         $(".reset.classic-button").removeClass("hidden");	  
-    } 	
-    else{	
+    }else{	
         $(".reset").addClass("hidden");
         $(".reset.classic-button").addClass("hidden");		
     }	

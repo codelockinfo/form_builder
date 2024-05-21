@@ -822,12 +822,14 @@ var BACKTO = 0;
                             }else{
                                 $(".headerData .showHeader").prop("checked", false);
                             }
+                            $(".headerData .form_id").val(comeback['form_id']);
                             $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
                             $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
                             $(".form_name_form_design").val(comeback['form_header_data']['1'])
                             $(".selected_element_set").html(comeback['outcome']);
                             $(".code-form-app").html(comeback['form_html']);
-
+                            
+                            $(".footerData .form_id").val(comeback['form_id']);
                             $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
                             $('.footerData .submitText').val(comeback['form_footer_data']['1']);
                             if(comeback['form_footer_data']['2'] == 1){
@@ -870,12 +872,14 @@ var BACKTO = 0;
                             }else{
                                 $(".headerData .showHeader").prop("checked", false);
                             }
+                            $(".headerData .form_id").val(comeback['form_id']);
                             $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
                             $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
                             $(".form_name_form_design").val(comeback['form_header_data']['1'])
                             $(".selected_element_set").html(comeback['outcome']);
                             $(".code-form-app").html(comeback['form_html']);
-
+                            
+                            $(".footerData .form_id").val(comeback['form_id']);
                             $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
                             $('.footerData .submitText').val(comeback['form_footer_data']['1']);
                             if(comeback['form_footer_data']['2'] == 1){
@@ -1188,10 +1192,21 @@ var BACKTO = 0;
         });
         $(document).on("click", ".saveForm", function(event) {
             console.log("savform .....");
-            var form_data = $(".add_elementdata")[0];
-            var form_data = new FormData(form_data);
-            form_data.append('store',store); 
-            form_data.append('routine_name','add_elementdata');   
+            var form_data = $(".add_elementdata")[0]; 
+            console.log(form_data);
+            if(form_data == undefined){
+                console.log("INIF");
+                var form_data = $(".add_headerdata")[0]; 
+                console.log(form_data);
+                var form_data = new FormData(form_data);
+                form_data.append('store',store); 
+                form_data.append('routine_name','saveheaderform'); 
+            }else{
+                console.log("ELSE");
+                var form_data = new FormData(form_data);
+                form_data.append('store',store); 
+                form_data.append('routine_name','saveform');  
+            }
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",

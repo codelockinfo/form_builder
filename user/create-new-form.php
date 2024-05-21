@@ -539,7 +539,7 @@ include_once('cls_header.php');
             </div>
         </form>
     </div>
-    <script>
+    <!-- <script>
     const ctx = document.getElementById('chart').getContext('2d');
          const chart = new Chart(ctx, {
              // The type of chart we want to create
@@ -620,4 +620,4 @@ include_once('cls_header.php');
          $(document).ready(function() {
             getAllForm();
     });
-    </script>
+    </script> -->
