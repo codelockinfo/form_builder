@@ -1195,12 +1195,17 @@ var BACKTO = 0;
             var form_data = $(".add_elementdata")[0]; 
             console.log(form_data);
             if(form_data == undefined){
-                console.log("INIF");
+                
                 var form_data = $(".add_headerdata")[0]; 
-                console.log(form_data);
                 var form_data = new FormData(form_data);
                 form_data.append('store',store); 
                 form_data.append('routine_name','saveheaderform'); 
+
+                // var form_data = $(".add_footerdata")[0];
+                // var form_data = new FormData(form_data);
+                // form_data.append('store',store); 
+                // form_data.append('routine_name','savefooterform');  
+
             }else{
                 console.log("ELSE");
                 var form_data = new FormData(form_data);

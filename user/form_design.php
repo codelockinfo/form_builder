@@ -1030,7 +1030,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     &lt;p&gt;This is some sample content.&lt;/p&gt;
                                 </textarea>
                             </div>
-                        <form>
+                        </form>
                     </div>
                 </div>
 
