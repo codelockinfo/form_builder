@@ -299,12 +299,31 @@ $(document).ready(function () {
     });
 });
 // width change
+$(document).on("click",".chooseItems .chooseItem-align",function(){
+    $('.chooseItem-align').removeClass("active");
+    $(this).addClass("active");
+    $dataValue = $(this).attr("data-value"); 
+    $(".forFooterAlign").removeClass("align-left align-center align-right").addClass($dataValue);
+    $inputFormate = $(this).closest(".form-control").find(".footer-button__alignment");
+    if($inputFormate.length > 0){
+        $inputFormate.val($dataValue);
+    }
+});
+$(document).on("click",".chooseItems .chooseItem-noperline",function(){
+    $('.chooseItem-noperline').removeClass("active");
+    $(this).addClass("active");
+    $dataValue = $(this).attr("data-value"); 
+    $mainContainer = $(this).closest(".container").attr("class");
+    var classArray = $mainContainer.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $("."+containerClass).find(".input_no-perline").val($dataValue);
+    $(".block-container").find("."+containerClass+" li").removeClass("option-1-column option-2-column option-3-column option-4-column option-5-column").addClass("option-"+$dataValue+"-column");
+});
 $(document).on("click",".chooseItems .chooseItem ",function(){
     $('.chooseItem').removeClass("active");
     $(this).addClass("active");
     $dataValue = $(this).attr("data-value");    
     $mainContainer = $(this).closest(".container").attr("class");
-    console.log($mainContainer);
     var classArray = $mainContainer.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
     
@@ -321,15 +340,14 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
     }
   }); 
 
-  $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
+$(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
+    $mainContainerClass = $(this).closest(".container");
     $inputVal = $(this).val();
-    console.log($inputVal);
     $attrName = $(this).attr('name');
     $nameExlode = "";
     if($attrName != undefined){
         $nameExlode = $attrName.split("__");
     }
-
     if($nameExlode[1] == "label"){
         $("."+$attrName).html($inputVal);
     }else if($nameExlode[1] == "placeholder"){
@@ -344,8 +362,45 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
         $("."+$nameExlode[0]+"__placeholder").attr("maxlength",$inputVal);
     }else if($nameExlode[1] == "html-code"){
         $("."+$attrName).html($inputVal);
+    }else if($nameExlode[1] == "checkboxoption"){
+        $preline = $mainContainerClass.find(".input_no-perline").val();
+        var options = $inputVal.split(",");
+        var htmlContent = "";
+        options.forEach(function(option, index) {
+            var optionValue = option.trim();
+            htmlContent +=`<li class="globo-list-control option-${$preline}-column">
+                                <div class="checkbox-wrapper">
+                                    <input class="checkbox-input ${$nameExlode[0]}__checkbox" id="false-checkbox-${index + 1}-${optionValue}-" type="checkbox" data-type="checkbox" name="checkbox-${index + 1}[]" value="${optionValue}">
+                                    <label class="checkbox-label globo-option ${$nameExlode[0]}__checkbox" for="false-checkbox-${index + 1}-${optionValue}-">${optionValue}</label>
+                                </div>
+                            </li>`;
+        });
+        $("."+$attrName).html(htmlContent); 
+    }else if($nameExlode[1] == "radiooption"){
+        $preline = $mainContainerClass.find(".input_no-perline").val();
+        var options = $inputVal.split(",");
+        var radioHtml = "";
+        options.forEach(function(option, index) {
+            var optionValue = option.trim();
+            radioHtml +=`
+            <li class="globo-list-control option-${$preline}-column">
+                <div class="radio-wrapper">
+                    <input class="radio-input  ${$nameExlode[0]}__radio" id="false-radio-${index + 1}-${optionValue}-" type="radio" data-type="radio" name="radio-1" value="${optionValue}">
+                    <label class="radio-label globo-option ${$nameExlode[0]}__radio" for="false-radio-${index + 1}-${optionValue}-">${optionValue}</label>
+                </div>
+            </li>`;
+        });
+        $("."+$attrName).html(radioHtml); 
     }
 
+});
+
+$(document).on("change ",".showHeader" ,function() {
+  console.log("showHeader");
+  $(".formHeader").addClass("hidden");
+  if(this.checked) {	
+    $(".formHeader").removeClass("hidden");
+  }
 });
 
 $(document).on("change ",".resetButton" ,function() {
@@ -475,5 +530,17 @@ $(document).on("change",".fullFooterButton" ,function(){
         $(".footer .classic-button").addClass("w100");	
     }else{
         $(".footer .classic-button").removeClass("w100");	 
+    }
+});
+$(document).on("change ",".defaultSelectAcceptterms" ,function() {
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $classExlode = containerClass.split("_");
+
+    $mainContainer = $(".block-container");
+    $mainContainer.find("." + $classExlode[1] +"__acceptterms").prop("checked", false);	 
+    if(this.checked) {
+        $mainContainer.find("." + $classExlode[1] +"__acceptterms").prop("checked", true);	 
     }
 });

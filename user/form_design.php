@@ -208,7 +208,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             <div class="root elementroot">
                                 <div class="builder-item-wrapper ">
                                     <div class="">
-                                        <h3 class="subheading">Elements</h3>
+                                        <!-- <h3 class="subheading">Elements</h3> -->
                                         <div>
                                             <div class="selected_element_set">
                                               
@@ -1671,7 +1671,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                         class="Polaris-Checkbox"><input name="resetbutton" id="PolarisCheckbox6"
                                                             type="checkbox" class="Polaris-Checkbox__Input resetButton"
                                                             aria-invalid="false" role="checkbox" aria-checked="false"
-                                                            value=""><span
+                                                            value="1"><span
                                                             class="Polaris-Checkbox__Backdrop"></span><span
                                                             class="Polaris-Checkbox__Icon"><span
                                                                 class="Polaris-Icon"><span
@@ -1683,7 +1683,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                                     </path>
                                                                 </svg></span></span></span></span><span
                                                     class="Polaris-Choice__Label">Reset button</span></label></div>
-                                        <div class="form-control hidden reset">
+                                        <div class="form-control hidden reset input_reset">
                                             <div class="textfield-wrapper">
                                                 <div class="">
                                                     <div class="Polaris-Labelled__LabelWrapper">
@@ -1712,7 +1712,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                         class="Polaris-Checkbox"><input name="fullwidth" id="PolarisCheckbox7"
                                                             type="checkbox" class="Polaris-Checkbox__Input fullFooterButton"
                                                             aria-invalid="false" role="checkbox" aria-checked="false"
-                                                            value=""><span
+                                                            value="1"><span
                                                             class="Polaris-Checkbox__Backdrop"></span><span
                                                             class="Polaris-Checkbox__Icon"><span
                                                                 class="Polaris-Icon"><span
@@ -1723,16 +1723,15 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                                         d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
                                                                     </path>
                                                                 </svg></span></span></span></span><span
-                                                    class="Polaris-Choice__Label">Full width footer
-                                                    button</span></label></div>
+                                                    class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
                                         <div class="form-control alignment" >
                                             <input name="footer-button__alignment" type="hidden" value="2" class="footer-button__alignment">
                                             <div class="chooseInput">
                                                 <div class="label">Alignment</div>
                                                 <div class="chooseItems">
-                                                    <div class="chooseItem active" data-value="0">Left</div>
-                                                    <div class="chooseItem" data-value="1">Center</div>
-                                                    <div class="chooseItem" data-value="2">Right</div>
+                                                    <div class="chooseItem-align active" data-value="align-left">Left</div>
+                                                    <div class="chooseItem-align" data-value="align-center">Center</div>
+                                                    <div class="chooseItem-align" data-value="align-right">Right</div>
                                                 </div>
                                             </div>
                                         </div>

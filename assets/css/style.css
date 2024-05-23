@@ -137,10 +137,18 @@ button.action.submit.classic-button {
 .layout-2-column {
   width: 50%;
 }
-.footer.fleft {
+.footer.flef {
   margin-top: 4%;
 }
-
+.align-left{
+  text-align: left;
+}
+.align-center{
+  text-align: center;
+}
+.align-right{
+  text-align: right;
+}
 button.action.reset.classic-button {
   text-transform: none;
     text-align: center;

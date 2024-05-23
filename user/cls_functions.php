@@ -1341,7 +1341,7 @@ class Client_functions extends common_function {
                 // $shopinfo->store_user_id
                 // $last_id = $this->db->insert_id;
                 $headerserialize = serialize(array("1", $_POST['formnamehide'] , "Leave your message and we will get back to you shortly."));
-                $footerserialize = serialize(array("", "Submit", "0","Reset", "0","0"));
+                $footerserialize = serialize(array("", "Submit", "0","Reset", "0","align-left"));
                 if (isset($_POST['selectedType']) && $_POST['selectedType'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
@@ -1714,17 +1714,10 @@ class Client_functions extends common_function {
                     if($formData != ''){
                         $form_header_data =  unserialize($formData['form_header_data']);
                         $form_footer_data =  unserialize($formData['form_footer_data']);
-                        $btnalignvalue = $form_footer_data['5'];
-                        if($btnalignvalue == 0){
-                            $btnalign = 'fleft';
-                        }else if($btnalignvalue == 1){
-                            $btnalign = 'btnCenter';
-                        }else if($btnalignvalue == 2){
-                            $btnalign = 'btnRight';
-                        }
-                        $form_html = '<div class="header">
-                            <h3 class="title globo-heading">'. $formData['form_name'] .'</h3>
-                            <div class="description globo-description"></div>
+                        $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
+                        $form_html = '<div class="formHeader header '.$header_hidden.'">
+                            <h3 class="title globo-heading">'.$form_header_data[1].'</h3>
+                            <div class="description globo-description">'.$form_header_data[2].'</div>
                         </div>';
                     }
 
@@ -1782,156 +1775,154 @@ class Client_functions extends common_function {
                                             </div>
                                         </div>
                                     </div>';
-                            if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){
+                            if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){ 
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                                     </div>
-                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
                             }
                             if($elements['id'] == 2){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Email">Email</span><span class="text-danger text-smaller"> *</span></label>
+                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Email">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="" value="">
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'">
                                     </div>
-                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 22 || $elements['id'] == 23 || $elements['id'] == 4){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label=>'.$elements['element_title'].'</span><span class="text-danger text-smaller"></span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder=""></textarea>
+                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'"></textarea>
                                                         <small class="help-text globo-description"></small>
-                                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
                             }
                             if($elements['id'] == 6){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Phone">Phone</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Phone">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input" name="phone-1" placeholder="" default-country-code="us">
+                                        <input type="text" data-type="phone" class="classic-input" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'">
                                     </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 7){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$elements['element_title'].'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="" value="">
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                                     </div>
-                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
                             }                            
                             if($elements['id'] == 8){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[16].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Password">Password</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Password">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="">
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'">
                                     </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 9){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">Date time</span><span class="text-danger text-smaller"> </span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> </span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
+                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="'.$unserialize_elementdata[1].'" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
                                         </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 10){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">File</span><span class="text-danger text-smaller"> </span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> </span></label>
                                         <div class="globo-form-input">
-                                            <input type="file" data-type="file" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="file-1" placeholder="">
+                                            <input type="file" data-type="file" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="file-1" placeholder="'.$unserialize_elementdata[2].'">
                                         </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[5].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 11){
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">Checkbox</span><span class="text-danger text-smaller"></span>
+                                $checkbox_options = explode(",", $unserialize_elementdata[1]);
+                                $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span>
                                         </label>
-                                        <ul class="flex-wrap">
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__checkbox" id="false-checkbox-1-Option 1-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 1">
-                                                    <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__checkbox" for="false-checkbox-1-Option 1-">Option 1</label>
-                                                </div>
-                                            </li>
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="checkbox-wrapper">
-                                                    <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__checkbox" id="false-checkbox-1-Option 2-" type="checkbox" data-type="checkbox" name="checkbox-1[]" value="Option 2">
-                                                    <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__checkbox" for="false-checkbox-1-Option 2-">Option 2</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
-                                </div>';
+                                        <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__checkboxoption">';
+                                foreach ($checkbox_options as $index => $option) {
+                                    $option = trim($option);
+                                    $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
+                                                    <div class="checkbox-wrapper">
+                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="checkbox-' . ($index + 1) . '[]" value="' . $option . '">
+                                                        <label class="checkbox-label globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
+                                                    </div>
+                                                    </li>';
+                                }  
+                                     
+                                $form_html .= '</ul>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[3].'</small>
+                                        </div>';
                             }
                             if($elements['id'] == 12){
+                                $defaultselect_checked = (isset($unserialize_elementdata[1]) && $unserialize_elementdata[1] == '1') ? "checked" : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[4].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <div class="checkbox-wrapper">
-                                                <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1">
-                                                <span class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label">I agree Terms and Conditions</span>
+                                                <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1" '.$defaultselect_checked.'>
+                                                <span class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label">'.$unserialize_elementdata[0].'</span>
                                             </div>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 13){
+                                $radio_options = explode(",", $unserialize_elementdata[1]);
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="radio">Radio</span><span></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="radio">'.$unserialize_elementdata[0].'</span><span></span>
                                         </label>
-                                        <ul class="flex-wrap">
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="radio-wrapper">
-                                                    <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-Option 1-" type="radio" data-type="radio" name="radio-1" value="Option 1">
-                                                    <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-Option 1-">Option 1</label>
-                                                </div>
-                                            </li>
-                                            <li class="globo-list-control option-1-column">
-                                                <div class="radio-wrapper">
-                                                    <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-Option 2-" type="radio" data-type="radio" name="radio-1" value="Option 2">
-                                                    <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-Option 2-">Option 2</label>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <small class="help-text globo-description"></small>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__radiooption">';
+                                        
+                                foreach ($radio_options as $index => $option) {
+                                    $option = trim($option);
+                                    $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
+                                                    <div class="radio-wrapper">
+                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1" value="' . $option . '">
+                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
+                                                    </div>
+                                                </li>';
+                                }          
+                                $form_html .= '</ul>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[3].'</small>
                                 </div>';
                             }
                             if($elements['id'] == 14){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">Dropdown</span><span  class="text-danger text-smaller"></span></label>
+                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller"></span></label>
                                                 <div class="globo-form-input">
                                                     <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
-                                                        <option value="" disabled="disabled">Please select</option>
+                                                        <option value="" disabled="disabled">'.$unserialize_elementdata[1].'</option>
                                                         <option value="Option 1">Option 1</option>
                                                         <option value="Option 2">Option 2</option>
                                                     </select>
                                                 </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[4].'</small>
                                     </div>';
                             }
                             if($elements['id'] == 15){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[8].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">Country</span><span  class="text-danger text-smaller"></span></label>
+                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller"></span></label>
                                             <div class="globo-form-input">
                                                 <select name="country-1" id="false-country-1" class="classic-input">
-                                                    <option value="" disabled="disabled">Please select</option>
+                                                    <option value="" disabled="disabled">'.$unserialize_elementdata[1].'</option>
                                                     <option value="Afghanistan">Afghanistan</option>
                                                     <option value="Aland Islands">Aland Islands</option>
                                                     <option value="Albania">Albania</option>
@@ -2074,59 +2065,61 @@ class Client_functions extends common_function {
                                                     <option value="Zimbabwe">Zimbabwe</option>
                                                 </select>
                                             </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                     </div>';
                             }
                             if($elements['id'] == 16){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[2].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Heading">Heading</span><span class="text-danger text-smaller"> *</span></label>
-                                        <p class="heading-caption '.$elementtitle.''.$form_data_id.'__description"></p>
+                                        <label for="false-text'.$elements['id'].'" class="classic-label globo-label">
+                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Heading">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                        <p class="heading-caption '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[1].'</p>
                                     </div>';
                             }
                             if($elements['id'] == 17){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[1].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <div class="globo-paragraph '.$elementtitle.''.$form_data_id.'__description">Paragraph</div>
+                                                <div class="globo-paragraph '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[0].'</div>
                                     </div>';
                             }
                             if($elements['id'] == 18){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[6].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">Rating</span><span class="text-danger text-smaller"></span></label>
+                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
                                                 <div class="star-rating">
                                                     <fieldset>
-                                                        <input type="radio" data-type="rating-star" id="false-rating-star-1-5-stars" name="rating-star-1" value="5"><label for="false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="false-rating-star-1-4-stars" name="rating-star-1" value="4"><label for="false-rating-star-1-4-stars" title="4 Stars">4 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="false-rating-star-1-3-stars" name="rating-star-1" value="3"><label for="false-rating-star-1-3-stars" title="3 Stars">3 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="false-rating-star-1-2-stars" name="rating-star-1" value="2"><label for="false-rating-star-1-2-stars" title="2 Stars">2 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="false-rating-star-1-1-star" name="rating-star-1" value="1"><label for="false-rating-star-1-1-star" title="1 Star">1 star</label>
+                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-5-stars" name="'.$form_data_id.'rating-star-1" value="5"><label for="'.$form_data_id.'false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
+                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-4-stars" name="'.$form_data_id.'rating-star-1" value="4"><label for="'.$form_data_id.'false-rating-star-1-4-stars" title="4 Stars">4 stars</label>
+                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-3-stars" name="'.$form_data_id.'rating-star-1" value="3"><label for="'.$form_data_id.'false-rating-star-1-3-stars" title="3 Stars">3 stars</label>
+                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-2-stars" name="'.$form_data_id.'rating-star-1" value="2"><label for="'.$form_data_id.'false-rating-star-1-2-stars" title="2 Stars">2 stars</label>
+                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-1-star" name="'.$form_data_id.'rating-star-1" value="1"><label for="'.$form_data_id.'false-rating-star-1-1-star" title="1 Star">1 star</label>
                                                     </fieldset>
                                                 </div>
-                                                <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                                <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[1].'</small>
                                     </div>';
                             }
                             if($elements['id'] == 19){
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[1].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <div id="htmlbox" class="classic-input '.$elementtitle.''.$form_data_id.'__html-code">Enter your code</div>
+                                                <div id="htmlbox" class="classic-input '.$elementtitle.''.$form_data_id.'__html-code">'.$unserialize_elementdata[0].'</div>
                                     </div>';
                             }
                             if($elements['id'] == 20){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="First Name">First Name</span><span class="text-danger text-smaller"> *</span></label>
+                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="First Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
+                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                         </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                     </div>';
                             }
                             if($elements['id'] == 21){
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Last Name">Last Name</span><span class="text-danger text-smaller"> *</span></label>
+                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Last Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
                                             <div class="globo-form-input">
-                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="" value="">
+                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                             </div>
-                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description"></small>
+                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                         </div>';
                             }
                         }  
@@ -2138,13 +2131,15 @@ class Client_functions extends common_function {
                         $form_html .='</form>';
                     }
                     if($formData != ''){
-                        $form_html .= '<div class="footer '.$btnalign.'">
+                        $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
+                        $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
+                        $form_html .= '<div class="footer forFooterAlign '.$form_footer_data['5'].'">
                                 <div class="messages footer-data__footerdescription"></div>
-                                <button class="action submit  classic-button footer-data__submittext">
+                                <button class="action submit  classic-button footer-data__submittext '.$fullwidth_button.'">
                                     <span class="spinner"></span>
-                                    Submit
+                                    '.$form_footer_data[1].'
                                 </button>
-                                <button class="action reset classic-button hidden footer-data__resetbuttontext" type="button">Reset</button>
+                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.$form_footer_data[3].'</button>
                             </div>';
                     }
                     $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data);
@@ -2614,7 +2609,7 @@ class Client_functions extends common_function {
                                  </label>
                               </div>
                               <div class="form-control">
-                                 <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                 <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[9].'" class="input_columnwidth"/>
                                  <div class="chooseInput">
                                     <div class="label">Column width</div>
                                     <div class="chooseItems">
@@ -3001,7 +2996,7 @@ class Client_functions extends common_function {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-control">
+                                        <div class="form-control hidden">
                                             <div class="">
                                                 <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label"><label id="PolarisSelect2Label" for="PolarisSelect2" class="Polaris-Label__Text">Validate</label></div>
@@ -4011,10 +4006,9 @@ class Client_functions extends common_function {
                         $noperline_datavalue3 = "active";
                     }else if($formData[8] == "4"){
                         $noperline_datavalue4 = "active";
-                    }else if($formData[8] == "4"){
+                    }else if($formData[8] == "5"){
                         $noperline_datavalue5 = "active";
                     }
-
                     $comeback .= '  <div class="">
                         <div class="container tabContent container_'.$elementtitle.''.$form_data_id.'">
                             <div>
@@ -4049,13 +4043,8 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__option" id="PolarisTextField17" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField17Label" aria-invalid="false" aria-multiline="true" style="height: 82px;">Option 1
-                                                </textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__checkboxoption" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">'.$formData[1].'</textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
-                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                        <div class="Polaris-TextField__DummyInput">Option 1</div>
-                                                        <div class="Polaris-TextField__DummyInput"><br></div>
-                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -4073,10 +4062,6 @@ class Client_functions extends common_function {
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
                                                     <textarea name="'.$elementtitle.''.$form_data_id.'__defaultvalue" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;">'.$formData[2].'</textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
-                                                    <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                        <div class="Polaris-TextField__DummyInput">dfdf<br></div>
-                                                        <div class="Polaris-TextField__DummyInput"><br></div>
-                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -4177,20 +4162,20 @@ class Client_functions extends common_function {
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__no-perline" type="hidden" value="2" class="input_no-perline">
+                                        <input name="'.$elementtitle.''.$form_data_id.'__no-perline" type="hidden" value="'.$formData[8].'" class="input_no-perline">
                                         <div class="chooseInput">
                                         <div class="label">Number of options per line</div>
                                         <div class="chooseItems">
-                                            <div class="chooseItem '.$noperline_datavalue5.'" data-value="5">5</div>
-                                            <div class="chooseItem '.$noperline_datavalue4.'" data-value="4">4</div>
-                                            <div class="chooseItem '.$noperline_datavalue3.'" data-value="3">3</div>
-                                            <div class="chooseItem '.$noperline_datavalue2.'" data-value="2">2</div>
-                                            <div class="chooseItem '.$noperline_datavalue1.'" data-value="1">1</div>
+                                            <div class="chooseItem-noperline '.$noperline_datavalue5.'" data-value="5">5</div>
+                                            <div class="chooseItem-noperline  '.$noperline_datavalue4.'" data-value="4">4</div>
+                                            <div class="chooseItem-noperline  '.$noperline_datavalue3.'" data-value="3">3</div>
+                                            <div class="chooseItem-noperline  '.$noperline_datavalue2.'" data-value="2">2</div>
+                                            <div class="chooseItem-noperline  '.$noperline_datavalue1.'" data-value="1">1</div>
                                         </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[9].'" class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -4228,7 +4213,7 @@ class Client_functions extends common_function {
                         $noperline_datavalue3 = "active";
                     }else if($formData[8] == "4"){
                         $noperline_datavalue4 = "active";
-                    }else if($formData[8] == "4"){
+                    }else if($formData[8] == "5"){
                         $noperline_datavalue5 = "active";
                     }
 
@@ -4266,12 +4251,8 @@ class Client_functions extends common_function {
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea name="'.$elementtitle.''.$form_data_id.'__options" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">'.$formData[1].'</textarea>
+                                                        <textarea name="'.$elementtitle.''.$form_data_id.'__radiooption" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">'.$formData[1].'</textarea>
                                                         <div class="Polaris-TextField__Backdrop"></div>
-                                                        <div aria-hidden="true" class="Polaris-TextField__Resizer">
-                                                            <div class="Polaris-TextField__DummyInput">Option 1<br>Option 2<br></div>
-                                                            <div class="Polaris-TextField__DummyInput"><br></div>
-                                                        </div>
                                                     </div>
                                                     </div>
                                                 </div>
@@ -4389,19 +4370,19 @@ class Client_functions extends common_function {
                                     </div>
                                     <div class="form-control">
                                         <div class="chooseInput">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__no-perline"  type="hidden" value="2" class="input_no-perline">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__no-perline"  type="hidden" value="'.$formData[8].'" class="input_no-perline">
                                             <div class="label">Number of options per line</div>
                                             <div class="chooseItems">
-                                                <div class="chooseItem '.$noperline_datavalue5.'" data-value="5">5</div>
-                                                <div class="chooseItem '.$noperline_datavalue4.'" data-value="4">4</div>
-                                                <div class="chooseItem '.$noperline_datavalue3.'" data-value="3">3</div>
-                                                <div class="chooseItem '.$noperline_datavalue2.'" data-value="2">2</div>
-                                                <div class="chooseItem '.$noperline_datavalue1.'" data-value="1">1</div>
+                                                <div class="chooseItem-noperline  '.$noperline_datavalue5.'" data-value="5">5</div>
+                                                <div class="chooseItem-noperline  '.$noperline_datavalue4.'" data-value="4">4</div>
+                                                <div class="chooseItem-noperline  '.$noperline_datavalue3.'" data-value="3">3</div>
+                                                <div class="chooseItem-noperline  '.$noperline_datavalue2.'" data-value="2">2</div>
+                                                <div class="chooseItem-noperline  '.$noperline_datavalue1.'" data-value="1">1</div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[9].'" class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -4579,7 +4560,7 @@ class Client_functions extends common_function {
                                                     <label class="Polaris-Choice" for="PolarisCheckbox3">
                                                         <span class="Polaris-Choice__Control">
                                                         <span class="Polaris-Checkbox">
-                                                            <input name="'.$elementtitle.''.$form_data_id.'__default-select" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="1" '.$default_select_checked.'><span class="Polaris-Checkbox__Backdrop"></span>
+                                                            <input name="'.$elementtitle.''.$form_data_id.'__default-select" id="PolarisCheckbox3" type="checkbox" class="Polaris-Checkbox__Input defaultSelectAcceptterms" aria-invalid="false" role="checkbox" aria-checked="false" value="1" '.$default_select_checked.'><span class="Polaris-Checkbox__Backdrop"></span>
                                                             <span class="Polaris-Checkbox__Icon">
                                                                 <span class="Polaris-Icon">
                                                                     <span class="Polaris-VisuallyHidden"></span>
@@ -4633,7 +4614,7 @@ class Client_functions extends common_function {
                                                     </label>
                                                 </div>
                                                 <div class="form-control">
-                                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[4].'" class="input_columnwidth"/>
                                                     <div class="chooseInput">
                                                         <div class="label">Column width</div>
                                                         <div class="chooseItems">
@@ -4718,13 +4699,9 @@ class Client_functions extends common_function {
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    
-                                                <div  style="display:flex;width:100%;">
-                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__option" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">'.$formData[2].'</textarea>
-                                                </div>
-                                                <div id="optionText"></div>
-                                                    
-                                                </div>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__dropoption" id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField59Label" aria-invalid="false" aria-multiline="true" style="height: 58px;">'.$formData[2].'</textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>  
                                             </div>
                                         </div>
                                         </div>
@@ -4838,7 +4815,7 @@ class Client_functions extends common_function {
                                     </label>
                                 </div>
                                 <div class="form-control">
-                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2" class="input_columnwidth"/>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[9].'" class="input_columnwidth"/>
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
@@ -5263,7 +5240,7 @@ class Client_functions extends common_function {
                                     </label>
                                 </div>
                                 <div class="form-control">
-                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[8].'"  class="input_columnwidth"/>
                                     <div class="chooseInput">
                                         <div class="label">Column width</div>
                                         <div class="chooseItems">
@@ -5404,7 +5381,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[2].'"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5569,7 +5546,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[1].'"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5716,7 +5693,7 @@ class Client_functions extends common_function {
                                         </label>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[6].'"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5765,7 +5742,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="2"  class="input_columnwidth"/>
+                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[1].'"  class="input_columnwidth"/>
                                         <div class="chooseInput">
                                             <div class="label">Column width</div>
                                             <div class="chooseItems">
@@ -5877,12 +5854,15 @@ class Client_functions extends common_function {
             $buttontext = isset($newData['buttontext']) ?  $newData['buttontext'] : '' ;
             $allowmultiple = isset($newData['allowmultiple']) ?  $newData['allowmultiple'] : '0' ;
             $allowextention = isset($newData['allowextention']) ?  $newData['allowextention'] : '' ;
+            $checkboxoption = isset($newData['checkboxoption']) ?  $newData['checkboxoption'] : '' ;
+            $radiooption = isset($newData['radiooption']) ?  $newData['radiooption'] : '' ;
+            $dropoption = isset($newData['dropoption']) ?  $newData['dropoption'] : '' ;
             $option = isset($newData['option']) ?  $newData['option'] : '' ;
             $defaultvalue = isset($newData['defaultvalue']) ?  $newData['defaultvalue'] : '' ;
             $noperline = isset($newData['no-perline']) ?  $newData['no-perline'] : '' ;
             $defaultselect = isset($newData['default-select']) ?  $newData['default-select'] : '0' ;
             $selectdefualtvalue = isset($newData['select-defualt-value']) ?  $newData['select-defualt-value'] : '0' ;
-            $htmlcode = isset($newData['html-code']) ?  $newData['html-code'] : '0' ;
+            $htmlcode = isset($newData['html-code']) ? str_replace("'", "&#039;", $newData['html-code']) : '0' ;
 
 
             $element_type = array("1","2","3","4","5","6","7","20","21","22","23");
@@ -5910,11 +5890,11 @@ class Client_functions extends common_function {
             }else if(in_array($elementid,$element_type5)){
                 $element_data = serialize(array($label, $buttontext, $placeholder, $allowmultiple, $allowextention, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
             }else if(in_array($elementid,$element_type6)){
-                $element_data = serialize(array($label, $option, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
+                $element_data = serialize(array($label, $checkboxoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
             }else if(in_array($elementid,$element_type7)){
                 $element_data = serialize(array($label, $defaultselect, $description, $required, $columnwidth));
             }else if(in_array($elementid,$element_type8)){
-                $element_data = serialize(array($label, $option, $defaultselect, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
+                $element_data = serialize(array($label, $radiooption, $defaultselect, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
             }else if(in_array($elementid,$element_type9)){
                 $element_data = serialize(array($label, $placeholder, $description, $selectdefualtvalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
             }else if(in_array($elementid,$element_type10)){
@@ -5926,7 +5906,7 @@ class Client_functions extends common_function {
             }else if(in_array($elementid,$element_type13)){
                 $element_data = serialize(array($htmlcode, $columnwidth));
             }else if(in_array($elementid,$element_type14)){
-                $element_data = serialize(array($label, $placeholder, $option, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data = serialize(array($label, $placeholder, $dropoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
             }
 
             $fields = array(
@@ -5965,13 +5945,12 @@ class Client_functions extends common_function {
     function savefooterform(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
-
             $form_id = isset($_POST['form_id']) ?  $_POST['form_id'] : '' ;
             $submittext = isset($_POST['footer-data__submittext']) ?  $_POST['footer-data__submittext'] : '' ;
             $resetbutton = isset($_POST['resetbutton']) ?  $_POST['resetbutton'] : '' ;
             $resetbuttontext = isset($_POST['footer-data__resetbuttontext']) ?  $_POST['footer-data__resetbuttontext'] : '' ;
             $fullwidth = isset($_POST['fullwidth']) ?  $_POST['fullwidth'] : '' ;
-            $alignment = isset($_POST['footer-button__alignment']) ?  $_POST['fullfooter-button__alignmentwidth'] : '' ;
+            $alignment = isset($_POST['footer-button__alignment']) ?  $_POST['footer-button__alignment'] : '' ;
 
             $form_footer_data = serialize(array("", $submittext, $resetbutton, $resetbuttontext, $fullwidth, $alignment));
 

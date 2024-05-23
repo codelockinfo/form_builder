@@ -810,7 +810,7 @@ var BACKTO = 0;
                     type: "post",
                     dataType: "json",
                     data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store},
-                    success: function (comeback) {
+                    success: function (comeback) { 
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
                             redirect403();
                         } else{
@@ -834,7 +834,9 @@ var BACKTO = 0;
                             $('.footerData .submitText').val(comeback['form_footer_data']['1']);
                             if(comeback['form_footer_data']['2'] == 1){
                                 $(".footerData .resetButton").prop("checked", true);
+                                $(".input_reset").removeClass("hidden");
                             }else{
+                                $(".input_reset").addClass("hidden");
                                 $(".footerData .resetButton").prop("checked", false);
                             }
                             $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
@@ -843,9 +845,9 @@ var BACKTO = 0;
                             }else{
                                 $(".footerData .fullFooterButton").prop("checked", false);
                             }
-                            $( ".footerData .chooseItem" ).each(function() {
+                            $( ".footerData .chooseItem-align" ).each(function() {
                                     if(comeback['form_footer_data']['5'] == $(this).data('value')){
-                                        $(".footerData .chooseItem").removeClass("active");
+                                        $(".footerData .chooseItem-align").removeClass("active");
                                         $(this).addClass("active");
                                     }
                             });
@@ -1193,25 +1195,9 @@ var BACKTO = 0;
         $(document).on("click", ".saveForm", function(event) {
             console.log("savform .....");
             var form_data = $(".add_elementdata")[0]; 
-            console.log(form_data);
-            if(form_data == undefined){
-                
-                var form_data = $(".add_headerdata")[0]; 
-                var form_data = new FormData(form_data);
-                form_data.append('store',store); 
-                form_data.append('routine_name','saveheaderform'); 
-
-                // var form_data = $(".add_footerdata")[0];
-                // var form_data = new FormData(form_data);
-                // form_data.append('store',store); 
-                // form_data.append('routine_name','savefooterform');  
-
-            }else{
-                console.log("ELSE");
-                var form_data = new FormData(form_data);
-                form_data.append('store',store); 
-                form_data.append('routine_name','saveform');  
-            }
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','saveform');  
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
@@ -1230,3 +1216,49 @@ var BACKTO = 0;
             });
         });
 
+        $(document).on("click", ".saveForm", function(event) {
+            console.log("savform .....");
+            var form_data = $(".add_headerdata")[0]; 
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','saveheaderform'); 
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: form_data, 
+                    beforeSend: function () {
+                    loading_show('.save_loader_show');
+                },
+                success: function (response) {
+                    var response = JSON.parse(response);
+                  console.log(response + "..............");
+                    loading_hide('.save_loader_show', 'Save');
+                }
+            });
+        });
+        $(document).on("click", ".saveForm", function(event) {
+            console.log("savform .....");
+            var form_data = $(".add_footerdata")[0];
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','savefooterform');  
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: form_data, 
+                    beforeSend: function () {
+                    loading_show('.save_loader_show');
+                },
+                success: function (response) {
+                    var response = JSON.parse(response);
+                  console.log(response + "..............");
+                    loading_hide('.save_loader_show', 'Save');
+                }
+            });
+        });
