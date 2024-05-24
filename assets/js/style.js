@@ -448,18 +448,16 @@ $(document).on("change",".hideLabel" ,function(){
     $showRequiredLabel = $("input[name='" + $classExlode[1] + "__required-hidelabel']");
     if(this.checked) {
         $(".passhideLabel").removeClass("hidden");
-        console.log(containerClass);
-        $mainContainer.find("." +containerClass +" .label-content").html(" ");
-        $mainContainer.find("." +containerClass +" .text-smaller").html(" ");
+        $mainContainer.find("." +containerClass +" .label-content").addClass("hidden");
+        $mainContainer.find("." +containerClass +" .text-smaller").addClass("hidden");
         if($showRequiredLabel.prop('checked') && $requiredCheckbox.prop('checked')) {
-            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass +" .text-smaller").removeClass("hidden");
         }
     }else{   
         $(".passhideLabel").addClass("hidden");
-        $labelVal = $("input[name='" + $classExlode[1] + "__label']").val();
-        $mainContainer.find("." +containerClass +" .label-content").html($labelVal);
+        $mainContainer.find("." +containerClass +" .label-content").removeClass("hidden");
         if($requiredCheckbox.prop('checked')) {
-            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass+" .text-smaller").removeClass("hidden");
         }
     }
 });
@@ -474,7 +472,6 @@ $(document).on("change",".keePositionLabel" ,function(){
     }else{
         $(".block-container").find("."+ containerClass + " .classic-label").removeClass("position--label");
     }
-
 });
 
 $(document).on("change",".requiredCheck" ,function(){
@@ -491,14 +488,14 @@ $(document).on("change",".requiredCheck" ,function(){
     if(this.checked) {
         if($hideLabel.prop('checked')) {
             if($showRequiredLabel.prop('checked')) {
-                $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+                $mainContainer.find("." +containerClass +" .text-smaller").removeClass("hidden");
             }
         }else{
-            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass +" .text-smaller").removeClass("hidden");
         }
         $(this).closest("."+containerClass).find(".Requiredpass").removeClass("hidden");
     }else{   
-        $mainContainer.find("." +containerClass +" .text-smaller").html(" ");
+        $mainContainer.find("." +containerClass +" .text-smaller").addClass("hidden");
         $(this).closest("."+containerClass).find(".Requiredpass").addClass("hidden");
     }
 });
@@ -515,11 +512,11 @@ $(document).on("change",".showRequireHideLabel" ,function(){
     $hideLabel = $("input[name='" + $classExlode[1] + "__hidelabel']");
     if(this.checked) {
         if($requiredCheckbox.prop('checked')) {
-            $mainContainer.find("." +containerClass +" .text-smaller").html(" *");
+            $mainContainer.find("." +containerClass +" .text-smaller").removeClass("hidden");
         }
     }else{
         if($hideLabel.prop('checked')){
-            $(".block-container").find("." +containerClass +" .text-smaller").html(" ");
+            $(".block-container").find("." +containerClass +" .text-smaller").addClass("hidden");
         }
     }
 });
@@ -543,4 +540,18 @@ $(document).on("change ",".defaultSelectAcceptterms" ,function() {
     if(this.checked) {
         $mainContainer.find("." + $classExlode[1] +"__acceptterms").prop("checked", true);	 
     }
+});
+$(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
+    console.log("CHNAGE KEYUP KEY DOWN");
+    $inputVal = $(this).val();
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $mainContainer = $(".block-container");
+    $mainContainer.find("."+containerClass + " input").prop('checked', false);
+    var $valuesToCheck = $mainContainer.find("."+containerClass + " li");
+    $valuesToCheck.each(function() {
+        $(this).find('input[value="' + $inputVal + '"]').prop('checked', true);
+
+    });
 });

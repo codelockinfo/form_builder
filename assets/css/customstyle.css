@@ -742,6 +742,13 @@ ul {
 .text-end{
     text-align: end;
 }
+.floting_form_main{
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,.74);
+  }
 @media screen and (max-width: 870px) {
     .context .context-inner .item{
              padding: 0 0rem;

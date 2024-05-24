@@ -1776,10 +1776,25 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>';
                             if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){ 
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <label for="false-text'.$elements['id'].'" class="classic-label globo-label">
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
                                                         <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                                     </div>
@@ -1787,9 +1802,24 @@ class Client_functions extends common_function {
                                                 </div>';
                             }
                             if($elements['id'] == 2){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Email">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                    <label for="false-email" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Email">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
                                         <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'">
                                     </div>
@@ -1797,18 +1827,48 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 22 || $elements['id'] == 23 || $elements['id'] == 4){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
+                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"></span></label>
                                                     <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'"></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
                             }
                             if($elements['id'] == 6){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Phone">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
                                         <input type="text" data-type="phone" class="classic-input" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'">
                                     </div>
@@ -1816,10 +1876,25 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 7){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
                                                         <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                                     </div>
@@ -1827,9 +1902,24 @@ class Client_functions extends common_function {
                                                 </div>';
                             }                            
                             if($elements['id'] == 8){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[9] == "1"){
+                                    if($unserialize_elementdata[7] == "1"){
+                                        if($unserialize_elementdata[10] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[10] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[16].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Password">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
+                                    <label for="false-password-1" class="classic-label globo-label  "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
                                         <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'">
                                     </div>
@@ -1837,8 +1927,23 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 9){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[5] == "1"){
+                                    if($unserialize_elementdata[3] == "1"){
+                                        if($unserialize_elementdata[6] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[3] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
+
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Date time">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> </span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input">
                                             <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="'.$unserialize_elementdata[1].'" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
                                         </div>
@@ -1846,8 +1951,22 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 10){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[8] == "1"){
+                                    if($unserialize_elementdata[6] == "1"){
+                                        if($unserialize_elementdata[9] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[6] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="File">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> </span></label>
+                                        <label  class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input">
                                             <input type="file" data-type="file" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="file-1" placeholder="'.$unserialize_elementdata[2].'">
                                         </div>
@@ -1855,16 +1974,34 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 11){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[6] == "1"){
+                                    if($unserialize_elementdata[4] == "1"){
+                                        if($unserialize_elementdata[7] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[4] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $checkbox_options = explode(",", $unserialize_elementdata[1]);
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Checkbox">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Checkbox">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
                                         </label>
                                         <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__checkboxoption">';
                                 foreach ($checkbox_options as $index => $option) {
                                     $option = trim($option);
+                                    $checkbox_option_checked = "";
+                                    if($unserialize_elementdata[2] == $option){
+                                        $checkbox_option_checked = "Checked";
+                                    }
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="checkbox-wrapper">
-                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="checkbox-' . ($index + 1) . '[]" value="' . $option . '">
+                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="checkbox-' . ($index + 1) . '[]" value="' . $option . '" '. $checkbox_option_checked.'>
                                                         <label class="checkbox-label globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
                                                     </div>
                                                     </li>';
@@ -1885,17 +2022,35 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 13){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[6] == "1"){
+                                    if($unserialize_elementdata[4] == "1"){
+                                        if($unserialize_elementdata[7] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[4] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $radio_options = explode(",", $unserialize_elementdata[1]);
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="radio">'.$unserialize_elementdata[0].'</span><span></span>
+                                        <label class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="radio">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
                                         </label>
                                         <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__radiooption">';
                                         
                                 foreach ($radio_options as $index => $option) {
                                     $option = trim($option);
+                                    $radio_option_checked = "";
+                                    if($unserialize_elementdata[2] == $option){
+                                        $radio_option_checked = "Checked";
+                                    }
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="radio-wrapper">
-                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1" value="' . $option . '">
+                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1" value="' . $option . '" '.$radio_option_checked.'>
                                                         <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
                                                     </div>
                                                 </li>';
@@ -1905,8 +2060,22 @@ class Client_functions extends common_function {
                                 </div>';
                             }
                             if($elements['id'] == 14){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Dropdown">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller"></span></label>
+                                                <label for="false-select-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Dropdown">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"></span> *</label>
                                                 <div class="globo-form-input">
                                                     <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
                                                         <option value="" disabled="disabled">'.$unserialize_elementdata[1].'</option>
@@ -1918,8 +2087,22 @@ class Client_functions extends common_function {
                                     </div>';
                             }
                             if($elements['id'] == 15){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[6] == "1"){
+                                    if($unserialize_elementdata[4] == "1"){
+                                        if($unserialize_elementdata[7] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[4] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[8].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Country">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller"></span></label>
+                                            <label for="false-country-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Country">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                             <div class="globo-form-input">
                                                 <select name="country-1" id="false-country-1" class="classic-input">
                                                     <option value="" disabled="disabled">'.$unserialize_elementdata[1].'</option>
@@ -2081,8 +2264,22 @@ class Client_functions extends common_function {
                                     </div>';
                             }
                             if($elements['id'] == 18){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[4] == "1"){
+                                    if($unserialize_elementdata[2] == "1"){
+                                        if($unserialize_elementdata[5] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[2] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[6].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Rating">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"></span></label>
+                                                <label for="false-rating-star-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Rating">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                 <div class="star-rating">
                                                     <fieldset>
                                                         <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-5-stars" name="'.$form_data_id.'rating-star-1" value="5"><label for="'.$form_data_id.'false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
@@ -2101,10 +2298,24 @@ class Client_functions extends common_function {
                                     </div>';
                             }
                             if($elements['id'] == 20){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="First Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                        <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="First Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input">
                                             <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                         </div>
@@ -2112,10 +2323,24 @@ class Client_functions extends common_function {
                                     </div>';
                             }
                             if($elements['id'] == 21){
+                                $is_hiderequire = $is_hidelabel = "";
+                               
+                                if($unserialize_elementdata[7] == "1"){
+                                    if($unserialize_elementdata[5] == "1"){
+                                        if($unserialize_elementdata[8] == "0"){
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                }else{
+                                    $is_hiderequire = "hidden";
+                                }
+                                if($unserialize_elementdata[5] == "1"){
+                                    $is_hidelabel = "hidden";
+                                }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <label for="false-text'.$elements['id'].'" class="classic-label globo-label ">
-                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label" data-label="Last Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller"> *</span></label>
+                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Last Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                             <div class="globo-form-input">
                                                 <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                             </div>
@@ -3748,11 +3973,11 @@ class Client_functions extends common_function {
                         $datavalue3 = "active";
                     }
                     $allowmultiple_checked = (isset($formData[3]) && $formData[3] == '1') ? "checked" : '';
-                    $hidelabel_checked = (isset($formData[5]) && $formData[5] == '1') ? "checked" : '';
+                    $hidelabel_checked = (isset($formData[6]) && $formData[6] == '1') ? "checked" : '';
                     $keepposition_label_hidden = (isset($hidelabel_checked) && $hidelabel_checked !== '') ? "" : 'hidden';
-                    $keepposition_label_checked = (isset($formData[6]) && $formData[6] == '1') ? "checked" : '';
-                    $required_checked = (isset($formData[7]) && $formData[7] == '1') ? "checked" : '';
-                    $required_hidelabel_checked = (isset($formData[8]) && $formData[8] == '1') ? "checked" : '';
+                    $keepposition_label_checked = (isset($formData[7]) && $formData[7] == '1') ? "checked" : '';
+                    $required_checked = (isset($formData[8]) && $formData[8] == '1') ? "checked" : '';
+                    $required_hidelabel_checked = (isset($formData[9]) && $formData[9] == '1') ? "checked" : '';
                     $comeback .= '<div class="">
                     <div class="container tabContent container_'.$elementtitle.''.$form_data_id.'">
                     <div>
@@ -4060,7 +4285,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__defaultvalue" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;">'.$formData[2].'</textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__defaultvalue" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input checkboxDefaultOption" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;">'.$formData[2].'</textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -4267,11 +4492,10 @@ class Client_functions extends common_function {
                                                 </div>
                                             </div>
                                             <div class="Polaris-Select">
-                                                <select class="selectDates" name="'.$elementtitle.''.$form_data_id.'__default-select">
-                                                    <option value="">Please select</option>
-                                                    <option value="Option 1">Option 1</option>
-                                                    <option value="Option 2">Option 2</option>
-                                                </select>
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__default-select" id="PolarisTextField19" placeholder="" class="Polaris-TextField__Input checkboxDefaultOption" type="text" rows="1" aria-labelledby="PolarisTextField19Label" aria-invalid="false" aria-multiline="true" style="height: 34px;">'.$formData[2].'</textarea>
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
