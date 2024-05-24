@@ -2015,8 +2015,8 @@ class Client_functions extends common_function {
                                 $defaultselect_checked = (isset($unserialize_elementdata[1]) && $unserialize_elementdata[1] == '1') ? "checked" : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[4].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <div class="checkbox-wrapper">
-                                                <input class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1" '.$defaultselect_checked.'>
-                                                <span class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label">'.$unserialize_elementdata[0].'</span>
+                                                <input id="terms_condition" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1" '.$defaultselect_checked.'>
+                                                <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label" for="terms_condition">'.$unserialize_elementdata[0].'</label>
                                             </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2050,7 +2050,7 @@ class Client_functions extends common_function {
                                     }
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="radio-wrapper">
-                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1" value="' . $option . '" '.$radio_option_checked.'>
+                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1'.$form_data_id.'" value="' . $option . '" '.$radio_option_checked.'>
                                                         <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
                                                     </div>
                                                 </li>';
