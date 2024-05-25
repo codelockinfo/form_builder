@@ -1012,7 +1012,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="title" placeholder="" class="Polaris-TextField__Input headerTitle" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false">
+                                                    <input name="header__title" placeholder="" class="Polaris-TextField__Input headerTitle" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>

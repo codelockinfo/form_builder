@@ -341,6 +341,7 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
   }); 
 
 $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
+    console.log("keydown, keyup");
     $mainContainerClass = $(this).closest(".container");
     $inputVal = $(this).val();
     $attrName = $(this).attr('name');
@@ -382,15 +383,20 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
         var radioHtml = "";
         options.forEach(function(option, index) {
             var optionValue = option.trim();
-            radioHtml +=`
-            <li class="globo-list-control option-${$preline}-column">
-                <div class="radio-wrapper">
-                    <input class="radio-input  ${$nameExlode[0]}__radio" id="false-radio-${index + 1}-${optionValue}-" type="radio" data-type="radio" name="radio-1" value="${optionValue}">
-                    <label class="radio-label globo-option ${$nameExlode[0]}__radio" for="false-radio-${index + 1}-${optionValue}-">${optionValue}</label>
-                </div>
-            </li>`;
+            if(optionValue !== ""){
+                radioHtml +=`
+                <li class="globo-list-control option-${$preline}-column">
+                    <div class="radio-wrapper">
+                        <input class="radio-input  ${$nameExlode[0]}__radio" id="false-radio-${index + 1}-${optionValue}-" type="radio" data-type="radio" name="radio-1" value="${optionValue}">
+                        <label class="radio-label globo-option ${$nameExlode[0]}__radio" for="false-radio-${index + 1}-${optionValue}-">${optionValue}</label>
+                    </div>
+                </li>`;
+            }
         });
         $("."+$attrName).html(radioHtml); 
+    }else if($nameExlode[1] == "title"){
+        console.log("Header title");
+        $(".formHeader .title").html($inputVal);
     }
 
 });

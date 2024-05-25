@@ -817,6 +817,11 @@ var BACKTO = 0;
                             console.log(comeback['form_footer_data']);
                             console.log(comeback['form_header_data']);
                             console.log(comeback['form_header_data']['1']);
+                            console.log("=======================");
+                            console.log(comeback['form_type']);
+                            if(comeback['form_type'] == "4"){
+                                    $(".preview-box").addClass("floting_form_main");
+                            }
                             if(comeback['form_header_data']['0'] == 1){
                                 $(".headerData .showHeader").prop("checked", true);
                             }else{

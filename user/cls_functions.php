@@ -1715,6 +1715,7 @@ class Client_functions extends common_function {
                         $form_header_data =  unserialize($formData['form_header_data']);
                         $form_footer_data =  unserialize($formData['form_footer_data']);
                         $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
+                        $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
                         $form_html = '<div class="formHeader header '.$header_hidden.'">
                             <h3 class="title globo-heading">'.$form_header_data[1].'</h3>
                             <div class="description globo-description">'.$form_header_data[2].'</div>
@@ -1844,7 +1845,7 @@ class Client_functions extends common_function {
 
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"></span></label>
+                                                    <label for="false-textarea-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'"></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
@@ -1870,7 +1871,7 @@ class Client_functions extends common_function {
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                     <label for="false-phone-1" class="classic-label globo-label "><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'">
+                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'">
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2367,7 +2368,7 @@ class Client_functions extends common_function {
                                 <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.$form_footer_data[3].'</button>
                             </div>';
                     }
-                    $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data);
+                    $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html , 'form_type' => $form_type ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data);
                 }
             }
         return $response_data;
@@ -6151,7 +6152,7 @@ class Client_functions extends common_function {
 
             $form_id = isset($_POST['form_id']) ?  $_POST['form_id'] : '' ;
             $showheader = isset($_POST['showheader']) ?  $_POST['showheader'] : '0' ;
-            $title = isset($_POST['title']) ?  $_POST['title'] : '' ;
+            $title = isset($_POST['header__title']) ?  $_POST['header__title'] : '' ;
             $content = isset($_POST['content']) ?  $_POST['content'] : '' ;
             $form_header_data = serialize(array($showheader, $title, $content));
 
