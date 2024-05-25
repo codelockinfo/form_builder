@@ -343,6 +343,10 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
 $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
     console.log("keydown, keyup");
     $mainContainerClass = $(this).closest(".container");
+    $classArray = $mainContainerClass.attr("class").split(" ");
+    var containerClass = $classArray.find(className => className.startsWith("container_"));
+    $mainContainer = $(".block-container");
+
     $inputVal = $(this).val();
     $attrName = $(this).attr('name');
     $nameExlode = "";
@@ -352,7 +356,13 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
     if($nameExlode[1] == "label"){
         $("."+$attrName).html($inputVal);
     }else if($nameExlode[1] == "placeholder"){
-        $("."+$attrName).attr('placeholder', $inputVal);
+        if ($nameExlode[0].includes("file")) {
+            $("."+$attrName).html($inputVal);
+        }else if($nameExlode[0].includes("country")) {
+            $mainContainer.find('.'+containerClass+' option[value=""]').html($inputVal);
+        }else{
+            $("."+$attrName).attr('placeholder', $inputVal);
+        }
     }else if($nameExlode[1] == "description"){
         $("."+$attrName).html($inputVal);
     }else if($nameExlode[1] == "submittext"){
@@ -397,8 +407,24 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
     }else if($nameExlode[1] == "title"){
         console.log("Header title");
         $(".formHeader .title").html($inputVal);
+    }else if($nameExlode[1] == "buttontext"){
+        $("."+$attrName).html($inputVal);
+        $("."+$attrName).removeClass("hidden");
+        if($inputVal == ""){
+            $("."+$attrName).addClass("hidden");
+        }
+    }else if($nameExlode[1] == "dropoption"){
+        console.log($attrName);
+        var options = $inputVal.split(",");
+        var dropdownHtml = "";
+        options.forEach(function(option, index) {
+            var optionValue = option.trim();
+            if(optionValue !== ""){
+                dropdownHtml +=`<option value="${optionValue}" >${optionValue}</option>`;
+            }
+        });
+        $mainContainer.find('.'+containerClass+' select').html(dropdownHtml); 
     }
-
 });
 
 $(document).on("change ",".showHeader" ,function() {
@@ -547,6 +573,30 @@ $(document).on("change ",".defaultSelectAcceptterms" ,function() {
         $mainContainer.find("." + $classExlode[1] +"__acceptterms").prop("checked", true);	 
     }
 });
+$(document).on("change",".selectDefaultCountry" ,function(){
+    console.log("change country");
+    $selectVal = $(this).val();
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $mainContainer = $(".block-container");
+    $mainContainer.find('.'+containerClass+' select').val($selectVal).change();
+
+});
+$(document).on('keydown, keyup',".dropdownDefaultOption" ,function() {
+    console.log("CHNAGE KEYUP KEY DOWN");
+    $inputVal = $(this).val();
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $mainContainer = $(".block-container");
+    if($inputVal == ""){
+        $mainContainer.find('.'+containerClass+' select').val("").change();
+    }else{
+        $mainContainer.find('.'+containerClass+' select').val($inputVal).change();
+    }
+
+});
 $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
     console.log("CHNAGE KEYUP KEY DOWN");
     $inputVal = $(this).val();
@@ -561,3 +611,82 @@ $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
 
     });
 });
+$(document).on("change",".allowMultipleCheckbox" ,function(){
+    console.log("...allowMultipleCheckbox");
+    $mainContainerClass = $(this).closest(".container").attr("class");
+    var classArray = $mainContainerClass.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $mainContainer = $(".block-container");
+
+    if(this.checked) {
+       $mainContainer.find('.'+containerClass+' input').attr('name','files[]');
+       $mainContainer.find('.'+containerClass+' input').attr('multiple','multiple');
+    }else{
+        $mainContainer.find('.'+containerClass+' input').removeAttr('name');
+        $mainContainer.find('.'+containerClass+' input').removeAttr('multiple');
+    }
+});
+// File 
+
+window.onload = (event) => {
+    const fileButton = document.getElementById('fileButton');
+    const fileInput = document.getElementById('fileimage');
+    const imgContainer = document.getElementById('imgContainer');
+    const uploadText = document.getElementById('uploadText');
+
+    fileButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function() {
+        imgContainer.innerHTML = ''; // Clear previous previews
+        const files = this.files;
+        if (files.length > 0) {
+            uploadText.style.display = 'none';
+            fileButton.style.display = 'none';
+        } else {
+            uploadText.style.display = 'block';
+            fileButton.style.display = 'block';
+        }
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imgPreviewWrapper = document.createElement('div');
+                imgPreviewWrapper.classList.add('img-preview-wrapper');
+
+                const imgPreview = document.createElement('img');
+                imgPreview.classList.add('img-preview');
+                if (file.type.startsWith('image/')) {
+                    imgPreview.src = event.target.result;
+                } else {
+                    imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
+                }
+
+                const closeButton = document.createElement('button');
+                closeButton.classList.add('close-button');
+                closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                closeButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    imgContainer.removeChild(imgPreviewWrapper);
+                    if (imgContainer.children.length === 0) {
+                        uploadText.style.display = 'block';
+                        fileButton.style.display = 'block';
+                        fileInput.value = '';
+                    }
+                });
+
+                const fileName = document.createElement('p');
+                fileName.classList.add('file-name');
+                fileName.textContent = file.name;
+
+                imgPreviewWrapper.appendChild(imgPreview);
+                imgPreviewWrapper.appendChild(closeButton);
+                imgPreviewWrapper.appendChild(fileName);
+                imgContainer.appendChild(imgPreviewWrapper);
+            }
+            reader.readAsDataURL(file);
+        });
+    });
+};
+
+// File 
