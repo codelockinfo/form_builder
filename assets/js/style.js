@@ -343,8 +343,10 @@ $(document).on("click",".chooseItems .chooseItem ",function(){
 $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
     console.log("keydown, keyup");
     $mainContainerClass = $(this).closest(".container");
-    $classArray = $mainContainerClass.attr("class").split(" ");
-    var containerClass = $classArray.find(className => className.startsWith("container_"));
+    if($mainContainerClass.length > 0){
+        $classArray = $mainContainerClass.attr("class").split(" ");
+        var containerClass = $classArray.find(className => className.startsWith("container_"));
+    }
     $mainContainer = $(".block-container");
 
     $inputVal = $(this).val();
