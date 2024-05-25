@@ -5533,6 +5533,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                             </div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 18){
