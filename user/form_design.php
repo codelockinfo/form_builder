@@ -15,7 +15,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <input id="PolarisTextField1" placeholder=""
                                             class="Polaris-TextField__Input form_name_form_design" name="form_name_form_design" type="text"
                                             aria-labelledby="PolarisTextField1Label" aria-invalid="false"
-                                            value="">
+                                            value="" readonly>
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
                                     <!-- <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"

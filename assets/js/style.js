@@ -362,6 +362,10 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
             $("."+$attrName).html($inputVal);
         }else if($nameExlode[0].includes("country")) {
             $mainContainer.find('.'+containerClass+' option[value=""]').html($inputVal);
+            $mainContainerClass.find('.selectDefaultCountry option[value=""]').html($inputVal);
+        }else if($nameExlode[0].includes("dropdown")) {
+            $mainContainer.find('.'+containerClass+' option[value=""]').html($inputVal);
+            // $mainContainerClass.find('.selectDefaultCountry option[value=""]').html($inputVal);
         }else{
             $("."+$attrName).attr('placeholder', $inputVal);
         }
@@ -377,29 +381,47 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
         $("."+$attrName).html($inputVal);
     }else if($nameExlode[1] == "checkboxoption"){
         $preline = $mainContainerClass.find(".input_no-perline").val();
+        $checkboxDefaultOption = $mainContainerClass.find(".checkboxDefaultOption").val();
+        var checkbooxArray = $checkboxDefaultOption.split(',').map(function(checkboxoption) {
+            return checkboxoption.trim();
+        });
         var options = $inputVal.split(",");
         var htmlContent = "";
         options.forEach(function(option, index) {
+            $value_checked = "";
             var optionValue = option.trim();
-            htmlContent +=`<li class="globo-list-control option-${$preline}-column">
+            if(optionValue !== ""){
+                if (checkbooxArray.includes(optionValue)) {
+                    $value_checked = 'checked';
+                }
+                htmlContent +=`<li class="globo-list-control option-${$preline}-column">
                                 <div class="checkbox-wrapper">
-                                    <input class="checkbox-input ${$nameExlode[0]}__checkbox" id="false-checkbox-${index + 1}-${optionValue}-" type="checkbox" data-type="checkbox" name="checkbox-${index + 1}[]" value="${optionValue}">
+                                    <input class="checkbox-input ${$nameExlode[0]}__checkbox" id="false-checkbox-${index + 1}-${optionValue}-" type="checkbox" data-type="checkbox" name="checkbox-${index + 1}[]" value="${optionValue}" ${$value_checked}>
                                     <label class="checkbox-label globo-option ${$nameExlode[0]}__checkbox" for="false-checkbox-${index + 1}-${optionValue}-">${optionValue}</label>
                                 </div>
                             </li>`;
+            }
         });
         $("."+$attrName).html(htmlContent); 
     }else if($nameExlode[1] == "radiooption"){
         $preline = $mainContainerClass.find(".input_no-perline").val();
+        $radioDefaultOption = $mainContainerClass.find(".checkboxDefaultOption").val();
+        var radioArray = $radioDefaultOption.split(',').map(function(radiooption) {
+            return radiooption.trim();
+        });
         var options = $inputVal.split(",");
         var radioHtml = "";
         options.forEach(function(option, index) {
+            $value_checked = "";
             var optionValue = option.trim();
             if(optionValue !== ""){
+                if (radioArray.includes(optionValue)) {
+                    $value_checked = 'checked';
+                }
                 radioHtml +=`
                 <li class="globo-list-control option-${$preline}-column">
                     <div class="radio-wrapper">
-                        <input class="radio-input  ${$nameExlode[0]}__radio" id="false-radio-${index + 1}-${optionValue}-" type="radio" data-type="radio" name="radio-1" value="${optionValue}">
+                        <input class="radio-input  ${$nameExlode[0]}__radio" id="false-radio-${index + 1}-${optionValue}-" type="radio" data-type="radio" name="radio-1" value="${optionValue}" ${$value_checked}>
                         <label class="radio-label globo-option ${$nameExlode[0]}__radio" for="false-radio-${index + 1}-${optionValue}-">${optionValue}</label>
                     </div>
                 </li>`;
@@ -417,12 +439,20 @@ $(document).on('keydown, keyup','.Polaris-TextField__Input', function () {
         }
     }else if($nameExlode[1] == "dropoption"){
         console.log($attrName);
+        $dropdownDefaultOption = $mainContainerClass.find(".dropdownDefaultOption").val();
+        var dropdownArray = $dropdownDefaultOption.split(',').map(function(dropdownoption) {
+            return dropdownoption.trim();
+        });
         var options = $inputVal.split(",");
-        var dropdownHtml = "";
+        var dropdownHtml = `<option value="">Please select</option>`;
         options.forEach(function(option, index) {
+            $value_checked = "";
             var optionValue = option.trim();
+            if (dropdownArray.includes(optionValue)) {
+                $value_checked = 'selected';
+            }
             if(optionValue !== ""){
-                dropdownHtml +=`<option value="${optionValue}" >${optionValue}</option>`;
+                dropdownHtml +=`<option value="${optionValue}" ${$value_checked}>${optionValue}</option>`;
             }
         });
         $mainContainer.find('.'+containerClass+' select').html(dropdownHtml); 
@@ -602,6 +632,10 @@ $(document).on('keydown, keyup',".dropdownDefaultOption" ,function() {
 $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
     console.log("CHNAGE KEYUP KEY DOWN");
     $inputVal = $(this).val();
+    var checkbooxArray = $inputVal.split(',').map(function(checkboxoption) {
+        return checkboxoption.trim();
+    });
+
     $mainContainerClass = $(this).closest(".container").attr("class");
     var classArray = $mainContainerClass.split(" ");
     var containerClass = classArray.find(className => className.startsWith("container_"));
@@ -609,7 +643,10 @@ $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
     $mainContainer.find("."+containerClass + " input").prop('checked', false);
     var $valuesToCheck = $mainContainer.find("."+containerClass + " li");
     $valuesToCheck.each(function() {
-        $(this).find('input[value="' + $inputVal + '"]').prop('checked', true);
+        $checkboxvalue = $(this).find('input').val();
+        if (checkbooxArray.includes($checkboxvalue)) {
+            $(this).find('input[value="' + $checkboxvalue + '"]').prop('checked', true);
+        }
 
     });
 });

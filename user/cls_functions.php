@@ -2025,6 +2025,8 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $checkbox_options = explode(",", $unserialize_elementdata[1]);
+                                $checkbox_deafult_options = array_map('trim', explode(',', $unserialize_elementdata[2]));
+
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Checkbox">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
                                         </label>
@@ -2032,7 +2034,7 @@ class Client_functions extends common_function {
                                 foreach ($checkbox_options as $index => $option) {
                                     $option = trim($option);
                                     $checkbox_option_checked = "";
-                                    if($unserialize_elementdata[2] == $option){
+                                    if (in_array(strtolower($option), array_map('strtolower', $checkbox_deafult_options))) {
                                         $checkbox_option_checked = "Checked";
                                     }
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
@@ -5100,7 +5102,7 @@ class Client_functions extends common_function {
                                         </div>
                                         <div class="Polaris-Select">
                                         <select name="'.$elementtitle.''.$form_data_id.'__select-defualt-value" class="selectDates selectDefaultCountry" >
-                                            <option value="">Please select</option>';
+                                            <option value="">'.$formData[1].'</option>';
                                             $countries = [
                                                 'Afghanistan', 'Aland Islands', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla',
                                                 'Antigua And Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan',
