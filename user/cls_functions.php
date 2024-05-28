@@ -1329,6 +1329,9 @@ class Client_functions extends common_function {
         return $response;
     }
     // start 014
+    function generateUniqueTextUsingUniqid($prefix = '', $moreEntropy = false) {
+        return uniqid($prefix, $moreEntropy);
+    } 
     function function_create_form() {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
@@ -1342,6 +1345,7 @@ class Client_functions extends common_function {
                 // $last_id = $this->db->insert_id;
                 $headerserialize = serialize(array("1", $_POST['formnamehide'] , "Leave your message and we will get back to you shortly."));
                 $footerserialize = serialize(array("", "Submit", "0","Reset", "0","align-left"));
+                $publishdataserialize = serialize(array("",'Please a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true))));
                 if (isset($_POST['selectedType']) && $_POST['selectedType'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
                     $fields_arr = array(
@@ -1351,6 +1355,7 @@ class Client_functions extends common_function {
                         '`form_type`' => $_POST['selectedType'],
                         '`form_header_data`' => $headerserialize,
                         '`form_footer_data`' => $footerserialize,
+                        '`publishdata`' => $publishdataserialize,
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
@@ -1717,6 +1722,7 @@ class Client_functions extends common_function {
                     if($formData != ''){
                         $form_header_data =  unserialize($formData['form_header_data']);
                         $form_footer_data =  unserialize($formData['form_footer_data']);
+                        $publishdata =  unserialize($formData['publishdata']);
                         $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
                         $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
                         $form_html = '<div class="formHeader header '.$header_hidden.'">
@@ -1963,8 +1969,8 @@ class Client_functions extends common_function {
                                 }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                        <div class="globo-form-input">
-                                            <input type="text" autocomplete="off" data-type="datetime" class="classic-input flatpickr-input  '.$elementtitle.''.$form_data_id.'__placeholder"  name="datetime-1" placeholder="'.$unserialize_elementdata[1].'" data-format="date" datadateformat="Y-m-d" datatimeformat="12h">
+                                        <div class="globo-form-input datepicker">
+                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder">
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2325,7 +2331,7 @@ class Client_functions extends common_function {
                                 <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.$form_footer_data[3].'</button>
                             </div>';
                     }
-                    $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html , 'form_type' => $form_type ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data);
+                    $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html , 'form_type' => $form_type ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data, 'publishdata' => $publishdata);
                 }
             }
         return $response_data;
@@ -2423,7 +2429,6 @@ class Client_functions extends common_function {
         return $response;
     }
 
-    // end 014
     function enable_disable(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
             if (isset($_POST['store']) && $_POST['store'] != '') {
@@ -4016,39 +4021,15 @@ class Client_functions extends common_function {
                             <div class="form-control">
                                 <div class="uikit select multiple" tabindex="0">
                                 <label class="label">Allowed extensions</label>
-                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention">
+                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention[]">
                                     <option></option>
-                                    <option value="1">csv</option>
-                                    <option value="2">pdf</option>
-                                    <option value="3">jpg</option>
-                                    <option value="4">jpeg</option>
-                                    <option value="5">gif</option>
-                                    <option value="6">svg</option>
-                                    <option value="7">png</option>
-                                    <option value="8">ai</option>
-                                    <option value="9">psd</option>
-                                    <option value="10">stl</option>
-                                    <option value="11">stp</option>
-                                    <option value="12">step</option>
-                                    <option value="13">doc</option>
-                                    <option value="14">docx</option>
-                                    <option value="15">ppt</option>
-                                    <option value="16">pptx</option>
-                                    <option value="17">txt</option>
-                                    <option value="18">ex2</option>
-                                    <option value="19">dxf</option>
-                                    <option value="20">gbr</option>
-                                    <option value="21">eps</option>
-                                    <option value="22">mov</option>
-                                    <option value="23">mp4</option>
-                                    <option value="24">xls</option>
-                                    <option value="25">xlsx</option>
-                                    <option value="26">ods</option>
-                                    <option value="27">numbers</option>
-                                    <option value="28">xlsm</option>
-                                    <option value="29">zip</option>
-                                    <option value="30">heic</option>
-                                    <option value="31">heif</option>
+                                    <option value="pdf">pdf</option>
+                                    <option value="jpg">jpg</option>
+                                    <option value="jpeg">jpeg</option>
+                                    <option value="gif">gif</option>
+                                    <option value="svg">svg</option>
+                                    <option value="png">png</option>
+                                    <option value="webp">webp</option>
                                 </select>
                                 </div>
                             </div>
@@ -4065,7 +4046,7 @@ class Client_functions extends common_function {
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="'.$formData[4].'">
+                                            <input name="'.$elementtitle.''.$form_data_id.'__description" id="PolarisTextField13" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField13Label" aria-invalid="false" value="'.$formData[5].'">
                                             <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -5832,7 +5813,7 @@ class Client_functions extends common_function {
             $limitdatepicker = isset($newData['limitdatepicker']) ?  $newData['limitdatepicker'] : '0' ;
             $buttontext = isset($newData['buttontext']) ?  $newData['buttontext'] : '' ;
             $allowmultiple = isset($newData['allowmultiple']) ?  $newData['allowmultiple'] : '0' ;
-            $allowextention = isset($newData['allowextention']) ?  $newData['allowextention'] : '' ;
+            $allowextention = isset($newData['allowextention[]']) ?  $newData['allowextention[]'] : '' ;
             $checkboxoption = isset($newData['checkboxoption']) ?  $newData['checkboxoption'] : '' ;
             $radiooption = isset($newData['radiooption']) ?  $newData['radiooption'] : '' ;
             $dropoption = isset($newData['dropoption']) ?  $newData['dropoption'] : '' ;
@@ -5859,7 +5840,7 @@ class Client_functions extends common_function {
             $element_type13 = array("19");
             $element_type14 = array("14");
             // $element_type14 = array("20","21","22","23");
-
+            $element_data = "";
             if(in_array($elementid,$element_type)){
                 $element_data = serialize(array($label, $placeholder, $description, $limitcharacter, $limitcharactervalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
             }else if(in_array($elementid,$element_type3)){
@@ -5921,6 +5902,7 @@ class Client_functions extends common_function {
         $response = json_encode($response_data);
         return $response;
     }
+
     function savefooterform(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
@@ -5944,21 +5926,76 @@ class Client_functions extends common_function {
         $response = json_encode($response_data);
         return $response;
     }
-    function get_selected_element_preview(){
+
+    function savepublishdata(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
-            $element_id = (isset($_POST['element_id']) && $_POST['element_id'] != '') ? $_POST['element_id'] : "";
-            $formdata_id = (isset($_POST['formdata_id']) && $_POST['formdata_id'] != '') ? $_POST['formdata_id'] : "";
-            if($form_id != ""){
-                    // $where_query = array(["", "element_id", "=", $elementid],["AND", "form_id", "=", $formid],["AND", "id", "=", $formdataid]);
-                    // $resource_array = array('single' => true);
-                    // $formData = $this->select_result(TABLE_FORM_DATA, '*', $where_query,$resource_array);
-                    // $formdata = (isset($formData['data']) && $formData['data'] !== '') ? $formData['data'] : '';
+            $form_id = isset($_POST['formid']) ?  $_POST['formid'] : '' ;
+            $require_login = isset($_POST['require_login']) ?  $_POST['require_login'] : '' ;
+            $login_message = isset($_POST['login_message']) ?  $_POST['login_message'] : '' ;
 
+            if($form_id != ""){
+                $where_query = array(["", "id", "=", $form_id]);
+                $resource_array = array('single' => true);
+                $formData = $this->select_result(TABLE_FORMS, '*', $where_query,$resource_array);
+                $formdata = (isset($formData['data']) && $formData['data'] !== '') ? $formData['data'] : '';
+                $publishdata = (isset($formdata['publishdata']) && $formdata['publishdata'] !== '') ? $formdata['publishdata'] : '';
+                $dataArray = unserialize($publishdata);
+                if ($dataArray !== false) {
+                    $dataArray[0] = $require_login;
+                    $dataArray[1] = $login_message;
+                    $dataArray[2] = $dataArray[2];
+                
+                    $updatedSerializedData = serialize($dataArray);
+                    $fields = array(
+                        '`publishdata`' => $updatedSerializedData,
+                    );
+                    $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+                    $response_data = array('data' => 'success', 'msg' => 'Update successfully','outcome' => $comeback); 
+                } 
             }
         }
         $response = json_encode($response_data);
         return $response;
     }
+
+    // function get_selected_element_preview(){
+    //     $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+    //     if (isset($_POST['store']) && $_POST['store'] != '') {
+    //         $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
+    //         $element_id = (isset($_POST['element_id']) && $_POST['element_id'] != '') ? $_POST['element_id'] : "";
+    //         $formdata_id = (isset($_POST['formdata_id']) && $_POST['formdata_id'] != '') ? $_POST['formdata_id'] : "";
+    //         if($form_id != ""){
+    //                 // $where_query = array(["", "element_id", "=", $elementid],["AND", "form_id", "=", $formid],["AND", "id", "=", $formdataid]);
+    //                 // $resource_array = array('single' => true);
+    //                 // $formData = $this->select_result(TABLE_FORM_DATA, '*', $where_query,$resource_array);
+    //                 // $formdata = (isset($formData['data']) && $formData['data'] !== '') ? $formData['data'] : '';
+
+    //         }
+    //     }
+    //     $response = json_encode($response_data);
+    //     return $response;
+    // }
+
+    
+    // For FRONTEND
+    function addformdata(){
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            echo "<pre>";
+            print_r($_POST);
+            if (isset($_POST['title']) && $_POST['title'] == '') {
+                $error_array['title'] = "Please Enter title";
+            }
+            if (empty($error_array)) {
+                $response_data = $this->post_data(TABLE_BLOGPOST_MASTER, array($fields_arr));  
+            }else {
+                $response_data = array('data' => 'fail', 'msg' => $error_array);
+            }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+    // For FRONTEND
+
 }

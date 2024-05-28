@@ -856,61 +856,66 @@ var BACKTO = 0;
                                         $(this).addClass("active");
                                     }
                             });
+                            if(comeback['publishdata']['0'] == 1){
+                                $('.required_login').prop("checked");
+                            }
+                            $('.login_message').html(comeback['publishdata']['1']);
+                            $('.embed_code').val(comeback['publishdata']['2']);
                          
                         }
                     }
                 });
         }
-        function get_selected_element_preview(formId,elementId,formdataId){
-            $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    data: {'routine_name': 'get_selected_element_preview','form_id': formId, store: store,"element_id":elementId,"formdata_id" :formdataId},
-                    success: function (comeback) {
-                        if (comeback['code'] != undefined && comeback['code'] == '403') {
-                            redirect403();
-                        } else{
-                            console.log(comeback['form_footer_data']);
-                            console.log(comeback['form_header_data']);
-                            console.log(comeback['form_header_data']['1']);
-                            if(comeback['form_header_data']['0'] == 1){
-                                $(".headerData .showHeader").prop("checked", true);
-                            }else{
-                                $(".headerData .showHeader").prop("checked", false);
-                            }
-                            $(".headerData .form_id").val(comeback['form_id']);
-                            $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
-                            $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
-                            $(".form_name_form_design").val(comeback['form_header_data']['1'])
-                            $(".selected_element_set").html(comeback['outcome']);
-                            $(".code-form-app").html(comeback['form_html']);
+        // function get_selected_element_preview(formId,elementId,formdataId){
+        //     $.ajax({
+        //             url: "ajax_call.php",
+        //             type: "post",
+        //             dataType: "json",
+        //             data: {'routine_name': 'get_selected_element_preview','form_id': formId, store: store,"element_id":elementId,"formdata_id" :formdataId},
+        //             success: function (comeback) {
+        //                 if (comeback['code'] != undefined && comeback['code'] == '403') {
+        //                     redirect403();
+        //                 } else{
+        //                     console.log(comeback['form_footer_data']);
+        //                     console.log(comeback['form_header_data']);
+        //                     console.log(comeback['form_header_data']['1']);
+        //                     if(comeback['form_header_data']['0'] == 1){
+        //                         $(".headerData .showHeader").prop("checked", true);
+        //                     }else{
+        //                         $(".headerData .showHeader").prop("checked", false);
+        //                     }
+        //                     $(".headerData .form_id").val(comeback['form_id']);
+        //                     $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
+        //                     $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
+        //                     $(".form_name_form_design").val(comeback['form_header_data']['1'])
+        //                     $(".selected_element_set").html(comeback['outcome']);
+        //                     $(".code-form-app").html(comeback['form_html']);
                             
-                            $(".footerData .form_id").val(comeback['form_id']);
-                            $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
-                            $('.footerData .submitText').val(comeback['form_footer_data']['1']);
-                            if(comeback['form_footer_data']['2'] == 1){
-                                $(".footerData .resetButton").prop("checked", true);
-                            }else{
-                                $(".footerData .resetButton").prop("checked", false);
-                            }
-                            $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
-                            if(comeback['form_footer_data']['4'] == 1){
-                                $(".footerData .fullFooterButton").prop("checked", true);
-                            }else{
-                                $(".footerData .fullFooterButton").prop("checked", false);
-                            }
-                            $( ".footerData .chooseItem" ).each(function() {
-                                    if(comeback['form_footer_data']['5'] == $(this).data('value')){
-                                        $(".footerData .chooseItem").removeClass("active");
-                                        $(this).addClass("active");
-                                    }
-                            });
+        //                     $(".footerData .form_id").val(comeback['form_id']);
+        //                     $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
+        //                     $('.footerData .submitText').val(comeback['form_footer_data']['1']);
+        //                     if(comeback['form_footer_data']['2'] == 1){
+        //                         $(".footerData .resetButton").prop("checked", true);
+        //                     }else{
+        //                         $(".footerData .resetButton").prop("checked", false);
+        //                     }
+        //                     $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
+        //                     if(comeback['form_footer_data']['4'] == 1){
+        //                         $(".footerData .fullFooterButton").prop("checked", true);
+        //                     }else{
+        //                         $(".footerData .fullFooterButton").prop("checked", false);
+        //                     }
+        //                     $( ".footerData .chooseItem" ).each(function() {
+        //                             if(comeback['form_footer_data']['5'] == $(this).data('value')){
+        //                                 $(".footerData .chooseItem").removeClass("active");
+        //                                 $(this).addClass("active");
+        //                             }
+        //                     });
                          
-                        }
-                    }
-                });
-        }
+        //                 }
+        //             }
+        //         });
+        // }
         function getFormTitle(form_id){
             $.ajax({
                     url: "ajax_call.php",
@@ -1266,4 +1271,51 @@ var BACKTO = 0;
                     loading_hide('.save_loader_show', 'Save');
                 }
             });
+        });
+        $(document).on("click", ".saveForm", function(event) {
+            console.log("savform .....");
+            var form_data = $(".add_publishdata")[0];
+            var form_data = new FormData(form_data);
+            form_data.append('store',store); 
+            form_data.append('routine_name','savepublishdata');  
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: form_data, 
+                    beforeSend: function () {
+                    loading_show('.save_loader_show');
+                },
+                success: function (response) {
+                    var response = JSON.parse(response);
+                  console.log(response + "..............");
+                    loading_hide('.save_loader_show', 'Save');
+                }
+            });
+        });
+        $(document).on("click",".submit.action",function (e) {
+            e.preventDefault();
+            console.log("HII");
+            var form_data = $(".get_selected_elements")[0];
+            var form_data = new FormData(form_data);
+            // form_data.append('images',$("#ImagePreview").attr("src"));
+            form_data.append('store',store); 
+            form_data.append('routine_name','addformdata');      
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                data: form_data,
+                beforeSend: function () {
+                    loading_show('.save_loader_show');
+                },
+                success: function (comeback) {
+                    console.log(comeback);
+                    loading_hide('save_loader_show', 'Save');
+                }
+            })
         });

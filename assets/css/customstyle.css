@@ -807,7 +807,7 @@ ul {
     border: none;
     background-color: #eb1256;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 18px;
     line-height: 20px;
     cursor: pointer;
     border-radius: 50%;
@@ -825,7 +825,7 @@ ul {
     text-align: center;
     border-radius: 0 0 5px 5px;
   }
-  
+ 
 @media screen and (max-width: 870px) {
     .context .context-inner .item{
              padding: 0 0rem;

@@ -247,7 +247,7 @@ $(document).ready(function(){
         });
 
         // dropdown select
-     i=1;
+        i=1;
     	$(document).on("click","#add",function(){
         	i++;
             // console.log("clickee");
@@ -665,8 +665,17 @@ $(document).on("change",".allowMultipleCheckbox" ,function(){
         $mainContainer.find('.'+containerClass+' input').removeAttr('multiple');
     }
 });
-// File 
 
+// copy input enbed value
+$(document).on("click",".copyButton" ,function(){
+    console.log("Copybutton click");
+    var copyText = document.querySelector(".embed_code");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // For mobile devices
+    navigator.clipboard.writeText(copyText.value);
+});
+// copy input enbed value
+// File 
 window.onload = (event) => {
     const fileButton = document.getElementById('fileButton');
     const fileInput = document.getElementById('fileimage');
@@ -703,7 +712,7 @@ window.onload = (event) => {
 
                 const closeButton = document.createElement('button');
                 closeButton.classList.add('close-button');
-                closeButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                closeButton.innerHTML = '×';
                 closeButton.addEventListener('click', function(event) {
                     event.preventDefault();
                     imgContainer.removeChild(imgPreviewWrapper);

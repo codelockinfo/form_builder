@@ -1,1 +1,3 @@
 ALTER TABLE `form_data` CHANGE `element_data` `element_data` LONGTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
+ALTER TABLE `forms` ADD `publishdata` LONGTEXT NOT NULL AFTER `status`;
+

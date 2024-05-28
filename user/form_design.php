@@ -452,127 +452,80 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     <div class="container">
                         <div>
                             <div class="">
-                                <div class="form-control">
-                                    <div>
-                                        <label class="Polaris-Choice">
-                                            <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input id="required_login" type="checkbox"
-                                                        class="Polaris-Checkbox__Input" aria-invalid="false"
-                                                        aria-describedby="PolarisCheckbox26HelpText" role="checkbox"
-                                                        aria-checked="false" value="">
-                                                    <span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                            <span class="Polaris-VisuallyHidden"></span>
-                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                focusable="false" aria-hidden="true">
-                                                                <path
-                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                </path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span class="Polaris-Choice__Label">Required Login</span>
-                                        </label>
-                                        <div class="Polaris-Choice__Descriptions">
-                                            <div class="Polaris-Choice__HelpText" id="PolarisCheckbox26HelpText">Only
-                                                allow logged users to access</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden required_message">
-                                    <div class="textarea-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <label class="Polaris-Label__Text">Required Login Message</label>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div
-                                                        class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                        <textarea class="Polaris-TextField__Input" type="text" rows="2">Please a href='/account/login' title='login'&gt;login&lt;/a&gt; to continue
-                                                        </textarea>
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Select publication type</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Select selectmain">
-                                            <select id="PolarisSelect18" class="select_code">
-                                                <option value="embedCode">Embed code</option>
-                                                <option value="shortCode">Short code</option>
-                                                <option value="popup">Popup</option>
-                                                <option value="lightbox">Lightbox</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control selectval embedCode" id="embedCode">
-                                    <div class="textfield-wrapper">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">
-                                                    <div>Copy and paste the embed code on your page</div>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div
-                                                    class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                    <input id="PolarisTextField54" readonly="" placeholder=""
-                                                        class="Polaris-TextField__Input" type="text"
-                                                        aria-describedby="PolarisTextField54HelpText"
-                                                        aria-labelledby="PolarisTextField54Label" aria-invalid="false"
-                                                        value="<div class=&quot;globo-formbuilder&quot; data-id=&quot;ZmFsc2U=&quot;></div>">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item">
-                                                <button class="Polaris-Button" type="button">
-                                                    <span class="Polaris-Button__Content">
-                                                        <span class="Polaris-Button__Text">
+                                <form class="add_publishdata" method="POST" >
+                                <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
+                                    <div class="form-control">
+                                        <div>
+                                            <label class="Polaris-Choice">
+                                                <span class="Polaris-Choice__Control">
+                                                    <span class="Polaris-Checkbox">
+                                                        <input name="require_login" id="required_login" type="checkbox"
+                                                            class="Polaris-Checkbox__Input required_login" aria-invalid="false"
+                                                            aria-describedby="PolarisCheckbox26HelpText" role="checkbox"
+                                                            aria-checked="false" value="1">
+                                                        <span class="Polaris-Checkbox__Backdrop"></span>
+                                                        <span class="Polaris-Checkbox__Icon">
                                                             <span class="Polaris-Icon">
                                                                 <span class="Polaris-VisuallyHidden"></span>
                                                                 <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
                                                                     focusable="false" aria-hidden="true">
                                                                     <path
-                                                                        d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
+                                                                        d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
                                                                     </path>
                                                                 </svg>
                                                             </span>
                                                         </span>
                                                     </span>
-                                                </button>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Required Login</span>
+                                            </label>
+                                            <div class="Polaris-Choice__Descriptions">
+                                                <div class="Polaris-Choice__HelpText" id="PolarisCheckbox26HelpText">Only
+                                                    allow logged users to access</div>
                                             </div>
                                         </div>
-                                        <div class="Polaris-Labelled__HelpText" id="PolarisTextField54HelpText">Copy
-                                            this shortcode and add it to your Shopify page or any Shopify file where you
-                                            want to display the form
+                                    </div>
+                                    <div class="form-control hidden required_message">
+                                        <div class="textarea-wrapper">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <label class="Polaris-Label__Text">Required Login Message</label>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
+                                                            <textarea name="login_message" class="Polaris-TextField__Input login_message" type="text" rows="2">Please a href='/account/login' title='login'&gt;login&lt;/a&gt; to continue
+                                                            </textarea>
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-control selectval  shortCode" id="shortCode">
-                                    <div class="textfield-wrapper">
+                                    <div class="form-control hidden">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label id="PolarisTextField55Label" for="PolarisTextField55"
-                                                        class="Polaris-Label__Text">
-                                                        <div>Copy and paste the short code on your page
-                                                        </div>
+                                                    <label class="Polaris-Label__Text">Select publication type</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Select selectmain">
+                                                <select id="PolarisSelect18" class="select_code">
+                                                    <option value="embedCode">Embed code</option>
+                                                    <option value="shortCode">Short code</option>
+                                                    <option value="popup">Popup</option>
+                                                    <option value="lightbox">Lightbox</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control selectval embedCode" id="embedCode">
+                                        <div class="textfield-wrapper">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">
+                                                        <div>Copy and paste the embed code on your page</div>
                                                     </label>
                                                 </div>
                                             </div>
@@ -580,391 +533,440 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div
                                                         class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField55" readonly="" placeholder=""
-                                                            class="Polaris-TextField__Input" type="text"
-                                                            aria-describedby="PolarisTextField55HelpText"
-                                                            aria-labelledby="PolarisTextField55Label"
-                                                            aria-invalid="false" value="{formbuilder:ZmFsc2U=}">
+                                                        <input id="PolarisTextField54" readonly="" placeholder=""
+                                                            class="Polaris-TextField__Input embed_code" type="text"
+                                                            aria-describedby="PolarisTextField54HelpText"
+                                                            aria-labelledby="PolarisTextField54Label" aria-invalid="false"
+                                                            value=''>
                                                         <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
-                                                <div class="Polaris-Connected__Item"><button class="Polaris-Button"
-                                                        type="button"><span class="Polaris-Button__Content"><span
-                                                                class="Polaris-Button__Text"><span
-                                                                    class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg></span></span></span></button>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Labelled__HelpText" id="PolarisTextField55HelpText">Copy
-                                                this shortcode and add
-                                                it to your Shopify page or any Shopify file where you want
-                                                to display the form
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control selectval popup" id="popup">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField56Label"
-                                                        for="PolarisTextField56" class="Polaris-Label__Text">
-                                                        <div>Use this code to create popup form display path
-                                                        </div>
-                                                    </label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div
-                                                        class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField56" readonly="" placeholder=""
-                                                            class="Polaris-TextField__Input" type="text"
-                                                            aria-describedby="PolarisTextField56HelpText"
-                                                            aria-labelledby="PolarisTextField56Label"
-                                                            aria-invalid="false"
-                                                            value="<button class=&quot;globo-formbuilder-open&quot; data-id=&quot;ZmFsc2U=&quot;>Open form</button>">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected__Item"><button class="Polaris-Button"
-                                                        type="button"><span class="Polaris-Button__Content"><span
-                                                                class="Polaris-Button__Text"><span
-                                                                    class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg></span></span></span></button>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Labelled__HelpText" id="PolarisTextField56HelpText">Copy
-                                                this code and add it to
-                                                your Shopify page or any Shopify file where you want to
-                                                display the form</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control selectval lightbox" id="lightbox">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField57Label"
-                                                        for="PolarisTextField57" class="Polaris-Label__Text">
-                                                        <div>Use this code to have your form appear in a
-                                                            lightbox</div>
-                                                    </label></div>
-                                            </div>
-                                            <div class="Polaris-Connected">
-                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                    <div
-                                                        class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField57" readonly="" placeholder=""
-                                                            class="Polaris-TextField__Input" type="text"
-                                                            aria-labelledby="PolarisTextField57Label"
-                                                            aria-invalid="false"
-                                                            value="<div class=&quot;globo-form-publish-modal lightbox hidden&quot; data-id=&quot;ZmFsc2U=&quot;><div class=&quot;globo-form-modal-content&quot;><div class=&quot;globo-formbuilder&quot; data-id=&quot;ZmFsc2U=&quot;></div></div></div>">
-                                                        <div class="Polaris-TextField__Backdrop"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected__Item"><button class="Polaris-Button"
-                                                        type="button"><span class="Polaris-Button__Content"><span
-                                                                class="Polaris-Button__Text"><span
-                                                                    class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
-                                                                        </path>
-                                                                    </svg></span></span></span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control">
-                                    <label class="Polaris-Choice">
-                                        <span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                    id="PolarisCheckbox27" type="checkbox"
-                                                    class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
-                                                    aria-checked="false" value=""><span
-                                                    class="Polaris-Checkbox__Backdrop"></span><span
-                                                    class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
-                                                            class="Polaris-VisuallyHidden"></span><svg
-                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                            focusable="false" aria-hidden="true">
-                                                            <path
-                                                                d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                        </svg></span></span></span></span><span
-                                            class="Polaris-Choice__Label">Add short code to
-                                            page</span>
-                                    </label>
-                                </div>
-                                <div class="form-control hidden shortcode">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label id="PolarisSelect19Label">Select page</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Select selectmain ">
-                                            <select id="PolarisSelect19" class="select_code">
-                                                <option value="89667436713">1kfounder</option>
-                                                <option value="87362437289">contact</option>
-                                                <option value="90644250793">ddd</option>
-                                                <option value="91029668009">DDD</option>
-                                                <option value="90743799977">EEEEE</option>
-                                                <option value="84723105961">hello everyone</option>
-                                                <option value="84966473897">hgf</option>
-                                                <option value="87429316777">hiiiii</option>
-                                                <option value="82853920937">home</option>
-                                                <option value="82854019241">index</option>
-                                                <option value="88030445737">login-overlay</option>
-                                                <option value="91482849449">Order Tracking Form</option>
-                                                <option value="93188620457">our-roots</option>
-                                                <option value="87361224873">page-contact-template</option>
-                                                <option value="93137731753">picture wall new</option>
-                                                <option value="92683239593">Register</option>
-                                                <option value="86016000169">Search Results</option>
-                                                <option value="83176292521">Seller Profile</option>
-                                                <option value="92045836457">shopthelook</option>
-                                                <option value="87190601897">Size chart</option>
-                                                <option value="79408234665">testing</option>
-                                                <option value="86984982697">testing time</option>
-                                                <option value="83172851881">tracking page</option>
-                                                <option value="82492424361">urvisha</option>
-                                                <option value="84966441129">vdvd</option>
-                                                <option value="88450629801">wishlist</option>
-                                                <option value="92931752105">www</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden shortcode">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label>Select position on page</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Select selectmain">
-                                            <select id="PolarisSelect20" class="select_code">
-                                                <option value="top">At the top of the page</option>
-                                                <option value="bottom">At the bottom of the page</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden  " id="lightbox2">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">
-                                                    <span tabindex="0" data-polaris-tooltip-activator="true">
-                                                        <span class="">
-                                                            <div class="labelToolTip">Select desired time to
-                                                                open form again after close it <span
-                                                                    class="Polaris-Icon Polaris-Icon--colorSubdued Polaris-Icon--applyColor"><span
-                                                                        class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path fill-rule="evenodd"
-                                                                            d="M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0zm-9 3a1 1 0 1 0 2 0v-2a1 1 0 1 0-2 0v2zm0-6a1 1 0 1 0 2 0 1 1 0 0 0-2 0z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span></div>
-                                                        </span></span></label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Select selectmain">
-                                            <select id="PolarisSelect21" class="select_code">
-                                                <option value="forever">Automatically open and never show upagain after
-                                                    close</option>
-                                                <option value="weeks">Automatically open after a period of time (Weeks)
-                                                </option>
-                                                <option value="days">Automatically open after a period of time (Days)
-                                                </option>
-                                                <option value="hours">Automatically open after a period of time (Hours)
-                                                </option>
-                                                <option value="none">Automatically open each time the page loads
-                                                </option>
-                                            </select>
-                                            <!-- <div class="Polaris-Select__Content" aria-hidden="true"
-                                                aria-disabled="false"><span
-                                                    class="Polaris-Select__SelectedOption">Automatically
-                                                    open and never show up again after close</span><span
-                                                    class="Polaris-Select__Icon"><span
-                                                        class="Polaris-Icon"><span
-                                                            class="Polaris-VisuallyHidden"></span><svg
-                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                            focusable="false" aria-hidden="true">
-                                                            <path
-                                                                d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z">
-                                                            </path>
-                                                        </svg></span></span></div>
-                                            <div class="Polaris-Select__Backdrop"></div> -->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden selectval" id="days">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label>Days</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <div class="Polaris-TextField__Prefix"
-                                                        id="PolarisTextField58-Prefix">days</div>
-                                                    <input class="Polaris-TextField__Input quentity" min="1"
-                                                        type="number" aria-invalid="false" value="1">
-                                                    <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                        <div role="button" class="Polaris-TextField__Segment plus"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                <div class="Polaris-Connected__Item copyButton">
+                                                    <button class="Polaris-Button" type="button">
+                                                        <span class="Polaris-Button__Content">
+                                                            <span class="Polaris-Button__Text">
                                                                 <span class="Polaris-Icon">
                                                                     <span class="Polaris-VisuallyHidden"></span>
                                                                     <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
                                                                         focusable="false" aria-hidden="true">
                                                                         <path
-                                                                            d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                            </div>
-                                                        </div>
-                                                        <div role="button" class="Polaris-TextField__Segment min"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                                            d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
                                                                         </path>
                                                                     </svg>
                                                                 </span>
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Labelled__HelpText" id="PolarisTextField54HelpText">Copy
+                                                this shortcode and add it to your Shopify page or any Shopify file where you
+                                                want to display the form
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control selectval  shortCode" id="shortCode">
+                                        <div class="textfield-wrapper">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField55Label" for="PolarisTextField55"
+                                                            class="Polaris-Label__Text">
+                                                            <div>Copy and paste the short code on your page
                                                             </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div
+                                                            class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
+                                                            <input id="PolarisTextField55" readonly="" placeholder=""
+                                                                class="Polaris-TextField__Input" type="text"
+                                                                aria-describedby="PolarisTextField55HelpText"
+                                                                aria-labelledby="PolarisTextField55Label"
+                                                                aria-invalid="false" value="{formbuilder:ZmFsc2U=}">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
-                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div class="Polaris-Connected__Item"><button class="Polaris-Button"
+                                                            type="button"><span class="Polaris-Button__Content"><span
+                                                                    class="Polaris-Button__Text"><span
+                                                                        class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
+                                                                            </path>
+                                                                        </svg></span></span></span></button>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Labelled__HelpText" id="PolarisTextField55HelpText">Copy
+                                                    this shortcode and add
+                                                    it to your Shopify page or any Shopify file where you want
+                                                    to display the form
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-control hidden selectval" id="hours">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label>Hours</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <div class="Polaris-TextField__Prefix"
-                                                        id="PolarisTextField59-Prefix">hours</div>
-                                                    <input id="PolarisTextField59"
-                                                        class="Polaris-TextField__Input hoursadd" min="1" type="number"
-                                                        aria-labelledby="PolarisTextField59Label PolarisTextField59-Prefix"
-                                                        aria-invalid="false" value="1">
-                                                    <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                        <div role="button" class="Polaris-TextField__Segment hourplus"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
-                                                                <span class="Polaris-Icon">
-                                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
+                                    <div class="form-control selectval popup" id="popup">
+                                        <div class="textfield-wrapper">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label"><label id="PolarisTextField56Label"
+                                                            for="PolarisTextField56" class="Polaris-Label__Text">
+                                                            <div>Use this code to create popup form display path
                                                             </div>
-                                                        </div>
-                                                        <div role="button" class="Polaris-TextField__Segment houminus"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
-                                                                <span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                            </div>
+                                                        </label></div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div
+                                                            class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
+                                                            <input id="PolarisTextField56" readonly="" placeholder=""
+                                                                class="Polaris-TextField__Input" type="text"
+                                                                aria-describedby="PolarisTextField56HelpText"
+                                                                aria-labelledby="PolarisTextField56Label"
+                                                                aria-invalid="false"
+                                                                value="<button class=&quot;globo-formbuilder-open&quot; data-id=&quot;ZmFsc2U=&quot;>Open form</button>">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
-                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                    <div class="Polaris-Connected__Item"><button class="Polaris-Button"
+                                                            type="button"><span class="Polaris-Button__Content"><span
+                                                                    class="Polaris-Button__Text"><span
+                                                                        class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
+                                                                            </path>
+                                                                        </svg></span></span></span></button>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Labelled__HelpText" id="PolarisTextField56HelpText">Copy
+                                                    this code and add it to
+                                                    your Shopify page or any Shopify file where you want to
+                                                    display the form</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control selectval lightbox" id="lightbox">
+                                        <div class="textfield-wrapper">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label"><label id="PolarisTextField57Label"
+                                                            for="PolarisTextField57" class="Polaris-Label__Text">
+                                                            <div>Use this code to have your form appear in a
+                                                                lightbox</div>
+                                                        </label></div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div
+                                                            class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
+                                                            <input id="PolarisTextField57" readonly="" placeholder=""
+                                                                class="Polaris-TextField__Input" type="text"
+                                                                aria-labelledby="PolarisTextField57Label"
+                                                                aria-invalid="false"
+                                                                value="<div class=&quot;globo-form-publish-modal lightbox hidden&quot; data-id=&quot;ZmFsc2U=&quot;><div class=&quot;globo-form-modal-content&quot;><div class=&quot;globo-formbuilder&quot; data-id=&quot;ZmFsc2U=&quot;></div></div></div>">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="Polaris-Connected__Item"><button class="Polaris-Button"
+                                                            type="button"><span class="Polaris-Button__Content"><span
+                                                                    class="Polaris-Button__Text"><span
+                                                                        class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M7.5 2a1.5 1.5 0 0 0-1.5 1.5v9.5a1 1 0 0 0 1 1h9.5a1.5 1.5 0 0 0 1.5-1.5v-9a1.5 1.5 0 0 0-1.5-1.5h-9zm-4 4h.5v10h10v.5a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5z">
+                                                                            </path>
+                                                                        </svg></span></span></span></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-control hidden selectval" id="weeks">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label>Weeks</label>
+                                    <div class="form-control hidden">
+                                        <label class="Polaris-Choice">
+                                            <span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
+                                                        id="PolarisCheckbox27" type="checkbox"
+                                                        class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
+                                                        aria-checked="false" value=""><span
+                                                        class="Polaris-Checkbox__Backdrop"></span><span
+                                                        class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
+                                                                class="Polaris-VisuallyHidden"></span><svg
+                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                focusable="false" aria-hidden="true">
+                                                                <path
+                                                                    d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                                </path>
+                                                            </svg></span></span></span></span><span
+                                                class="Polaris-Choice__Label">Add short code to
+                                                page</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-control hidden shortcode">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label id="PolarisSelect19Label">Select page</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Select selectmain ">
+                                                <select id="PolarisSelect19" class="select_code">
+                                                    <option value="89667436713">1kfounder</option>
+                                                    <option value="87362437289">contact</option>
+                                                    <option value="90644250793">ddd</option>
+                                                    <option value="91029668009">DDD</option>
+                                                    <option value="90743799977">EEEEE</option>
+                                                    <option value="84723105961">hello everyone</option>
+                                                    <option value="84966473897">hgf</option>
+                                                    <option value="87429316777">hiiiii</option>
+                                                    <option value="82853920937">home</option>
+                                                    <option value="82854019241">index</option>
+                                                    <option value="88030445737">login-overlay</option>
+                                                    <option value="91482849449">Order Tracking Form</option>
+                                                    <option value="93188620457">our-roots</option>
+                                                    <option value="87361224873">page-contact-template</option>
+                                                    <option value="93137731753">picture wall new</option>
+                                                    <option value="92683239593">Register</option>
+                                                    <option value="86016000169">Search Results</option>
+                                                    <option value="83176292521">Seller Profile</option>
+                                                    <option value="92045836457">shopthelook</option>
+                                                    <option value="87190601897">Size chart</option>
+                                                    <option value="79408234665">testing</option>
+                                                    <option value="86984982697">testing time</option>
+                                                    <option value="83172851881">tracking page</option>
+                                                    <option value="82492424361">urvisha</option>
+                                                    <option value="84966441129">vdvd</option>
+                                                    <option value="88450629801">wishlist</option>
+                                                    <option value="92931752105">www</option>
+                                                </select>
                                             </div>
                                         </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <div class="Polaris-TextField__Prefix"
-                                                        id="PolarisTextField60-Prefix">weeks</div>
-                                                    <input id="PolarisTextField60"
-                                                        class="Polaris-TextField__Input weekadd" min="1" type="number"
-                                                        aria-labelledby="PolarisTextField60Label PolarisTextField60-Prefix"
-                                                        aria-invalid="false" value="1">
-                                                    <div class="Polaris-TextField__Spinner" aria-hidden="true">
-                                                        <div role="button" class="Polaris-TextField__Segment weekplus"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
-                                                                <span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
-                                                                        </path>
-                                                                    </svg></span>
+                                    </div>
+                                    <div class="form-control hidden shortcode">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label>Select position on page</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Select selectmain">
+                                                <select id="PolarisSelect20" class="select_code">
+                                                    <option value="top">At the top of the page</option>
+                                                    <option value="bottom">At the bottom of the page</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden" id="lightbox2">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">
+                                                        <span tabindex="0" data-polaris-tooltip-activator="true">
+                                                            <span class="">
+                                                                <div class="labelToolTip">Select desired time to
+                                                                    open form again after close it <span
+                                                                        class="Polaris-Icon Polaris-Icon--colorSubdued Polaris-Icon--applyColor"><span
+                                                                            class="Polaris-VisuallyHidden"></span>
+                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path fill-rule="evenodd"
+                                                                                d="M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0zm-9 3a1 1 0 1 0 2 0v-2a1 1 0 1 0-2 0v2zm0-6a1 1 0 1 0 2 0 1 1 0 0 0-2 0z">
+                                                                            </path>
+                                                                        </svg>
+                                                                    </span></div>
+                                                            </span></span></label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Select selectmain">
+                                                <select id="PolarisSelect21" class="select_code">
+                                                    <option value="forever">Automatically open and never show upagain after
+                                                        close</option>
+                                                    <option value="weeks">Automatically open after a period of time (Weeks)
+                                                    </option>
+                                                    <option value="days">Automatically open after a period of time (Days)
+                                                    </option>
+                                                    <option value="hours">Automatically open after a period of time (Hours)
+                                                    </option>
+                                                    <option value="none">Automatically open each time the page loads
+                                                    </option>
+                                                </select>
+                                                <!-- <div class="Polaris-Select__Content" aria-hidden="true"
+                                                    aria-disabled="false"><span
+                                                        class="Polaris-Select__SelectedOption">Automatically
+                                                        open and never show up again after close</span><span
+                                                        class="Polaris-Select__Icon"><span
+                                                            class="Polaris-Icon"><span
+                                                                class="Polaris-VisuallyHidden"></span><svg
+                                                                viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                focusable="false" aria-hidden="true">
+                                                                <path
+                                                                    d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z">
+                                                                </path>
+                                                            </svg></span></span></div>
+                                                <div class="Polaris-Select__Backdrop"></div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden selectval" id="days">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label>Days</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                        <div class="Polaris-TextField__Prefix"
+                                                            id="PolarisTextField58-Prefix">days</div>
+                                                        <input class="Polaris-TextField__Input quentity" min="1"
+                                                            type="number" aria-invalid="false" value="1">
+                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                            <div role="button" class="Polaris-TextField__Segment plus"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon">
+                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                </div>
+                                                            </div>
+                                                            <div role="button" class="Polaris-TextField__Segment min"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon">
+                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                                            </path>
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div role="button" class="Polaris-TextField__Segment weekminus"
-                                                            tabindex="-1">
-                                                            <div class="Polaris-TextField__SpinnerIcon">
-                                                                <span class="Polaris-Icon"><span
-                                                                        class="Polaris-VisuallyHidden"></span><svg
-                                                                        viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                        focusable="false" aria-hidden="true">
-                                                                        <path
-                                                                            d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                            </div>
-                                                        </div>
+                                                        <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
-                                                    <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <div class="form-control hidden selectval" id="hours">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label>Hours</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                        <div class="Polaris-TextField__Prefix"
+                                                            id="PolarisTextField59-Prefix">hours</div>
+                                                        <input id="PolarisTextField59"
+                                                            class="Polaris-TextField__Input hoursadd" min="1" type="number"
+                                                            aria-labelledby="PolarisTextField59Label PolarisTextField59-Prefix"
+                                                            aria-invalid="false" value="1">
+                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                            <div role="button" class="Polaris-TextField__Segment hourplus"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon">
+                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
+                                                                            </path>
+                                                                        </svg>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div role="button" class="Polaris-TextField__Segment houminus"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-control hidden selectval" id="weeks">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label>Weeks</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                        <div class="Polaris-TextField__Prefix"
+                                                            id="PolarisTextField60-Prefix">weeks</div>
+                                                        <input id="PolarisTextField60"
+                                                            class="Polaris-TextField__Input weekadd" min="1" type="number"
+                                                            aria-labelledby="PolarisTextField60Label PolarisTextField60-Prefix"
+                                                            aria-invalid="false" value="1">
+                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                            <div role="button" class="Polaris-TextField__Segment weekplus"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                </div>
+                                                            </div>
+                                                            <div role="button" class="Polaris-TextField__Segment weekminus"
+                                                                tabindex="-1">
+                                                                <div class="Polaris-TextField__SpinnerIcon">
+                                                                    <span class="Polaris-Icon"><span
+                                                                            class="Polaris-VisuallyHidden"></span><svg
+                                                                            viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                            focusable="false" aria-hidden="true">
+                                                                            <path
+                                                                                d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
