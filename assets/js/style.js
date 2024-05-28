@@ -1,4 +1,23 @@
 $(document).ready(function(){
+           // code for create new form start
+        $("#myBtn_new").click(function(){
+            $("#myModal_new").css("display","block");
+        });
+        $(".close_new").click(function(){
+            $("#myModal_new").css("display","none");
+        });
+        $(".close2_new").click(function(){
+            $("#myModal_new").css("display","none");
+        });
+              // code for create new form end
+        $(".main_list_").click(function () {
+            $(".first_txt_image").removeClass("first_txt_image");
+            $(this).find(".text_image_list").addClass("first_txt_image");
+            var getval = $(this).data("val");
+            var formname = $(this).find(".text_image_list").html();
+            $(".selectedType").val(getval);
+            $(".formnamehide").val(formname);
+        });
     // mobile desktop icon box-shadow
         $(".view_icon li ").click(function(){
             $(".view_icon li ").removeClass("active");
@@ -681,60 +700,62 @@ window.onload = (event) => {
     const fileInput = document.getElementById('fileimage');
     const imgContainer = document.getElementById('imgContainer');
     const uploadText = document.getElementById('uploadText');
-
-    fileButton.addEventListener('click', () => {
-        fileInput.click();
-    });
-
-    fileInput.addEventListener('change', function() {
-        imgContainer.innerHTML = ''; // Clear previous previews
-        const files = this.files;
-        if (files.length > 0) {
-            uploadText.style.display = 'none';
-            fileButton.style.display = 'none';
-        } else {
-            uploadText.style.display = 'block';
-            fileButton.style.display = 'block';
-        }
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const imgPreviewWrapper = document.createElement('div');
-                imgPreviewWrapper.classList.add('img-preview-wrapper');
-
-                const imgPreview = document.createElement('img');
-                imgPreview.classList.add('img-preview');
-                if (file.type.startsWith('image/')) {
-                    imgPreview.src = event.target.result;
-                } else {
-                    imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
-                }
-
-                const closeButton = document.createElement('button');
-                closeButton.classList.add('close-button');
-                closeButton.innerHTML = '×';
-                closeButton.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    imgContainer.removeChild(imgPreviewWrapper);
-                    if (imgContainer.children.length === 0) {
-                        uploadText.style.display = 'block';
-                        fileButton.style.display = 'block';
-                        fileInput.value = '';
-                    }
-                });
-
-                const fileName = document.createElement('p');
-                fileName.classList.add('file-name');
-                fileName.textContent = file.name;
-
-                imgPreviewWrapper.appendChild(imgPreview);
-                imgPreviewWrapper.appendChild(closeButton);
-                imgPreviewWrapper.appendChild(fileName);
-                imgContainer.appendChild(imgPreviewWrapper);
-            }
-            reader.readAsDataURL(file);
+    if(fileButton != null){
+        fileButton.addEventListener('click', () => {
+            fileInput.click();
         });
-    });
+    }
+    if(fileInput != null){
+        fileInput.addEventListener('change', function() {
+            imgContainer.innerHTML = ''; // Clear previous previews
+            const files = this.files;
+            if (files.length > 0) {
+                uploadText.style.display = 'none';
+                fileButton.style.display = 'none';
+            } else {
+                uploadText.style.display = 'block';
+                fileButton.style.display = 'block';
+            }
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imgPreviewWrapper = document.createElement('div');
+                    imgPreviewWrapper.classList.add('img-preview-wrapper');
+
+                    const imgPreview = document.createElement('img');
+                    imgPreview.classList.add('img-preview');
+                    if (file.type.startsWith('image/')) {
+                        imgPreview.src = event.target.result;
+                    } else {
+                        imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
+                    }
+
+                    const closeButton = document.createElement('button');
+                    closeButton.classList.add('close-button');
+                    closeButton.innerHTML = '×';
+                    closeButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        imgContainer.removeChild(imgPreviewWrapper);
+                        if (imgContainer.children.length === 0) {
+                            uploadText.style.display = 'block';
+                            fileButton.style.display = 'block';
+                            fileInput.value = '';
+                        }
+                    });
+
+                    const fileName = document.createElement('p');
+                    fileName.classList.add('file-name');
+                    fileName.textContent = file.name;
+
+                    imgPreviewWrapper.appendChild(imgPreview);
+                    imgPreviewWrapper.appendChild(closeButton);
+                    imgPreviewWrapper.appendChild(fileName);
+                    imgContainer.appendChild(imgPreviewWrapper);
+                }
+                reader.readAsDataURL(file);
+            });
+        });
+    }
 };
 
 // File 
