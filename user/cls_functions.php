@@ -1202,33 +1202,30 @@ class Client_functions extends common_function {
     function enable_disable(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
             if (isset($_POST['store']) && $_POST['store'] != '') {
-                $shop = $_POST['store'];
-                $where_query = array(["", "shop_name", "=", "$shop"]);
-                $comeback_client = $this->select_result(TABLE_USER_SHOP, '*', $where_query);
                 $btnval = (isset($_POST['btnval']) && $_POST['btnval'] !== '') ? $_POST['btnval'] : '';
-            if($btnval == 1){
-                    $fields = array(
-                        'status' => 1
-                    );
-                    $where_query = array(["", "shop_name", "=", "$shop"]);
-                    $comeback = $this->put_data(TABLE_USER_SHOP, $fields, $where_query);
-                    $response = array(
-                        "result" => 'success',
-                        "message" => 'data update successfully',
-                        "outcome" => $comeback,
-                    );
-                }else{
-                $fields = array(
-                        'status' => 0,
-                    );
-                    $where_query = array(["", "shop_name", "=", "$shop"]);
-                    $comeback = $this->put_data(TABLE_USER_SHOP, $fields, $where_query);
-                    $response = array(
-                        "result" => 'success',
-                        "message" => 'data update successfully',
-                        "outcome" => $comeback,
-                    );
-                }
+                $form_id = (isset($_POST['form_id']) && $_POST['form_id'] !== '') ? $_POST['form_id'] : '';
+                $where_query = array(["", "id", "=", $form_id]);
+                if($btnval == 1){
+                        $fields = array(
+                            'status' => 1
+                        );
+                        $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+                        $response = array(
+                            "result" => 'success',
+                            "message" => 'data update successfully',
+                            "outcome" => $comeback,
+                        );
+                    }else{
+                        $fields = array(
+                            'status' => 0,
+                        );
+                        $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+                        $response = array(
+                            "result" => 'success',
+                            "message" => 'data update successfully',
+                            "outcome" => $comeback,
+                        );
+                    }
             }
             return $response;
     }
@@ -1236,12 +1233,12 @@ class Client_functions extends common_function {
     function btn_enable_disable(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
             if (isset($_POST['store']) && $_POST['store'] != '') {
-                $store= $_POST['store'];
-                $where_query = array(["", "shop_name", "=", "$store"]);
-                $comeback= $this->select_result(TABLE_USER_SHOP, '*', $where_query);
+                $form_id = isset($_POST['form_id']) ?  $_POST['form_id'] : '' ;
+                $where_query = array(["", "id", "=", $form_id ]);
+                $resource_array = array('single' => true);
+                $comeback= $this->select_result(TABLE_FORMS, '*', $where_query,$resource_array);
                 $response = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
             }
-            
             return $response;
     }
     
@@ -1579,7 +1576,7 @@ class Client_functions extends common_function {
                               </div>
                            </div>
                            <div class="form-control">
-                              <button  class="Polaris-Button Polaris-Button--destructive   Polaris-Button--plain Polaris-Button--fullWidth " type="button">
+                              <button  class="Polaris-Button Polaris-Button--destructive   Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                               <span class="Polaris-Button__Content">
                               <span class="Polaris-Button__Text">
                               <span>Remove this element</span>
@@ -1814,7 +1811,7 @@ class Client_functions extends common_function {
                         </div>
                     </div>
                     <div class="form-control">
-                        <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                        <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                     </div>
                     </div>';
                 }else if($elementid == 8){
@@ -2191,7 +2188,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                                 <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                                 </div>
                             </div>
                     </div>';
@@ -2694,7 +2691,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';    
                 }else if($elementid == 10){
@@ -2909,7 +2906,7 @@ class Client_functions extends common_function {
                             </div>
                         </div>
                             <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive  Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                                <button class="Polaris-Button Polaris-Button--destructive  Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                                 <span class="Polaris-Button__Content">
                                 <span class="Polaris-Button__Text">
                                 <span>Remove this element</span>
@@ -3122,7 +3119,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 13){
@@ -3427,7 +3424,7 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             <div class="form-control">
-                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button">
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                                 <span class="Polaris-Button__Content">
                                 <span class="Polaris-Button__Text">
                                 <span>Remove this element</span>
@@ -3560,7 +3557,7 @@ class Client_functions extends common_function {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                                        <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                                     </div>
                                 </div>';
                 }else if($elementid == 14){
@@ -3762,7 +3759,7 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 15){
@@ -4053,7 +4050,7 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 16){
@@ -4124,7 +4121,7 @@ class Client_functions extends common_function {
                                     
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 17){
@@ -4158,7 +4155,7 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 18){
@@ -4307,7 +4304,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
                 }else if($elementid == 19){
@@ -4356,7 +4353,7 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                             </div>
                         </div>
                     </div>';

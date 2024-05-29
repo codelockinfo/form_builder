@@ -58,6 +58,16 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     </div>
                     <div class="item action">
                         <div class="Polaris-ButtonGroup">
+                          
+                            <div class="Polaris-ButtonGroup__Item cls_design_enaDisa">
+                                <button class="Polaris-Button enable-btn" type="button" value="">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text">
+                                            <span></span>
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
                             <div class="Polaris-ButtonGroup__Item">
                                 <button class="Polaris-Button" type="button">
                                     <span class="Polaris-Button__Content">
@@ -1271,7 +1281,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             </div>
                         </div>
                         <div class="form-control">
-                            <button class="Polaris-Button Polaris-Button--destructive" type="button">
+                            <button class="Polaris-Button Polaris-Button--destructive removeElement" type="button">
                                 <span class="Polaris-Button__Content">
                                     <span class="Polaris-Button__Text">Remove this element</span>
                                 </span>
@@ -4385,6 +4395,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
         <script>
     $(document).ready(function() {
         get_selected_elements(<?php echo $form_id; ?>);
+        seeting_enable_disable(<?php echo $form_id; ?>);
         // getFormTitle(<?php echo $form_id; ?>);
     });
 

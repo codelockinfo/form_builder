@@ -157,7 +157,7 @@ var BACKTO = 0;
             });
         });
 
-        function btn_enable_disable(){
+        function btn_enable_disable(form_id){
         $.ajax({
                 url: "ajax_call.php",
                 type: "post",
@@ -168,33 +168,30 @@ var BACKTO = 0;
                         if (comeback['outcome']['data']['status'] != undefined && comeback['outcome']['data']['status'] == 0) {
                             $("#register_frm_btn").attr('disabled',true);
                             $(".app-setting-msg").show();
-                            
                         } else {
                             $("#register_frm_btn").attr('disabled',false);
-                            
                         }
                     }
             });
         }
 
-        function seeting_enable_disable(store){
+        function seeting_enable_disable(form_id){
         $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
-                data: {'routine_name': 'btn_enable_disable' ,'store' : store},
+                data: {'routine_name': 'btn_enable_disable' ,'store' : store, 'form_id':form_id},
                 success: function (comeback) {
-        //            console.log(comeback['outcome']['data']['status']);
+                    console.log("---------------");
+                   console.log(comeback['outcome']['data']['status']);
                         if (comeback['outcome']['data']['status'] != undefined && comeback['outcome']['data']['status'] == 0) {
                             $(".app-setting-msg").show();
                             $(".enable-btn").html("Enable");
-                            $(".enable-btn").val(1);
-                            $(".red").html("Disable"); 
+                            $(".enable-btn").addClass("Polaris-Button--primary");
                         } else {
                             $(".app-setting-msg").hide();
                             $(".enable-btn").html("Disable");
-                            $(".enable-btn").val(0);
-                            $(".red").html("Enable"); 
+                            $(".enable-btn").addClass("Polaris-Button--destructive");
                         }
                     }
             });
@@ -228,33 +225,30 @@ var BACKTO = 0;
         
         $(document).on("click", ".enable-btn", function(event) {
             event.preventDefault();
-        //       $(".enable-btn").toggle();
+                            
+            var $form_id  = $('.form_id').val();
             var btnval = $(this).val();
-            // console.log(btnval);
             if (btnval == 0) {
-                $(".app-setting-msg").show();
-                $(".red").html("Disable");
                 $(".enable-btn").val(1);
                 $(".enable-btn").html("Enable");
+                $('.enable-btn').removeClass('Polaris-Button--destructive');
+                $('.enable-btn').addClass('Polaris-Button--primary');
             } else {
-                $(".app-setting-msg").hide();
-                $(".red").html("Enable");
                 $(".enable-btn").val(0);
                 $(".enable-btn").html("Disable");
+                $('.enable-btn').removeClass('Polaris-Button--primary');
+                $('.enable-btn').addClass('Polaris-Button--destructive');
             }
                 $.ajax({
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
-                    data: {'store': store,'routine_name' : 'enable_disable','btnval':btnval}, 
-                    beforeSend: function () {
-                        loading_show('.save_loader_show');
-                    },
+                    data: {'store': store,'routine_name' : 'enable_disable','btnval':btnval,'form_id': $form_id}, 
+                    
                     success: function (response) {
                         if (response['code'] != undefined && response['code'] == '403') {
                             redirect403();
                         }
-                        loading_hide('.save_loader_show', 'Save');
                     }
                 });
         });
@@ -563,7 +557,7 @@ var BACKTO = 0;
            
         });
         
-        $(document).on("click", ".Polaris-Button--destructive", function(event) {
+        $(document).on("click", ".removeElement", function(event) {
             console.log("delete form element  .....");
             var thisObj = $(this);
             var formid=$(".form_id").val();
