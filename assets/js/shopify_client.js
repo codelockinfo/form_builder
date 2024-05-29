@@ -1205,7 +1205,9 @@ var BACKTO = 0;
         $(document).on("click", ".saveForm", function(event) {
             console.log("savform .....");
             var form_data = $(".add_elementdata")[0]; 
+            var val = $(".selectFile").select2("val");
             var form_data = new FormData(form_data);
+            form_data.append("allowextention", val);
             form_data.append('store',store); 
             form_data.append('routine_name','saveform');  
             $.ajax({
@@ -1319,3 +1321,91 @@ var BACKTO = 0;
                 }
             })
         });
+        // File 
+            window.onload = (event) => {
+                const fileButton = document.getElementById('fileButton');
+                const fileInput = document.getElementById('fileimage');
+                const imgContainer = document.getElementById('imgContainer');
+                const uploadText = document.getElementById('uploadText');
+                if(fileButton != null){
+                    fileButton.addEventListener('click', () => {
+                        fileInput.click();
+                    });
+                }
+                if(fileInput != null){
+                    fileInput.addEventListener('change', function() {
+                        imgContainer.innerHTML = ''; // Clear previous previews
+                        const files = this.files;
+                       
+                        Array.from(files).forEach(file => {
+                           var $form_id  = $('.form_id').val();
+                            console.log($form_id);
+                            var allow_extentions = '';
+                            $.ajax({
+                                url: "ajax_call.php",
+                                type: "post",
+                                dataType: "json",
+                                data: {'routine_name': 'get_fileallowextention', store: store,"form_id":$form_id },
+                                success: function (comeback) {
+                                    var comeback = JSON.parse(comeback);
+                                    if (comeback['data'] != undefined && comeback['data'] != '') {
+                                        allow_extentions = comeback['data'][4];
+                                        const extensionArray = allow_extentions.split(',').map(ext => `image/${ext}`);
+                                        if (extensionArray.includes(file.type)) {
+                                            if (files.length > 0) {
+                                                uploadText.style.display = 'none';
+                                                fileButton.style.display = 'none';
+                                            } else {
+                                                uploadText.style.display = 'block';
+                                                fileButton.style.display = 'block';
+                                            }
+                                            const reader = new FileReader();
+                                            reader.onload = function(event) {
+                                                const imgPreviewWrapper = document.createElement('div');
+                                                imgPreviewWrapper.classList.add('img-preview-wrapper');
+            
+                                                const imgPreview = document.createElement('img');
+                                                imgPreview.classList.add('img-preview');
+                                                if (file.type.startsWith('image/')) {
+                                                    imgPreview.src = event.target.result;
+                                                } else {
+                                                    imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
+                                                }
+            
+                                                const closeButton = document.createElement('button');
+                                                closeButton.classList.add('close-button');
+                                                closeButton.innerHTML = '×';
+                                                closeButton.addEventListener('click', function(event) {
+                                                    event.preventDefault();
+                                                    imgContainer.removeChild(imgPreviewWrapper);
+                                                    if (imgContainer.children.length === 0) {
+                                                        uploadText.style.display = 'block';
+                                                        fileButton.style.display = 'block';
+                                                        fileInput.value = '';
+                                                    }
+                                                });
+            
+                                                const fileName = document.createElement('p');
+                                                fileName.classList.add('file-name');
+                                                fileName.textContent = file.name;
+            
+                                                imgPreviewWrapper.appendChild(imgPreview);
+                                                imgPreviewWrapper.appendChild(closeButton);
+                                                imgPreviewWrapper.appendChild(fileName);
+                                                imgContainer.appendChild(imgPreviewWrapper);
+                                            }
+                                            reader.readAsDataURL(file);
+                                        }else{
+                                            alert("File Not supported");
+                                        }
+                                        
+                                    }
+                                }
+                            });
+                           
+                        });
+                    });
+                }
+            };
+
+        // File 

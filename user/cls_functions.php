@@ -3936,6 +3936,10 @@ class Client_functions extends common_function {
                         $datavalue3 = "active";
                     }
                     $allowmultiple_checked = (isset($formData[3]) && $formData[3] == '1') ? "checked" : '';
+                    $allowextention = (isset($formData[4]) && $formData[4] != '') ? explode(',',$formData[4]) : '';
+                    $extentions = [
+                        'png', 'svg', 'gif', 'jpeg', 'jpg', 'pdf', 'webp',
+                    ];
                     $hidelabel_checked = (isset($formData[6]) && $formData[6] == '1') ? "checked" : '';
                     $keepposition_label_hidden = (isset($hidelabel_checked) && $hidelabel_checked !== '') ? "" : 'hidden';
                     $keepposition_label_checked = (isset($formData[7]) && $formData[7] == '1') ? "checked" : '';
@@ -4022,15 +4026,12 @@ class Client_functions extends common_function {
                                 <div class="uikit select multiple" tabindex="0">
                                 <label class="label">Allowed extensions</label>
                                 <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention[]">
-                                    <option></option>
-                                    <option value="pdf">pdf</option>
-                                    <option value="jpg">jpg</option>
-                                    <option value="jpeg">jpeg</option>
-                                    <option value="gif">gif</option>
-                                    <option value="svg">svg</option>
-                                    <option value="png">png</option>
-                                    <option value="webp">webp</option>
-                                </select>
+                                    <option></option>';
+                                    foreach ($extentions as $extention) {
+                                        $selected = in_array(trim($extention), array_map('trim', $allowextention), true) ? ' selected' : '';
+                                        $comeback .= '<option value="' . $extention . '"' . $selected . '>' . $extention . '</option>';
+                                    }
+                        $comeback .=  '</select>
                                 </div>
                             </div>
                             <div class="form-control">
@@ -5813,7 +5814,9 @@ class Client_functions extends common_function {
             $limitdatepicker = isset($newData['limitdatepicker']) ?  $newData['limitdatepicker'] : '0' ;
             $buttontext = isset($newData['buttontext']) ?  $newData['buttontext'] : '' ;
             $allowmultiple = isset($newData['allowmultiple']) ?  $newData['allowmultiple'] : '0' ;
-            $allowextention = isset($newData['allowextention[]']) ?  $newData['allowextention[]'] : '' ;
+            // $allowextention = isset($newData['allowextention[]']) ?  $newData['allowextention[]'] : '' ;
+            $allowextention = isset($newData['allowextention']) ?  $newData['allowextention'] : '' ;
+           
             $checkboxoption = isset($newData['checkboxoption']) ?  $newData['checkboxoption'] : '' ;
             $radiooption = isset($newData['radiooption']) ?  $newData['radiooption'] : '' ;
             $dropoption = isset($newData['dropoption']) ?  $newData['dropoption'] : '' ;
@@ -5997,5 +6000,20 @@ class Client_functions extends common_function {
         return $response;
     }
     // For FRONTEND
+    function get_fileallowextention(){
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
 
+            $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
+            $where_query = array(["", "form_id", "=", $form_id],["AND", "element_id", "=", "10"]);
+            $comeback_client = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
+            $comebackdata = (isset($comeback_client['data'][0]) && $comeback_client['data'][0] !== '') ? $comeback_client['data'][0] : '';
+            $element_data = (isset($comebackdata['element_data']) && $comebackdata['element_data'] !== '') ? $comebackdata['element_data'] : '';
+            if(!empty($element_data)){
+                $response_data = array('result' => 'success', 'data' => unserialize($element_data));
+            }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
 }
