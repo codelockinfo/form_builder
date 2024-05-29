@@ -2128,7 +2128,7 @@ class Client_functions extends common_function {
                                                 <label for="false-select-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Dropdown">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span> </label>
                                                 <div class="globo-form-input">
                                                     <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
-                                                    <option value="" >'.$unserialize_elementdata[1].'</option>';
+                                                    <option value=""  disabled="disabled" selected="selected">'.$unserialize_elementdata[1].'</option>';
                                                     $dropdown_options = explode(",", $unserialize_elementdata[2]);
                                                     foreach ($dropdown_options as $index => $option) {
                                                         $option = trim($option);
@@ -3474,7 +3474,7 @@ class Client_functions extends common_function {
                                         </div>
                                         </div>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <div class="textfield-wrapper">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
@@ -3589,18 +3589,18 @@ class Client_functions extends common_function {
                                         <span class="Polaris-Choice__Label">Show required note if hide label?</span>
                                         </label>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <input name="'.$elementtitle.''.$form_data_id.'__formate" type="hidden" value="2" class="input_formate">
                                         <div class="chooseInput">
                                         <div class="label">Format</div>
                                         <div class="chooseItems">
-                                            <div class="chooseItem '.$formatedatavalue1.'" data-value="1">Date &amp; time</div>
-                                            <div class="chooseItem '.$formatedatavalue2.'" data-value="2">Date</div>
-                                            <div class="chooseItem '.$formatedatavalue3.'" data-value="3">Time</div>
+                                            <div class="chooseItem-datetime '.$formatedatavalue1.'" data-value="1">Date &amp; time</div>
+                                            <div class="chooseItem-datetime '.$formatedatavalue2.'" data-value="2">Date</div>
+                                            <div class="chooseItem-datetime '.$formatedatavalue3.'" data-value="3">Time</div>
                                         </div>
                                         </div>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <label class="Polaris-Choice" for="PolarisCheckbox16">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">
@@ -3698,7 +3698,7 @@ class Client_functions extends common_function {
                                         </div>
                                         </div>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <div class="">
                                         <div class="Polaris-Labelled__LabelWrapper">
                                             <div class="Polaris-Label"><label id="PolarisSelect8Label" for="PolarisSelect8" class="Polaris-Label__Text">Date format</label></div>
@@ -3731,7 +3731,7 @@ class Client_functions extends common_function {
                                         </div>
                                         </div>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <div class="">
                                         <div class="Polaris-Labelled__LabelWrapper">
                                             <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Time format</label></div>
@@ -3756,7 +3756,7 @@ class Client_functions extends common_function {
                                         </div>
                                         </div>
                                     </div>
-                                    <div class="form-control">
+                                    <div class="form-control hidden">
                                         <label class="Polaris-Choice" for="PolarisCheckbox17">
                                         <span class="Polaris-Choice__Control">
                                             <span class="Polaris-Checkbox">

@@ -338,6 +338,16 @@ $(document).on("click",".chooseItems .chooseItem-noperline",function(){
     $("."+containerClass).find(".input_no-perline").val($dataValue);
     $(".block-container").find("."+containerClass+" li").removeClass("option-1-column option-2-column option-3-column option-4-column option-5-column").addClass("option-"+$dataValue+"-column");
 });
+$(document).on("click",".chooseItems .chooseItem-datetime",function(){
+    $('.chooseItem-datetime').removeClass("active");
+    $(this).addClass("active");
+    $dataValue = $(this).attr("data-value"); 
+    $mainContainer = $(this).closest(".container").attr("class");
+    var classArray = $mainContainer.split(" ");
+    var containerClass = classArray.find(className => className.startsWith("container_"));
+    $("."+containerClass).find(".input_formate").val($dataValue);
+    // $(".block-container").find("."+containerClass+" li").removeClass("option-1-column option-2-column option-3-column option-4-column option-5-column").addClass("option-"+$dataValue+"-column");
+});
 $(document).on("click",".chooseItems .chooseItem ",function(){
     $('.chooseItem').removeClass("active");
     $(this).addClass("active");

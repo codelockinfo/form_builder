@@ -386,6 +386,17 @@ display: none;
  .chooseItem-noperline.active{
     background: #eaeaea;
  }
+ .chooseItem-datetime{
+    border-right: 1px solid #d3dbe2;
+    cursor: pointer;
+    flex: 33.33%;
+    font-size: 12px;
+    padding: 8px;
+    text-align: center;
+ }
+ .chooseItem-datetime.active{
+    background: #eaeaea;
+ }
  .builder-item-wrapper .subheading{
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
