@@ -51,66 +51,32 @@ $(document).ready(function(){
                 $(".conpass").addClass("hidden");
             }
         });
-
-        // $(document).on("change",".pass_required" ,function(){
-        //     if(this.checked) {
-        //         $(".Requiredpass").removeClass("hidden");
-        //     }
-        //     else
-        //     {   
-        //         $(".Requiredpass").addClass("hidden");
-        //     }
-        // });
-
-        // $(document).on("change",".passLabel" ,function(){
-        //     if(this.checked) {
-        //         $(".passhideLabel").removeClass("hidden");
-        //     }
-        //     else
-        //     {   
-        //         $(".passhideLabel").addClass("hidden");
-        //     }
-        // });
-
-        // $(document).on("change",".passLimitcar" ,function(){
-        //     $mainContainer = $(this).closest(".container").find(".limitCaracters");
-
-        //     if(this.checked) {
-
-        //         $mainContainer.removeClass("hidden");
-        //     }
-        //     else
-        //     {   
-        //         $mainContainer.addClass("hidden");
-        //     }
-        // });
-
         $('.selectval').hide();
         //show the first tab content
         $('#embedCode').show();
 
-        $('#PolarisSelect18').change(function(){
-            $('.selectval').hide();
-            $('#' + $(this).val()).show();
-            if($('#PolarisSelect18').val() == "lightbox"){
-                $("#lightbox2").removeClass("hidden");
-            }else{
-                $("#lightbox2").addClass("hidden");
-            }
-        });
+        // $('#PolarisSelect18').change(function(){
+        //     $('.selectval').hide();
+        //     $('#' + $(this).val()).show();
+        //     if($('#PolarisSelect18').val() == "lightbox"){
+        //         $("#lightbox2").removeClass("hidden");
+        //     }else{
+        //         $("#lightbox2").addClass("hidden");
+        //     }
+        // });
 
-        $("#PolarisCheckbox27 ").change(function() {
-            if(this.checked) {
-                $(".shortcode").removeClass("hidden");
-            }else{
-                $(".shortcode").addClass("hidden");
-            }
-        });
+        // $("#PolarisCheckbox27 ").change(function() {
+        //     if(this.checked) {
+        //         $(".shortcode").removeClass("hidden");
+        //     }else{
+        //         $(".shortcode").addClass("hidden");
+        //     }
+        // });
 
-        $('#PolarisSelect21').change(function(){
-            $('.selectval').hide();
-            $('#' + $(this).val()).show();
-        });
+        // $('#PolarisSelect21').change(function(){
+        //     $('.selectval').hide();
+        //     $('#' + $(this).val()).show();
+        // });
 
         var input = $('.quentity');
         $('.plus').on('click', function () {
@@ -139,10 +105,12 @@ $(document).ready(function(){
             var inputValue = input.val();
             input.val(parseInt(inputValue) + 1);
         });
+
         $('.weekminus').on('click', function () {
             var inputValue = input.val();
             input.val(parseInt(inputValue) - 1); 
         });
+
         $('.owl-carousel').owlCarousel({
             items:1,
             loop:false,
@@ -152,72 +120,20 @@ $(document).ready(function(){
         })
 
         $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
-            // console.log("HRRRRR");
             var slideTo = $(this).data("owl");
-            // console.log(slideTo);
             $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
         });
     
         $(document).on("click",".backBtn",function(){
             $('.owl-carousel').trigger('to.owl.carousel',  [0, 40, true]);
         });
-        $('.editor').each(function(index,item){
-            // console.log(index);
-            ClassicEditor.create(item)
-            .catch( error => {
-                console.error( error );
-        });
-        
-    });
-        // Reset button  in footer element
-        // $("#PolarisCheckbox6 ").change(function() {	
-        //     if(this.checked) {	
-        //         $(".reset").removeClass("hidden");	
-        //         $(".reset.classic-button").removeClass("hidden");	
-        //     } 	
-        //     else{	
-        //         $(".reset").addClass("hidden");
-        //         $(".reset.classic-button").addClass("hidden");		
-        //     }	        
-        // });
 
-        // column width changes 
-        
-        // $(document).on('click','.chooseItems .chooseItem ', function(){
-        //     $('.chooseItems .chooseItem ').removeClass('active');
-        //     $(this).addClass('active');
-        //     var content = $('.chooseItem.active').text();
-        //     var additionalClassName = "choose" + content;
-        //     $(".form_content").find(".contact-form  .g-container .code-form-control").addClass(additionalClassName);
-        // });
-
-        // Width of footer button in footer element
-        // $("#PolarisCheckbox7 ").change(function() {	
-        //     if(this.checked) {	
-        //         $(".alignment").addClass("hidden");	
-        //         $(".classic-button").addClass("w100");	
-        //     } 	
-        //     else{	
-        //         $(".alignment").removeClass("hidden");
-        //         $(".classic-button").removeClass("w100");	
-        //     }		
-        // });
-
-    // footer submit button alignment
-        // $(".chooseItem").click(function(event){
-        //     event.preventDefault();
-        //     $(".active").removeClass("active");
-        //     $(this).addClass("active");
-        //     $(".footer").removeClass("btnRight btnLeft btnCenter");
-        //     var buttonClass = $(this).text();
-        //     $(".footer").addClass("btn"+buttonClass);
-        // });
-
-    //footer submit button text change
+        //footer submit button text change
         $(document).on('keydown, keyup','#PolarisTextField17', function () {
             var addText = $(this).val();
             $(' .submit.classic-button').html(addText);
-        }); 
+        });
+
         $(document).on("change "," #PolarisCheckbox13 " ,function() {	
             if(this.checked) {	
                 $(".hideLabel").removeClass("hidden");	
@@ -225,6 +141,7 @@ $(document).ready(function(){
                 $(".hideLabel").addClass("hidden");	
             }	    
         });
+
         $(document).on("change "," #PolarisCheckbox15 " ,function() {	
             if(this.checked) {	
                 $(".required_Content").removeClass("hidden");	
@@ -241,22 +158,21 @@ $(document).ready(function(){
         $(document).click(".close_icon" , function(){
             $(this).find(".pickerList").removeClass("show");
         });
-        // Dropdown hide show checkbox
+
         $(document).on("change "," #PolarisCheckbox3 " ,function() {	
             if(this.checked) {	
                 $(".hideLabel").removeClass("hidden");	
             }else{	
                 $(".hideLabel").addClass("hidden");	
-            }	
-                
+            }	  
         });
+
         $(document).on("change "," #PolarisCheckbox5 " ,function() {	
             if(this.checked) {	
                 $(".hideRequired").removeClass("hidden");	
             }else{	
                 $(".hideRequired").addClass("hidden");	
-            }	
-                
+            }	  
         });
        
         $(document).on("click",".Polaris-Tabs__Panel .list-item",function(){
@@ -286,6 +202,7 @@ $(document).ready(function(){
             });
             $('#optionSelect').html(optionHtml);
     	});
+
         $(document).on('click', '.btn_add11', function(){
             var button_id = $(this).attr("id"); 
             $(this).closest(".addskildy").remove();
@@ -295,17 +212,7 @@ $(document).ready(function(){
 // today
 
 $(document).ready(function () {
-    // $(".code-form-control").each(function (index) {           
-    //     $(this).css("display", "none");
-    // });
-    // var formId = $(".element_start").find(".owl-item #tab-1 .tabContent .elementroot .selected_element_set").html();
-    // console.log(formId); 
-    // var newId1 = (formId - 1);
-    // console.log(newId1); 
-    // var formId1 = "element" + newId;
-    // console.log(formId1);
-    // var elementWithDataId = $(".preview-box").find(".g-container .code-form-control[data-id='" + formId1 + "']");
-    // elementWithDataId.css("display", "block");     
+ 
     $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
         var elementId = $(this).data("elementid");
         console.log(elementId); 

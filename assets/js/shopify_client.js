@@ -79,97 +79,6 @@ var BACKTO = 0;
         function redirect403() {
             window.location = "https://www.shopify.com/admin/apps";
         }
-        var loadShopifyAJAX= null;
-        var js_loadShopifyDATA = function js_loadShopifyDATA(listingID, pageno) {
-            if (loadShopifyAJAX && loadShopifyAJAX.readyState != 4) {
-                loadShopifyAJAX.abort();
-            }
-            var searchKEY = $("#" + listingID + "SearchKeyword").val();
-            var searchKEYLEN = (searchKEY != undefined) ? searchKEY.length : 0;
-            if (searchKEYLEN == 0 || searchKEYLEN >= 3) {
-                var shopifyApi = $('#' + listingID).attr('data-apiName');  
-                var limit = $("#" + listingID + "limit").val();
-                var from = $('#' + listingID).data('from');
-                var routineNAME = 'take_' + from + '_shopify_data';
-                var fields = $('#' + listingID).attr('data-fields');
-                fields = (fields != undefined) ? fields : '*';
-                var searchFields = $('#' + listingID).attr('data-search');
-                pageno = (pageno != undefined) ? pageno : 1;
-                loadShopifyAJAX = $.ajax({  
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    data: {
-                        routine_name: routineNAME,
-                        shopify_api: shopifyApi,
-                        fields: fields,
-                        store: store,
-                        limit: limit,
-                        pageno: pageno,
-                        search_key: searchKEY,
-                        listing_id: listingID,
-                        search_fields: searchFields,
-                        pagination_method: js_loadShopifyDATA.name
-                    }, 
-                    beforeSend: function () {
-                        var listingTH = $('#' + listingID + ' thead tr th').length;
-                        table_loader("table#" + listingID + " tbody", listingTH);
-                    },  
-                    success:function(comeback){
-                        if (comeback['code'] != undefined && comeback['code'] == '403') {
-                            redirect403();
-                        } else if (comeback['outcome'] == 'true') {
-                            $('table#' + listingID + ' tbody').html(comeback['html']);
-                            $('#' + listingID + 'Pagination').html(comeback['pagination_html']);
-                        } else {
-                        }
-                    }
-                });
-            }
-        }
-        function OrderDetails(order_id,store){
-            var store_id = store_id;
-            var order_id = order_id;
-            var shopifyApi = "orders";
-            var routineNAME = "order_detail";
-        $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {routine_name: routineNAME,shopify_api :shopifyApi , order_id : order_id , store : store},
-                success: function ($return_arary) {
-                        if ($return_arary['code'] != undefined && $return_arary['code'] == '403') {
-                            redirect403();
-                        } else if ($return_arary['outcome'] == 'true') {
-                            $('.block2').append($return_arary["html"]["table"]);
-                            $('.block1').append($return_arary["html"]["product"]);
-                            $('.block3').append($return_arary["html"]["customer"]);
-                        } else {
-                        }
-                    }
-            });
-        }
-        function replaceTableStatus(tableName, primaryKeyId, status, thisObj) {
-            var class_name = 'listingTableLoader', button_name = '';
-            $.ajax({
-                url: "responce.php",
-                type: "post",
-                dataType: "json",
-                data: {method_name: "replace_table_status", shop: shop, table_name: tableName, primary_key_id: primaryKeyId, status: status},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        flashNotice(response['message']);
-                        $(thisObj).attr('onclick', response['onclickfn'])
-                                .find('.Polaris-custom-icon.Polaris-Icon.Polaris-Icon--hasBackdrop').html(response['svg_icon'])
-                                .children('span').attr('data-hover', response['data_hover']);
-                    } else {
-                        flashNotice(response['message']);
-                    }
-                },
-                error: function () {
-                }
-            });
-        }
         function removeFromTable(tableName,ID,id,pageno, tableId,api_name ,is_delete) {
             var is_delete = (is_delete == undefined) ? 'Record' : is_delete;
             var Ajaxdelete = function Ajaxdelete() {
@@ -238,176 +147,16 @@ var BACKTO = 0;
             }
         }
         $(document).ready(function () {
-            $('#rating').rating({
-                min: 0,
-                max: 5,
-                step: 1,
-                size: 'xs',
-                showClear: false
-            });
-            $(".star").hover(function () {
-                $(".rate-our-app").show();
-                $(".dismiss-button-rating").hide();
-            });
-            $('table[data-listing="true"]').each(function () {
-                var tableId = $(this).attr('id');
-                js_loadShopifyDATA(tableId);
-            });
-            var flashmessage = getCookie("flash_message");
-            var flashClass = getCookie("flash_class");
-            if (flashmessage != '') {
-                flashClass = (flashClass == null || flashClass == undefined) ? '' : flashClass;
-                setCookie('flash_message', '', -2);
-                flashNotice(flashmessage, flashClass);
-            }
-            $(".spectrumColor").spectrum({
-                showButtons: false
-            });
-            $(".spectrumColor").on('move.spectrum', function (e, color) {
-                var id = $(this).data('id');
-                var hexVal = color.toHexString();
-                $("[data-id='" + id + "']").val(hexVal);
-            });
-            $(document).on("submit", "#addClientstore_settingFrm", function (e) {
-                e.preventDefault();
-                var frmData = $(this).serialize();
-                frmData += '&' + $.param({"method_name": 'set_store_settings', 'shop': shop});
-                $.ajax({
-                    url: "responce.php",
-                    type: "post",
-                    dataType: "json",
-                    data: frmData,
-                    beforeSend: function () {
-                        loading_show('save_loader_show');
-                    },
-                    success: function (response) {
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } else if (response['result'] == 'success') {
-                            $("#errorsmsgBlock").hide();
-                            flashNotice(response['message']);
-                        } else if (response['msg_contented'] != undefined && response['msg_manage'] != undefined) {
-                            $("#errorBlockInfo").html(response['msg_contented']);
-                            $("#errorBlockManage").html(response['msg_manage']);
-                            $("#errorsmsgBlock").show();
-                            $("html, body").animate({scrollTop: 0}, "slow");
-                        } else {
-                            flashNotice(response['message']);
-                        }
-                        loading_hide('save_loader_show', 'Save');
-                    }
-                });
-            });
-            $(document).on("submit", "#imageExmapleFrm", function (e) {
-                e.preventDefault();
-                var frmData = new FormData($(this)[0]);
-                frmData.append('shop', shop);
-                frmData.append('method_name', 'image_file_example');
-                $.ajax({
-                    url: "responce.php",
-                    type: "post",
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    data: frmData,
-                    beforeSend: function () {
-                        loading_show('save_loader_show');
-                    },
-                    success: function (response) {
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } else if (response['result'] == 'success') {
-                            $("#errorsmsgBlock").hide();
-                            flashNotice(response['message']);
-                        } else if (response['msg_contented'] != undefined && response['msg_manage'] != undefined) {
-                            $("#errorBlockInfo").html(response['msg_contented']);
-                            $("#errorBlockManage").html(response['msg_manage']);
-                            $("#errorsmsgBlock").show();
-                            $("html, body").animate({scrollTop: 0}, "slow");
-                        } else {
-                            flashNotice(response['message']);
-                        }
-                        loading_hide('save_loader_show', 'Save');
-                    }
-                });
-            });
-            $(document).on("click", ".logout", function(event) {
-                event.preventDefault();
-                    logout();
-            });
-            function logout()
-            {
-                $.ajax({
-                    url:"ajax_call.php",
-                    type:'POST',
-                    data:{
-                        action:'logout'
-                    },
-                    success:function(response)
-                    {
-                        if(response.trim() == 'success')
-                        {
-                            window.location.href = 'index.php';
-                        }
-                    }
+            setTimeout(function () {
+                var count = $(".set_all_form .Polaris-ResourceList__HeaderWrapper").length;
+                $('.dataAdded').append('Showing '+count+'  form');
+            }, 100);
 
-                });
-            }
-            $(document).on("submit", "#register_frm", function (e) {
-                    e.preventDefault(); 
-                    var frmData = new FormData($(this)[0]);
-                    frmData.append('store',store); 
-                    frmData.append('routine_name','allbutton_details');  
-                    $.ajax({
-                        url: "ajax_call.php",
-                        type: "post",
-                        dataType: "json",
-                        contentType: false,
-                        processData: false,
-                        data: frmData, 
-                        beforeSend: function () { 
-                            loading_show('.save_loader_show');
-                        
-                        },
-                        success: function (response) {
-                            if (response['code'] != undefined && response['code'] == '403') {
-                                redirect403();
-                            } 
-                            else{
-                                if(response['for_data'] == 'blog'){
-                                window.location.href = 'blog_post.php?store='+store;
-                                }else if(response['for_data']== 'page'){
-                                window.location.href = 'pages.php?store='+store;
-                                }else if(response['for_data']== 'collections'){                        
-                                window.location.href = 'collection.php?store='+store;
-                                }else{
-                                window.location.href = 'products.php?store='+store;
-                                }
-                                loading_hide('.save_loader_show','save');
-                            }
-                        }
-                    });
+            $('.myeditor').each(function(index,item){
+                CKEDITOR.replace(item);
             });
         });
-        function get_textarea_value(routine_name,store,id,for_data){
-        $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {'routine_name': routine_name , store: store, 'id'  : id,'for_data' : for_data},
-                success: function (comeback) {
-                        if (comeback['code'] != undefined && comeback['code'] == '403') {
-                            redirect403();
-                        }else if (comeback['outcome'] == 'true') {
-                                $('#title').val(comeback['data']['title']);
-                                $('#ImagePreview').attr("src",comeback['data']['image']);
-                                $('.textdetails').val(comeback['data']['description']);
-                        } else {
-                        }
-                        loading_hide('.save_loader_show','save');
-                    }
-            });
-        }
+
         function btn_enable_disable(){
         $.ajax({
                 url: "ajax_call.php",
@@ -427,6 +176,7 @@ var BACKTO = 0;
                     }
             });
         }
+
         function seeting_enable_disable(store){
         $.ajax({
                 url: "ajax_call.php",
@@ -449,6 +199,7 @@ var BACKTO = 0;
                     }
             });
         }
+
         function get_api_data(routineName,shopify_api){
             var routineName = routineName;
             var shopify_api = shopify_api;
@@ -474,242 +225,7 @@ var BACKTO = 0;
                     }
             })
         }
-        $(document).on("submit", "#addblog_frm", function (e) {
-                e.preventDefault();       
-                var form_data = $("#addblog_frm")[0];
-                var form_data = new FormData(form_data);
-                form_data.append('images',$("#ImagePreview").attr("src"));
-                form_data.append('store',store); 
-                form_data.append('routine_name','addblog');      
-                $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    data: form_data, 
-                    beforeSend: function () {
-                        loading_show('.save_loader_show');
-                    },
-                    success: function (response) {
-                        var response = JSON.parse(response);
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } 
-                        else if(response['data'] == "fail"){
-                            response["msg"]["title"] !== undefined ? $(".title").html (response["msg"]["title"]) : $(".title").html("");
-                        }else{
-                            $(".title").html("");
-                        window.location.href = "blog_post.php?store="+ store;
-                        }
-                        loading_hide('.save_loader_show','Save');
-                    }
-                });
-        });
-        $(document).on("submit", "#addproduct_frm", function (e) {
-                e.preventDefault();       
-                var form_data = $("#addproduct_frm")[0];
-                var form_data = new FormData(form_data);
-                
-                form_data.append('images',$("#ImagePreview").attr("src"));
-                form_data.append('store',store); 
-                form_data.append('routine_name','addproduct');      
-                $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    data: form_data, 
-                    beforeSend: function () {
-                        loading_show('.save_loader_show');
-                    },
-                    success: function (response) {
-                        var response = JSON.parse(response);
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } 
-                        else if(response['data'] == "fail"){
-                            response["msg"]["title"] !== undefined ? $(".title").html (response["msg"]["title"]) : $(".title").html("");
-                        }else{
-                            $(".title").html("");
-                        window.location.href = "products.php?store="+ store;
-                        }
-                        loading_hide('.save_loader_show', 'Save');
-                    }
-                });
-        });
-        $(document).on("submit", "#addpages_frm", function (e) {
-                e.preventDefault();       
-                var form_data = $("#addpages_frm")[0];
-                var form_data = new FormData(form_data);
-                form_data.append('store',store); 
-                form_data.append('routine_name','addpages');      
-                $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    data: form_data, 
-                    beforeSend: function () {
-                        loading_show('.save_loader_show');
-                    },
-                    success: function (response) {
-                        var response = JSON.parse(response);
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } 
-                        else if(response['data'] == "fail"){
-                            response["msg"]["title"] !== undefined ? $(".title").html (response["msg"]["title"]) : $(".title").html("");
-                        }else{
-                            $(".title").html("");
-                        window.location.href = "pages.php?store="+ store;
-                        }
-                        loading_hide('.save_loader_show', 'Save');
-                    }
-                });
-        });
-        $(document).on("submit", "#addcollection_frm", function (e) {
-                e.preventDefault();       
-                var form_data = $("#addcollection_frm")[0];
-                var form_data = new FormData(form_data);
-                form_data.append('images',$("#ImagePreview").attr("src"));
-                form_data.append('store',store); 
-                form_data.append('routine_name','addcollections');      
-                $.ajax({
-                    url: "ajax_call.php",
-                    type: "post",
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    data: form_data, 
-                    beforeSend: function () {
-                        loading_show('.save_loader_show');
-                    },
-                    success: function (response) {
-                        var response = JSON.parse(response);
-                        if (response['code'] != undefined && response['code'] == '403') {
-                            redirect403();
-                        } 
-                        else if(response['data'] == "fail"){
-                            response["msg"]["title"] !== undefined ? $(".title").html (response["msg"]["title"]) : $(".title").html("");
-                        }else{
-                            $(".title").html("");
-                        window.location.href = "collection.php?store="+ store;
-                        }
-                        loading_hide('.save_loader_show', 'Save');
-                    }
-                });
-        });
-
-        function readURL(input) {
-            $(".imagesBlock").css("display","block");
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#ImagePreview').attr('src', e.target.result);
-                    };
-
-                    reader.readAsDataURL(input.files[0]);
-                }
-        }
-        function preview_image(selector,page)
-        {    $('.imagesBlock').css({display: 'block'});
-            $('.imagesBlockEdit').css({display: 'block'});
-            var product_id = $('#product_id').val();
-            var id = 1, last_id = '', last_cid = '';
-            var img_srcs = [];
-            var img_titles = [];
-                                
-            $.each(selector.files, function (vpb_o_, file)
-            {
-                if (file.name.length > 0)
-                {
-                    if (!file.type.match('image.*')) {
-                        return true;
-                    }
-                    else
-                    {
-                        var reader = new FileReader();
-                        if (page == 'add') {
-                            reader.onload = function (e)
-                            {
-                                $('#multiImagePreview').append(
-                                        '<div class="column">' +
-                                        '<div class="image-box">' +
-                                        '<img class="btn-delete removeAddImage" src="http://cdn1.iconfinder.com/data/icons/diagona/icon/16/101.png">' +
-                                        '<img class="thumbnail multi-image-preview" src="' + e.target.result + '" \
-                                    title="' + escape(file.name) + '" /><input type="hidden" name="selected_imges[]" id="jsImg" value="' + file.name + '"></div></div>');
-                            }
-                        } else {
-                            reader.onload = function (e)
-                            {
-                                img_srcs.push(e.target.result);
-                                img_titles.push(escape(file.name));
-                            }
-                        }
-                        reader.readAsDataURL(file);
-                    }
-                }
-                else {
-                    return false;
-                }
-            });
-            
-                    if(page == 'update'){
-                        setTimeout(function () {
-                            var old_images = $('#oldImages').val();
-                            var frmData = new FormData();
-                            $.each(img_srcs, function (index, value) {
-                                frmData.append('images[]', value);
-                                frmData.append('title[]', img_titles[index]);
-                            });
-                            frmData.append('shop', shop);
-                            frmData.append('product_id', product_id);
-                            frmData.append('image_ids', old_images);
-                            frmData.append('method_name', 'upload_product_images');
-
-                            if (frmData != '') {
-                                $.ajax({
-                                    url: "ajax_responce.php",
-                                    type: "post",
-                                    dataType: "json",
-                                    processData: false,
-                                    contentType: false,
-                                    data: frmData,
-                                    beforeSend: function () {
-                                        loading_show('.image_loader');
-                                    },
-                                    success: function (response) {
-                                        var old_img_arr = JSON.parse(old_images);
-                                        if (response['result'] == 'success') {
-                                            $.each(response['images']['product']['images'], function (index, value) {
-                                                if ($.inArray(value.id, old_img_arr) == -1) {
-                                                    old_img_arr.push(value.id);
-                                                    $('#multiImagePreview').append(
-                                                            '<div class="column style="display:none;">' +
-                                                            '<div class="image-box-edit selectMainImage" data-id="' + value.id + '"><i class="btn-select-image"><input type="radio" name="select_main_image" class="select_main_image" value="' + value.id + '" style="display:none;"></i>' +
-                                                            '<img class="btn-delete-edit removeAddImage" data-id="' + value.id + '" src="http://cdn1.iconfinder.com/data/icons/diagona/icon/16/101.png">' +
-                                                            '<img class="thumbnail  multi-image-preview addedNewImage" src="' + value.src + '" \
-                                        title="' + value.alt + '" /><input type="hidden" name="selected_imges[]" id="jsImg" value="' + value.id + '"></div></div>');
-                                                }
-                                            });
-                                            old_img_arr.toString();
-                                            $('#oldImages').val("[" + old_img_arr + "]");
-                                            loading_hide('.image_loader', '');
-                                        } else {
-                                            flashNotice(response['msg']);
-                                        }
-                                        loading_hide('.image_loader', '');
-                                    }
-                                });
-                            }
-                        }, 1000);
-                    }
-
-
-        }
+        
         $(document).on("click", ".enable-btn", function(event) {
             event.preventDefault();
         //       $(".enable-btn").toggle();
@@ -742,6 +258,7 @@ var BACKTO = 0;
                     }
                 });
         });
+
          // start 014
         $(document).on("click", ".btn_add_element", function(event) {
             event.preventDefault();    
@@ -804,6 +321,7 @@ var BACKTO = 0;
                 }
             });
         }      
+
         function get_selected_elements(form_id){
             $.ajax({
                     url: "ajax_call.php",
@@ -815,10 +333,6 @@ var BACKTO = 0;
                             redirect403();
                         } else{
                             console.log(comeback['form_footer_data']);
-                            console.log(comeback['form_header_data']);
-                            console.log(comeback['form_header_data']['1']);
-                            console.log("=======================");
-                            console.log(comeback['form_type']);
                             if(comeback['form_type'] == "4"){
                                     $(".preview-box").addClass("floting_form_main");
                             }
@@ -829,13 +343,13 @@ var BACKTO = 0;
                             }
                             $(".headerData .form_id").val(comeback['form_id']);
                             $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
-                            $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
+                            $('.headerData .myeditor').html(comeback['form_header_data']['2']);
                             $(".form_name_form_design").val(comeback['form_header_data']['1'])
                             $(".selected_element_set").html(comeback['outcome']);
                             $(".code-form-app").html(comeback['form_html']);
                             
                             $(".footerData .form_id").val(comeback['form_id']);
-                            $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
+                            $('.footerData .myeditor').html(comeback['form_footer_data']['0']);
                             $('.footerData .submitText').val(comeback['form_footer_data']['1']);
                             if(comeback['form_footer_data']['2'] == 1){
                                 $(".footerData .resetButton").prop("checked", true);
@@ -866,56 +380,7 @@ var BACKTO = 0;
                     }
                 });
         }
-        // function get_selected_element_preview(formId,elementId,formdataId){
-        //     $.ajax({
-        //             url: "ajax_call.php",
-        //             type: "post",
-        //             dataType: "json",
-        //             data: {'routine_name': 'get_selected_element_preview','form_id': formId, store: store,"element_id":elementId,"formdata_id" :formdataId},
-        //             success: function (comeback) {
-        //                 if (comeback['code'] != undefined && comeback['code'] == '403') {
-        //                     redirect403();
-        //                 } else{
-        //                     console.log(comeback['form_footer_data']);
-        //                     console.log(comeback['form_header_data']);
-        //                     console.log(comeback['form_header_data']['1']);
-        //                     if(comeback['form_header_data']['0'] == 1){
-        //                         $(".headerData .showHeader").prop("checked", true);
-        //                     }else{
-        //                         $(".headerData .showHeader").prop("checked", false);
-        //                     }
-        //                     $(".headerData .form_id").val(comeback['form_id']);
-        //                     $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
-        //                     $('.headerData .ck-content p').html(comeback['form_header_data']['2']);
-        //                     $(".form_name_form_design").val(comeback['form_header_data']['1'])
-        //                     $(".selected_element_set").html(comeback['outcome']);
-        //                     $(".code-form-app").html(comeback['form_html']);
-                            
-        //                     $(".footerData .form_id").val(comeback['form_id']);
-        //                     $('.footerData .ck-content p').html(comeback['form_footer_data']['0']);
-        //                     $('.footerData .submitText').val(comeback['form_footer_data']['1']);
-        //                     if(comeback['form_footer_data']['2'] == 1){
-        //                         $(".footerData .resetButton").prop("checked", true);
-        //                     }else{
-        //                         $(".footerData .resetButton").prop("checked", false);
-        //                     }
-        //                     $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
-        //                     if(comeback['form_footer_data']['4'] == 1){
-        //                         $(".footerData .fullFooterButton").prop("checked", true);
-        //                     }else{
-        //                         $(".footerData .fullFooterButton").prop("checked", false);
-        //                     }
-        //                     $( ".footerData .chooseItem" ).each(function() {
-        //                             if(comeback['form_footer_data']['5'] == $(this).data('value')){
-        //                                 $(".footerData .chooseItem").removeClass("active");
-        //                                 $(this).addClass("active");
-        //                             }
-        //                     });
-                         
-        //                 }
-        //             }
-        //         });
-        // }
+
         function getFormTitle(form_id){
             $.ajax({
                     url: "ajax_call.php",
@@ -932,6 +397,7 @@ var BACKTO = 0;
                     }
                 });
         }
+
         $(document).on("click", ".btnFormSubmit", function(event) {
             var formid=$(".formid").val();
             var form_name=$(".form_name_form_design").val();
@@ -955,80 +421,7 @@ var BACKTO = 0;
                 }
             });
         });
-        $(document).on("click", ".clsmain_form", function(event) {
-            event.preventDefault();
-            var formid=$(this).find(".form_id_main").val();
-            $.ajax({
-                url: "ajax_call.php",
-                type: "post",
-                dataType: "json",
-                data: {'routine_name': 'mainForm', store: store,'formid':formid},
-                success: function (comeback) {
-                    var comeback = JSON.parse(comeback);
-                    if (comeback['code'] != undefined && comeback['code'] == '403') {
-                        redirect403();
-                    } else{
-                    window.location.href = "index.php?form_id="+formid+"&store="+store;
-                    }
-                }
-            });
-        });
 
-        // $(document).on("click", ".clsselected_element", function(event) {
-        //     var formid=$(".formid").val();
-        //     var element_id=$(this).find(".get_element_hidden").val();
-        //     var form_data_id=$(this).find(".form_data_id").val();
-            
-        //     event.preventDefault();  
-        //     $.ajax({
-        //         url: "ajax_call.php",
-        //         type: "post",
-        //         dataType: "json",
-        //         data: {'routine_name': 'getElementdetails', store: store,'formid':formid,'element_id':element_id },
-        //         beforeSend: function () {
-        //             loading_show('.save_loader_show');
-        //         },
-        //         success: function (comeback) {
-        //             var comeback = JSON.parse(comeback);
-        //             if (comeback['code'] != undefined && comeback['code'] == '403') {
-        //                 redirect403();
-        //             } else{  
-        //             // $(".clsname_of_element").html(comeback['outcome']);
-        //             // $(".clsname_of_element_val").val(comeback['outcome']);
-        //             $(".element_id_in_form").val(element_id);
-        //             $(".form_data_id_second").val(form_data_id);
-        //             }
-        //             loading_hide('.save_loader_show', 'Save');
-        //         }
-        //     });
-        // });
-        // $(document).on("click", ".remove_this_element", function(event) {
-        //     event.preventDefault();
-        //     var thisObj = $(this);
-        //     var formid=$(".formid").val();
-        //     var element_id=$(".element_id_in_form").val();
-        //     var form_data_id=$(".form_data_id_second").val(); 
-        //     event.preventDefault();  
-        //      $.ajax({
-        //         url: "ajax_call.php",
-        //         type: "post",
-        //         dataType: "json",
-        //         data: {'routine_name': 'deleteElement', store: store,'formid':formid,'element_id':element_id,'form_data_id':form_data_id }, 
-        //         beforeSend: function () {
-        //             loading_show('.save_loader_show');
-        //         },
-        //         success: function (comeback) {
-        //             var comeback = JSON.parse(comeback);
-        //             if (comeback['code'] != undefined && comeback['code'] == '403') {
-        //                 redirect403();
-        //             } else{
-        //             $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-        //             get_selected_elements(formid); 
-        //             }
-        //             loading_hide('.save_loader_show', 'Save');
-        //         }
-        //     });
-        // });
         function getAllForm(){
             $.ajax({
                     url: "ajax_call.php",
@@ -1078,8 +471,8 @@ var BACKTO = 0;
                 }
             });
         });
+
         $(document).on("click",".Polaris-Tabs__Panel .list-item",function(){
-            // console.log("element click ");
             var slideTo = $(this).data("owl");
             var elementId = $(this).data("elementid");
             var formId = $(this).closest(".clsselected_element").data("formid");
@@ -1092,20 +485,18 @@ var BACKTO = 0;
                     dataType: "json",
                     data: {'routine_name': 'form_element_data_html', store: store,"elementid":elementId, "formid":formId ,"formdataid":formdataId },
                     success: function (comeback) {
-                        // console.log(comeback);
                         var comeback = JSON.parse(comeback);
-                        // console.log(comeback);
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
-                        //   redirect403();
                         } else{
-                        // console.log("return get all form ");
-                        $(".elementAppend").html(comeback.outcome);
+                            $(".elementAppend").html(comeback.outcome);
+                            $('.myeditor').each(function(index,item){
+                                CKEDITOR.replace(item);
+                            });
                         }
                     }
                 });
             }
-        });
-        // index page checkbox selected    
+        });   
 
         $(document).on("change",".switch input[name='checkbox']",function(){
             console.log("Input checkboc table");
@@ -1126,6 +517,7 @@ var BACKTO = 0;
             });
 
         });
+
         $(document).on("click","#checkAll",function(){
             
             var checked = $(this).is(":checked");
@@ -1141,6 +533,7 @@ var BACKTO = 0;
                 $(".selectedshow,.sortBy").css("display","block");
             }
         });
+
         $(document).on("click",".selectedCheck",function() {
         if ($(".selectedCheck").length == $(".selectedCheck:checked").length) {
             $("#checkAll").prop("checked", true);
@@ -1149,12 +542,7 @@ var BACKTO = 0;
             $("#checkAll").prop("checked", false);
         }
         });
-        $(document).ready(function() {
-            setTimeout(function () {
-                var count = $(".set_all_form .Polaris-ResourceList__HeaderWrapper").length;
-                $('.dataAdded').append('Showing '+count+'  form');
-            }, 100);
-        });
+
         $(document).on("click",".selectedCheck",function () {
             if ($(this).is(":checked")) {
                 $(".bultActionss").css("display","block");
@@ -1202,8 +590,18 @@ var BACKTO = 0;
             });
             
         });
+
         $(document).on("click", ".saveForm", function(event) {
             console.log("savform .....");
+            saveform();
+            saveheaderform();
+            savefooterform();
+            savepublishdata();
+        });
+
+        function  saveform(){
+            console.log(CKEDITOR.instances["content"]);
+            CKEDITOR.instances["content"].updateElement();
             var form_data = $(".add_elementdata")[0]; 
             var val = $(".selectFile").select2("val");
             var form_data = new FormData(form_data);
@@ -1226,10 +624,10 @@ var BACKTO = 0;
                     loading_hide('.save_loader_show', 'Save');
                 }
             });
-        });
-
-        $(document).on("click", ".saveForm", function(event) {
-            console.log("savform .....");
+        }
+        
+        function saveheaderform(){
+            CKEDITOR.instances["content"].updateElement();
             var form_data = $(".add_headerdata")[0]; 
             var form_data = new FormData(form_data);
             form_data.append('store',store); 
@@ -1241,18 +639,15 @@ var BACKTO = 0;
                 contentType: false,
                 processData: false,
                 data: form_data, 
-                    beforeSend: function () {
-                    loading_show('.save_loader_show');
-                },
                 success: function (response) {
                     var response = JSON.parse(response);
                   console.log(response + "..............");
-                    loading_hide('.save_loader_show', 'Save');
                 }
             });
-        });
-        $(document).on("click", ".saveForm", function(event) {
-            console.log("savform .....");
+        }
+
+        function savefooterform(){
+            CKEDITOR.instances["content"].updateElement();
             var form_data = $(".add_footerdata")[0];
             var form_data = new FormData(form_data);
             form_data.append('store',store); 
@@ -1264,18 +659,14 @@ var BACKTO = 0;
                 contentType: false,
                 processData: false,
                 data: form_data, 
-                    beforeSend: function () {
-                    loading_show('.save_loader_show');
-                },
                 success: function (response) {
                     var response = JSON.parse(response);
                   console.log(response + "..............");
-                    loading_hide('.save_loader_show', 'Save');
                 }
             });
-        });
-        $(document).on("click", ".saveForm", function(event) {
-            console.log("savform .....");
+        }
+        
+        function savepublishdata(){
             var form_data = $(".add_publishdata")[0];
             var form_data = new FormData(form_data);
             form_data.append('store',store); 
@@ -1287,16 +678,13 @@ var BACKTO = 0;
                 contentType: false,
                 processData: false,
                 data: form_data, 
-                    beforeSend: function () {
-                    loading_show('.save_loader_show');
-                },
                 success: function (response) {
                     var response = JSON.parse(response);
                   console.log(response + "..............");
-                    loading_hide('.save_loader_show', 'Save');
                 }
             });
-        });
+        }
+
         $(document).on("click",".submit.action",function (e) {
             e.preventDefault();
             console.log("HII");
@@ -1321,91 +709,96 @@ var BACKTO = 0;
                 }
             })
         });
+
         // File 
-            window.onload = (event) => {
-                const fileButton = document.getElementById('fileButton');
-                const fileInput = document.getElementById('fileimage');
-                const imgContainer = document.getElementById('imgContainer');
-                const uploadText = document.getElementById('uploadText');
-                if(fileButton != null){
-                    fileButton.addEventListener('click', () => {
-                        fileInput.click();
-                    });
-                }
-                if(fileInput != null){
-                    fileInput.addEventListener('change', function() {
-                        imgContainer.innerHTML = ''; // Clear previous previews
-                        const files = this.files;
-                       
-                        Array.from(files).forEach(file => {
-                           var $form_id  = $('.form_id').val();
-                            console.log($form_id);
-                            var allow_extentions = '';
-                            $.ajax({
-                                url: "ajax_call.php",
-                                type: "post",
-                                dataType: "json",
-                                data: {'routine_name': 'get_fileallowextention', store: store,"form_id":$form_id },
-                                success: function (comeback) {
-                                    var comeback = JSON.parse(comeback);
-                                    if (comeback['data'] != undefined && comeback['data'] != '') {
-                                        allow_extentions = comeback['data'][4];
-                                        const extensionArray = allow_extentions.split(',').map(ext => `image/${ext}`);
-                                        if (extensionArray.includes(file.type)) {
-                                            if (files.length > 0) {
-                                                uploadText.style.display = 'none';
-                                                fileButton.style.display = 'none';
-                                            } else {
-                                                uploadText.style.display = 'block';
-                                                fileButton.style.display = 'block';
-                                            }
-                                            const reader = new FileReader();
-                                            reader.onload = function(event) {
-                                                const imgPreviewWrapper = document.createElement('div');
-                                                imgPreviewWrapper.classList.add('img-preview-wrapper');
-            
-                                                const imgPreview = document.createElement('img');
-                                                imgPreview.classList.add('img-preview');
-                                                if (file.type.startsWith('image/')) {
-                                                    imgPreview.src = event.target.result;
-                                                } else {
-                                                    imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
-                                                }
-            
-                                                const closeButton = document.createElement('button');
-                                                closeButton.classList.add('close-button');
-                                                closeButton.innerHTML = '×';
-                                                closeButton.addEventListener('click', function(event) {
-                                                    event.preventDefault();
-                                                    imgContainer.removeChild(imgPreviewWrapper);
-                                                    if (imgContainer.children.length === 0) {
-                                                        uploadText.style.display = 'block';
-                                                        fileButton.style.display = 'block';
-                                                        fileInput.value = '';
-                                                    }
-                                                });
-            
-                                                const fileName = document.createElement('p');
-                                                fileName.classList.add('file-name');
-                                                fileName.textContent = file.name;
-            
-                                                imgPreviewWrapper.appendChild(imgPreview);
-                                                imgPreviewWrapper.appendChild(closeButton);
-                                                imgPreviewWrapper.appendChild(fileName);
-                                                imgContainer.appendChild(imgPreviewWrapper);
-                                            }
-                                            reader.readAsDataURL(file);
-                                        }else{
-                                            alert("File Not supported");
+        window.onload = (event) => {
+            const fileButton = document.getElementById('fileButton');
+            const fileInput = document.getElementById('fileimage');
+            const imgContainer = document.getElementById('imgContainer');
+            const uploadText = document.getElementById('uploadText');
+            if(fileButton != null){
+                fileButton.addEventListener('click', () => {
+                    fileInput.click();
+                });
+            }
+            if(fileInput != null){
+                fileInput.addEventListener('change', function() {
+                    imgContainer.innerHTML = ''; // Clear previous previews
+                    const files = this.files;
+                    
+                    Array.from(files).forEach(file => {
+                        var $form_id  = $('.form_id').val();
+                        console.log($form_id);
+                        var allow_extentions = '';
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: {'routine_name': 'get_fileallowextention', store: store,"form_id":$form_id },
+                            success: function (comeback) {
+                                var comeback = JSON.parse(comeback);
+
+                                if (comeback['data'] != undefined && comeback['data'] != '') {
+                                    allow_extentions = comeback['data'][4] != undefined && comeback['data'][4] != '' ? comeback['data'][4] : 'png,svg,gif,jpeg,jpg,pdf,webp';
+                                    console.log(allow_extentions);
+                                    const extensionArray = allow_extentions.split(',').map(ext => `image/${ext}`);
+                                    if (extensionArray.includes(file.type)) {
+                                        if (files.length > 0) {
+                                            uploadText.style.display = 'none';
+                                            fileButton.style.display = 'none';
+                                        } else {
+                                            uploadText.style.display = 'block';
+                                            fileButton.style.display = 'block';
                                         }
-                                        
+                                        const reader = new FileReader();
+                                        reader.onload = function(event) {
+                                            const imgPreviewWrapper = document.createElement('div');
+                                            imgPreviewWrapper.classList.add('img-preview-wrapper');
+        
+                                            const imgPreview = document.createElement('img');
+                                            imgPreview.classList.add('img-preview');
+                                            if (file.type.startsWith('image/')) {
+                                                imgPreview.src = event.target.result;
+                                            } else {
+                                                imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
+                                            }
+        
+                                            const closeButton = document.createElement('button');
+                                            closeButton.classList.add('close-button');
+                                            closeButton.innerHTML = '×';
+                                            closeButton.addEventListener('click', function(event) {
+                                                event.preventDefault();
+                                                imgContainer.removeChild(imgPreviewWrapper);
+                                                if (imgContainer.children.length === 0) {
+                                                    uploadText.style.display = 'block';
+                                                    fileButton.style.display = 'block';
+                                                    fileInput.value = '';
+                                                }
+                                            });
+        
+                                            const fileName = document.createElement('p');
+                                            fileName.classList.add('file-name');
+                                            fileName.textContent = file.name;
+        
+                                            imgPreviewWrapper.appendChild(imgPreview);
+                                            imgPreviewWrapper.appendChild(closeButton);
+                                            imgPreviewWrapper.appendChild(fileName);
+                                            imgContainer.appendChild(imgPreviewWrapper);
+                                        }
+                                        reader.readAsDataURL(file);
+                                    }else{
+                                        alert("File Not supported");
                                     }
+                                    
+                                }else{
+                                    console.log("ALL FILE SET");
                                 }
-                            });
-                           
+                            }
                         });
+                        
                     });
-                }
-            };
+                });
+            }
+        };
 
         // File 

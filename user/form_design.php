@@ -1028,9 +1028,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <label id=":R1n6:Label" for=":R1n6:" class="Polaris-Label__Text">Description</label>
                                     </div>
                                 </div>
-                                <textarea name="content" class="editor headerDescription">
-                                    &lt;p&gt;This is some sample content.&lt;/p&gt;
-                                </textarea>
+                                <textarea name="content" class="myeditor"></textarea>
                             </div>
                         </form>
                     </div>
@@ -1639,8 +1637,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         <div class="form-control">
                                             <div class="textfield-wrapper">
                                                 <div class="">
-                                                    <textarea name="content" class="editor">
-                                                    </textarea>
+                                                    <textarea name="content" class="myeditor"></textarea>
                                                 </div>
                                             </div>
                                         </div>

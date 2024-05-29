@@ -36,11 +36,11 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script> -->
         
         <script src="<?php echo main_url('assets/js/jquery3.6.4.min.js'); ?>"></script>
-        <script src="<?php echo main_url('assets/js/ckeditor.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/ckeditor/ckeditor.js'); ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
   
    
