@@ -788,7 +788,7 @@ class Client_functions extends common_function {
                                 }
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                        <div class="globo-form-input">
+                                        <div class="globo-form-input" data-formdataid="'.$form_data_id.'">
                                             <div class="upload-area" id="uploadArea">
                                                 <p class="upload-p '.$elementtitle.''.$form_data_id.'__placeholder"" id="uploadText">'.$unserialize_elementdata[2].'</p>
                                                 <span class="file_button '.$elementtitle.''.$form_data_id.'__buttontext '.$is_buttonhidden.'"  id="fileButton">'.$unserialize_elementdata[1].'</span>
@@ -4604,9 +4604,9 @@ class Client_functions extends common_function {
     function get_fileallowextention(){
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
-
             $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
-            $where_query = array(["", "form_id", "=", $form_id],["AND", "element_id", "=", "10"]);
+            $formdata_id = (isset($_POST['formdata_id']) && $_POST['formdata_id'] != '') ? $_POST['formdata_id'] : "";
+            $where_query = array(["", "form_id", "=", $form_id],["AND", "id", "=", $formdata_id],["AND", "element_id", "=", "10"]);
             $comeback_client = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
             $comebackdata = (isset($comeback_client['data'][0]) && $comeback_client['data'][0] !== '') ? $comeback_client['data'][0] : '';
             $element_data = (isset($comebackdata['element_data']) && $comebackdata['element_data'] !== '') ? $comebackdata['element_data'] : '';

@@ -706,93 +706,93 @@ var BACKTO = 0;
 
         // File 
         window.onload = (event) => {
-            const fileButton = document.getElementById('fileButton');
-            const fileInput = document.getElementById('fileimage');
-            const imgContainer = document.getElementById('imgContainer');
-            const uploadText = document.getElementById('uploadText');
-            if(fileButton != null){
-                fileButton.addEventListener('click', () => {
-                    fileInput.click();
-                });
-            }
-            if(fileInput != null){
-                fileInput.addEventListener('change', function() {
-                    imgContainer.innerHTML = ''; // Clear previous previews
-                    const files = this.files;
-                    
-                    Array.from(files).forEach(file => {
-                        var $form_id  = $('.form_id').val();
-                        console.log($form_id);
-                        var allow_extentions = '';
-                        $.ajax({
-                            url: "ajax_call.php",
-                            type: "post",
-                            dataType: "json",
-                            data: {'routine_name': 'get_fileallowextention', store: store,"form_id":$form_id },
-                            success: function (comeback) {
-                                var comeback = JSON.parse(comeback);
+            const fileButton = $('#fileButton');
+            const fileInput = $('#fileimage');
+            const imgContainer = $('#imgContainer');
+            const uploadText = $('#uploadText');
+            $(document).on('click', '#fileButton', function() {
+                $(this).closest(".globo-form-input").find('#fileimage').click();
+            });
+                                     
+            $(document).on('click', '.close-button', function(event) {
+                event.preventDefault();
+                if ($(this).closest(".globo-form-input").find('.imgContainer').children().length === 0) {
+                    $(this).closest(".globo-form-input").find('#uploadText').show();
+                    $(this).closest(".globo-form-input").find('#fileButton').show();
+                    $(this).closest(".globo-form-input").find('#fileimage').val('');
+                    $(this).closest(".globo-form-input").find('.img-preview-wrapper').remove();
+                }
+            });
 
-                                if (comeback['data'] != undefined && comeback['data'] != '') {
-                                    allow_extentions = comeback['data'][4] != undefined && comeback['data'][4] != '' ? comeback['data'][4] : 'png,svg,gif,jpeg,jpg,pdf,webp';
-                                    console.log(allow_extentions);
-                                    const extensionArray = allow_extentions.split(',').map(ext => `image/${ext}`);
-                                    if (extensionArray.includes(file.type)) {
-                                        if (files.length > 0) {
-                                            uploadText.style.display = 'none';
-                                            fileButton.style.display = 'none';
-                                        } else {
-                                            uploadText.style.display = 'block';
-                                            fileButton.style.display = 'block';
-                                        }
-                                        const reader = new FileReader();
-                                        reader.onload = function(event) {
-                                            const imgPreviewWrapper = document.createElement('div');
-                                            imgPreviewWrapper.classList.add('img-preview-wrapper');
-        
-                                            const imgPreview = document.createElement('img');
-                                            imgPreview.classList.add('img-preview');
-                                            if (file.type.startsWith('image/')) {
-                                                imgPreview.src = event.target.result;
-                                            } else {
-                                                imgPreview.src = "https://pngfre.com/wp-content/uploads/Folder-1.png";
-                                            }
-        
-                                            const closeButton = document.createElement('button');
-                                            closeButton.classList.add('close-button');
-                                            closeButton.innerHTML = '×';
-                                            closeButton.addEventListener('click', function(event) {
-                                                event.preventDefault();
-                                                imgContainer.removeChild(imgPreviewWrapper);
-                                                if (imgContainer.children.length === 0) {
-                                                    uploadText.style.display = 'block';
-                                                    fileButton.style.display = 'block';
-                                                    fileInput.value = '';
-                                                }
-                                            });
-        
-                                            const fileName = document.createElement('p');
-                                            fileName.classList.add('file-name');
-                                            fileName.textContent = file.name;
-        
-                                            imgPreviewWrapper.appendChild(imgPreview);
-                                            imgPreviewWrapper.appendChild(closeButton);
-                                            imgPreviewWrapper.appendChild(fileName);
-                                            imgContainer.appendChild(imgPreviewWrapper);
-                                        }
-                                        reader.readAsDataURL(file);
-                                    }else{
-                                        alert("File Not supported");
+            $(document).on('change', '#fileimage', function(event) {
+                event.preventDefault();
+                var $thisObj = $(this);
+                $(this).closest(".globo-form-input").find('#imgContainer').html(''); // Clear previous previews
+                const files = this.files;
+
+                Array.from(files).forEach(file => {
+                    const formId = $('.form_id').val();
+                    const formDataId = $(this).closest('.globo-form-input').attr("data-formdataid");
+                    $.ajax({
+                        url: "ajax_call.php",
+                        type: "post",
+                        dataType: "json",
+                        data: {'routine_name': 'get_fileallowextention', 'store': store, 'form_id': formId ,'formdata_id': formDataId },
+                        success: function(comeback) {
+                            const data = JSON.parse(comeback);
+
+                            if (data && data.data) {
+                                let allowExtentions = data.data[4] || 'png,svg,gif,jpeg,jpg,pdf,webp';
+                                console.log(allowExtentions);
+                                const extensionArray = allowExtentions.split(',').map(ext => {
+                                    switch(ext) {
+                                        case 'jpg': return 'image/jpeg';
+                                        case 'jpeg': return 'image/jpeg';
+                                        case 'png': return 'image/png';
+                                        case 'gif': return 'image/gif';
+                                        case 'svg': return 'image/svg+xml';
+                                        case 'webp': return 'image/webp';
+                                        default: return ext;
                                     }
-                                    
-                                }else{
-                                    console.log("ALL FILE SET");
+                                });
+
+                                if (extensionArray.includes(file.type)) {
+                                    if (files.length > 0) {
+                                        $thisObj.closest(".globo-form-input").find('#uploadText').hide();
+                                        $thisObj.closest(".globo-form-input").find('#fileButton').hide();
+                                    } else {
+                                        $thisObj.closest(".globo-form-input").find('#uploadText').show();
+                                        $thisObj.closest(".globo-form-input").find('#fileButton').show();
+                                    }
+
+                                    const reader = new FileReader();
+                                    reader.onload = function(event) {
+                                        const imgPreviewWrapper = $('<div>').addClass('img-preview-wrapper');
+                                        const imgPreview = $('<img>').addClass('img-preview');
+                                        const fileName = $('<p>').addClass('file-name').text(file.name);
+                                        const closeButton = $('<button>').addClass('close-button').text('×');
+
+                                        if (file.type.startsWith('image/')) {
+                                            imgPreview.attr('src', event.target.result);
+                                        } else {
+                                            imgPreview.attr('src', 'https://pngfre.com/wp-content/uploads/Folder-1.png');
+                                        }
+
+                                        imgPreviewWrapper.append(imgPreview).append(closeButton).append(fileName);
+                                        $thisObj.closest(".globo-form-input").find('#imgContainer').append(imgPreviewWrapper);
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    alert('File not supported');
                                 }
+                            } else {
+                                console.log('ALL FILE SET');
                             }
-                        });
-                        
+                        }
                     });
                 });
-            }
+            });
         };
 
         // File 
