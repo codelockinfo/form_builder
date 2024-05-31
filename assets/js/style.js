@@ -198,7 +198,30 @@ $(document).ready(function () {
         var elementId1 = "element" + newId;
         console.log(elementId1);
         var elementWithDataId = $(".preview-box").find(".g-container .code-form-control[data-id='" + elementId1 + "']");
-        elementWithDataId.css("display", "block");     
+        elementWithDataId.css("display", "block"); 
+        
+        
+        function initializeCKEditor(editorName, targetElement) {
+            var editorElement = $('textarea[name="' + editorName + '"]');
+            if (editorElement.length > 0 && !CKEDITOR.instances[editorName]) {
+                CKEDITOR.replace(editorName, {
+                    on: {
+                        instanceReady: function(evt) {
+                            evt.editor.on('change', function() {
+                                var editorData = evt.editor.getData();
+                                console.log(editorData);
+                                $(targetElement).html(editorData);
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    
+        initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
+        initializeCKEditor('contentfooter', '.footer  .footer-data__footerdescription');
+        initializeCKEditor('contentparagraph', '.paragraph-container .paragraph-content');
+
     });
 });
 // width change

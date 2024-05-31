@@ -29,6 +29,7 @@
 </head>
 <body>
     <form class="add_headerdata" id="addHeaderDataForm">
+        <textarea name="contentheader" class=""></textarea>
         <textarea name="myeditor" class="myeditor"></textarea>
         <textarea name="myeditor31" class="myeditor"></textarea>
         <button class="saveForm" type="submit">Save</button>
@@ -64,6 +65,20 @@
                     }
                 });
             });
+
+            CKEDITOR.replace('contentheader', {
+                on: {
+                    instanceReady: function(evt) {
+                        // Attach the change event listener here
+                        CKEDITOR.instances.contentheader.on('change', function() {
+                            console.log('value changed!!');
+                            var desc = CKEDITOR.instances.contentheader.getData();
+                            console.log(desc);
+                        });
+                    }
+                }
+            });
+
         });
     </script>
 </body>

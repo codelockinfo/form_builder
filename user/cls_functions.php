@@ -1110,7 +1110,7 @@ class Client_functions extends common_function {
                         $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
                         $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
                         $form_html .= '<div class="footer forFooterAlign '.$form_footer_data['5'].'">
-                                <div class="messages footer-data__footerdescription"></div>
+                                <div class="messages footer-data__footerdescription">'.$form_footer_data[0].'</div>
                                 <button class="action submit  classic-button footer-data__submittext '.$fullwidth_button.'">
                                     <span class="spinner"></span>
                                     '.$form_footer_data[1].'
@@ -4141,7 +4141,7 @@ class Client_functions extends common_function {
                                                 <label class="Polaris-Label__Text">Rich Text Editor</label>
                                             </div>
                                         </div>
-                                        <textarea name="content" class="myeditor">   <p>'.$formData[0].'</p></textarea>
+                                        <textarea name="contentparagraph" class="myeditor">   <p>'.$formData[0].'</p></textarea>
                                     </div>
                                     <div class="form-control">
                                         <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[1].'"  class="input_columnwidth"/>
@@ -4465,7 +4465,7 @@ class Client_functions extends common_function {
             $selectdefualtvalue = isset($newData['select-defualt-value']) ?  $newData['select-defualt-value'] : '0' ;
             $htmlcode = isset($newData['html-code']) ? str_replace("'", "&#039;", $newData['html-code']) : '0' ;
 
-            $content = isset($_POST['content']) ?  $_POST['content'] : '' ;
+            $content = isset($_POST['saveheaderform']) ?  $_POST['saveheaderform'] : '' ;
 
             $element_type = array("1","2","3","4","5","6","7","20","21","22","23");
             // $element_type2 = array("5");
@@ -4529,7 +4529,7 @@ class Client_functions extends common_function {
             $form_id = isset($_POST['form_id']) ?  $_POST['form_id'] : '' ;
             $showheader = isset($_POST['showheader']) ?  $_POST['showheader'] : '0' ;
             $title = isset($_POST['header__title']) ?  $_POST['header__title'] : '' ;
-            $content = isset($_POST['content']) ?  $_POST['content'] : '' ;
+            $content = isset($_POST['contentheader']) ?  $_POST['contentheader'] : '' ;
             $form_header_data = serialize(array($showheader, $title, $content));
 
             $fields = array(
@@ -4548,7 +4548,7 @@ class Client_functions extends common_function {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $form_id = isset($_POST['form_id']) ?  $_POST['form_id'] : '' ;
-            $content = isset($_POST['content']) ?  $_POST['content'] : '' ;
+            $content = isset($_POST['contentfooter']) ?  $_POST['contentfooter'] : '' ;
             $submittext = isset($_POST['footer-data__submittext']) ?  $_POST['footer-data__submittext'] : '' ;
             $resetbutton = isset($_POST['resetbutton']) ?  $_POST['resetbutton'] : '' ;
             $resetbuttontext = isset($_POST['footer-data__resetbuttontext']) ?  $_POST['footer-data__resetbuttontext'] : '' ;

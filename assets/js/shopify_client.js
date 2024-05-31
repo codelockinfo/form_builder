@@ -72,7 +72,6 @@ var BACKTO = 0;
             }
             $($selector).removeClass("Polaris-Button--loading").html('<span class="Polaris-Button__Content">' + $buttonIcon + '<span>' + $buttonName + '</span></span>').removeAttr("disabled");
         }
-
         function table_loader(selector, colSpan) {
             $(selector).html('<tr><td colspan="' + colSpan + '" style="text-align:center;"><div class="loader-spinner"><svg viewBox="0 0 44 44" class="Polaris-Spinner Polaris-Spinner--colorTeal Polaris-Spinner--sizeLarge" role="status"><path d="M15.542 1.487A21.507 21.507 0 0 0 .5 22c0 11.874 9.626 21.5 21.5 21.5 9.847 0 18.364-6.675 20.809-16.072a1.5 1.5 0 0 0-2.904-.756C37.803 34.755 30.473 40.5 22 40.5 11.783 40.5 3.5 32.217 3.5 22c0-8.137 5.3-15.247 12.942-17.65a1.5 1.5 0 1 0-.9-2.863z"></path></svg></div></td></tr>')
         }
@@ -152,9 +151,9 @@ var BACKTO = 0;
                 $('.dataAdded').append('Showing '+count+'  form');
             }, 100);
 
-            $('.myeditor').each(function(index,item){
-                CKEDITOR.replace(item);
-            });
+            // $('.myeditor').each(function(index,item){
+            //     CKEDITOR.replace(item);
+            // });
         });
 
         function btn_enable_disable(form_id){
@@ -466,6 +465,42 @@ var BACKTO = 0;
             });
         });
 
+        function initializeCKEditor(editorName, targetElement) {
+            console.log("initializeCKEditor")
+            var editorElement = $('textarea[name="' + editorName + '"]');
+            console.log(editorElement.length);
+            console.log(CKEDITOR.instances[editorName]);
+            if (editorElement.length > 0 && CKEDITOR.instances[editorName]){
+                console.log("DESTROY");
+                console.log(CKEDITOR.instances);
+                console.log(CKEDITOR.instances["contentparagraph"]);
+                // if (CKEDITOR.instances['contentparagraph']) {
+                //     CKEDITOR.instances['contentparagraph'].destroy();
+                // } else {
+                //     console.error("CKEditor instance for contentparagraph is not found.");
+                // }
+            }
+            if (editorElement.length > 0 && !CKEDITOR.instances[editorName]) {
+                CKEDITOR.replace(editorName, {
+                    on: {
+                        instanceReady: function(evt) {
+                            evt.editor.on('change', function() {
+                                var editorData = evt.editor.getData();
+                                if(editorName == "contentparagraph"){
+                                    var mainContainerClass = editorElement.closest(".container").attr("class");
+                                    var classArray = mainContainerClass.split(" ");
+                                    var containerClass = classArray.find(className => className.startsWith("container_"));
+                                    $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
+                                }else{
+                                    $(targetElement).html(editorData);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
         $(document).on("click",".Polaris-Tabs__Panel .list-item",function(){
             var slideTo = $(this).data("owl");
             var elementId = $(this).data("elementid");
@@ -483,9 +518,10 @@ var BACKTO = 0;
                         if (comeback['code'] != undefined && comeback['code'] == '403') {
                         } else{
                             $(".elementAppend").html(comeback.outcome);
-                            $('.myeditor').each(function(index,item){
-                                CKEDITOR.replace(item);
-                            });
+                            initializeCKEditor('contentparagraph', '');
+                            // $('.myeditor').each(function(index,item){
+                            //     CKEDITOR.replace(item);
+                            // });
                         }
                     }
                 });
@@ -594,8 +630,10 @@ var BACKTO = 0;
         });
 
         function  saveform(){
-            console.log(CKEDITOR.instances["content"]);
-            CKEDITOR.instances["content"].updateElement();
+            var $content = CKEDITOR.instances["content"];
+            if($content != undefined){
+                CKEDITOR.instances["content"].updateElement();
+            }
             var form_data = $(".add_elementdata")[0]; 
             var val = $(".selectFile").select2("val");
             var form_data = new FormData(form_data);
@@ -621,7 +659,10 @@ var BACKTO = 0;
         }
         
         function saveheaderform(){
-            CKEDITOR.instances["content"].updateElement();
+            var $contentheader =  CKEDITOR.instances["contentheader"];
+            if($contentheader != undefined){
+                CKEDITOR.instances["contentheader"].updateElement();
+            }
             var form_data = $(".add_headerdata")[0]; 
             var form_data = new FormData(form_data);
             form_data.append('store',store); 
@@ -641,7 +682,10 @@ var BACKTO = 0;
         }
 
         function savefooterform(){
-            CKEDITOR.instances["content"].updateElement();
+            var $contentfooter = CKEDITOR.instances["contentfooter"];
+            if($contentfooter != undefined){
+                CKEDITOR.instances["contentfooter"].updateElement();
+            }
             var form_data = $(".add_footerdata")[0];
             var form_data = new FormData(form_data);
             form_data.append('store',store); 
