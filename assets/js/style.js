@@ -55,29 +55,6 @@ $(document).ready(function(){
         //show the first tab content
         $('#embedCode').show();
 
-        // $('#PolarisSelect18').change(function(){
-        //     $('.selectval').hide();
-        //     $('#' + $(this).val()).show();
-        //     if($('#PolarisSelect18').val() == "lightbox"){
-        //         $("#lightbox2").removeClass("hidden");
-        //     }else{
-        //         $("#lightbox2").addClass("hidden");
-        //     }
-        // });
-
-        // $("#PolarisCheckbox27 ").change(function() {
-        //     if(this.checked) {
-        //         $(".shortcode").removeClass("hidden");
-        //     }else{
-        //         $(".shortcode").addClass("hidden");
-        //     }
-        // });
-
-        // $('#PolarisSelect21').change(function(){
-        //     $('.selectval').hide();
-        //     $('#' + $(this).val()).show();
-        // });
-
         var input = $('.quentity');
         $('.plus').on('click', function () {
             var inputValue = input.val();
@@ -421,6 +398,7 @@ $(document).on('keydown, keyup',".ck-content" ,function() {
         $(".footer-data__footerdescription").html($inputVal);
     }
 });
+
 $(document).on("change",".passLimitcar" ,function(){
     $mainContainerClass = $(this).closest(".container").attr("class");
     var classArray = $mainContainerClass.split(" ");
@@ -521,7 +499,6 @@ $(document).on("change",".showRequireHideLabel" ,function(){
     }
 });
 
-
 $(document).on("change",".fullFooterButton" ,function(){
     if(this.checked) {
         $(".footer .classic-button").addClass("w100");	
@@ -529,6 +506,7 @@ $(document).on("change",".fullFooterButton" ,function(){
         $(".footer .classic-button").removeClass("w100");	 
     }
 });
+
 $(document).on("change ",".defaultSelectAcceptterms" ,function() {
     $mainContainerClass = $(this).closest(".container").attr("class");
     var classArray = $mainContainerClass.split(" ");
@@ -541,6 +519,7 @@ $(document).on("change ",".defaultSelectAcceptterms" ,function() {
         $mainContainer.find("." + $classExlode[1] +"__acceptterms").prop("checked", true);	 
     }
 });
+
 $(document).on("change",".selectDefaultCountry" ,function(){
     console.log("change country");
     $selectVal = $(this).val();
@@ -551,6 +530,7 @@ $(document).on("change",".selectDefaultCountry" ,function(){
     $mainContainer.find('.'+containerClass+' select').val($selectVal).change();
 
 });
+
 $(document).on('keydown, keyup',".dropdownDefaultOption" ,function() {
     console.log("CHNAGE KEYUP KEY DOWN");
     $inputVal = $(this).val();
@@ -565,6 +545,7 @@ $(document).on('keydown, keyup',".dropdownDefaultOption" ,function() {
     }
 
 });
+
 $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
     console.log("CHNAGE KEYUP KEY DOWN");
     $inputVal = $(this).val();
@@ -586,6 +567,7 @@ $(document).on('keydown, keyup',".checkboxDefaultOption" ,function() {
 
     });
 });
+
 $(document).on("change",".allowMultipleCheckbox" ,function(){
     console.log("...allowMultipleCheckbox");
     $mainContainerClass = $(this).closest(".container").attr("class");

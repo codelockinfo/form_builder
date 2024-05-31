@@ -368,7 +368,7 @@ var BACKTO = 0;
                                 $('.required_login').prop("checked");
                             }
                             $('.login_message').html(comeback['publishdata']['1']);
-                            $('.embed_code').val(comeback['publishdata']['2']);
+                            $('.embed_code').val('<div data-formid="'+comeback['publishdata']['2']+'"></div>');
                          
                         }
                     }
