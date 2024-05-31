@@ -318,6 +318,17 @@ class Client_functions extends common_function {
                 $elementid = (isset($_POST['get_element_hidden']) && $_POST['get_element_hidden'] != '') ? $_POST['get_element_hidden'] : "";
                 if($elementid != ""){
 
+                    $formid = (isset($_POST['formid']) && $_POST['formid'] != '') ? $_POST['formid'] : "";
+                    $where_query = array(["", "form_id", "=", $formid]);
+                    $element_result_data = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
+                    $max_position = null;
+
+                    foreach ($element_result_data['data'] as $item) {
+                        if ($max_position === null || $item['position'] > $max_position) {
+                            $max_position = $item['position'];
+                        }
+                    }
+                    $position = intval($max_position)+1;
                     $where_query = array(["", "id", "=", $elementid]);
                     $element_result_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                     $comeback_client = isset($element_result_data["data"]) ?  $element_result_data["data"] : '';
@@ -377,6 +388,7 @@ class Client_functions extends common_function {
                             '`form_id`' => $_POST['formid'],
                             '`element_id`' => $comeback_client['id'],
                             '`element_data`' => $element_data,
+                            '`position`' => $position,
                             '`created`' => $mysql_date,
                             '`updated`' => $mysql_date
                         );
@@ -414,6 +426,8 @@ class Client_functions extends common_function {
               }
 
                 $sortedData = array();
+                $counter = 1;
+
                 foreach($where_query as $templates){  
                                              
                     $elementid= $templates[3];
@@ -476,10 +490,13 @@ class Client_functions extends common_function {
                         '`form_id`' => $_POST['form_id'],
                         '`element_id`' => $comeback_client['id'],
                         '`element_data`' => $element_data,
+                        '`position`' => $counter,
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
                     $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr)); 
+                    $counter++;
+
                 }
                 $response_data = array('data' => 'success', 'msg' => 'insert successfully');
             } else {
