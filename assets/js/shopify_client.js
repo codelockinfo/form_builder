@@ -630,9 +630,9 @@ var BACKTO = 0;
         });
 
         function  saveform(){
-            var $content = CKEDITOR.instances["content"];
+            var $content = CKEDITOR.instances["contentparagraph"];
             if($content != undefined){
-                CKEDITOR.instances["content"].updateElement();
+                CKEDITOR.instances["contentparagraph"].updateElement();
             }
             var form_data = $(".add_elementdata")[0]; 
             var val = $(".selectFile").select2("val");

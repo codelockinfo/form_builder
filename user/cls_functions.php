@@ -4465,7 +4465,7 @@ class Client_functions extends common_function {
             $selectdefualtvalue = isset($newData['select-defualt-value']) ?  $newData['select-defualt-value'] : '0' ;
             $htmlcode = isset($newData['html-code']) ? str_replace("'", "&#039;", $newData['html-code']) : '0' ;
 
-            $content = isset($_POST['saveheaderform']) ?  $_POST['saveheaderform'] : '' ;
+            $content = isset($_POST['contentparagraph']) ?  $_POST['contentparagraph'] : '' ;
 
             $element_type = array("1","2","3","4","5","6","7","20","21","22","23");
             // $element_type2 = array("5");
