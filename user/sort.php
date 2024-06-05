@@ -46,13 +46,24 @@
 <div class="selected_element_set" >
 <table  id="sortable-table">
 
-    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="1" data-formdataid="3"><td> sweweweewe item 1</td></tr><div>
-    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="2" data-formdataid="1"><td> eweffdf item 2</td></tr><div>
-    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="4" data-formdataid="6"><td> erererer item 4</td></tr><div>
-    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="5" data-formdataid="7"><td> 5tfhgjgjhj item 5</td></tr><div>
+    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="1" data-formdataid="1"><td> sweweweewe item 1</td></tr><div>
+    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="2" data-formdataid="2"><td> eweffdf item 2</td></tr><div>
+    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="4" data-formdataid="3"><td> erererer item 3</td></tr><div>
+    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="4" data-formdataid="4"><td> erererer item 4</td></tr><div>
+    <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="5" data-formdataid="5"><td> 5tfhgjgjhj item 5</td></tr><div>
     </table>
 </div>
-
+<div>
+    <table id="abc">
+        <tbody>
+            <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="1" data-formdataid="1"><td> sweweweewe item 1</td></tr><div>
+            <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="2" data-formdataid="2"><td> eweffdf item 2</td></tr><div>
+            <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="4" data-formdataid="3"><td> erererer item 3</td></tr><div>
+            <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="4" data-formdataid="4"><td> erererer item 4</td></tr><div>
+            <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="5" data-formdataid="5"><td> 5tfhgjgjhj item 5</td></tr><div>
+        </tbody>
+    </table>
+    </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
@@ -61,7 +72,16 @@
             placeholder: "placeholder",
             update: function(event, ui) {
                 console.log(ui);
-                var order = $(this).sortable("toArray", { attribute: "data-id" });
+                var order = $(this).sortable("toArray", { attribute: "data-postionid" });
+                var id = $(this).sortable("toArray", { attribute: "data-formdataid" });
+                $.post("update_order.php", { order: order,id:id });
+            }
+        }).disableSelection();
+        $("#abc tbody").sortable({
+            placeholder: "placeholder",
+            update: function(event, ui) {
+                console.log(ui);
+                var order = $(this).sortable("toArray", { attribute: "data-postionid" });
                 var id = $(this).sortable("toArray", { attribute: "data-formdataid" });
                 $.post("update_order.php", { order: order,id:id });
             }
@@ -71,7 +91,7 @@
     <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="12" data-formdataid="1"><td>      item 12</td></tr><div>
     <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="13" data-formdataid="6"><td>      item 13</td></tr><div>
     <div  class="builder-item-wrapper clsselected_element" ><tr data-postionid="14" data-formdataid="7"><td>      item 14</td></tr><div>`;
-    $("#sortable-table").append($html);
+    $("#abc").append($html);
     });
 </script>
 

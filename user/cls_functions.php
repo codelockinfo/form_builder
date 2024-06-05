@@ -516,7 +516,7 @@ class Client_functions extends common_function {
             if($form_id != ""){
 
                     $where_query = array(["", "form_id", "=", $form_id]);
-                    $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id", $where_query); 
+                    $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position", $where_query); 
 
                     $resource_array = array('single' => true);
                     $where_query = array(["", "id", "=", $_POST['form_id']],["AND", "store_client_id", "=", "$shopinfo->store_user_id"]);
@@ -552,7 +552,7 @@ class Client_functions extends common_function {
                             $unserialize_elementdata =  unserialize($templates['element_data']);
                             $elementtitle = strtolower($elements['element_title']); 
                             $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
-                            $html .= '<div class="builder-item-wrapper clsselected_element" data-formid='.$formData['id'].' data-formdataid='.$form_data_id.'>
+                            $html .= '<div class="builder-item-wrapper clsselected_element" data-formid='.$formData['id'].' data-formdataid='.$form_data_id.' data-positionid='.$templates['position'].'>
                                         <div class="list-item" data-owl="3" data-elementid='.$elements['id'].'>
                                             <div class="row">
                                                 <div class="icon">
@@ -4630,6 +4630,23 @@ class Client_functions extends common_function {
             if(!empty($element_data)){
                 $response_data = array('result' => 'success', 'data' => unserialize($element_data));
             }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+
+    function update_position(){
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $formdataid = (isset($_POST['formdataid']) && $_POST['formdataid'] != '') ? $_POST['formdataid'] : "";
+            foreach ($formdataid as $position => $id) {
+                $where_query = array(["", "id", "=", $id]);
+                $fields = array(
+                    '`position`' => $position,
+                );
+                $comeback = $this->put_data(TABLE_FORM_DATA, $fields, $where_query);
+            }
+            $response_data = array('result' => 'success', 'data' => "Position update successfully");
         }
         $response = json_encode($response_data);
         return $response;

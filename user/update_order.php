@@ -13,14 +13,13 @@ if (isset($_POST['order'])) {
     }
 
     // Update the order in the database
-    foreach ($order as $position => $id) {
-        echo "UPDATE form_data SET position = ? WHERE id = $formdataid";
-        $sql = "UPDATE form_data SET position = ? WHERE id = $formdataid";
+    foreach ($formdataid as $position => $id) {
+        echo "<pre>";
+        print_r($id);
+        $sql = "UPDATE form_data SET position = $position WHERE id = $id";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $position, $id);
         $stmt->execute();
     }
-
     $stmt->close();
     $conn->close();
 }

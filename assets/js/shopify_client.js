@@ -368,12 +368,19 @@ var BACKTO = 0;
                             }
                             $('.login_message').html(comeback['publishdata']['1']);
                             $('.embed_code').val('<div data-formid="'+comeback['publishdata']['2']+'"></div>');
-                         
+                            $(".selected_element_set").sortable({ 
+                                opacity: 0.6, 
+                                cursor: 'move',  
+                                update: function(event, ui) {
+                                    // var formdataid = $(this).sortable("toArray", { attribute: "data-formdataid" });
+                                    // $.post("ajax_call.php", { routine_name: 'update_position', store: store, formdataid:formdataid });
+                                }
+                            });
                         }
                     }
                 });
         }
-
+        
         function getFormTitle(form_id){
             $.ajax({
                     url: "ajax_call.php",
@@ -623,11 +630,17 @@ var BACKTO = 0;
 
         $(document).on("click", ".saveForm", function(event) {
             console.log("savform .....");
+            saveposition();
             saveform();
             saveheaderform();
             savefooterform();
             savepublishdata();
         });
+
+        function saveposition(){
+            var formdataid = $(".selected_element_set").sortable("toArray", { attribute: "data-formdataid" });
+            $.post("ajax_call.php", { routine_name: 'update_position', store: store, formdataid:formdataid });  
+        }
 
         function  saveform(){
             var $content = CKEDITOR.instances["contentparagraph"];
