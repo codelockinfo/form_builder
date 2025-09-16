@@ -561,6 +561,13 @@ var BACKTO = 0;
             if (checked) {
                 $(".selectedCheck").each(function() {
                 $(this).prop("checked", true);
+                // $(".dataAdded").css("display","none");
+                setTimeout(function () {
+                        var    mychecked = $('.selectedCheck:checked').length;
+                        $('.Deselectcount').text('Selected '+ mychecked + '  form'); 
+                }, 100);
+                $(".bultActionss").css("display","block");
+                $(".selectedshow,.sortBy").css("display","none");
                 });
             } else {
                 $(".selectedCheck").each(function() {
@@ -570,14 +577,21 @@ var BACKTO = 0;
                 $(".selectedshow,.sortBy").css("display","block");
             }
         });
-
-        $(document).on("click",".selectedCheck",function() {
-        if ($(".selectedCheck").length == $(".selectedCheck:checked").length) {
-            $("#checkAll").prop("checked", true);
-        } else {
-            // $("#checkall").removeAttr("checked");
-            $("#checkAll").prop("checked", false);
-        }
+        $(document).on("click", ".selectedCheck", function(){
+            var total = $(".selectedCheck").length;
+            var checked = $(".selectedCheck:checked").length;
+            if(checked === 0){
+                // If none are checked, uncheck "Check All"
+                $("#checkAll").prop("checked", false);
+                $('.selectedshow').css("display","block");
+                $('.bultActionss').css("display","none");
+            } else {
+                // If at least one is checked, check "Check All"
+                // $("#checkAll").prop("checked", true);
+                $(".checkAllCount").prop("checked", true);
+                 $('.selectedshow').css("display","none");
+                $('.bultActionss').css("display","block");
+            }
         });
 
         $(document).on("click",".selectedCheck",function () {
@@ -588,7 +602,7 @@ var BACKTO = 0;
                 setTimeout(function () {
                     
                         var    mychecked = $('.selectedCheck:checked').length;
-                        $('.Deselectcount').text('Deselect all '+ mychecked + '  form'); 
+                        $('.Deselectcount').text('Selected '+ mychecked + '  form'); 
                     
                 }, 100);  
             } 
