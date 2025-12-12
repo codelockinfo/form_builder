@@ -319,20 +319,54 @@ class Client_functions extends common_function {
                 if($elementid != ""){
 
                     $formid = (isset($_POST['formid']) && $_POST['formid'] != '') ? $_POST['formid'] : "";
+                    
+                    // Validate formid
+                    if (empty($formid)) {
+                        $response_data = array('data' => 'fail', 'msg' => __('Form ID is required'));
+                        $response = json_encode($response_data);
+                        return $response;
+                    }
+                    
+                    // Validate elementid
+                    if (empty($elementid)) {
+                        $response_data = array('data' => 'fail', 'msg' => __('Element ID is required'));
+                        $response = json_encode($response_data);
+                        return $response;
+                    }
+                    
                     $where_query = array(["", "form_id", "=", $formid]);
                     $element_result_data = $this->select_result(TABLE_FORM_DATA, '*', $where_query);
-                    $max_position = null;
+                    $max_position = 0;
 
-                    foreach ($element_result_data['data'] as $item) {
-                        if ($max_position === null || $item['position'] > $max_position) {
-                            $max_position = $item['position'];
+                    // Check if data exists and is an array before iterating
+                    if (isset($element_result_data['data']) && is_array($element_result_data['data']) && !empty($element_result_data['data'])) {
+                        foreach ($element_result_data['data'] as $item) {
+                            if (isset($item['position']) && $item['position'] > $max_position) {
+                                $max_position = intval($item['position']);
+                            }
                         }
                     }
-                    $position = intval($max_position)+1;
+                    
+                    $position = $max_position + 1;
+                    
                     $where_query = array(["", "id", "=", $elementid]);
                     $element_result_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
-                    $comeback_client = isset($element_result_data["data"]) ?  $element_result_data["data"] : '';
-                    $comeback_client = $comeback_client[0];
+                    
+                    // Validate that element data exists
+                    if (!isset($element_result_data["data"]) || !is_array($element_result_data["data"]) || empty($element_result_data["data"])) {
+                        $response_data = array('data' => 'fail', 'msg' => __('Element not found'));
+                        $response = json_encode($response_data);
+                        return $response;
+                    }
+                    
+                    $comeback_client = $element_result_data["data"][0];
+                    
+                    // Validate that comeback_client has required fields
+                    if (!isset($comeback_client['id']) || !isset($comeback_client['element_title'])) {
+                        $response_data = array('data' => 'fail', 'msg' => __('Invalid element data'));
+                        $response = json_encode($response_data);
+                        return $response;
+                    }
                         
                         $element_type = array("1","2","3","4","6","7");
                         $element_type2 = array("5");
@@ -355,7 +389,16 @@ class Client_functions extends common_function {
                         }else if(in_array($elementid,$element_type2)){
                             $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
                         }else if(in_array($elementid,$element_type3)){
+                            // Password element data structure: [label, placeholder, description, limit_char_enable, limit_char_value, confirm_password, confirm_placeholder, hidelabel, keeppositionlabel, required, required_hidelabel, columnwidth, confirm_label, confirm_placeholder_confirm, confirm_description, confirm_columnwidth]
                             $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                            error_log("Password element (ID: " . $elementid . ") - Serialized data length: " . strlen($element_data));
+                            // Test unserialize to make sure it works
+                            $test_unserialize = @unserialize($element_data);
+                            if ($test_unserialize === false) {
+                                error_log("ERROR: Password element data failed to unserialize after creation!");
+                            } else {
+                                error_log("Password element data unserializes correctly, array has " . count($test_unserialize) . " elements");
+                            }
                         }else if(in_array($elementid,$element_type4)){
                             $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
                         }else if(in_array($elementid,$element_type5)){
@@ -380,30 +423,85 @@ class Client_functions extends common_function {
                             $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
                         }else if(in_array($elementid,$element_type15)){
                             $element_data = serialize(array($comeback_client['element_title'], "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                        } else {
+                            // Default element data if element type is not recognized
+                            $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+
+                        // Validate element_data was set
+                        if (!isset($element_data) || empty($element_data)) {
+                            $response_data = array('data' => 'fail', 'msg' => __('Failed to create element data'));
+                            $response = json_encode($response_data);
+                            return $response;
                         }
 
                         $mysql_date = date('Y-m-d H:i:s');
                         $fields_arr = array(
                             '`id`' => '',
-                            '`form_id`' => $_POST['formid'],
+                            '`form_id`' => $formid,
                             '`element_id`' => $comeback_client['id'],
                             '`element_data`' => $element_data,
                             '`position`' => $position,
                             '`created`' => $mysql_date,
                             '`updated`' => $mysql_date
                         );
+                        
+                        // Add status field only if column exists (will be ignored if it doesn't)
+                        // Try to add status, but don't fail if column doesn't exist
+                        $fields_arr['`status`'] = '1';
 
-                        $response_data = $this->post_data(TABLE_FORM_DATA, array($fields_arr)); 
+                        // Debug: Log what we're trying to insert
+                        error_log("=== set_element Debug ===");
+                        error_log("Form ID: " . $formid);
+                        error_log("Element ID: " . $comeback_client['id']);
+                        error_log("Position: " . $position);
+                        error_log("Fields array: " . print_r($fields_arr, true));
+
+                        $post_result = $this->post_data(TABLE_FORM_DATA, array($fields_arr)); 
                       
-                        $last_id = $this->db->insert_id;
-                        $response_data = array('data' => 'success', 'msg' => "Element Data add successfully","last_id" => $last_id );
+                        // Debug: Log post_data result
+                        error_log("post_data raw result: " . $post_result);
+                      
+                        // post_data returns JSON string, decode it first
+                        $post_result_array = json_decode($post_result, true);
+                        
+                        error_log("post_data decoded: " . print_r($post_result_array, true));
+                        
+                        // Check if post_data was successful
+                        if (isset($post_result_array['status']) && $post_result_array['status'] == '1') {
+                            // Check if data is numeric (insert_id) or if it's an error message
+                            if (isset($post_result_array['data']) && is_numeric($post_result_array['data']) && $post_result_array['data'] > 0) {
+                                $last_id = $post_result_array['data'];
+                                error_log("Success! Insert ID: " . $last_id);
+                                $response_data = array('data' => 'success', 'msg' => "Element Data add successfully","last_id" => $last_id );
+                            } else {
+                                // Try to get insert_id from database connection
+                                $last_id = isset($this->db->insert_id) ? $this->db->insert_id : (isset($this->db_connection->lastInsertId) ? $this->db_connection->lastInsertId() : 0);
+                                if ($last_id > 0) {
+                                    error_log("Success! Using fallback insert ID: " . $last_id);
+                                    $response_data = array('data' => 'success', 'msg' => "Element Data add successfully","last_id" => $last_id );
+                                } else {
+                                    $error_msg = isset($post_result_array['data']) ? $post_result_array['data'] : 'Insert ID not returned';
+                                    error_log("Failed: " . $error_msg);
+                                    $response_data = array('data' => 'fail', 'msg' => __('Failed to save element data: ') . $error_msg);
+                                }
+                            }
+                        } else {
+                            $error_msg = isset($post_result_array['data']) ? $post_result_array['data'] : 'Unknown error';
+                            error_log("Failed to save element data. Status: " . (isset($post_result_array['status']) ? $post_result_array['status'] : 'not set') . ", Error: " . $error_msg);
+                            $response_data = array('data' => 'fail', 'msg' => __('Failed to save element data: ') . $error_msg);
+                        }
+                        
+                        error_log("=== End set_element Debug ===");
 
+                } else {
+                    $response_data = array('data' => 'fail', 'msg' => __('Element ID is required'));
                 }
         }else{
-            $response_data = array('data' => 'fail', 'msg' => $error_array);
+            $response_data = array('data' => 'fail', 'msg' => __('Store parameter is required'));
         }
-        $response = json_encode($response_data);
-        return $response;
+        // Return array, not JSON string (ajax_call.php handles JSON encoding)
+        return $response_data;
     }
 
     function insertDefaultElements() {
@@ -515,44 +613,210 @@ class Client_functions extends common_function {
             $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
             if($form_id != ""){
 
-                    $where_query = array(["", "form_id", "=", $form_id]);
-                    $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position", $where_query); 
+                    // Query form_data - use direct database query as PRIMARY method to ensure we get ALL elements
+                    // This bypasses any potential issues with select_result (limits, filters, etc.)
+                    error_log("=== Direct Database Query for form_id: " . $form_id . " ===");
+                    $comeback_client = array('status' => 0, 'data' => array());
+                    
+                    try {
+                        // Use direct query as primary method - always use this result
+                        // Order by position first, then by id as fallback
+                        $direct_query = "SELECT element_id, element_data, id, position, status FROM " . TABLE_FORM_DATA . " WHERE form_id = " . intval($form_id) . " ORDER BY position ASC, id ASC";
+                        error_log("Executing direct query: " . $direct_query);
+                        $result = $this->db_connection->query($direct_query);
+                        $direct_data = array();
+                        if ($result) {
+                            while ($row = $result->fetch_assoc()) {
+                                $direct_data[] = $row;
+                            }
+                            error_log("Direct query SUCCESS - Found " . count($direct_data) . " elements");
+                            if (count($direct_data) > 0) {
+                                $comeback_client = array('status' => 1, 'data' => $direct_data);
+                            } else {
+                                error_log("WARNING: Direct query returned 0 elements for form_id: " . $form_id);
+                            }
+                        } else {
+                            $error_msg = method_exists($this->db_connection, 'error') ? $this->db_connection->error : 'unknown error';
+                            error_log("ERROR: Direct query returned false - " . $error_msg);
+                            // Fallback to select_result
+                            $where_query = array(["", "form_id", "=", $form_id]);
+                            $options_arr = array('limit' => 1000, 'skip' => 0);
+                            $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position,status", $where_query, $options_arr);
+                            error_log("Fallback select_result found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
+                        }
+                    } catch (Exception $e) {
+                        error_log("EXCEPTION: Direct query failed - " . $e->getMessage());
+                        // Fallback to select_result
+                        $where_query = array(["", "form_id", "=", $form_id]);
+                        $options_arr = array('limit' => 1000, 'skip' => 0);
+                        $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position,status", $where_query, $options_arr);
+                        error_log("Fallback select_result found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
+                    }
+                    error_log("=== Final result: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements ===");
+                    
+                    // Debug: Log raw query results BEFORE filtering
+                    error_log("=== get_selected_elements_fun Query Results ===");
+                    error_log("Query status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'not set'));
+                    error_log("Raw elements count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 'not array or not set'));
+                    if (isset($comeback_client['data']) && is_array($comeback_client['data'])) {
+                        foreach($comeback_client['data'] as $idx => $elem) {
+                            error_log("  Element #$idx - Element ID: " . (isset($elem['element_id']) ? $elem['element_id'] : 'N/A') . 
+                                     ", Form Data ID: " . (isset($elem['id']) ? $elem['id'] : 'N/A') . 
+                                     ", Position: " . (isset($elem['position']) ? $elem['position'] : 'N/A') .
+                                     ", Status: " . (isset($elem['status']) ? $elem['status'] : 'NULL'));
+                        }
+                    }
+                    
+                    // Filter by status in PHP if status column exists in results
+                    if (isset($comeback_client['data']) && is_array($comeback_client['data']) && !empty($comeback_client['data'])) {
+                        $filtered_data = array();
+                        foreach($comeback_client['data'] as $elem) {
+                            // If status column exists, only include active elements (status = 1 or NULL/empty)
+                            // If status column doesn't exist, include all elements
+                            if (!isset($elem['status']) || $elem['status'] == '1' || $elem['status'] == 1 || $elem['status'] === null || $elem['status'] === '') {
+                                $filtered_data[] = $elem;
+                            } else {
+                                error_log("Filtered out element - Form Data ID: " . (isset($elem['id']) ? $elem['id'] : 'N/A') . ", Status: " . $elem['status']);
+                            }
+                        }
+                        $comeback_client['data'] = $filtered_data;
+                        error_log("After filtering - Elements count: " . count($filtered_data));
+                    }
+                    error_log("=== End Query Results ==="); 
+                    
+                    // Debug: Log the query result
+                    error_log("Form Data Query Result - Status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'not set'));
+                    error_log("Form Data Query Result - Data count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 'not array or not set'));
 
                     $resource_array = array('single' => true);
                     $where_query = array(["", "id", "=", $_POST['form_id']],["AND", "store_client_id", "=", "$shopinfo->store_user_id"]);
-                    $comeback_form = $this->select_result(TABLE_FORMS,'*', $where_query, $resource_array); 
+                    $comeback_form = $this->select_result(TABLE_FORMS,'*', $where_query, $resource_array);
+                    
+                    // Debug: Log the form query result
+                    error_log("Form Query Result - Status: " . (isset($comeback_form['status']) ? $comeback_form['status'] : 'not set'));
+                    error_log("Form Query Result - Has data: " . (isset($comeback_form['data']) && !empty($comeback_form['data']) ? 'yes' : 'no')); 
                     $form_html= $form_header_data = $form_footer_data = $btnalign = '';
-                    $formData = isset($comeback_form['data']) && $comeback_form['data'] != '' ? $comeback_form['data'] : '';
+                    
+                    // Check if query was successful (status == 1) and has data
+                    $formData = '';
+                    if (isset($comeback_form['status']) && $comeback_form['status'] == 1 && isset($comeback_form['data']) && !empty($comeback_form['data'])) {
+                        $formData = $comeback_form['data'];
+                    } else {
+                        error_log("Form query failed or returned no data. Status: " . (isset($comeback_form['status']) ? $comeback_form['status'] : 'not set'));
+                    }
+                    
+                    // Initialize default values if form data is empty
                     if($formData != ''){
-                        $form_header_data =  unserialize($formData['form_header_data']);
-                        $form_footer_data =  unserialize($formData['form_footer_data']);
-                        $publishdata =  unserialize($formData['publishdata']);
+                        $form_header_data_raw = isset($formData['form_header_data']) ? $formData['form_header_data'] : '';
+                        $form_footer_data_raw = isset($formData['form_footer_data']) ? $formData['form_footer_data'] : '';
+                        $publishdata_raw = isset($formData['publishdata']) ? $formData['publishdata'] : '';
+                        
+                        // Unserialize with error handling
+                        $form_header_data = !empty($form_header_data_raw) ? @unserialize($form_header_data_raw) : array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                        if ($form_header_data === false) {
+                            $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                        }
+                        
+                        $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0","Reset", "0","align-left");
+                        if ($form_footer_data === false) {
+                            $form_footer_data = array("", "Submit", "0","Reset", "0","align-left");
+                        }
+                        
+                        $publishdata = !empty($publishdata_raw) ? @unserialize($publishdata_raw) : array("",'Please <a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true)));
+                        if ($publishdata === false) {
+                            $publishdata = array("",'Please <a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true)));
+                        }
+                        
                         $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
                         $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
+                        $form_name = isset($formData['form_name']) && !empty($formData['form_name']) ? $formData['form_name'] : (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form');
                         $form_html = '<div class="formHeader header '.$header_hidden.'">
-                            <h3 class="title globo-heading">'.$form_header_data[1].'</h3>
-                            <div class="description globo-description">'.$form_header_data[2].'</div>
+                            <h3 class="title globo-heading">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
+                            <div class="description globo-description">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
                         </div>';
+                    } else {
+                        // Default values if no form data found
+                        $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                        $form_footer_data = array("", "Submit", "0","Reset", "0","align-left");
+                        $publishdata = array("",'Please <a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true)));
+                        $form_type = '0';
+                        $form_name = 'Blank Form';
                     }
 
-                    $html = '';
+                    // Initialize HTML - use a unique variable name to avoid conflicts
+                    $builder_html = '';
+                    $html = ''; // Keep for backward compatibility but use $builder_html for building
                     $i= $layoutColumn = 2;
-                    if(isset($comeback_client['data']) && $comeback_client['data'] != '') {
+                    error_log("=== HTML Generation Started - Initial HTML length: " . strlen($html) . " ===");
+                    
+                    // Check if comeback_client query was successful and has data
+                    $element_data_array = array();
+                    if (isset($comeback_client['status']) && $comeback_client['status'] == 1 && isset($comeback_client['data']) && is_array($comeback_client['data'])) {
+                        $element_data_array = $comeback_client['data'];
+                        error_log("Found " . count($element_data_array) . " form elements to process");
+                    } else {
+                        error_log("Form elements query failed or returned no data. Status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'not set'));
+                        // Even if status is not 1, try to use the data if it exists
+                        if (isset($comeback_client['data']) && is_array($comeback_client['data']) && !empty($comeback_client['data'])) {
+                            $element_data_array = $comeback_client['data'];
+                            error_log("Using data despite status != 1. Found " . count($element_data_array) . " elements");
+                        }
+                    }
+                    
+                    if(!empty($element_data_array)) {
                         $form_html .='<form class="get_selected_elements" name="get_selected_elements" method="post">
                         <input type="hidden" class="form_id" name="form_id"  value='.$_POST['form_id'].'>';
                     }
                     $form_html .= '<div class="content flex-wrap block-container" data-id="false">';
-                    foreach($comeback_client['data'] as $templates){
+                    
+                    // Only loop if we have data
+                    if(!empty($element_data_array)) {
+                        error_log("Starting to process " . count($element_data_array) . " elements for HTML generation");
+                        $element_count = 0;
+                        foreach($element_data_array as $templates){
+                            $element_count++;
+                            error_log("Processing element #$element_count - Form Data ID: " . (isset($templates['id']) ? $templates['id'] : 'N/A') . ", Element ID: " . (isset($templates['element_id']) ? $templates['element_id'] : 'N/A'));
                         $form_element_no = $templates['element_id'];
                         $form_data_id = $templates['id'];
                         $where_query = array(["", "id", "=", "$form_element_no"] );
                         $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
                     
                         foreach($element_data['data'] as $elements){
-                            $unserialize_elementdata =  unserialize($templates['element_data']);
+                            // Unserialize with error handling - if it fails, try to recover
+                            $unserialize_elementdata = @unserialize($templates['element_data']);
+                            if ($unserialize_elementdata === false || !is_array($unserialize_elementdata)) {
+                                // Try to use default data based on element type instead of skipping
+                                error_log("Failed to unserialize element_data for element_id: " . $templates['element_id'] . ", form_data_id: " . $form_data_id . ", element_type: " . $elements['id']);
+                                
+                                // Use default data based on element type
+                                if ($elements['id'] == 8) {
+                                    // Password element default data
+                                    $unserialize_elementdata = array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2");
+                                    error_log("Using default password element data");
+                                } else if (in_array($elements['id'], array(1,2,3,4,6,7))) {
+                                    // Standard text-like elements
+                                    $unserialize_elementdata = array($elements['element_title'], $elements['element_title'], "", "0", "100", "0", "0", "1", "0", "2");
+                                    error_log("Using default data for element type " . $elements['id']);
+                                } else {
+                                    // Generic default - don't skip, use minimal data
+                                    $unserialize_elementdata = array($elements['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2");
+                                    error_log("Using generic default data for element type " . $elements['id']);
+                                }
+                                // Don't continue - process the element with default data
+                            }
+                            
+                            // Debug: Log password elements specifically
+                            if ($elements['id'] == 8) {
+                                error_log("Password element processing - element_id: " . $templates['element_id'] . ", form_data_id: " . $form_data_id);
+                                error_log("Unserialized data count: " . count($unserialize_elementdata));
+                                error_log("Unserialized data: " . print_r($unserialize_elementdata, true));
+                            }
                             $elementtitle = strtolower($elements['element_title']); 
                             $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
-                            $html .= '<div class="builder-item-wrapper clsselected_element" data-formid='.$formData['id'].' data-formdataid='.$form_data_id.' data-positionid='.$templates['position'].'>
+                            
+                            // Debug: Log before appending to HTML
+                            $html_before = strlen($builder_html);
+                            $builder_html .= '<div class="builder-item-wrapper clsselected_element" data-formid='.$formData['id'].' data-formdataid='.$form_data_id.' data-positionid='.$templates['position'].'>
                                         <div class="list-item" data-owl="3" data-elementid='.$elements['id'].'>
                                             <div class="row">
                                                 <div class="icon">
@@ -589,6 +853,14 @@ class Client_functions extends common_function {
                                             </div>
                                         </div>
                                     </div>';
+                            
+                            // Debug: Log after appending to HTML
+                            $html_after = strlen($builder_html);
+                            if ($html_after <= $html_before) {
+                                error_log("WARNING: HTML length did not increase! Before: $html_before, After: $html_after, Element ID: " . $elements['id']);
+                            }
+                            error_log("HTML appended for element " . $elements['id'] . " (form_data_id: $form_data_id). HTML length now: $html_after");
+                            
                             if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){ 
                                 $is_hiderequire = $is_hidelabel = $is_keepossition_label =  "";
                                
@@ -729,28 +1001,33 @@ class Client_functions extends common_function {
                             if($elements['id'] == 8){
                                 $is_hiderequire = $is_hidelabel = $is_keepossition_label =  "";
                                
-                                if($unserialize_elementdata[9] == "1"){
-                                    if($unserialize_elementdata[7] == "1"){
-                                        if($unserialize_elementdata[10] == "0"){
+                                // Check if array keys exist before accessing
+                                if(isset($unserialize_elementdata[9]) && $unserialize_elementdata[9] == "1"){
+                                    if(isset($unserialize_elementdata[7]) && $unserialize_elementdata[7] == "1"){
+                                        if(isset($unserialize_elementdata[10]) && $unserialize_elementdata[10] == "0"){
                                             $is_hiderequire = "hidden";
                                         }
                                     }
                                 }else{
                                     $is_hiderequire = "hidden";
                                 }
-                                if($unserialize_elementdata[10] == "1"){
+                                if(isset($unserialize_elementdata[10]) && $unserialize_elementdata[10] == "1"){
                                     $is_hidelabel = "hidden";
                                 }
-                                if($unserialize_elementdata[8] == "1"){
+                                if(isset($unserialize_elementdata[8]) && $unserialize_elementdata[8] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[16].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                $layout_col = isset($unserialize_elementdata[16]) ? $unserialize_elementdata[16] : '2';
+                                $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Password';
+                                $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
+                                $description_text = isset($unserialize_elementdata[2]) ? $unserialize_elementdata[2] : '';
+                                $form_html .= ' <div class="code-form-control layout-'.$layout_col.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
+                                    <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password">'.$label_text.'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'">
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'">
                                     </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$description_text.'</small>
                                 </div>';
                             }
                             if($elements['id'] == 9){
@@ -1117,26 +1394,90 @@ class Client_functions extends common_function {
                             }
                         }  
                     
-                        $i++;             
+                            $i++;             
+                        }
+                        // Copy builder_html to html before finishing
+                        $html = $builder_html;
+                        error_log("=== Loop Finished - Final HTML length: " . strlen($html) . ", Elements in HTML: " . substr_count($html, 'data-formdataid=') . " ===");
+                    } else {
+                        error_log("=== No elements to process - element_data_array is empty ===");
                     }
                     $form_html .= '</div>';
-                    if(isset($element_data['data']) && $element_data['data'] != '') {
+                    if(!empty($element_data_array)) {
                         $form_html .='</form>';
                     }
-                    if($formData != ''){
+                    if($formData != '' || !empty($form_footer_data)){
                         $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
                         $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
-                        $form_html .= '<div class="footer forFooterAlign '.$form_footer_data['5'].'">
-                                <div class="messages footer-data__footerdescription">'.$form_footer_data[0].'</div>
+                        $footer_align = isset($form_footer_data[5]) ? $form_footer_data[5] : 'align-left';
+                        $form_html .= '<div class="footer forFooterAlign '.$footer_align.'">
+                                <div class="messages footer-data__footerdescription">'.(isset($form_footer_data[0]) ? $form_footer_data[0] : '').'</div>
                                 <button class="action submit  classic-button footer-data__submittext '.$fullwidth_button.'">
                                     <span class="spinner"></span>
-                                    '.$form_footer_data[1].'
+                                    '.(isset($form_footer_data[1]) ? $form_footer_data[1] : 'Submit').'
                                 </button>
-                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.$form_footer_data[3].'</button>
+                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
                             </div>';
                     }
-                    $response_data = array('data' => 'success', 'msg' => 'all selected element select successfully','outcome' => $html , 'form_type' => $form_type ,'form_id' => $form_id, 'form_html' => $form_html , 'form_header_data' => $form_header_data , 'form_footer_data' => $form_footer_data, 'publishdata' => $publishdata);
+                    // Debug: Log final response
+                    error_log("Final response - HTML length: " . strlen($html) . " chars");
+                    error_log("Final response - Form HTML length: " . strlen($form_html) . " chars");
+                    error_log("Final response - Elements in HTML: " . substr_count($html, 'data-formdataid='));
+                    
+                    // Debug: Log final response
+                    error_log("=== Final Response Debug ===");
+                    error_log("HTML length: " . strlen($html) . " chars");
+                    error_log("Form HTML length: " . strlen($form_html) . " chars");
+                    error_log("Elements in HTML (data-formdataid count): " . substr_count($html, 'data-formdataid='));
+                    error_log("=== End Final Response Debug ===");
+                    
+                    // Debug: Calculate elements in HTML
+                    $elements_in_html = substr_count($html, 'data-formdataid=');
+                    error_log("=== Final Response Debug ===");
+                    error_log("HTML length: " . strlen($html) . " chars");
+                    error_log("Elements in HTML: " . $elements_in_html);
+                    error_log("Elements found by query: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0));
+                    error_log("Elements processed: " . (isset($element_count) ? $element_count : 0));
+                    error_log("=== End Final Response Debug ===");
+                    
+                    // Final check - log HTML right before response
+                    error_log("=== RIGHT BEFORE RESPONSE ===");
+                    error_log("HTML variable length: " . strlen($html));
+                    error_log("HTML variable elements count: " . substr_count($html, 'data-formdataid='));
+                    error_log("HTML variable (first 200 chars): " . substr($html, 0, 200));
+                    error_log("=== END FINAL CHECK ===");
+                    
+                    // CRITICAL FIX: Use builder_html which was built safely
+                    // Make sure html is set to builder_html
+                    if (!isset($builder_html) || empty($builder_html)) {
+                        $builder_html = $html; // Fallback to html if builder_html wasn't used
+                    }
+                    $html = $builder_html; // Ensure html has the correct value
+                    
+                    error_log("Final HTML length: " . strlen($html) . ", Elements: " . substr_count($html, 'data-formdataid='));
+                    
+                    $response_data = array(
+                        'data' => 'success', 
+                        'msg' => 'all selected element select successfully',
+                        'outcome' => $html,
+                        'form_type' => $form_type,
+                        'form_id' => $form_id,
+                        'form_html' => $form_html,
+                        'form_header_data' => $form_header_data,
+                        'form_footer_data' => $form_footer_data,
+                        'publishdata' => $publishdata,
+                        'form_name' => isset($form_name) ? $form_name : 'Blank Form',
+                        'debug' => array(
+                            'elements_found' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
+                            'elements_in_html' => $elements_in_html,
+                            'elements_processed' => isset($element_count) ? $element_count : 0
+                        )
+                    );
+                } else {
+                    $response_data = array('data' => 'fail', 'msg' => __('Form ID is required'));
                 }
+            } else {
+                $response_data = array('data' => 'fail', 'msg' => __('Store parameter is required'));
             }
         return $response_data;
     }
@@ -4547,10 +4888,22 @@ class Client_functions extends common_function {
             $showheader = isset($_POST['showheader']) ?  $_POST['showheader'] : '0' ;
             $title = isset($_POST['header__title']) ?  $_POST['header__title'] : '' ;
             $content = isset($_POST['contentheader']) ?  $_POST['contentheader'] : '' ;
+            
+            // Validate form_id and title
+            if (empty($form_id)) {
+                $response_data = array('result' => 'fail', 'msg' => __('Form ID is required'));
+                $response = json_encode($response_data);
+                return $response;
+            }
+            
             $form_header_data = serialize(array($showheader, $title, $content));
+            
+            // Use title for form_name, or default to "Blank Form" if empty
+            $form_name = !empty($title) ? $title : 'Blank Form';
 
             $fields = array(
                 '`form_header_data`' => $form_header_data,
+                '`form_name`' => $form_name,
             );
 
             $where_query = array(["", "id", "=", "$form_id"]);
@@ -4639,14 +4992,63 @@ class Client_functions extends common_function {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $formdataid = (isset($_POST['formdataid']) && $_POST['formdataid'] != '') ? $_POST['formdataid'] : "";
-            foreach ($formdataid as $position => $id) {
-                $where_query = array(["", "id", "=", $id]);
-                $fields = array(
-                    '`position`' => $position,
-                );
-                $comeback = $this->put_data(TABLE_FORM_DATA, $fields, $where_query);
+            
+            // Validate formdataid is an array
+            if (!is_array($formdataid) || empty($formdataid)) {
+                $response_data = array('result' => 'fail', 'msg' => __('No elements to update'));
+                $response = json_encode($response_data);
+                return $response;
             }
-            $response_data = array('result' => 'success', 'data' => "Position update successfully");
+            
+            $updated_count = 0;
+            $errors = array();
+            
+            foreach ($formdataid as $position => $id) {
+                // Validate position and id
+                if (!is_numeric($position) || !is_numeric($id) || $id <= 0) {
+                    error_log("Invalid position or id: position=$position, id=$id");
+                    continue;
+                }
+                
+                $where_query = array(["", "id", "=", intval($id)]);
+                $fields = array(
+                    '`position`' => intval($position),
+                );
+                
+                $comeback = $this->put_data(TABLE_FORM_DATA, $fields, $where_query);
+                
+                // Check if update was successful
+                if (is_string($comeback)) {
+                    $comeback_array = json_decode($comeback, true);
+                    if (isset($comeback_array['status']) && $comeback_array['status'] == '1') {
+                        $updated_count++;
+                        error_log("Position updated successfully: id=$id, position=$position");
+                    } else {
+                        $errors[] = "Failed to update position for id=$id";
+                        error_log("Failed to update position: id=$id, position=$position, response=" . $comeback);
+                    }
+                } else {
+                    $errors[] = "Invalid response for id=$id";
+                    error_log("Invalid response for position update: id=$id, response=" . print_r($comeback, true));
+                }
+            }
+            
+            if ($updated_count > 0) {
+                $response_data = array(
+                    'result' => 'success', 
+                    'data' => "Position updated successfully for $updated_count element(s)",
+                    'updated_count' => $updated_count
+                );
+                if (!empty($errors)) {
+                    $response_data['warnings'] = $errors;
+                }
+            } else {
+                $response_data = array(
+                    'result' => 'fail', 
+                    'msg' => __('Failed to update positions'),
+                    'errors' => $errors
+                );
+            }
         }
         $response = json_encode($response_data);
         return $response;

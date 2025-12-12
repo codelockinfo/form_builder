@@ -24,7 +24,7 @@ class Login extends common_function {
       
         if (isset($_GET["logout"])) {
             $this->doLogout();
-        } elseif (!empty($_SESSION['email']) && ($_SESSION['user_logged_in'] == 1)) {
+        } elseif (!empty($_SESSION['email']) && (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == 1)) {
    
             $this->loginWithSessionData();
             if (isset($_POST["user_edit_submit_name"])) {

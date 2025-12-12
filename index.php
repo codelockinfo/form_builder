@@ -61,7 +61,7 @@ if ($_GET['shop'] != "") {
             if (!empty($__webhook_arr)) {
                 foreach ($__webhook_arr as $topic) {
                     $file_name = str_replace('/', '-', $topic) . '.php';
-                    $params = '{"webhook": {"topic":"' . $topic . '",
+                    $params = '{"webhook": {"topic":"' . $topic . '", 
                                "address":"https://codelocksolutions.com/form_builder/webhook/' . $file_name . '",
                                 "format":"json"
 				}}';

@@ -79,6 +79,8 @@ class Translations {
 	}
 }
 class Gettext_Translations extends Translations {
+	var $_nplurals = null;
+	var $_gettext_select_plural_form = null;
 	function gettext_select_plural_form($count) {
 		if (!isset($this->_gettext_select_plural_form) || is_null($this->_gettext_select_plural_form)) {
 			list( $nplurals, $expression ) = $this->nplurals_and_expression_from_header($this->get_header('Plural-Forms'));

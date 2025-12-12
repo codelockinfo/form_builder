@@ -3,6 +3,8 @@ if ( ! class_exists( 'POMO_Reader', false ) ):
 class POMO_Reader {
 	var $endian = 'little';
 	var $_post = '';
+	var $_pos = 0;
+	var $is_overloaded = false;
 	function __construct() {
 		$this->is_overloaded = ((ini_get("mbstring.func_overload") & 2) != 0) && function_exists('mb_substr');
 		$this->_pos = 0;
@@ -67,6 +69,7 @@ endif;
 
 if ( ! class_exists( 'POMO_FileReader', false ) ):
 class POMO_FileReader extends POMO_Reader {
+	var $_f = null;
 	function __construct( $filename ) {
 		parent::POMO_Reader();
 		$this->_f = fopen($filename, 'rb');

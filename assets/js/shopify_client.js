@@ -280,21 +280,60 @@ var BACKTO = 0;
             var thisObj = $(this);
             var formid= $(".formid").val();
             var elementid= $(this).find(".get_element_hidden").val();
+            
+            // Validate formid and elementid
+            if (!formid || formid === '') {
+                alert('Form ID is missing. Please refresh the page and try again.');
+                return false;
+            }
+            
+            if (!elementid || elementid === '') {
+                alert('Element ID is missing. Please try selecting the element again.');
+                return false;
+            }
+            
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
                 dataType: "json",
                 data: {'routine_name': 'set_element' , store: store,'get_element_hidden':elementid,'formid':formid},
                 success: function (comeback) {
-                    var comeback = JSON.parse(comeback);
-                    var formdata_id = comeback["last_id"] !== undefined ? comeback["last_id"] : "";
-                    if (comeback['code'] != undefined && comeback['code'] == '403') {
+                    console.log('=== Add Element AJAX Response ===');
+                    console.log('Raw comeback:', comeback);
+                    console.log('Type of comeback:', typeof comeback);
+                    
+                    // Parse JSON if it's a string, otherwise use as-is
+                    var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
+                    
+                    console.log('Parsed response:', response);
+                    console.log('Response data:', response['data']);
+                    console.log('Response msg:', response['msg']);
+                    console.log('Response last_id:', response['last_id']);
+                    console.log('=== End Response Debug ===');
+                    
+                    var formdata_id = response["last_id"] !== undefined ? response["last_id"] : "";
+                    
+                    if (response['code'] != undefined && response['code'] == '403') {
                         redirect403();
-                    } else{
+                    } else if (response['data'] === 'success') {
+                        console.log('Element added successfully! ID:', formdata_id);
                         $('.owl-carousel').trigger('to.owl.carousel',  [BACKTO, 40, true]);
                         get_selected_elements(formid);
                         // get_selected_element_preview(formid,elementid,formdata_id);
+                    } else {
+                        var errorMsg = response['msg'] || response['message'] || 'Failed to add element. Please try again.';
+                        console.error('Error adding element:', response);
+                        alert('Error: ' + errorMsg);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('=== AJAX Error Adding Element ===');
+                    console.error('Status:', status);
+                    console.error('Error:', error);
+                    console.error('Response Text:', xhr.responseText);
+                    console.error('Response Status:', xhr.status);
+                    console.error('=== End Error Debug ===');
+                    alert('An error occurred while adding the element.\n\nStatus: ' + status + '\nError: ' + error + '\n\nPlease check the console for details.');
                 }
             });
         });
@@ -316,67 +355,165 @@ var BACKTO = 0;
         }      
 
         function get_selected_elements(form_id){
+            if (!form_id || form_id === '' || form_id === 0) {
+                console.error('Form ID is missing or invalid');
+                alert('Form ID is missing. Please refresh the page and try again.');
+                return;
+            }
+            
             $.ajax({
                     url: "ajax_call.php",
                     type: "post",
                     dataType: "json",
                     data: {'routine_name': 'get_selected_elements_fun','form_id': form_id, store: store},
-                    success: function (comeback) { 
-                        if (comeback['code'] != undefined && comeback['code'] == '403') {
+                    success: function (comeback) {
+                        // Debug: Log raw response
+                        console.log('=== get_selected_elements AJAX Response ===');
+                        console.log('Raw comeback:', comeback);
+                        console.log('Type of comeback:', typeof comeback);
+                        
+                        // Parse JSON if it's a string, otherwise use as-is
+                        var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
+                        
+                        console.log('Parsed response:', response);
+                        console.log('Response data:', response['data']);
+                        console.log('Response form_id:', response['form_id']);
+                        console.log('Response form_name:', response['form_name']);
+                        console.log('Response form_header_data:', response['form_header_data']);
+                        console.log('Response form_footer_data:', response['form_footer_data']);
+                            console.log('Response outcome:', response['outcome']);
+                            console.log('Response outcome length:', response['outcome'] ? response['outcome'].length : 0);
+                            console.log('Response outcome (first 500 chars):', response['outcome'] ? response['outcome'].substring(0, 500) : 'empty');
+                            console.log('Response form_html:', response['form_html'] ? 'exists (' + response['form_html'].length + ' chars)' : 'missing');
+                            
+                            // Count how many elements are in the outcome
+                            if (response['outcome']) {
+                                var elementCount = (response['outcome'].match(/data-formdataid=/g) || []).length;
+                                console.log('Number of elements in outcome:', elementCount);
+                            }
+                            
+                            // Show debug info from server
+                            if (response['debug']) {
+                                console.log('=== Server Debug Info ===');
+                                console.log('Elements found by query:', response['debug']['elements_found']);
+                                console.log('Elements in HTML:', response['debug']['elements_in_html']);
+                                console.log('Elements processed:', response['debug']['elements_processed']);
+                                console.log('=== End Server Debug ===');
+                            }
+                            console.log('=== End Response Debug ===');
+                        
+                        if (response['code'] != undefined && response['code'] == '403') {
                             redirect403();
-                        } else{
-                            console.log(comeback['form_footer_data']);
-                            if(comeback['form_type'] == "4"){
+                        } else if (response['data'] === 'success') {
+                            console.log('Form data loaded successfully');
+                            console.log('Form footer data:', response['form_footer_data']);
+                            if(response['form_type'] == "4"){
                                     $(".preview-box").addClass("floting_form_main");
                             }
-                            if(comeback['form_header_data']['0'] == 1){
+                            if(response['form_header_data'] && response['form_header_data']['0'] == 1){
                                 $(".headerData .showHeader").prop("checked", true);
                             }else{
                                 $(".headerData .showHeader").prop("checked", false);
                             }
-                            $(".headerData .form_id").val(comeback['form_id']);
-                            $(".headerData .headerTitle").val(comeback['form_header_data']['1']);
-                            $('.headerData .myeditor').html(comeback['form_header_data']['2']);
-                            $(".form_name_form_design").val(comeback['form_header_data']['1'])
-                            $(".selected_element_set").html(comeback['outcome']);
-                            $(".code-form-app").html(comeback['form_html']);
+                            $(".headerData .form_id").val(response['form_id']);
+                            $(".headerData .headerTitle").val(response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : '');
+                            $('.headerData .myeditor').html(response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '');
                             
-                            $(".footerData .form_id").val(comeback['form_id']);
-                            $('.footerData .myeditor').html(comeback['form_footer_data']['0']);
-                            $('.footerData .submitText').val(comeback['form_footer_data']['1']);
-                            if(comeback['form_footer_data']['2'] == 1){
-                                $(".footerData .resetButton").prop("checked", true);
-                                $(".input_reset").removeClass("hidden");
-                            }else{
-                                $(".input_reset").addClass("hidden");
-                                $(".footerData .resetButton").prop("checked", false);
+                            // Set form name - prefer form_name from response, fallback to header title
+                            var formName = response['form_name'] || (response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : 'Blank Form');
+                            $(".form_name_form_design").val(formName);
+                            
+                            $(".selected_element_set").html(response['outcome'] || '');
+                            $(".code-form-app").html(response['form_html'] || '');
+                            
+                            $(".footerData .form_id").val(response['form_id']);
+                            if (response['form_footer_data']) {
+                                $('.footerData .myeditor').html(response['form_footer_data']['0'] || '');
+                                $('.footerData .submitText').val(response['form_footer_data']['1'] || 'Submit');
+                                if(response['form_footer_data']['2'] == 1){
+                                    $(".footerData .resetButton").prop("checked", true);
+                                    $(".input_reset").removeClass("hidden");
+                                }else{
+                                    $(".input_reset").addClass("hidden");
+                                    $(".footerData .resetButton").prop("checked", false);
+                                }
+                                $('.footerData .resetbuttonText').val(response['form_footer_data']['3'] || 'Reset');
+                                if(response['form_footer_data']['4'] == 1){
+                                    $(".footerData .fullFooterButton").prop("checked", true);
+                                }else{
+                                    $(".footerData .fullFooterButton").prop("checked", false);
+                                }
+                                $( ".footerData .chooseItem-align" ).each(function() {
+                                        if(response['form_footer_data']['5'] == $(this).data('value')){
+                                            $(".footerData .chooseItem-align").removeClass("active");
+                                            $(this).addClass("active");
+                                        }
+                                });
                             }
-                            $('.footerData .resetbuttonText').val(comeback['form_footer_data']['3']);
-                            if(comeback['form_footer_data']['4'] == 1){
-                                $(".footerData .fullFooterButton").prop("checked", true);
-                            }else{
-                                $(".footerData .fullFooterButton").prop("checked", false);
+                            if (response['publishdata']) {
+                                if(response['publishdata']['0'] == 1){
+                                    $('.required_login').prop("checked", true);
+                                } else {
+                                    $('.required_login').prop("checked", false);
+                                }
+                                $('.login_message').html(response['publishdata']['1'] || '');
+                                $('.embed_code').val('<div data-formid="'+(response['publishdata']['2'] || '')+'"></div>');
                             }
-                            $( ".footerData .chooseItem-align" ).each(function() {
-                                    if(comeback['form_footer_data']['5'] == $(this).data('value')){
-                                        $(".footerData .chooseItem-align").removeClass("active");
-                                        $(this).addClass("active");
-                                    }
-                            });
-                            if(comeback['publishdata']['0'] == 1){
-                                $('.required_login').prop("checked");
-                            }
-                            $('.login_message').html(comeback['publishdata']['1']);
-                            $('.embed_code').val('<div data-formid="'+comeback['publishdata']['2']+'"></div>');
                             $(".selected_element_set").sortable({ 
                                 opacity: 0.6, 
-                                cursor: 'move',  
+                                cursor: 'move',
+                                handle: '.softable', // Use the sort handle
                                 update: function(event, ui) {
-                                    // var formdataid = $(this).sortable("toArray", { attribute: "data-formdataid" });
-                                    // $.post("ajax_call.php", { routine_name: 'update_position', store: store, formdataid:formdataid });
+                                    // Save position immediately when element is dragged
+                                    var formdataid = $(this).sortable("toArray", { attribute: "data-formdataid" });
+                                    console.log("Position changed, saving positions:", formdataid);
+                                    $.ajax({
+                                        url: "ajax_call.php",
+                                        type: "POST",
+                                        data: { 
+                                            routine_name: 'update_position', 
+                                            store: store, 
+                                            formdataid: formdataid 
+                                        },
+                                        success: function(response) {
+                                            console.log("Position saved successfully:", response);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error("Error saving position:", error);
+                                        }
+                                    });
                                 }
                             });
+                            
+                            // Initialize CKEditor for header and footer
+                            if (typeof CKEDITOR !== 'undefined') {
+                                setTimeout(function() {
+                                    if ($('.headerData .myeditor').length > 0 && !CKEDITOR.instances['contentheader']) {
+                                        initializeCKEditor('contentheader', '.headerData .myeditor');
+                                    }
+                                    if ($('.footerData .myeditor').length > 0 && !CKEDITOR.instances['contentfooter']) {
+                                        initializeCKEditor('contentfooter', '.footerData .myeditor');
+                                    }
+                                }, 100);
+                            }
+                        } else {
+                            console.error('=== Failed to load form data ===');
+                            console.error('Response:', response);
+                            console.error('Response structure:', JSON.stringify(response, null, 2));
+                            var errorMsg = response['msg'] || response['message'] || 'Failed to load form data. Please refresh the page and try again.';
+                            console.error('Error message:', errorMsg);
+                            alert('Error: ' + errorMsg + '\n\nCheck console for details.');
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('=== AJAX Error Loading Form Data ===');
+                        console.error('Status:', status);
+                        console.error('Error:', error);
+                        console.error('Response Text:', xhr.responseText);
+                        console.error('Response Status:', xhr.status);
+                        console.error('Response Headers:', xhr.getAllResponseHeaders());
+                        console.error('=== End Error Debug ===');
+                        alert('An error occurred while loading the form data.\n\nStatus: ' + status + '\nError: ' + error + '\n\nPlease check the console for details.');
                     }
                 });
         }
@@ -639,7 +776,26 @@ var BACKTO = 0;
 
         function saveposition(){
             var formdataid = $(".selected_element_set").sortable("toArray", { attribute: "data-formdataid" });
-            $.post("ajax_call.php", { routine_name: 'update_position', store: store, formdataid:formdataid });  
+            console.log("Saving positions on form save:", formdataid);
+            if (formdataid && formdataid.length > 0) {
+                $.ajax({
+                    url: "ajax_call.php",
+                    type: "POST",
+                    data: { 
+                        routine_name: 'update_position', 
+                        store: store, 
+                        formdataid: formdataid 
+                    },
+                    success: function(response) {
+                        console.log("Position saved successfully:", response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error saving position:", error, xhr.responseText);
+                    }
+                });
+            } else {
+                console.warn("No elements found to save positions");
+            }
         }
 
         function  saveform(){

@@ -4,7 +4,7 @@ ini_set("error_reporting", E_ALL);
  session_start();
 if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_SERVER", "localhost");
-    define("DB_DATABASE", "form_builder");
+    define("DB_DATABASE", "u402017191_form_builder");
     define("DB_USERNAME", "root");
     define("DB_PASSWORD", "");
     define("DB_OBJECT", "mysql"); 
@@ -53,7 +53,22 @@ require_once ABS_PATH . '/language/' . $lang . '/common_constant_msg.php';
 class DB_Class {
     var $db; 
     function __construct() {
-        $this->db=mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_DATABASE);
+        // First, connect without selecting a database to create it if it doesn't exist
+        $temp_conn = @mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD);
+        if ($temp_conn) {
+            // Create database if it doesn't exist
+            $create_db_query = "CREATE DATABASE IF NOT EXISTS `" . DB_DATABASE . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+            mysqli_query($temp_conn, $create_db_query);
+            mysqli_close($temp_conn);
+        }
+        
+        // Now connect to the database
+        $this->db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+        
+        if (!$this->db) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        
         try {
             if (DB_OBJECT == "mysql") {
                 $odbclink = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_DATABASE, DB_USERNAME, DB_PASSWORD);

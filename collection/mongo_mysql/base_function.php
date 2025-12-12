@@ -7,6 +7,11 @@ class base_function {
     protected $cls_is_demand_accept = '';
     protected $store_idea = '';
     protected $last_query = '';
+    public $db = null;
+    public $store_user_id = null;
+    public $messages = array();
+    public $errors = array();
+    public $is_demand_accept = '';
     public function __construct($shop = '') {
         
         if ($this->db_connection == null) {

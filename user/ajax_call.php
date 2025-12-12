@@ -1,5 +1,10 @@
 <?php
 
+// Suppress PHP warnings/notices from being output (they break JSON)
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 header("Access-Control-Allow-Origin: *");
 include_once '../append/connection.php';
 include_once ABS_PATH . '/user/cls_functions.php';
@@ -11,7 +16,13 @@ if (isset($_POST['routine_name']) && $_POST['routine_name'] != '' && isset($_POS
     $current_user = $obj_Client_functions->get_store_detail_obj();
 
     if (!empty($current_user)) {
+        // Capture any output that might be generated (PHP warnings/notices)
+        ob_start();
         $comeback = call_user_func(array($obj_Client_functions,$_POST['routine_name']));
+        $output = ob_get_clean();
+        
+        // Only output JSON, ignore any PHP warnings/notices
+        header('Content-Type: application/json');
         echo json_encode($comeback);
         exit;
     } else {
