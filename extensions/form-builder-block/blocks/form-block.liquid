@@ -150,28 +150,15 @@
       console.log('Current form_id:', currentFormId, '→ Valid ID:', validFormId);
       
       // Populate the select dropdown in the settings panel (right sidebar)
-      // Try multiple selectors to find the settings select element
-      let settingsSelect = null;
-      const selectors = [
-        'select[data-setting-id="form_id"]',
-        'select[name*="form_id"]',
-        '.shopify-block-settings select[name*="form_id"]',
-        'select[data-setting="form_id"]',
-        '[data-setting-id="form_id"] select'
-      ];
-      
-      for (const selector of selectors) {
-        settingsSelect = document.querySelector(selector);
-        if (settingsSelect) {
-          console.log('✅ Found settings select element using selector:', selector);
-          break;
-        }
-      }
-      
-      if (settingsSelect) {
+      // Function to populate the select dropdown
+      const populateSettingsSelect = (selectElement) => {
+        if (!selectElement) return false;
+        
+        console.log('Populating settings select element:', selectElement);
+        
         // Clear existing options except the first one
-        while (settingsSelect.options.length > 1) {
-          settingsSelect.remove(1);
+        while (selectElement.options.length > 1) {
+          selectElement.remove(1);
         }
         
         // Add form options
@@ -182,12 +169,12 @@
           if (form.id == validFormId) {
             option.selected = true;
           }
-          settingsSelect.appendChild(option);
+          selectElement.appendChild(option);
         });
         
         // Set the current value
         if (validFormId > 0) {
-          settingsSelect.value = validFormId;
+          selectElement.value = validFormId;
         }
         
         // Add change event listener to save when form is selected
@@ -212,7 +199,8 @@
               if (numericFormId && numericFormId > 0) {
                 await loadFormPreview(numericFormId);
               } else {
-                blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the settings panel on the right →</div>';
+                const container = blockContainer.querySelector('.form-preview-container') || blockContainer;
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the settings panel on the right →</div>';
               }
             } catch (error) {
               console.error('Error saving form selection:', error);
@@ -221,38 +209,97 @@
         };
         
         // Remove existing listener if any, then add new one
-        settingsSelect.removeEventListener('change', changeHandler);
-        settingsSelect.addEventListener('change', changeHandler);
+        const newSelect = selectElement.cloneNode(true);
+        selectElement.parentNode.replaceChild(newSelect, selectElement);
+        newSelect.addEventListener('change', changeHandler);
         
         console.log('✅ Settings panel dropdown populated with ' + formList.length + ' forms');
-      } else {
-        console.warn('⚠️ Could not find settings select element. Retrying in 500ms...');
-        // Retry after a delay (settings panel might not be ready yet)
-        setTimeout(() => {
-          for (const selector of selectors) {
-            const retrySelect = document.querySelector(selector);
-            if (retrySelect) {
-              console.log('✅ Found settings select on retry');
-              // Same population logic as above
-              while (retrySelect.options.length > 1) {
-                retrySelect.remove(1);
+        return true;
+      };
+      
+      // Try multiple selectors to find the settings select element
+      let settingsSelect = null;
+      const selectors = [
+        'select[data-setting-id="form_id"]',
+        'select[name*="form_id"]',
+        '.shopify-block-settings select[name*="form_id"]',
+        'select[data-setting="form_id"]',
+        '[data-setting-id="form_id"] select',
+        'select[id*="form_id"]',
+        '.shopify-block-settings select',
+        'form select[name*="form_id"]',
+        'select'
+      ];
+      
+      console.log('Searching for settings select element...');
+      for (const selector of selectors) {
+        const elements = document.querySelectorAll(selector);
+        console.log(`Selector "${selector}" found ${elements.length} elements`);
+        
+        // Check each element to see if it's the form_id select
+        for (let i = 0; i < elements.length; i++) {
+          const el = elements[i];
+          const id = el.id || '';
+          const name = el.name || '';
+          const dataId = el.getAttribute('data-setting-id') || '';
+          
+          console.log(`  Element ${i}: id="${id}", name="${name}", data-setting-id="${dataId}"`);
+          
+          if (id.includes('form_id') || name.includes('form_id') || dataId === 'form_id') {
+            settingsSelect = el;
+            console.log('✅ Found settings select element using selector:', selector);
+            break;
+          }
+        }
+        
+        if (settingsSelect) break;
+      }
+      
+      // Try to find by looking for the label "Select Form" and finding the select next to it
+      if (!settingsSelect) {
+        console.log('Trying to find by label...');
+        const labels = document.querySelectorAll('label');
+        for (const label of labels) {
+          if (label.textContent.includes('Select Form') || label.textContent.includes('form')) {
+            console.log('Found label:', label.textContent);
+            // Look for select in the same container
+            const container = label.closest('.shopify-block-settings, [class*="settings"], [class*="block"]');
+            if (container) {
+              const select = container.querySelector('select');
+              if (select) {
+                settingsSelect = select;
+                console.log('✅ Found settings select by label');
+                break;
               }
-              formList.forEach(form => {
-                const option = document.createElement('option');
-                option.value = form.id;
-                option.textContent = form.name + ' (ID: ' + form.id + ')';
-                if (form.id == validFormId) {
-                  option.selected = true;
-                }
-                retrySelect.appendChild(option);
-              });
-              if (validFormId > 0) {
-                retrySelect.value = validFormId;
-              }
-              break;
             }
           }
-        }, 500);
+        }
+      }
+      
+      if (settingsSelect) {
+        populateSettingsSelect(settingsSelect);
+      } else {
+        console.warn('⚠️ Could not find settings select element. Retrying...');
+        // Retry multiple times with delays (settings panel might not be ready yet)
+        const retryAttempts = [100, 300, 500, 1000, 2000];
+        retryAttempts.forEach((delay, index) => {
+          setTimeout(() => {
+            console.log(`Retry attempt ${index + 1} after ${delay}ms...`);
+            for (const selector of selectors) {
+              const elements = document.querySelectorAll(selector);
+              for (const el of elements) {
+                const id = el.id || '';
+                const name = el.name || '';
+                const dataId = el.getAttribute('data-setting-id') || '';
+                if (id.includes('form_id') || name.includes('form_id') || dataId === 'form_id') {
+                  if (populateSettingsSelect(el)) {
+                    return; // Success, stop retrying
+                  }
+                }
+              }
+            }
+          }, delay);
+        });
       }
       
       // Show preview area (not the dropdown) - just a container for the form
