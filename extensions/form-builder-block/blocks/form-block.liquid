@@ -3,23 +3,17 @@
 </div>
 
 <script>
-// Run immediately, don't wait for DOMContentLoaded in design mode
+// Multiple strategies to ensure code runs in Theme Customizer
 (function() {
-  // Check if we're in design mode - if so, run immediately
-  {% if request.design_mode %}
-    // In design mode, run immediately
-    (async function() {
-      await initializeFormBuilder();
-    })();
-  {% else %}
-    // On live storefront, wait for DOMContentLoaded
-    document.addEventListener("DOMContentLoaded", async () => {
-      await initializeFormBuilder();
-    });
-  {% endif %}
+  'use strict';
   
   async function initializeFormBuilder() {
-  const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    
+    if (!blockContainer) {
+      console.warn('Block container not found for: easy-form-{{ block.id }}');
+      return false;
+    }
   // Try different shop domain formats - Shopify might use different formats
   let shop = "{{ shop.permanent_domain }}";
   if (!shop || shop === "") {
@@ -55,15 +49,24 @@
       console.log('Fetching from: /apps/easy-form-builder/list?shop=' + shop);
       
       // Load form list from your PHP app (App Proxy)
-      const listUrl = `/apps/easy-form-builder/list?shop=${encodeURIComponent(shop)}`;
+      // Use absolute URL if we're on Shopify's domain
+      let listUrl = `/apps/easy-form-builder/list?shop=${encodeURIComponent(shop)}`;
+      
+      // If we're on a Shopify domain, make sure we use the correct protocol
+      if (window.location.hostname.includes('.myshopify.com') || window.location.hostname.includes('shopify.com')) {
+        // We're on Shopify, use relative URL (Shopify will proxy it)
+        listUrl = `/apps/easy-form-builder/list?shop=${encodeURIComponent(shop)}`;
+      }
+      
       console.log('Full URL:', listUrl);
+      console.log('Current location:', window.location.href);
       
       const response = await fetch(listUrl, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          'Accept': 'application/json'
+        },
+        credentials: 'same-origin' // Include cookies for same-origin requests
       });
       
       console.log('Response status:', response.status);
@@ -193,23 +196,12 @@
         }
       });
       
-      // Load preview if form is already selected
-      const currentFormId = {{ block.settings.form_id | default: 0 }};
-      const numericCurrentId = parseInt(currentFormId);
-      console.log('Current form ID from settings:', currentFormId, 'Numeric:', numericCurrentId);
-      if (numericCurrentId && numericCurrentId > 0) {
-        await loadFormPreview(numericCurrentId);
-      } else if (currentFormId && currentFormId !== "" && currentFormId !== "0") {
-        console.warn('Invalid form ID format:', currentFormId, '- Please select a form from the dropdown');
-        // Clear invalid form ID
-        if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
-          await Shopify.theme.editor.setBlockSettings({
-            id: "{{ block.id }}",
-            settings: {
-              form_id: ""
-            }
-          });
-        }
+      // Load preview if form is already selected (use validFormId from above)
+      if (validFormId && validFormId > 0) {
+        console.log('Loading preview for already selected form ID:', validFormId);
+        await loadFormPreview(validFormId);
+      } else {
+        console.log('No valid form selected, waiting for user selection');
       }
       
     } catch (error) {
@@ -241,7 +233,15 @@
         previewDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form preview...</div>';
         
         console.log('Loading form preview for ID:', numericFormId, 'shop:', shop);
-        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${shop}`);
+        const renderUrl = `/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${encodeURIComponent(shop)}`;
+        console.log('Preview render URL:', renderUrl);
+        const formResponse = await fetch(renderUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/html'
+          },
+          credentials: 'same-origin'
+        });
         
         console.log('Preview response status:', formResponse.status);
         
@@ -352,7 +352,40 @@
       }
     }
   {% endif %}
-});
+    
+    return true; // Success
+  } // End of initializeFormBuilder
+  
+  // Multiple strategies to ensure code runs in Theme Customizer
+  {% if request.design_mode %}
+    // Strategy 1: Run immediately if DOM is ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initializeFormBuilder();
+    } else {
+      document.addEventListener('DOMContentLoaded', initializeFormBuilder);
+    }
+    
+    // Strategy 2: Retry after delays (Theme Customizer loads blocks dynamically)
+    setTimeout(() => initializeFormBuilder(), 100);
+    setTimeout(() => initializeFormBuilder(), 500);
+    setTimeout(() => initializeFormBuilder(), 1000);
+    setTimeout(() => initializeFormBuilder(), 2000);
+    
+    // Strategy 3: Listen for Shopify theme editor events
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', function() {
+        setTimeout(initializeFormBuilder, 100);
+      });
+    }
+  {% else %}
+    // On live storefront
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeFormBuilder);
+    } else {
+      initializeFormBuilder();
+    }
+  {% endif %}
+})();
 </script>
 
 {% schema %}
