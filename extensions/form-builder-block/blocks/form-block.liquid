@@ -5,41 +5,114 @@
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const blockContainer = document.getElementById("easy-form-{{ block.id }}");
-  const shop = "{{ shop.permanent_domain }}";
+  // Try different shop domain formats - Shopify might use different formats
+  let shop = "{{ shop.permanent_domain }}";
+  if (!shop || shop === "") {
+    shop = "{{ shop.myshopify_domain }}";
+  }
+  if (!shop || shop === "") {
+    shop = "{{ shop.domain }}";
+  }
+  // Fallback: try to get from window.location if available
+  if (!shop || shop === "") {
+    try {
+      const hostname = window.location.hostname;
+      if (hostname && hostname.includes('.myshopify.com')) {
+        shop = hostname;
+      }
+    } catch(e) {
+      console.warn('Could not get shop from window.location');
+    }
+  }
+  
+  console.log('=== Easy Form Builder Initialization ===');
+  console.log('Block ID:', '{{ block.id }}');
+  console.log('Shop permanent_domain:', "{{ shop.permanent_domain }}");
+  console.log('Shop myshopify_domain:', "{{ shop.myshopify_domain }}");
+  console.log('Shop domain:', "{{ shop.domain }}");
+  console.log('Final shop value:', shop);
+  console.log('Current form_id:', '{{ block.settings.form_id }}');
   
   // In Theme Editor
   {% if request.design_mode %}
     try {
-      console.log('Loading forms list for shop:', shop);
-      // Load form list from your PHP app (App Proxy)
-      const response = await fetch(`/apps/easy-form-builder/list?shop=${shop}`);
+      console.log('=== DESIGN MODE: Loading forms list ===');
+      console.log('Fetching from: /apps/easy-form-builder/list?shop=' + shop);
       
-      console.log('Forms list response status:', response.status);
+      // Load form list from your PHP app (App Proxy)
+      const listUrl = `/apps/easy-form-builder/list?shop=${encodeURIComponent(shop)}`;
+      console.log('Full URL:', listUrl);
+      
+      const response = await fetch(listUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Forms list error:', errorText);
-        throw new Error(`Failed to load forms: ${response.status} ${response.statusText}`);
-      }
-      
-      const responseData = await response.json();
-      console.log('Forms list response received:', responseData);
-      
-      // Extract forms array from response (App Proxy returns {forms: [...], debug: {...}})
-      const formList = Array.isArray(responseData) ? responseData : (responseData.forms || []);
-      
-      if (!Array.isArray(formList)) {
-        console.error('Invalid response format:', responseData);
-        throw new Error('Invalid response format: expected array or object with forms property');
-      }
-      
-      if (formList.length === 0) {
-        blockContainer.innerHTML = '<div style="padding: 20px; color: #637381; text-align: center;">No forms found. Please create forms in your app first.</div>';
+        console.error('❌ Forms list error response:', errorText);
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
+          '<strong>❌ Error Loading Forms</strong><br>' +
+          '<small>Status: ' + response.status + ' ' + response.statusText + '</small><br>' +
+          '<small style="margin-top: 10px; display: block;">Error: ' + errorText.substring(0, 200) + '</small><br>' +
+          '<small style="margin-top: 10px; display: block;">URL: ' + listUrl + '</small><br>' +
+          '<small style="margin-top: 10px; display: block;">Check browser console (F12) for details.</small>' +
+          '</div>';
         return;
       }
       
-      // Get current form_id (after clearing invalid values)
-      const validFormId = numericCurrentId && numericCurrentId > 0 ? numericCurrentId : 0;
+      const responseData = await response.json();
+      console.log('✅ Forms list response received:', responseData);
+      console.log('Response type:', typeof responseData);
+      console.log('Is array?', Array.isArray(responseData));
+      
+      // Extract forms array from response
+      let formList = [];
+      if (Array.isArray(responseData)) {
+        formList = responseData;
+      } else if (responseData && Array.isArray(responseData.forms)) {
+        formList = responseData.forms;
+      } else if (responseData && responseData.forms && typeof responseData.forms === 'object') {
+        // Handle case where forms might be an object
+        formList = Object.values(responseData.forms);
+      }
+      
+      console.log('Extracted formList:', formList);
+      console.log('Form count:', formList.length);
+      
+      if (!Array.isArray(formList)) {
+        console.error('❌ Invalid response format:', responseData);
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
+          '<strong>❌ Invalid Response Format</strong><br>' +
+          '<small>Expected array but got: ' + typeof responseData + '</small><br>' +
+          '<small>Response: ' + JSON.stringify(responseData).substring(0, 200) + '</small>' +
+          '</div>';
+        return;
+      }
+      
+      if (formList.length === 0) {
+        console.warn('⚠️ No forms found in response');
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #637381; text-align: center; border: 1px solid #e1e3e5; border-radius: 4px; background: #f6f6f7;">' +
+          '<strong>No forms found</strong><br>' +
+          '<small>Please create forms in your app first.</small><br>' +
+          '<small style="margin-top: 10px; display: block; color: #999;">Shop: ' + shop + '</small><br>' +
+          '<small style="margin-top: 5px; display: block; color: #999;">Check browser console (F12) for details.</small>' +
+          '</div>';
+        return;
+      }
+      
+      // First, clear any invalid form_id (hash values) before using it
+      const currentFormId = '{{ block.settings.form_id | default: "0" }}';
+      const numericCurrentId = parseInt(currentFormId);
+      const validFormId = (numericCurrentId && numericCurrentId > 0 && !isNaN(numericCurrentId)) ? numericCurrentId : 0;
+      
+      console.log('Current form_id:', currentFormId, '→ Valid ID:', validFormId);
       
       let html = '<div style="padding: 20px; border: 2px solid #008060; border-radius: 6px; background: #f0fdf4;">';
       html += '<div style="margin-bottom: 15px;">';

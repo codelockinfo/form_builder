@@ -174,15 +174,24 @@ try {
 
 // Get shop parameter from Shopify
 // Shopify App Proxy sends shop in query string
-$shop = isset($_GET['shop']) ? $_GET['shop'] : '';
+$shop = isset($_GET['shop']) ? trim($_GET['shop']) : '';
 
 // Also check for shop in the path (some Shopify configurations)
 if (empty($shop)) {
     $request_uri = $_SERVER['REQUEST_URI'];
     if (preg_match('/shop=([^&]+)/', $request_uri, $matches)) {
-        $shop = $matches[1];
+        $shop = trim($matches[1]);
     }
 }
+
+// Normalize shop domain - remove protocol, trailing slashes, etc.
+if (!empty($shop)) {
+    $shop = preg_replace('#^https?://#', '', $shop); // Remove http:// or https://
+    $shop = rtrim($shop, '/'); // Remove trailing slash
+    $shop = strtolower($shop); // Convert to lowercase for consistency
+}
+
+error_log("App Proxy - Shop parameter received: '" . $shop . "'");
 
 // Verify shop parameter exists
 if (empty($shop)) {
