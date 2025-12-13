@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /
+
+# Route Shopify App Proxy requests
+RewriteCond %{REQUEST_URI} ^/apps/form-builder/(.*)$
+RewriteRule ^apps/form-builder/(.*)$ shopify/app-proxy.php [L,QSA]
+

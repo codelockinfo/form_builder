@@ -1,4 +1,11 @@
 <?php
+// Handle Shopify App Proxy requests first
+$request_uri = $_SERVER['REQUEST_URI'];
+if (strpos($request_uri, '/apps/form-builder/') !== false) {
+    include_once 'shopify/app-proxy.php';
+    exit;
+}
+
 include_once 'append/connection.php';
 if(isset($_GET['shop'])){
    header('X-Frame-Options:ALLOW-FROM '.$_GET['shop']);

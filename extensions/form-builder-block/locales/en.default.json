@@ -1,0 +1,12 @@
+{
+  "form_id": {
+    "label": "Form ID"
+  },
+  "form_width": {
+    "label": "Form Width (%)"
+  },
+  "form_alignment": {
+    "label": "Form Alignment"
+  }
+}
+

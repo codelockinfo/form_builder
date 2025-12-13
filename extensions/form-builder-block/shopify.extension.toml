@@ -1,0 +1,18 @@
+# Learn more about configuring your theme app extension:
+# https://shopify.dev/docs/apps/online-store/theme-app-extensions
+
+api_version = "2024-01"
+
+[[extensions]]
+
+uid = "3aac69a6-fbff-d817-b560-220d69fe7350d8bc3800"
+
+type = "theme"
+name = "form-builder-block"
+handle = "form-builder-block"
+
+[extensions.settings]
+[[extensions.settings.files]]
+name = "form-block"
+accept = ["*.liquid"]
+

@@ -1,0 +1,24 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "de776739597a8c3590a04a65195d6f44"
+name = "Easy Form Builder & Email"
+application_url = "https://codelocksolutions.com/form_builder"
+embedded = false
+handle = "easy-form-builder-email"
+
+[webhooks]
+api_version = "2023-04"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,write_customers,read_products,write_products,read_script_tags,write_script_tags,read_content,write_content"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ "https://codelocksolutions.com/form_builder/index.php" ]
+
+[app_proxy]
+url = "https://codelocksolutions.com/form_builder/shopify/app-proxy.php"
+subpath = "easy-form-builder"
+prefix = "apps"

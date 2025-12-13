@@ -1,0 +1,268 @@
+<div id="easy-form-{{ block.id }}" class="form-builder-container" style="width: {{ block.settings.form_width }}%; margin: 0 auto; text-align: {{ block.settings.form_alignment }};">
+  <div class="form-loading">Loading form...</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+  const shop = "{{ shop.permanent_domain }}";
+  
+  // In Theme Editor
+  {% if request.design_mode %}
+    try {
+      // Load form list from your PHP app (App Proxy)
+      const response = await fetch(`/apps/easy-form-builder/list?shop=${shop}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to load forms');
+      }
+      
+      const formList = await response.json();
+      
+      let html = '<div style="padding: 15px; border: 1px solid #e1e3e5; border-radius: 4px; background: #f6f6f7;">';
+      html += '<label style="font-weight: bold; display: block; margin-bottom: 8px; font-size: 14px;">Select Form</label>';
+      html += '<select id="select-form-{{ block.id }}" style="width: 100%; padding: 8px; border: 1px solid #c9cccf; border-radius: 4px; font-size: 14px; background: white;">';
+      html += '<option value="">-- Select a form --</option>';
+      
+      formList.forEach(form => {
+        const selected = form.id == {{ block.settings.form_id | default: 0 }} ? 'selected' : '';
+        html += `<option value="${form.id}" ${selected}>${form.name}</option>`;
+      });
+      
+      html += '</select>';
+      html += '<div style="margin-top: 10px; font-size: 12px; color: #637381;">Selected Form ID: <span id="current-form-id-{{ block.id }}">{{ block.settings.form_id | default: "None" }}</span></div>';
+      html += '</div>';
+      
+      blockContainer.innerHTML = html;
+      
+      // Save selected form into block settings
+      const selectElement = document.getElementById("select-form-{{ block.id }}");
+      
+      selectElement.addEventListener("change", async (e) => {
+        const formId = e.target.value;
+        const currentFormIdSpan = document.getElementById("current-form-id-{{ block.id }}");
+        
+        if (currentFormIdSpan) {
+          currentFormIdSpan.textContent = formId || "None";
+        }
+        
+        if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
+          try {
+            await Shopify.theme.editor.setBlockSettings({
+              id: "{{ block.id }}",
+              settings: {
+                form_id: formId
+              }
+            });
+            
+            // Preview the selected form
+            if (formId) {
+              await loadFormPreview(formId);
+            } else {
+              blockContainer.querySelector('.form-loading')?.remove();
+              const previewDiv = blockContainer.querySelector('.form-preview');
+              if (previewDiv) {
+                previewDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">Please select a form</div>';
+              }
+            }
+          } catch (error) {
+            console.error('Error saving form selection:', error);
+          }
+        }
+      });
+      
+      // Load preview if form is already selected
+      const currentFormId = {{ block.settings.form_id | default: 0 }};
+      if (currentFormId) {
+        await loadFormPreview(currentFormId);
+      }
+      
+    } catch (error) {
+      console.error('Error loading form list:', error);
+      blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error loading forms. Please check your app configuration.</div>';
+    }
+    
+    async function loadFormPreview(formId) {
+      try {
+        // Create preview container if it doesn't exist
+        let previewDiv = blockContainer.querySelector('.form-preview');
+        if (!previewDiv) {
+          previewDiv = document.createElement('div');
+          previewDiv.className = 'form-preview';
+          previewDiv.style.cssText = 'margin-top: 20px; padding: 15px; border: 1px solid #e1e3e5; border-radius: 4px; background: white;';
+          blockContainer.appendChild(previewDiv);
+        }
+        
+        previewDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form preview...</div>';
+        
+        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}`);
+        
+        if (!formResponse.ok) {
+          throw new Error('Failed to load form');
+        }
+        
+        const formHtml = await formResponse.text();
+        previewDiv.innerHTML = formHtml;
+        
+        // Remove loading message if exists
+        const loadingMsg = blockContainer.querySelector('.form-loading');
+        if (loadingMsg) {
+          loadingMsg.remove();
+        }
+      } catch (error) {
+        console.error('Error loading form preview:', error);
+        const previewDiv = blockContainer.querySelector('.form-preview');
+        if (previewDiv) {
+          previewDiv.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error loading form preview</div>';
+        }
+      }
+    }
+    
+  {% else %}
+    // On Live Storefront: render selected form
+    const formId = {{ block.settings.form_id | default: 0 }};
+    
+    if (formId) {
+      try {
+        blockContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
+        
+        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}`);
+        
+        if (!formResponse.ok) {
+          throw new Error('Failed to load form');
+        }
+        
+        const formHtml = await formResponse.text();
+        blockContainer.innerHTML = formHtml;
+        
+        // Initialize form submission handler if needed
+        initializeFormSubmission();
+      } catch (error) {
+        console.error('Error loading form:', error);
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Error loading form. Please try again later.</div>';
+      }
+    } else {
+      blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">No form selected</div>';
+    }
+    
+    function initializeFormSubmission() {
+      // Add form submission handling here if needed
+      const form = blockContainer.querySelector('form.get_selected_elements');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          // Handle form submission
+          console.log('Form submitted');
+        });
+      }
+    }
+  {% endif %}
+});
+</script>
+
+{% schema %}
+{
+  "name": "Easy Form Builder",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "form_id",
+      "label": "Form ID",
+      "info": "Enter the form ID to display. This will be set automatically when you select a form from the dropdown in theme editor."
+    },
+    {
+      "type": "header",
+      "content": "Form Display Settings"
+    },
+    {
+      "type": "range",
+      "id": "form_width",
+      "label": "Form Width (%)",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "form_alignment",
+      "label": "Form Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.form-builder-container {
+  width: 100%;
+}
+
+.form-loading {
+  text-align: center;
+  padding: 20px;
+  color: #637381;
+}
+
+.form-preview {
+  max-width: 100%;
+}
+
+/* Form styles - adjust as needed to match your form design */
+.form-builder-container .formHeader {
+  margin-bottom: 20px;
+}
+
+.form-builder-container .formHeader .title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.form-builder-container .formHeader .description {
+  font-size: 14px;
+  color: #637381;
+}
+
+.form-builder-container form {
+  width: 100%;
+}
+
+.form-builder-container .code-form-control {
+  margin-bottom: 20px;
+}
+
+.form-builder-container .footer {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.form-builder-container .footer.forFooterAlign {
+  text-align: left;
+}
+
+.form-builder-container .footer.forFooterAlign.align-center {
+  text-align: center;
+}
+
+.form-builder-container .footer.forFooterAlign.align-right {
+  text-align: right;
+}
+</style>
+
