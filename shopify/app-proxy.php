@@ -252,28 +252,62 @@ $path = parse_url($request_uri, PHP_URL_PATH);
 // Check if path is in query string (from .htaccess RewriteRule)
 $query_path = isset($_GET['path']) ? $_GET['path'] : '';
 
+// Shopify App Proxy adds path_prefix parameter - check that too
+$path_prefix = isset($_GET['path_prefix']) ? trim($_GET['path_prefix'], '/') : '';
+
 // Determine route type
 $is_list_request = false;
 $is_render_request = false;
 
 // Check full path first (when accessed directly or via index.php)
-if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/easy-form-builder/list') !== false) {
+if (strpos($path, '/apps/form-builder/list') !== false || 
+    strpos($path, '/apps/easy-form-builder/list') !== false ||
+    strpos($path, '/list') !== false ||
+    strpos($path, 'app-proxy.php/list') !== false) {
     $is_list_request = true;
-} elseif (strpos($path, '/apps/form-builder/render') !== false || strpos($path, '/apps/easy-form-builder/render') !== false) {
+}
+if (strpos($path, '/apps/form-builder/render') !== false || 
+    strpos($path, '/apps/easy-form-builder/render') !== false ||
+    strpos($path, '/render') !== false ||
+    strpos($path, 'app-proxy.php/render') !== false) {
     $is_render_request = true;
 }
+
 // Check query path (from .htaccess routing: path=list or path=render)
-elseif (!empty($query_path)) {
+if (!empty($query_path)) {
     if (strpos($query_path, 'list') !== false || $query_path == 'list') {
         $is_list_request = true;
-    } elseif (strpos($query_path, 'render') !== false || $query_path == 'render') {
+    }
+    if (strpos($query_path, 'render') !== false || $query_path == 'render') {
         $is_render_request = true;
+    }
+}
+
+// Check path_prefix from Shopify App Proxy (Shopify sends this parameter)
+if (!empty($path_prefix)) {
+    if (strpos($path_prefix, 'list') !== false || $path_prefix == 'list' || $path_prefix == 'apps/easy-form-builder/list') {
+        $is_list_request = true;
+    }
+    if (strpos($path_prefix, 'render') !== false || $path_prefix == 'render' || $path_prefix == 'apps/easy-form-builder/render') {
+        $is_render_request = true;
+    }
+}
+
+// Last resort: check if path ends with /list or /render
+if (!$is_list_request && !$is_render_request) {
+    if (preg_match('#/(list|render)(\?|$)#', $path)) {
+        if (strpos($path, '/list') !== false) {
+            $is_list_request = true;
+        }
+        if (strpos($path, '/render') !== false) {
+            $is_render_request = true;
+        }
     }
 }
 
 // Route handling
 // Debug: Log route detection BEFORE handling
-error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO'));
+error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Path Prefix: $path_prefix, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO'));
 
 // If no route detected, output debug info immediately
 if (!$is_list_request && !$is_render_request) {
@@ -281,11 +315,12 @@ if (!$is_list_request && !$is_render_request) {
         'error' => 'Route not detected',
         'path' => $path,
         'query_path' => $query_path,
+        'path_prefix' => $path_prefix,
         'request_uri' => $request_uri,
         'get_params' => $_GET,
         'is_list_request' => $is_list_request ? 'YES' : 'NO',
         'is_render_request' => $is_render_request ? 'YES' : 'NO',
-        'help' => 'Add ?path=list to URL to test list route'
+        'help' => 'Route detection failed. Check path, query_path, and path_prefix parameters.'
     ], JSON_PRETTY_PRINT);
     exit;
 }
