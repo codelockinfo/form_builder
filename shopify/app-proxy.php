@@ -13,8 +13,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Start output buffering AFTER header
-ob_start();
+// DON'T use output buffering - it's causing blank pages
+// ob_start();
 
 // Try to include connection file
 try {
@@ -23,9 +23,7 @@ try {
     }
     include_once '../append/connection.php';
 } catch (Exception $e) {
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+    // Output buffering disabled - no need to clean
     http_response_code(500);
     echo json_encode(['error' => 'Configuration error', 'message' => $e->getMessage()]);
     exit;
@@ -52,14 +50,12 @@ try {
     }
     require_once($cls_file);
 } catch (Exception $e) {
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
     http_response_code(500);
     echo json_encode([
         'error' => 'File include error', 
         'message' => $e->getMessage(),
-        'abs_path' => defined('ABS_PATH') ? ABS_PATH : 'not defined'
+        'abs_path' => defined('ABS_PATH') ? ABS_PATH : 'not defined',
+        'file' => __FILE__
     ]);
     exit;
 }
@@ -79,9 +75,7 @@ if (empty($shop)) {
 // Verify shop parameter exists
 if (empty($shop)) {
     // Clean any output and send JSON error
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+    // Output buffering disabled - no need to clean
     http_response_code(400);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Shop parameter is required', 'message' => 'Please provide the shop parameter in the query string']);
@@ -107,9 +101,7 @@ try {
         exit;
     }
 } catch (Exception $e) {
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+    // Output buffering disabled - no need to clean
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
@@ -149,12 +141,23 @@ elseif (!empty($query_path)) {
 // Debug: Log route detection BEFORE handling
 error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO'));
 
+// If no route detected, output debug info immediately
+if (!$is_list_request && !$is_render_request) {
+    echo json_encode([
+        'error' => 'Route not detected',
+        'path' => $path,
+        'query_path' => $query_path,
+        'request_uri' => $request_uri,
+        'get_params' => $_GET,
+        'is_list_request' => $is_list_request ? 'YES' : 'NO',
+        'is_render_request' => $is_render_request ? 'YES' : 'NO',
+        'help' => 'Add ?path=list to URL to test list route'
+    ], JSON_PRETTY_PRINT);
+    exit;
+}
+
 if ($is_list_request) {
     // Handle form list request
-    // Clean any output before JSON (but keep header)
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
     // Header already set at top
     
     // Debug logging
@@ -223,21 +226,19 @@ if ($is_list_request) {
             ob_end_clean();
         }
         
-        // Output forms or debug info if empty
-        if (empty($forms)) {
-            // Return empty array but with debug info in response
-            echo json_encode([
-                'forms' => [],
-                'debug' => [
-                    'store_user_id' => isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 'NOT SET',
-                    'query_result_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
-                    'query_result_count' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
-                    'message' => 'No forms found. Check if forms exist in database with status=1 for this store.'
-                ]
-            ], JSON_PRETTY_PRINT);
-        } else {
-            echo json_encode($forms, JSON_PRETTY_PRINT);
-        }
+        // Always include debug info in response
+        $response = [
+            'forms' => $forms,
+            'debug' => [
+                'store_user_id' => isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 'NOT SET',
+                'query_result_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
+                'query_result_count' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
+                'forms_after_filter' => count($forms),
+                'shop' => $shop
+            ]
+        ];
+        
+        echo json_encode($response, JSON_PRETTY_PRINT);
         exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
@@ -256,9 +257,7 @@ if ($is_list_request) {
 } elseif ($is_render_request) {
     // Handle form render request
     // Clean output buffer for HTML
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+    // Output buffering disabled - no need to clean
     header('Content-Type: text/html; charset=utf-8');
     
     $form_id = isset($_GET['form_id']) ? (int)$_GET['form_id'] : 0;
@@ -291,11 +290,7 @@ if ($is_list_request) {
     
 } else {
     // Unknown route - provide helpful debug info
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
     http_response_code(404);
-    header('Content-Type: application/json; charset=utf-8');
     
     $debug_info = [
         'error' => 'Route not found',
