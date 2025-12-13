@@ -346,28 +346,18 @@ if ($is_list_request) {
         error_log("Final active forms count: " . count($forms));
         error_log("Forms array: " . json_encode($forms));
         
-        // Always include debug info in response
-        $response = [
-            'forms' => $forms,
-            'debug' => [
-                'store_user_id' => isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 'NOT SET',
-                'query_result_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
-                'query_result_count' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
-                'forms_after_filter' => count($forms),
-                'shop' => $shop,
-                'path' => $path,
-                'query_path' => $query_path,
-                'is_list_request' => $is_list_request ? 'YES' : 'NO'
-            ]
-        ];
-        
-        $json_output = json_encode($response, JSON_PRETTY_PRINT);
+        // Return forms array directly for Shopify compatibility
+        // Shopify expects a simple array, but we can include debug in development
+        $json_output = json_encode($forms, JSON_PRETTY_PRINT);
         if ($json_output === false) {
             error_log("JSON encode error: " . json_last_error_msg());
             echo json_encode(['error' => 'JSON encoding failed', 'json_error' => json_last_error_msg()]);
         } else {
             echo $json_output;
         }
+        
+        // Log debug info separately
+        error_log("App Proxy - Forms returned: " . count($forms) . " forms for shop: " . $shop);
         exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());

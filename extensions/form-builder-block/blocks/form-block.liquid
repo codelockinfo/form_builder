@@ -22,11 +22,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         throw new Error(`Failed to load forms: ${response.status} ${response.statusText}`);
       }
       
-      const formList = await response.json();
-      console.log('Forms list received:', formList);
+      const responseData = await response.json();
+      console.log('Forms list response received:', responseData);
+      
+      // Extract forms array from response (App Proxy returns {forms: [...], debug: {...}})
+      const formList = Array.isArray(responseData) ? responseData : (responseData.forms || []);
       
       if (!Array.isArray(formList)) {
-        throw new Error('Invalid response format: expected array');
+        console.error('Invalid response format:', responseData);
+        throw new Error('Invalid response format: expected array or object with forms property');
       }
       
       if (formList.length === 0) {
@@ -34,21 +38,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
       
-      let html = '<div style="padding: 15px; border: 1px solid #e1e3e5; border-radius: 4px; background: #f6f6f7;">';
-      html += '<label style="font-weight: bold; display: block; margin-bottom: 8px; font-size: 14px;">Select Form</label>';
-      html += '<select id="select-form-{{ block.id }}" style="width: 100%; padding: 8px; border: 1px solid #c9cccf; border-radius: 4px; font-size: 14px; background: white;">';
-      html += '<option value="">-- Select a form --</option>';
+      // Get current form_id (after clearing invalid values)
+      const validFormId = numericCurrentId && numericCurrentId > 0 ? numericCurrentId : 0;
+      
+      let html = '<div style="padding: 20px; border: 2px solid #008060; border-radius: 6px; background: #f0fdf4;">';
+      html += '<div style="margin-bottom: 15px;">';
+      html += '<label style="font-weight: bold; display: block; margin-bottom: 10px; font-size: 16px; color: #008060;">📋 Select Form</label>';
+      html += '<select id="select-form-{{ block.id }}" style="width: 100%; padding: 12px; border: 2px solid #008060; border-radius: 4px; font-size: 14px; background: white; cursor: pointer;">';
+      html += '<option value="0">-- Select a form --</option>';
       
       formList.forEach(form => {
-        const selected = form.id == {{ block.settings.form_id | default: 0 }} ? 'selected' : '';
-        html += `<option value="${form.id}" ${selected}>${form.name}</option>`;
+        const selected = form.id == validFormId ? 'selected' : '';
+        html += `<option value="${form.id}" ${selected}>${form.name} (ID: ${form.id})</option>`;
       });
       
       html += '</select>';
-      html += '<div style="margin-top: 10px; font-size: 12px; color: #637381;">Selected Form ID: <span id="current-form-id-{{ block.id }}">{{ block.settings.form_id | default: "None" }}</span></div>';
+      html += '</div>';
+      html += '<div style="padding: 10px; background: white; border-radius: 4px; font-size: 12px; color: #637381;">';
+      html += '<strong>Selected Form ID:</strong> <span id="current-form-id-{{ block.id }}" style="font-weight: bold; color: #008060;">' + (validFormId > 0 ? validFormId : 'None') + '</span>';
+      html += '</div>';
       html += '</div>';
       
       blockContainer.innerHTML = html;
+      console.log('Dropdown HTML created and inserted');
       
       // Save selected form into block settings
       const selectElement = document.getElementById("select-form-{{ block.id }}");
@@ -242,6 +254,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       "label": "Form ID",
       "info": "This will be set automatically when you select a form from the dropdown above.",
       "default": "0"
+    },
+    {
+      "type": "paragraph",
+      "content": "👆 Select a form from the dropdown that appears in the preview area above. The Form ID will be set automatically."
     },
     {
       "type": "header",
