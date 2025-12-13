@@ -5,23 +5,64 @@
  * Routes: /apps/form-builder/list and /apps/form-builder/render
  */
 
-// Suppress PHP warnings/notices from being output (they break JSON)
+// Enable error reporting for debugging (will be disabled in production)
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Start output buffering to catch any unwanted output
+// Start output buffering
 ob_start();
 
-include_once '../append/connection.php';
+// Set JSON header early
+header('Content-Type: application/json; charset=utf-8');
 
-if (DB_OBJECT == 'mysql') {
-    include ABS_PATH . "/collection/mongo_mysql/mysql/common_function.php";
-} else {
-    include ABS_PATH . "/collection/mongo_mysql/mongo/common_function.php";
+// Try to include connection file
+try {
+    if (!file_exists('../append/connection.php')) {
+        throw new Exception('connection.php not found');
+    }
+    include_once '../append/connection.php';
+} catch (Exception $e) {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    http_response_code(500);
+    echo json_encode(['error' => 'Configuration error', 'message' => $e->getMessage()]);
+    exit;
 }
 
-require_once(ABS_PATH . '/user/cls_functions.php');
+try {
+    if (DB_OBJECT == 'mysql') {
+        $common_file = ABS_PATH . "/collection/mongo_mysql/mysql/common_function.php";
+        if (!file_exists($common_file)) {
+            throw new Exception('common_function.php not found at: ' . $common_file);
+        }
+        include $common_file;
+    } else {
+        $common_file = ABS_PATH . "/collection/mongo_mysql/mongo/common_function.php";
+        if (!file_exists($common_file)) {
+            throw new Exception('common_function.php not found at: ' . $common_file);
+        }
+        include $common_file;
+    }
+
+    $cls_file = ABS_PATH . '/user/cls_functions.php';
+    if (!file_exists($cls_file)) {
+        throw new Exception('cls_functions.php not found at: ' . $cls_file);
+    }
+    require_once($cls_file);
+} catch (Exception $e) {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'File include error', 
+        'message' => $e->getMessage(),
+        'abs_path' => defined('ABS_PATH') ? ABS_PATH : 'not defined'
+    ]);
+    exit;
+}
 
 // Get shop parameter from Shopify
 // Shopify App Proxy sends shop in query string
@@ -112,6 +153,9 @@ if ($is_list_request) {
         ob_end_clean();
     }
     header('Content-Type: application/json; charset=utf-8');
+    
+    // Debug logging
+    error_log("App Proxy - List handler. Shop: $shop, Path: $path, Query Path: $query_path");
     
     try {
         // Get all forms for this shop - use EXACT same approach as getAllFormFunction()
