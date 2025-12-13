@@ -1,7 +1,7 @@
 <?php
 // Handle Shopify App Proxy requests first
 $request_uri = $_SERVER['REQUEST_URI'];
-if (strpos($request_uri, '/apps/form-builder/') !== false) {
+if (strpos($request_uri, '/apps/form-builder/') !== false || strpos($request_uri, '/apps/easy-form-builder/') !== false) {
     include_once 'shopify/app-proxy.php';
     exit;
 }
