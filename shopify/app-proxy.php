@@ -10,6 +10,17 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
+// Start output buffering to catch any unwanted output
+ob_start();
+
+// Set JSON header immediately
+header('Content-Type: application/json; charset=utf-8');
+
+// Prevent any output before JSON
+if (ob_get_level() > 0) {
+    ob_clean();
+}
+
 include_once '../append/connection.php';
 
 if (DB_OBJECT == 'mysql') {
@@ -34,9 +45,15 @@ if (empty($shop)) {
 
 // Verify shop parameter exists
 if (empty($shop)) {
+    if (ob_get_level() > 0) {
+        ob_clean();
+    }
     http_response_code(400);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Shop parameter is required']);
+    if (ob_get_level() > 0) {
+        ob_end_flush();
+    }
     exit;
 }
 
@@ -73,6 +90,10 @@ $path = parse_url($request_uri, PHP_URL_PATH);
 // Support both form-builder and easy-form-builder subpaths
 if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/easy-form-builder/list') !== false) {
     // Handle form list request
+    // Clean any output before JSON
+    if (ob_get_level() > 0) {
+        ob_clean();
+    }
     header('Content-Type: application/json; charset=utf-8');
     
     try {
@@ -131,12 +152,31 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
         }
         
         error_log("Final active forms count: " . count($forms));
+        
+        // Clean any output and send JSON
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
         echo json_encode($forms);
+        if (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
         error_log("Stack trace: " . $e->getTraceAsString());
+        
+        // Clean any output and send JSON error
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
         http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['error' => 'Failed to fetch forms: ' . $e->getMessage()]);
+        if (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        exit;
     }
     
 } elseif (strpos($path, '/apps/form-builder/render') !== false || strpos($path, '/apps/easy-form-builder/render') !== false) {
