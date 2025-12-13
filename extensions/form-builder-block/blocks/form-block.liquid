@@ -128,80 +128,142 @@
       // First, clear any invalid form_id (hash values) before using it
       const currentFormId = '{{ block.settings.form_id | default: "0" }}';
       const numericCurrentId = parseInt(currentFormId);
-      const validFormId = (numericCurrentId && numericCurrentId > 0 && !isNaN(numericCurrentId)) ? numericCurrentId : 0;
+      let validFormId = (numericCurrentId && numericCurrentId > 0 && !isNaN(numericCurrentId)) ? numericCurrentId : 0;
+      
+      // If form_id is a hash (long alphanumeric string), clear it
+      if (currentFormId && currentFormId.length > 10 && !/^\d+$/.test(currentFormId)) {
+        console.warn('⚠️ Invalid form_id (hash detected):', currentFormId, '- Clearing it');
+        validFormId = 0;
+        if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
+          try {
+            await Shopify.theme.editor.setBlockSettings({
+              id: "{{ block.id }}",
+              settings: { form_id: "0" }
+            });
+            console.log('✅ Cleared invalid form_id');
+          } catch(e) {
+            console.error('Error clearing form_id:', e);
+          }
+        }
+      }
       
       console.log('Current form_id:', currentFormId, '→ Valid ID:', validFormId);
       
-      let html = '<div style="padding: 20px; border: 2px solid #008060; border-radius: 6px; background: #f0fdf4;">';
-      html += '<div style="margin-bottom: 15px;">';
-      html += '<label style="font-weight: bold; display: block; margin-bottom: 10px; font-size: 16px; color: #008060;">📋 Select Form</label>';
-      html += '<select id="select-form-{{ block.id }}" style="width: 100%; padding: 12px; border: 2px solid #008060; border-radius: 4px; font-size: 14px; background: white; cursor: pointer;">';
-      html += '<option value="0">-- Select a form --</option>';
+      // Populate the select dropdown in the settings panel (right sidebar)
+      // Try multiple selectors to find the settings select element
+      let settingsSelect = null;
+      const selectors = [
+        'select[data-setting-id="form_id"]',
+        'select[name*="form_id"]',
+        '.shopify-block-settings select[name*="form_id"]',
+        'select[data-setting="form_id"]',
+        '[data-setting-id="form_id"] select'
+      ];
       
-      formList.forEach(form => {
-        const selected = form.id == validFormId ? 'selected' : '';
-        html += `<option value="${form.id}" ${selected}>${form.name} (ID: ${form.id})</option>`;
-      });
+      for (const selector of selectors) {
+        settingsSelect = document.querySelector(selector);
+        if (settingsSelect) {
+          console.log('✅ Found settings select element using selector:', selector);
+          break;
+        }
+      }
       
-      html += '</select>';
-      html += '</div>';
-      html += '<div style="padding: 10px; background: white; border-radius: 4px; font-size: 12px; color: #637381;">';
-      html += '<strong>Selected Form ID:</strong> <span id="current-form-id-{{ block.id }}" style="font-weight: bold; color: #008060;">' + (validFormId > 0 ? validFormId : 'None') + '</span>';
-      html += '</div>';
-      html += '</div>';
-      
-      blockContainer.innerHTML = html;
-      console.log('Dropdown HTML created and inserted');
-      
-      // Save selected form into block settings
-      const selectElement = document.getElementById("select-form-{{ block.id }}");
-      
-      selectElement.addEventListener("change", async (e) => {
-        const formId = e.target.value;
-        const numericFormId = parseInt(formId);
-        const currentFormIdSpan = document.getElementById("current-form-id-{{ block.id }}");
-        
-        console.log('Form selected:', formId, 'Numeric ID:', numericFormId);
-        
-        if (currentFormIdSpan) {
-          currentFormIdSpan.textContent = numericFormId || "None";
+      if (settingsSelect) {
+        // Clear existing options except the first one
+        while (settingsSelect.options.length > 1) {
+          settingsSelect.remove(1);
         }
         
-        if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
-          try {
-            // Save as string but ensure it's a valid number
-            await Shopify.theme.editor.setBlockSettings({
-              id: "{{ block.id }}",
-              settings: {
-                form_id: numericFormId ? String(numericFormId) : ""
-              }
-            });
-            
-            console.log('Block settings saved with form_id:', numericFormId);
-            
-            // Preview the selected form
-            if (numericFormId && numericFormId > 0) {
-              await loadFormPreview(numericFormId);
-            } else {
-              blockContainer.querySelector('.form-loading')?.remove();
-              const previewDiv = blockContainer.querySelector('.form-preview');
-              if (previewDiv) {
-                previewDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">Please select a form</div>';
-              }
-            }
-          } catch (error) {
-            console.error('Error saving form selection:', error);
-            alert('Error saving form selection: ' + error.message);
+        // Add form options
+        formList.forEach(form => {
+          const option = document.createElement('option');
+          option.value = form.id;
+          option.textContent = form.name + ' (ID: ' + form.id + ')';
+          if (form.id == validFormId) {
+            option.selected = true;
           }
+          settingsSelect.appendChild(option);
+        });
+        
+        // Set the current value
+        if (validFormId > 0) {
+          settingsSelect.value = validFormId;
         }
-      });
+        
+        // Add change event listener to save when form is selected
+        const changeHandler = async function(e) {
+          const formId = e.target.value;
+          const numericFormId = parseInt(formId);
+          
+          console.log('Form selected in settings:', formId, 'Numeric ID:', numericFormId);
+          
+          if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
+            try {
+              await Shopify.theme.editor.setBlockSettings({
+                id: "{{ block.id }}",
+                settings: {
+                  form_id: numericFormId ? String(numericFormId) : "0"
+                }
+              });
+              
+              console.log('✅ Block settings saved with form_id:', numericFormId);
+              
+              // Load preview of selected form
+              if (numericFormId && numericFormId > 0) {
+                await loadFormPreview(numericFormId);
+              } else {
+                blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the settings panel on the right →</div>';
+              }
+            } catch (error) {
+              console.error('Error saving form selection:', error);
+            }
+          }
+        };
+        
+        // Remove existing listener if any, then add new one
+        settingsSelect.removeEventListener('change', changeHandler);
+        settingsSelect.addEventListener('change', changeHandler);
+        
+        console.log('✅ Settings panel dropdown populated with ' + formList.length + ' forms');
+      } else {
+        console.warn('⚠️ Could not find settings select element. Retrying in 500ms...');
+        // Retry after a delay (settings panel might not be ready yet)
+        setTimeout(() => {
+          for (const selector of selectors) {
+            const retrySelect = document.querySelector(selector);
+            if (retrySelect) {
+              console.log('✅ Found settings select on retry');
+              // Same population logic as above
+              while (retrySelect.options.length > 1) {
+                retrySelect.remove(1);
+              }
+              formList.forEach(form => {
+                const option = document.createElement('option');
+                option.value = form.id;
+                option.textContent = form.name + ' (ID: ' + form.id + ')';
+                if (form.id == validFormId) {
+                  option.selected = true;
+                }
+                retrySelect.appendChild(option);
+              });
+              if (validFormId > 0) {
+                retrySelect.value = validFormId;
+              }
+              break;
+            }
+          }
+        }, 500);
+      }
       
-      // Load preview if form is already selected (use validFormId from above)
+      // Show preview area (not the dropdown) - just a container for the form
+      blockContainer.innerHTML = '<div class="form-preview-container"></div>';
+      
+      // Load preview if form is already selected
       if (validFormId && validFormId > 0) {
         console.log('Loading preview for already selected form ID:', validFormId);
         await loadFormPreview(validFormId);
       } else {
-        console.log('No valid form selected, waiting for user selection');
+        blockContainer.querySelector('.form-preview-container').innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the settings panel on the right →</div>';
       }
       
     } catch (error) {
@@ -221,16 +283,15 @@
           throw new Error('Invalid form ID: ' + formId);
         }
         
-        // Create preview container if it doesn't exist
-        let previewDiv = blockContainer.querySelector('.form-preview');
+        // Use the preview container
+        let previewDiv = blockContainer.querySelector('.form-preview-container');
         if (!previewDiv) {
           previewDiv = document.createElement('div');
-          previewDiv.className = 'form-preview';
-          previewDiv.style.cssText = 'margin-top: 20px; padding: 15px; border: 1px solid #e1e3e5; border-radius: 4px; background: white;';
+          previewDiv.className = 'form-preview-container';
           blockContainer.appendChild(previewDiv);
         }
         
-        previewDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form preview...</div>';
+        previewDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: #637381;">Loading form preview...</div>';
         
         console.log('Loading form preview for ID:', numericFormId, 'shop:', shop);
         const renderUrl = `/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${encodeURIComponent(shop)}`;
@@ -267,9 +328,9 @@
         }
       } catch (error) {
         console.error('Error loading form preview:', error);
-        const previewDiv = blockContainer.querySelector('.form-preview');
+        const previewDiv = blockContainer.querySelector('.form-preview-container');
         if (previewDiv) {
-          previewDiv.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error loading form preview: ' + error.message + '</div>';
+          previewDiv.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Error loading form preview: ' + error.message + '</div>';
         }
       }
     }
@@ -394,15 +455,17 @@
   "target": "section",
   "settings": [
     {
-      "type": "text",
+      "type": "select",
       "id": "form_id",
-      "label": "Form ID",
-      "info": "This will be set automatically when you select a form from the dropdown above.",
-      "default": "0"
-    },
-    {
-      "type": "paragraph",
-      "content": "👆 Select a form from the dropdown that appears in the preview area above. The Form ID will be set automatically."
+      "label": "Select Form",
+      "options": [
+        {
+          "value": "0",
+          "label": "-- Loading forms... --"
+        }
+      ],
+      "default": "0",
+      "info": "Select a form to display. Forms are loaded dynamically from your app."
     },
     {
       "type": "header",
