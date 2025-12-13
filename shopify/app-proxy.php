@@ -5,16 +5,16 @@
  * Routes: /apps/form-builder/list and /apps/form-builder/render
  */
 
-// Enable error reporting for debugging (will be disabled in production)
+// Set JSON header FIRST before any output
+header('Content-Type: application/json; charset=utf-8');
+
+// Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Start output buffering
+// Start output buffering AFTER header
 ob_start();
-
-// Set JSON header early
-header('Content-Type: application/json; charset=utf-8');
 
 // Try to include connection file
 try {
@@ -146,13 +146,16 @@ elseif (!empty($query_path)) {
 }
 
 // Route handling
+// Debug: Log route detection BEFORE handling
+error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO'));
+
 if ($is_list_request) {
     // Handle form list request
-    // Clean any output before JSON
+    // Clean any output before JSON (but keep header)
     while (ob_get_level() > 0) {
         ob_end_clean();
     }
-    header('Content-Type: application/json; charset=utf-8');
+    // Header already set at top
     
     // Debug logging
     error_log("App Proxy - List handler. Shop: $shop, Path: $path, Query Path: $query_path");
@@ -213,12 +216,28 @@ if ($is_list_request) {
         }
         
         error_log("Final active forms count: " . count($forms));
+        error_log("Forms array: " . json_encode($forms));
         
         // Clean any output and send JSON
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
-        echo json_encode($forms);
+        
+        // Output forms or debug info if empty
+        if (empty($forms)) {
+            // Return empty array but with debug info in response
+            echo json_encode([
+                'forms' => [],
+                'debug' => [
+                    'store_user_id' => isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 'NOT SET',
+                    'query_result_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
+                    'query_result_count' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
+                    'message' => 'No forms found. Check if forms exist in database with status=1 for this store.'
+                ]
+            ], JSON_PRETTY_PRINT);
+        } else {
+            echo json_encode($forms, JSON_PRETTY_PRINT);
+        }
         exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
@@ -284,8 +303,9 @@ if ($is_list_request) {
         'path' => $path,
         'query_path' => $query_path,
         'request_uri' => $request_uri,
-        'is_list_request' => $is_list_request,
-        'is_render_request' => $is_render_request,
+        'is_list_request' => $is_list_request ? 'YES' : 'NO',
+        'is_render_request' => $is_render_request ? 'YES' : 'NO',
+        'get_params' => $_GET,
         'note' => 'Access via: https://YOUR-STORE.myshopify.com/apps/easy-form-builder/list?shop=YOUR-STORE.myshopify.com'
     ];
     
