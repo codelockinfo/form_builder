@@ -82,18 +82,30 @@ try {
 $request_uri = $_SERVER['REQUEST_URI'];
 $path = parse_url($request_uri, PHP_URL_PATH);
 
-// Also check query string for path (some configurations)
-if (empty($path) || $path == '/shopify/app-proxy.php' || $path == '/form_builder/shopify/app-proxy.php') {
-    // Check if path is in query string
-    $query_path = isset($_GET['path']) ? $_GET['path'] : '';
-    if (!empty($query_path)) {
-        $path = $query_path;
+// Check if path is in query string (from .htaccess RewriteRule)
+$query_path = isset($_GET['path']) ? $_GET['path'] : '';
+
+// Determine route type
+$is_list_request = false;
+$is_render_request = false;
+
+// Check full path first (when accessed directly or via index.php)
+if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/easy-form-builder/list') !== false) {
+    $is_list_request = true;
+} elseif (strpos($path, '/apps/form-builder/render') !== false || strpos($path, '/apps/easy-form-builder/render') !== false) {
+    $is_render_request = true;
+}
+// Check query path (from .htaccess routing: path=list or path=render)
+elseif (!empty($query_path)) {
+    if (strpos($query_path, 'list') !== false || $query_path == 'list') {
+        $is_list_request = true;
+    } elseif (strpos($query_path, 'render') !== false || $query_path == 'render') {
+        $is_render_request = true;
     }
 }
 
 // Route handling
-// Support both form-builder and easy-form-builder subpaths
-if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/easy-form-builder/list') !== false) {
+if ($is_list_request) {
     // Handle form list request
     // Clean any output before JSON
     while (ob_get_level() > 0) {
@@ -178,7 +190,7 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
         exit;
     }
     
-} elseif (strpos($path, '/apps/form-builder/render') !== false || strpos($path, '/apps/easy-form-builder/render') !== false) {
+} elseif ($is_render_request) {
     // Handle form render request
     // Clean output buffer for HTML
     while (ob_get_level() > 0) {
@@ -215,13 +227,25 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
     }
     
 } else {
-    // Unknown route
+    // Unknown route - provide helpful debug info
     while (ob_get_level() > 0) {
         ob_end_clean();
     }
     http_response_code(404);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Route not found', 'path' => $path, 'message' => 'The requested route does not exist. Available routes: /list and /render']);
+    
+    $debug_info = [
+        'error' => 'Route not found',
+        'message' => 'The requested route does not exist. Available routes: /apps/easy-form-builder/list and /apps/easy-form-builder/render',
+        'path' => $path,
+        'query_path' => $query_path,
+        'request_uri' => $request_uri,
+        'is_list_request' => $is_list_request,
+        'is_render_request' => $is_render_request,
+        'note' => 'Access via: https://YOUR-STORE.myshopify.com/apps/easy-form-builder/list?shop=YOUR-STORE.myshopify.com'
+    ];
+    
+    echo json_encode($debug_info, JSON_PRETTY_PRINT);
     exit;
 }
 

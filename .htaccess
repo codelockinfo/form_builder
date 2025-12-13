@@ -7,5 +7,5 @@ RewriteRule ^apps/form-builder/(.*)$ shopify/app-proxy.php [L,QSA]
 
 # Route easy-form-builder subpath
 RewriteCond %{REQUEST_URI} ^/apps/easy-form-builder/(.*)$
-RewriteRule ^apps/easy-form-builder/(.*)$ shopify/app-proxy.php [L,QSA]
+RewriteRule ^apps/easy-form-builder/(.*)$ shopify/app-proxy.php?path=$1 [L,QSA]
 
