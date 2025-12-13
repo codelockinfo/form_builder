@@ -5,58 +5,170 @@
  * Routes: /apps/form-builder/list and /apps/form-builder/render
  */
 
+// Enable error reporting for debugging FIRST
+error_reporting(E_ALL);
+ini_set('display_errors', 0);  // Keep 0 to prevent HTML errors breaking JSON
+ini_set('log_errors', 1);
+
 // Set JSON header FIRST before any output
 header('Content-Type: application/json; charset=utf-8');
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
+// Register shutdown function to catch fatal errors
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== NULL && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        // Clean any output buffer
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'error' => 'Fatal error',
+            'message' => $error['message'],
+            'file' => $error['file'],
+            'line' => $error['line'],
+            'type' => $error['type']
+        ], JSON_PRETTY_PRINT);
+    }
+});
 
 // DON'T use output buffering - it's causing blank pages
 // ob_start();
 
+// TEMPORARY: Test output to verify file is executing
+if (isset($_GET['test']) && $_GET['test'] == '1') {
+    // Clean any output buffers
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    echo json_encode(['test' => 'File is executing', 'time' => date('Y-m-d H:i:s'), 'php_version' => phpversion()]);
+    exit;
+}
+
+// DEBUG: Test if we can output JSON before includes
+if (isset($_GET['debug']) && $_GET['debug'] == '1') {
+    // Clean any output buffers
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    echo json_encode(['debug' => 'Before includes', 'time' => date('Y-m-d H:i:s')]);
+    exit;
+}
+
 // Try to include connection file
+// Use output buffering to catch any output from includes
 try {
     if (!file_exists('../append/connection.php')) {
         throw new Exception('connection.php not found');
     }
+    
+    // Start output buffering
+    ob_start();
+    
+    // Temporarily suppress session warnings (session may already be started)
+    $session_started = session_status() === PHP_SESSION_ACTIVE;
+    if (!$session_started) {
+        @session_start();
+    }
+    
     include_once '../append/connection.php';
+    
+    $output = ob_get_clean();
+    
+    // Check if connection.php output anything (like "Undefine host")
+    if (!empty($output)) {
+        error_log("App Proxy - connection.php output detected: " . substr($output, 0, 200));
+        // If output contains error messages, throw exception
+        if (stripos($output, 'Undefine host') !== false || 
+            stripos($output, 'Connection failed') !== false ||
+            stripos($output, 'No mysql connection') !== false ||
+            stripos($output, 'No mongodb connection') !== false) {
+            throw new Exception('Database connection error: ' . $output);
+        }
+    }
+    
+    // Verify required constants are defined
+    if (!defined('ABS_PATH')) {
+        throw new Exception('ABS_PATH not defined after including connection.php');
+    }
+    if (!defined('DB_OBJECT')) {
+        throw new Exception('DB_OBJECT not defined after including connection.php');
+    }
+    
 } catch (Exception $e) {
-    // Output buffering disabled - no need to clean
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code(500);
-    echo json_encode(['error' => 'Configuration error', 'message' => $e->getMessage()]);
+    echo json_encode([
+        'error' => 'Configuration error', 
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_PRETTY_PRINT);
+    exit;
+} catch (Error $e) {
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Fatal error in connection.php', 
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_PRETTY_PRINT);
     exit;
 }
 
+// Include cls_functions
+// Note: cls_functions.php includes common_function.php which includes base_function.php
+// Both use 'include' not 'include_once', so we need to prevent double inclusion
+ob_start();
 try {
-    if (DB_OBJECT == 'mysql') {
-        $common_file = ABS_PATH . "/collection/mongo_mysql/mysql/common_function.php";
-        if (!file_exists($common_file)) {
-            throw new Exception('common_function.php not found at: ' . $common_file);
+    // Only include cls_functions if Client_functions class doesn't exist
+    if (!class_exists('Client_functions')) {
+        $cls_file = ABS_PATH . '/user/cls_functions.php';
+        if (!file_exists($cls_file)) {
+            throw new Exception('cls_functions.php not found at: ' . $cls_file);
         }
-        include $common_file;
-    } else {
-        $common_file = ABS_PATH . "/collection/mongo_mysql/mongo/common_function.php";
-        if (!file_exists($common_file)) {
-            throw new Exception('common_function.php not found at: ' . $common_file);
-        }
-        include $common_file;
+        
+        // cls_functions.php will include common_function.php which includes base_function.php
+        // Since they use 'include' not 'include_once', we need to prevent double declaration
+        // We'll use a custom include wrapper that checks if class exists first
+        require_once($cls_file);
     }
-
-    $cls_file = ABS_PATH . '/user/cls_functions.php';
-    if (!file_exists($cls_file)) {
-        throw new Exception('cls_functions.php not found at: ' . $cls_file);
+    
+    $output = ob_get_clean();
+    if (!empty($output)) {
+        error_log("App Proxy - common_function/cls_functions output: " . substr($output, 0, 200));
     }
-    require_once($cls_file);
+    
 } catch (Exception $e) {
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code(500);
     echo json_encode([
         'error' => 'File include error', 
         'message' => $e->getMessage(),
         'abs_path' => defined('ABS_PATH') ? ABS_PATH : 'not defined',
-        'file' => __FILE__
-    ]);
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_PRETTY_PRINT);
+    exit;
+} catch (Error $e) {
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Fatal error in file includes', 
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ], JSON_PRETTY_PRINT);
     exit;
 }
 
@@ -74,11 +186,14 @@ if (empty($shop)) {
 
 // Verify shop parameter exists
 if (empty($shop)) {
-    // Clean any output and send JSON error
-    // Output buffering disabled - no need to clean
     http_response_code(400);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Shop parameter is required', 'message' => 'Please provide the shop parameter in the query string']);
+    echo json_encode(['error' => 'Shop parameter is required', 'message' => 'Please provide the shop parameter in the query string'], JSON_PRETTY_PRINT);
+    exit;
+}
+
+// DEBUG: Test output after includes but before Client_functions
+if (isset($_GET['debug']) && $_GET['debug'] == '2') {
+    echo json_encode(['debug' => 'After includes, before Client_functions', 'shop' => $shop, 'time' => date('Y-m-d H:i:s')], JSON_PRETTY_PRINT);
     exit;
 }
 
@@ -88,11 +203,7 @@ try {
     
     // Check if store was found
     if (empty($cls_functions->current_store_obj)) {
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
         http_response_code(500);
-        header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'error' => 'Store not found',
             'message' => 'The shop "' . $shop . '" is not registered in the app. Please install the app first.',
@@ -101,13 +212,27 @@ try {
         exit;
     }
 } catch (Exception $e) {
-    // Output buffering disabled - no need to clean
+    error_log("App Proxy - Exception during initialization: " . $e->getMessage());
     http_response_code(500);
-    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
-        'error' => 'Failed to initialize',
-        'message' => $e->getMessage()
-    ]);
+        'error' => 'Failed to initialize Client_functions',
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'shop' => $shop
+    ], JSON_PRETTY_PRINT);
+    exit;
+} catch (Error $e) {
+    // Catch fatal errors (PHP 7+)
+    error_log("App Proxy - Fatal error during initialization: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'error' => 'Fatal error during initialization',
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'shop' => $shop
+    ], JSON_PRETTY_PRINT);
     exit;
 }
 
@@ -221,11 +346,6 @@ if ($is_list_request) {
         error_log("Final active forms count: " . count($forms));
         error_log("Forms array: " . json_encode($forms));
         
-        // Clean any output and send JSON
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
-        
         // Always include debug info in response
         $response = [
             'forms' => $forms,
@@ -234,23 +354,46 @@ if ($is_list_request) {
                 'query_result_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
                 'query_result_count' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
                 'forms_after_filter' => count($forms),
-                'shop' => $shop
+                'shop' => $shop,
+                'path' => $path,
+                'query_path' => $query_path,
+                'is_list_request' => $is_list_request ? 'YES' : 'NO'
             ]
         ];
         
-        echo json_encode($response, JSON_PRETTY_PRINT);
+        $json_output = json_encode($response, JSON_PRETTY_PRINT);
+        if ($json_output === false) {
+            error_log("JSON encode error: " . json_last_error_msg());
+            echo json_encode(['error' => 'JSON encoding failed', 'json_error' => json_last_error_msg()]);
+        } else {
+            echo $json_output;
+        }
         exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
         error_log("Stack trace: " . $e->getTraceAsString());
         
-        // Clean any output and send JSON error
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
+        // Send JSON error with full details
         http_response_code(500);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(['error' => 'Failed to fetch forms: ' . $e->getMessage()]);
+        $error_response = [
+            'error' => 'Failed to fetch forms', 
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ];
+        echo json_encode($error_response, JSON_PRETTY_PRINT);
+        exit;
+    } catch (Error $e) {
+        // Catch fatal errors too
+        error_log("App Proxy Fatal Error: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'error' => 'Fatal error', 
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ], JSON_PRETTY_PRINT);
         exit;
     }
     

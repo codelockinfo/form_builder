@@ -1,9 +1,11 @@
 
 <?php
-if (DB_OBJECT == 'mysql') {
-    include ABS_PATH . "/collection/mongo_mysql/mysql/common_function.php";
-} else {
-    include ABS_PATH . "/collection/mongo_mysql/mongo/common_function.php";
+if (!class_exists('common_function')) {
+    if (DB_OBJECT == 'mysql') {
+        include_once ABS_PATH . "/collection/mongo_mysql/mysql/common_function.php";
+    } else {
+        include_once ABS_PATH . "/collection/mongo_mysql/mongo/common_function.php";
+    }
 }
 include_once ABS_PATH . '/collection/form_validation.php';
 include_once ABS_PATH . '/user/cls_load_language_file.php';

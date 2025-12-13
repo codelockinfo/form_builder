@@ -1,6 +1,8 @@
 <?php
 
-include dirname(dirname(__FILE__)). "/base_function.php";
+if (!class_exists('base_function')) {
+    include_once dirname(dirname(__FILE__)). "/base_function.php";
+}
 
     class common_function extends base_function {
 

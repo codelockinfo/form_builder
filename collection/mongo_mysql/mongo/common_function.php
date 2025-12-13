@@ -1,5 +1,7 @@
 <?php
-include dirname(dirname(__FILE__)) . "/collection/mongo_mysql/base_function.php";
+if (!class_exists('base_function')) {
+    include_once dirname(dirname(__FILE__)) . "/collection/mongo_mysql/base_function.php";
+}
 class common_function extends base_function {
     public function build_where_clause($where_query_arr, $tbl_name, $isGroupBy) {
         $final_arr = array();
