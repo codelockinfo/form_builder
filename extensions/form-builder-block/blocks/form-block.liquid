@@ -10,14 +10,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   // In Theme Editor
   {% if request.design_mode %}
     try {
+      console.log('Loading forms list for shop:', shop);
       // Load form list from your PHP app (App Proxy)
       const response = await fetch(`/apps/easy-form-builder/list?shop=${shop}`);
       
+      console.log('Forms list response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to load forms');
+        const errorText = await response.text();
+        console.error('Forms list error:', errorText);
+        throw new Error(`Failed to load forms: ${response.status} ${response.statusText}`);
       }
       
       const formList = await response.json();
+      console.log('Forms list received:', formList);
+      
+      if (!Array.isArray(formList)) {
+        throw new Error('Invalid response format: expected array');
+      }
+      
+      if (formList.length === 0) {
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #637381; text-align: center;">No forms found. Please create forms in your app first.</div>';
+        return;
+      }
       
       let html = '<div style="padding: 15px; border: 1px solid #e1e3e5; border-radius: 4px; background: #f6f6f7;">';
       html += '<label style="font-weight: bold; display: block; margin-bottom: 8px; font-size: 14px;">Select Form</label>';
@@ -40,24 +55,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       selectElement.addEventListener("change", async (e) => {
         const formId = e.target.value;
+        const numericFormId = parseInt(formId);
         const currentFormIdSpan = document.getElementById("current-form-id-{{ block.id }}");
         
+        console.log('Form selected:', formId, 'Numeric ID:', numericFormId);
+        
         if (currentFormIdSpan) {
-          currentFormIdSpan.textContent = formId || "None";
+          currentFormIdSpan.textContent = numericFormId || "None";
         }
         
         if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
           try {
+            // Save as string but ensure it's a valid number
             await Shopify.theme.editor.setBlockSettings({
               id: "{{ block.id }}",
               settings: {
-                form_id: formId
+                form_id: numericFormId ? String(numericFormId) : ""
               }
             });
             
+            console.log('Block settings saved with form_id:', numericFormId);
+            
             // Preview the selected form
-            if (formId) {
-              await loadFormPreview(formId);
+            if (numericFormId && numericFormId > 0) {
+              await loadFormPreview(numericFormId);
             } else {
               blockContainer.querySelector('.form-loading')?.remove();
               const previewDiv = blockContainer.querySelector('.form-preview');
@@ -67,14 +88,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           } catch (error) {
             console.error('Error saving form selection:', error);
+            alert('Error saving form selection: ' + error.message);
           }
         }
       });
       
       // Load preview if form is already selected
       const currentFormId = {{ block.settings.form_id | default: 0 }};
-      if (currentFormId) {
-        await loadFormPreview(currentFormId);
+      const numericCurrentId = parseInt(currentFormId);
+      console.log('Current form ID from settings:', currentFormId, 'Numeric:', numericCurrentId);
+      if (numericCurrentId && numericCurrentId > 0) {
+        await loadFormPreview(numericCurrentId);
+      } else if (currentFormId && currentFormId !== "" && currentFormId !== "0") {
+        console.warn('Invalid form ID format:', currentFormId, '- Please select a form from the dropdown');
+        // Clear invalid form ID
+        if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
+          await Shopify.theme.editor.setBlockSettings({
+            id: "{{ block.id }}",
+            settings: {
+              form_id: ""
+            }
+          });
+        }
       }
       
     } catch (error) {
@@ -84,6 +119,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     async function loadFormPreview(formId) {
       try {
+        const numericFormId = parseInt(formId);
+        if (!numericFormId || numericFormId <= 0) {
+          throw new Error('Invalid form ID: ' + formId);
+        }
+        
         // Create preview container if it doesn't exist
         let previewDiv = blockContainer.querySelector('.form-preview');
         if (!previewDiv) {
@@ -95,14 +135,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         previewDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form preview...</div>';
         
-        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}`);
+        console.log('Loading form preview for ID:', numericFormId, 'shop:', shop);
+        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${shop}`);
+        
+        console.log('Preview response status:', formResponse.status);
         
         if (!formResponse.ok) {
-          throw new Error('Failed to load form');
+          const errorText = await formResponse.text();
+          console.error('Preview error response:', errorText);
+          throw new Error(`Failed to load form: ${formResponse.status}`);
         }
         
         const formHtml = await formResponse.text();
-        previewDiv.innerHTML = formHtml;
+        console.log('Preview HTML received, length:', formHtml.length);
+        
+        if (formHtml && formHtml.length > 0) {
+          previewDiv.innerHTML = formHtml;
+        } else {
+          throw new Error('Empty form HTML received');
+        }
         
         // Remove loading message if exists
         const loadingMsg = blockContainer.querySelector('.form-loading');
@@ -113,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error('Error loading form preview:', error);
         const previewDiv = blockContainer.querySelector('.form-preview');
         if (previewDiv) {
-          previewDiv.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error loading form preview</div>';
+          previewDiv.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error loading form preview: ' + error.message + '</div>';
         }
       }
     }
@@ -122,27 +173,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     // On Live Storefront: render selected form
     const formId = {{ block.settings.form_id | default: 0 }};
     
-    if (formId) {
+    // Validate formId is a number
+    const numericFormId = parseInt(formId);
+    
+    if (numericFormId && numericFormId > 0) {
       try {
         blockContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
         
-        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}`);
+        console.log('Loading form ID:', numericFormId, 'for shop:', shop);
+        
+        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${shop}`);
+        
+        console.log('Form response status:', formResponse.status);
         
         if (!formResponse.ok) {
-          throw new Error('Failed to load form');
+          const errorText = await formResponse.text();
+          console.error('Form response error:', errorText);
+          throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
         }
         
         const formHtml = await formResponse.text();
-        blockContainer.innerHTML = formHtml;
+        console.log('Form HTML received, length:', formHtml.length);
         
-        // Initialize form submission handler if needed
-        initializeFormSubmission();
+        if (formHtml && formHtml.length > 0) {
+          blockContainer.innerHTML = formHtml;
+          // Initialize form submission handler if needed
+          initializeFormSubmission();
+        } else {
+          throw new Error('Empty form HTML received');
+        }
       } catch (error) {
         console.error('Error loading form:', error);
-        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Error loading form. Please try again later.</div>';
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Error loading form: ' + error.message + '<br>Please check browser console for details.</div>';
       }
     } else {
-      blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">No form selected</div>';
+      console.warn('Invalid form ID:', formId);
+      blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">No form selected. Please select a form in Theme Customizer.</div>';
     }
     
     function initializeFormSubmission() {
@@ -169,7 +235,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       "type": "text",
       "id": "form_id",
       "label": "Form ID",
-      "info": "Enter the form ID to display. This will be set automatically when you select a form from the dropdown in theme editor."
+      "info": "This will be set automatically when you select a form from the dropdown above.",
+      "default": "0"
     },
     {
       "type": "header",
