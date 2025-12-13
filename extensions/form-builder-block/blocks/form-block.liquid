@@ -3,7 +3,22 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+// Run immediately, don't wait for DOMContentLoaded in design mode
+(function() {
+  // Check if we're in design mode - if so, run immediately
+  {% if request.design_mode %}
+    // In design mode, run immediately
+    (async function() {
+      await initializeFormBuilder();
+    })();
+  {% else %}
+    // On live storefront, wait for DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initializeFormBuilder();
+    });
+  {% endif %}
+  
+  async function initializeFormBuilder() {
   const blockContainer = document.getElementById("easy-form-{{ block.id }}");
   // Try different shop domain formats - Shopify might use different formats
   let shop = "{{ shop.permanent_domain }}";
@@ -261,18 +276,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     
   {% else %}
     // On Live Storefront: render selected form
-    const formId = {{ block.settings.form_id | default: 0 }};
+    const formId = '{{ block.settings.form_id | default: "0" }}';
     
-    // Validate formId is a number
+    // Validate formId is a number (not a hash)
     const numericFormId = parseInt(formId);
     
-    if (numericFormId && numericFormId > 0) {
+    console.log('=== LIVE STOREFRONT MODE ===');
+    console.log('Form ID from settings:', formId, '→ Numeric:', numericFormId);
+    
+    if (numericFormId && numericFormId > 0 && !isNaN(numericFormId)) {
       try {
-        blockContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
+        const loadingDiv = blockContainer.querySelector('.form-loading');
+        if (loadingDiv) {
+          loadingDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
+        } else {
+          blockContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
+        }
         
-        console.log('Loading form ID:', numericFormId, 'for shop:', shop);
+        console.log('Fetching form ID:', numericFormId, 'for shop:', shop);
+        const renderUrl = `/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${encodeURIComponent(shop)}`;
+        console.log('Render URL:', renderUrl);
         
-        const formResponse = await fetch(`/apps/easy-form-builder/render?form_id=${numericFormId}&shop=${shop}`);
+        const formResponse = await fetch(renderUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/html',
+            'Content-Type': 'text/html'
+          }
+        });
         
         console.log('Form response status:', formResponse.status);
         
@@ -285,20 +316,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         const formHtml = await formResponse.text();
         console.log('Form HTML received, length:', formHtml.length);
         
-        if (formHtml && formHtml.length > 0) {
+        if (formHtml && formHtml.trim().length > 0) {
           blockContainer.innerHTML = formHtml;
+          console.log('✅ Form HTML inserted');
           // Initialize form submission handler if needed
           initializeFormSubmission();
         } else {
           throw new Error('Empty form HTML received');
         }
       } catch (error) {
-        console.error('Error loading form:', error);
-        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center;">Error loading form: ' + error.message + '<br>Please check browser console for details.</div>';
+        console.error('❌ Error loading form:', error);
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
+          '<strong>Error loading form</strong><br>' +
+          error.message + '<br>' +
+          '<small style="margin-top: 10px; display: block;">Check browser console (F12) for details.</small>' +
+          '</div>';
       }
     } else {
-      console.warn('Invalid form ID:', formId);
-      blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381;">No form selected. Please select a form in Theme Customizer.</div>';
+      console.warn('⚠️ Invalid form ID:', formId, '- Not a valid number');
+      blockContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px solid #e1e3e5; border-radius: 4px; background: #f6f6f7;">' +
+        '<strong>No form selected</strong><br>' +
+        '<small>Please select a form in Theme Customizer.</small>' +
+        '</div>';
     }
     
     function initializeFormSubmission() {
@@ -426,4 +465,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   text-align: right;
 }
 </style>
-
