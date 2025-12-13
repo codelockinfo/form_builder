@@ -13,14 +13,6 @@ ini_set('log_errors', 1);
 // Start output buffering to catch any unwanted output
 ob_start();
 
-// Set JSON header immediately
-header('Content-Type: application/json; charset=utf-8');
-
-// Prevent any output before JSON
-if (ob_get_level() > 0) {
-    ob_clean();
-}
-
 include_once '../append/connection.php';
 
 if (DB_OBJECT == 'mysql') {
@@ -45,15 +37,13 @@ if (empty($shop)) {
 
 // Verify shop parameter exists
 if (empty($shop)) {
-    if (ob_get_level() > 0) {
-        ob_clean();
+    // Clean any output and send JSON error
+    while (ob_get_level() > 0) {
+        ob_end_clean();
     }
     http_response_code(400);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Shop parameter is required']);
-    if (ob_get_level() > 0) {
-        ob_end_flush();
-    }
+    echo json_encode(['error' => 'Shop parameter is required', 'message' => 'Please provide the shop parameter in the query string']);
     exit;
 }
 
@@ -63,6 +53,9 @@ try {
     
     // Check if store was found
     if (empty($cls_functions->current_store_obj)) {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
@@ -73,6 +66,9 @@ try {
         exit;
     }
 } catch (Exception $e) {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
@@ -86,13 +82,22 @@ try {
 $request_uri = $_SERVER['REQUEST_URI'];
 $path = parse_url($request_uri, PHP_URL_PATH);
 
+// Also check query string for path (some configurations)
+if (empty($path) || $path == '/shopify/app-proxy.php' || $path == '/form_builder/shopify/app-proxy.php') {
+    // Check if path is in query string
+    $query_path = isset($_GET['path']) ? $_GET['path'] : '';
+    if (!empty($query_path)) {
+        $path = $query_path;
+    }
+}
+
 // Route handling
 // Support both form-builder and easy-form-builder subpaths
 if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/easy-form-builder/list') !== false) {
     // Handle form list request
     // Clean any output before JSON
-    if (ob_get_level() > 0) {
-        ob_clean();
+    while (ob_get_level() > 0) {
+        ob_end_clean();
     }
     header('Content-Type: application/json; charset=utf-8');
     
@@ -154,33 +159,31 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
         error_log("Final active forms count: " . count($forms));
         
         // Clean any output and send JSON
-        if (ob_get_level() > 0) {
-            ob_clean();
+        while (ob_get_level() > 0) {
+            ob_end_clean();
         }
         echo json_encode($forms);
-        if (ob_get_level() > 0) {
-            ob_end_flush();
-        }
         exit;
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
         error_log("Stack trace: " . $e->getTraceAsString());
         
         // Clean any output and send JSON error
-        if (ob_get_level() > 0) {
-            ob_clean();
+        while (ob_get_level() > 0) {
+            ob_end_clean();
         }
         http_response_code(500);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['error' => 'Failed to fetch forms: ' . $e->getMessage()]);
-        if (ob_get_level() > 0) {
-            ob_end_flush();
-        }
         exit;
     }
     
 } elseif (strpos($path, '/apps/form-builder/render') !== false || strpos($path, '/apps/easy-form-builder/render') !== false) {
     // Handle form render request
+    // Clean output buffer for HTML
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     header('Content-Type: text/html; charset=utf-8');
     
     $form_id = isset($_GET['form_id']) ? (int)$_GET['form_id'] : 0;
@@ -213,8 +216,12 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
     
 } else {
     // Unknown route
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
     http_response_code(404);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Route not found', 'path' => $path]);
+    echo json_encode(['error' => 'Route not found', 'path' => $path, 'message' => 'The requested route does not exist. Available routes: /list and /render']);
+    exit;
 }
 
