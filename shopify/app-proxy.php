@@ -76,79 +76,61 @@ if (strpos($path, '/apps/form-builder/list') !== false || strpos($path, '/apps/e
     header('Content-Type: application/json; charset=utf-8');
     
     try {
-        // Get all forms for this shop
-        // current_store_obj is an array from the database query
-        $shopinfo = is_array($cls_functions->current_store_obj) 
-            ? $cls_functions->current_store_obj 
-            : (array)$cls_functions->current_store_obj;
+        // Get all forms for this shop - use EXACT same approach as getAllFormFunction()
+        $shopinfo = (object)$cls_functions->current_store_obj;
         
         // Debug logging
-        error_log("App Proxy - List Forms Request");
-        error_log("Shop: " . $shop);
-        error_log("Current Store Obj: " . json_encode($shopinfo));
+        error_log("App Proxy - List Forms Request for shop: " . $shop);
         
-        // Get store_user_id from the store object array
-        // The database column is 'store_user_id' and it's in the array
-        $store_user_id = null;
-        
-        // Try array access first
-        if (is_array($shopinfo) && isset($shopinfo['store_user_id'])) {
-            $store_user_id = (int)$shopinfo['store_user_id'];
-        }
-        // Try object access
-        elseif (is_object($cls_functions->current_store_obj) && isset($cls_functions->current_store_obj->store_user_id)) {
-            $store_user_id = (int)$cls_functions->current_store_obj->store_user_id;
-        }
-        // Try direct array access on current_store_obj
-        elseif (is_array($cls_functions->current_store_obj) && isset($cls_functions->current_store_obj['store_user_id'])) {
-            $store_user_id = (int)$cls_functions->current_store_obj['store_user_id'];
-        }
-        
-        error_log("Store User ID: " . ($store_user_id ? $store_user_id : 'NOT SET'));
-        
-        if (empty($store_user_id) || $store_user_id <= 0) {
+        if (empty($cls_functions->current_store_obj)) {
             http_response_code(500);
             echo json_encode([
-                'error' => 'Store user ID not found',
-                'message' => 'Unable to identify store user. Store object: ' . json_encode($shopinfo),
+                'error' => 'Store not found',
+                'message' => 'The shop is not registered in the app.',
                 'shop' => $shop
             ]);
             exit;
         }
         
-        // Build WHERE query - match the format used in getAllFormFunction()
-        // Use string interpolation like: "$shopinfo->store_user_id"
-        $where_query = array(["", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
-        
-        error_log("Query params - store_user_id: " . $store_user_id . " (type: " . gettype($store_user_id) . ")");
-        error_log("WHERE query array: " . json_encode($where_query));
-        
-        $comeback_client = $cls_functions->select_result(TABLE_FORMS, 'id, form_name', $where_query);
-        
-        error_log("Forms query result status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET'));
-        error_log("Forms count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : '0'));
-        
-        // If no results with status filter, try without status filter (like getAllFormFunction does)
-        if (!isset($comeback_client['data']) || empty($comeback_client['data']) || count($comeback_client['data']) == 0) {
-            error_log("No forms found with status filter, trying without status filter...");
-            $where_query_no_status = array(["", "store_client_id", "=", "$store_user_id"]);
-            $comeback_client = $cls_functions->select_result(TABLE_FORMS, 'id, form_name', $where_query_no_status);
-            error_log("Forms count (no status filter): " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : '0'));
+        // Check if store_user_id exists
+        if (!isset($shopinfo->store_user_id) || empty($shopinfo->store_user_id)) {
+            error_log("ERROR: store_user_id not found in shopinfo object");
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Store user ID not found',
+                'message' => 'Unable to identify store user.',
+                'shop' => $shop,
+                'debug' => 'Store object keys: ' . (is_object($shopinfo) ? implode(', ', array_keys((array)$shopinfo)) : 'not object')
+            ]);
+            exit;
         }
         
-        error_log("Final forms query result: " . json_encode($comeback_client));
+        // Use EXACT same format as getAllFormFunction() line 256
+        // First try without status filter (like getAllFormFunction does)
+        $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
+        
+        error_log("Querying forms for store_user_id: " . $shopinfo->store_user_id);
+        
+        $comeback_client = $cls_functions->select_result(TABLE_FORMS, 'id, form_name, status', $where_query);
+        
+        error_log("Query result status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET'));
+        error_log("Query result data count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : '0'));
         
         $forms = array();
         if (isset($comeback_client['data']) && is_array($comeback_client['data'])) {
             foreach ($comeback_client['data'] as $form) {
-                $forms[] = array(
-                    'id' => (int)$form['id'],
-                    'name' => $form['form_name']
-                );
+                // Filter to only include forms with status = 1
+                $form_status = isset($form['status']) ? (int)$form['status'] : 1;
+                if ($form_status == 1) {
+                    $forms[] = array(
+                        'id' => (int)$form['id'],
+                        'name' => isset($form['form_name']) ? $form['form_name'] : 'Unnamed Form'
+                    );
+                }
             }
         }
         
-        error_log("Forms array: " . json_encode($forms));
+        error_log("Final active forms count: " . count($forms));
         echo json_encode($forms);
     } catch (Exception $e) {
         error_log("App Proxy Error: " . $e->getMessage());
