@@ -77,6 +77,15 @@ $__webhook_arr = array(
 // Get shop parameter - can be in $_GET['shop'] directly
 $shop = isset($_GET['shop']) ? trim($_GET['shop']) : '';
 
+// Check for OAuth errors from Shopify
+if (isset($_GET['error'])) {
+    error_log("=== OAUTH ERROR DETECTED ===");
+    error_log("OAuth Error: " . (isset($_GET['error']) ? $_GET['error'] : 'unknown'));
+    error_log("OAuth Error Description: " . (isset($_GET['error_description']) ? urldecode($_GET['error_description']) : 'N/A'));
+    error_log("Full GET parameters: " . json_encode($_GET));
+    die('OAuth Error: ' . htmlspecialchars(isset($_GET['error_description']) ? urldecode($_GET['error_description']) : $_GET['error']));
+}
+
 // If shop not in GET, try to extract from redirect_uri parameter or referer
 if (empty($shop) && isset($_GET['code'])) {
     // Check redirect_uri parameter (Shopify sends this)
@@ -91,6 +100,15 @@ if (empty($shop) && isset($_GET['code'])) {
     if (empty($shop) && isset($_SERVER['REQUEST_URI']) && preg_match('/[?&]shop=([^&]+)/', $_SERVER['REQUEST_URI'], $matches)) {
         $shop = urldecode($matches[1]);
     }
+}
+
+// Check if we're coming back from OAuth but without code (user cancelled or error)
+if (!empty($shop) && !isset($_GET['code']) && !isset($_GET['hmac']) && !isset($_GET['error'])) {
+    // This might be a redirect back from OAuth without code
+    // Check if we just redirected to OAuth recently
+    error_log("WARNING: Request has shop parameter but no code, hmac, or error. This might indicate OAuth was cancelled.");
+    error_log("Request details: " . json_encode($_GET));
+    error_log("Referer: " . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'N/A'));
 }
 
 // Handle OAuth callback even if shop extraction failed (for debugging)
@@ -280,8 +298,16 @@ if (!empty($shop)) {
         // Check if this is an embedded app request (has hmac/host) vs direct visit
         $is_embedded_app = isset($_GET['hmac']) && isset($_GET['host']);
         
+        // Check if this is a redirect back from OAuth without code (user cancelled or error)
+        $is_oauth_redirect_back = !$is_embedded_app && !isset($_GET['code']) && isset($_GET['shop']);
+        if ($is_oauth_redirect_back) {
+            error_log("WARNING: Possible OAuth redirect back without code parameter for shop: $shop");
+            error_log("This might indicate OAuth was cancelled or failed. Full GET: " . json_encode($_GET));
+        }
+        
         error_log("Initial visit: Checking store existence for: $shop");
         error_log("Is embedded app request: " . ($is_embedded_app ? 'YES' : 'NO'));
+        error_log("Is OAuth redirect back: " . ($is_oauth_redirect_back ? 'YES' : 'NO'));
         
         // Initialize common_function without shop (since shop might not exist yet)
         $temp_cls_functions = new common_function('');
@@ -314,8 +340,14 @@ if (!empty($shop)) {
                 echo '<!DOCTYPE html><html><head><script>top.location.href = "' . htmlspecialchars($install_url) . '";</script></head><body>Redirecting to install...</body></html>';
                 exit;
             } else {
-                // Direct visit, redirect to OAuth installation
-                error_log("Store doesn't exist, redirecting to OAuth for: $shop");
+                // Direct visit or OAuth redirect back without code
+                if ($is_oauth_redirect_back) {
+                    // This might be a redirect back from OAuth without code (user cancelled)
+                    error_log("WARNING: Possible OAuth cancellation or error for shop: $shop");
+                    error_log("Redirecting to OAuth again. Make sure to click 'Install' and authorize the app.");
+                } else {
+                    error_log("Store doesn't exist, redirecting to OAuth for: $shop");
+                }
                 
                 $redirect_uri = SITE_PATH . '/index.php?shop=' . urlencode($shop);
                 $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
