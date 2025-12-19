@@ -212,14 +212,31 @@ try {
     
     // Check if store was found
     if (empty($cls_functions->current_store_obj)) {
+        error_log("App Proxy - Store not found for shop: $shop");
         http_response_code(500);
         echo json_encode([
             'error' => 'Store not found',
             'message' => 'The shop "' . $shop . '" is not registered in the app. Please install the app first.',
+            'shop' => $shop,
+            'debug' => 'Make sure the app is installed and the shop is registered in the database'
+        ]);
+        exit;
+    }
+    
+    // Verify store_user_id exists
+    $shopinfo = (object)$cls_functions->current_store_obj;
+    if (!isset($shopinfo->store_user_id) || empty($shopinfo->store_user_id)) {
+        error_log("App Proxy - store_user_id missing for shop: $shop");
+        http_response_code(500);
+        echo json_encode([
+            'error' => 'Store user ID not found',
+            'message' => 'Unable to identify store user. Please reinstall the app.',
             'shop' => $shop
         ]);
         exit;
     }
+    
+    error_log("App Proxy - Store found: $shop, store_user_id: " . $shopinfo->store_user_id);
 } catch (Exception $e) {
     error_log("App Proxy - Exception during initialization: " . $e->getMessage());
     http_response_code(500);
@@ -363,12 +380,24 @@ if ($is_list_request) {
         }
         
         // Use EXACT same format as getAllFormFunction() line 256
-        // First try without status filter (like getAllFormFunction does)
-        $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
+        // Filter forms by store_client_id AND status to ensure data isolation
+        $store_user_id = (int)$shopinfo->store_user_id;
+        if ($store_user_id <= 0) {
+            error_log("ERROR: Invalid store_user_id: " . $shopinfo->store_user_id);
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Invalid store user ID',
+                'message' => 'Unable to identify store user.',
+                'shop' => $shop
+            ]);
+            exit;
+        }
         
-        error_log("Querying forms for store_user_id: " . $shopinfo->store_user_id);
+        $where_query = array(["", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
         
-        $comeback_client = $cls_functions->select_result(TABLE_FORMS, 'id, form_name, status', $where_query);
+        error_log("App Proxy - Querying forms for shop: $shop, store_user_id: $store_user_id");
+        
+        $comeback_client = $cls_functions->select_result(TABLE_FORMS, 'id, form_name, status, store_client_id', $where_query);
         
         error_log("Query result status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET'));
         error_log("Query result data count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : '0'));
@@ -376,13 +405,19 @@ if ($is_list_request) {
         $forms = array();
         if (isset($comeback_client['data']) && is_array($comeback_client['data'])) {
             foreach ($comeback_client['data'] as $form) {
-                // Filter to only include forms with status = 1
+                // Double-check: ensure form belongs to this store (extra security layer)
+                $form_store_id = isset($form['store_client_id']) ? (int)$form['store_client_id'] : 0;
                 $form_status = isset($form['status']) ? (int)$form['status'] : 1;
-                if ($form_status == 1) {
+                
+                // Only include forms that belong to this store and are active
+                // Note: Query already filters by store_client_id, but this is an extra check
+                if ($form_store_id == $store_user_id && $form_status == 1) {
                     $forms[] = array(
                         'id' => (int)$form['id'],
                         'name' => isset($form['form_name']) ? $form['form_name'] : 'Unnamed Form'
                     );
+                } else {
+                    error_log("App Proxy - Security check: Skipping form ID {$form['id']}: store_id mismatch ($form_store_id != $store_user_id) or inactive");
                 }
             }
         }
@@ -446,6 +481,25 @@ if ($is_list_request) {
     }
     
     try {
+        // Verify form belongs to this store before rendering (security check)
+        $shopinfo = (object)$cls_functions->current_store_obj;
+        $store_user_id = (int)$shopinfo->store_user_id;
+        
+        if ($store_user_id <= 0) {
+            http_response_code(500);
+            echo '<div style="padding: 20px; color: #d32f2f;">Error: Store not properly initialized</div>';
+            exit;
+        }
+        
+        $form_check_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
+        $form_check = $cls_functions->select_result(TABLE_FORMS, 'id', $form_check_query, ['single' => true]);
+        
+        if ($form_check['status'] != 1 || empty($form_check['data'])) {
+            http_response_code(403);
+            echo '<div style="padding: 20px; color: #d32f2f;">Error: Form not found or access denied. This form does not belong to your store.</div>';
+            exit;
+        }
+        
         // Set POST data to simulate the get_selected_elements_fun call
         $_POST['store'] = $shop;
         $_POST['form_id'] = $form_id;

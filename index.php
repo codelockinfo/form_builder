@@ -47,17 +47,30 @@ if ($_GET['shop'] != "") {
         echo "Failed : connect to MySQL: " . mysqli_connect_error();
         die;
     }
-    if (isset($_GET['code'])) {
-        $shopifyClient = new ShopifyClient($_GET['shop'], "", $CLS_API_KEY, $SHOPIFY_SECRET);
-        $password = $shopifyClient->getEntrypassword($_GET['code']);
+    if (isset($_GET['code']) && isset($_GET['shop'])) {
         $shop = $_GET['shop'];
-        $where_query = array(["", "shop_name", "=", "$shop"],["AND", "status", "=", "1"]);
+        // Normalize shop name
+        $shop = preg_replace('#^https?://#', '', $shop);
+        $shop = rtrim($shop, '/');
+        $shop = strtolower($shop);
+        
+        $shopifyClient = new ShopifyClient($shop, "", $CLS_API_KEY, $SHOPIFY_SECRET);
+        $password = $shopifyClient->getEntrypassword($_GET['code']);
+        
+        // Check if store already exists (check both shop_name and store_name)
+        $where_query = array(["", "shop_name", "=", "$shop"], ["OR", "store_name", "=", "$shop"]);
         $comeback_client = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
    
         if ($comeback_client['status'] == 1) {
+            // Store exists, update password and redirect
             $shop_row = $comeback_client['data'];
+            $update_data = array('password' => $password, 'updated_on' => DATE, 'status' => '1');
+            $update_where = array(["", "shop_name", "=", "$shop"]);
+            $cls_functions->put_data(TABLE_USER_SHOP, $update_data, $update_where);
             header('Location: ' . SITE_CLIENT_URL . '?store=' . $shop);
+            exit;
         } else {
+            // Store doesn't exist, create it
             $shopuinfo = shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/shop.json", array(), 'GET');
             $shopuinfo = json_decode($shopuinfo['response']);
             
@@ -113,13 +126,30 @@ if ($_GET['shop'] != "") {
             exit;
         }
     } else {
-        $shop = isset($_POST['shop']) ? $_POST['shop'] : $_GET['shop'];
-        $where_query = array(["", "store_name", "=", "$shop"], ["AND", "status", "=", "1"]);
+        $shop = isset($_POST['shop']) ? $_POST['shop'] : (isset($_GET['shop']) ? $_GET['shop'] : '');
+        
+        if (empty($shop)) {
+            die('Shop parameter is required');
+        }
+        
+        // Normalize shop name
+        $shop = preg_replace('#^https?://#', '', $shop);
+        $shop = rtrim($shop, '/');
+        $shop = strtolower($shop);
+        
+        // Check if store exists (check both shop_name and store_name fields)
+        $where_query = array(["", "shop_name", "=", "$shop"], ["OR", "store_name", "=", "$shop"]);
         $comeback = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
+        
         if ($comeback['status'] == 1) {
+            // Store exists, redirect to admin
             header('Location: ' . SITE_CLIENT_URL . '?store=' . $shop);
+            exit;
         } else {
-            $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode(SITE_PATH);
+            // Store doesn't exist, redirect to OAuth installation
+            // Use the full URL with shop parameter for redirect_uri
+            $redirect_uri = SITE_PATH . '/?shop=' . urlencode($shop);
+            $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
             header("Location: " . $install_url);
             exit;
         }

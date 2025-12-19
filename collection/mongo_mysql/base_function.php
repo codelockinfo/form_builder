@@ -64,8 +64,10 @@ class base_function {
         $comeback = $this->select_result(TABLE_USER_SHOP,$fields, $where_query, $options_arr);
         if ($comeback['status'] == 1) {
             $user_shop = $comeback['data']; 
-            $this->current_store_obj= $user_shop;
-            $this->store_user_id = ['store_user_id'];
+            $this->current_store_obj = $user_shop;
+            // Fix: Get the actual store_user_id value, not the array key
+            $this->store_user_id = is_array($user_shop) ? $user_shop['store_user_id'] : (isset($user_shop->store_user_id) ? $user_shop->store_user_id : null);
+            $this->login_user_id = $this->store_user_id;
         }
     }
     
