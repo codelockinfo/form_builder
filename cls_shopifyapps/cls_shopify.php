@@ -24,12 +24,29 @@ class ShopifyClient {
 	public function getEntrypassword($code) {
 		$shopify_url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$cls_payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
+		
+		error_log("getEntrypassword: Requesting access token for shop: {$this->shop_domain}");
+		error_log("getEntrypassword: API Key: {$this->api_key}");
+		error_log("getEntrypassword: Code length: " . strlen($code));
+		
 		$comeback = $this->curlHttpApiRequest('POST', $shopify_url, '', $cls_payload, array());
+		
+		error_log("getEntrypassword: Raw response: " . substr($comeback, 0, 500));
+		
 		$comeback = json_decode($comeback, true);
-		if (isset($comeback['access_token']))
-			return $comeback['access_token'];
-		else
+		
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			error_log("getEntrypassword: JSON decode error: " . json_last_error_msg());
 			return '';
+		}
+		
+		if (isset($comeback['access_token'])) {
+			error_log("getEntrypassword: Successfully obtained access token");
+			return $comeback['access_token'];
+		} else {
+			error_log("getEntrypassword: No access_token in response: " . json_encode($comeback));
+			return '';
+		}
 	}
 	public function termsMade()
 	{
@@ -79,7 +96,19 @@ class ShopifyClient {
 		$error = curl_error($ch);
 		curl_close($ch);
 		if ($errno) throw new ShopifyCurlException($error, $errno);
-		list($message_headers, $message_body) = preg_split("/\r\n\r\n|\n\n|\r\r/", $comeback, 2);
+		
+		// Split headers and body safely
+		$parts = preg_split("/\r\n\r\n|\n\n|\r\r/", $comeback, 2);
+		if (count($parts) >= 2) {
+			$message_headers = $parts[0];
+			$message_body = $parts[1];
+		} else {
+			// If no separator found, assume entire response is body
+			error_log("curlHttpApiRequest: Warning - No header/body separator found in response");
+			$message_headers = '';
+			$message_body = $comeback;
+		}
+		
 		$this->last_response_headers = $this->curlParseHeaders($message_headers);
 		return $message_body;
 	}
@@ -112,12 +141,25 @@ class ShopifyClient {
 	{
 		$header_lines = preg_split("/\r\n|\n|\r/", $message_headers);
 		$headers = array();
-		list(, $headers['http_status_code'], $headers['http_status_message']) = explode(' ', trim(array_shift($header_lines)), 3);
+		
+		// Parse HTTP status line safely
+		$status_line = trim(array_shift($header_lines));
+		if (!empty($status_line)) {
+			$status_parts = explode(' ', $status_line, 3);
+			if (count($status_parts) >= 2) {
+				$headers['http_status_code'] = isset($status_parts[1]) ? $status_parts[1] : '';
+				$headers['http_status_message'] = isset($status_parts[2]) ? $status_parts[2] : '';
+			}
+		}
+		
 		foreach ($header_lines as $header_line)
 		{
-			list($name, $value) = explode(':', $header_line, 2);
-			$name = strtolower($name);
-			$headers[$name] = trim($value);
+			if (empty(trim($header_line))) continue;
+			$parts = explode(':', $header_line, 2);
+			if (count($parts) == 2) {
+				$name = strtolower(trim($parts[0]));
+				$headers[$name] = trim($parts[1]);
+			}
 		}
 		return $headers;
 	}	
