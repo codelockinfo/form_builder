@@ -10,12 +10,15 @@ if (strpos($request_uri, '/apps/form-builder/') !== false || strpos($request_uri
     exit;
 }
 
-// Log OAuth callback attempts
+// Log OAuth callback attempts - MUST be at the very top before any output
 if (isset($_GET['code'])) {
     error_log("=== OAuth Callback Started ===");
+    error_log("Timestamp: " . date('Y-m-d H:i:s'));
     error_log("GET parameters: " . json_encode($_GET));
-    error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
+    error_log("REQUEST_URI: " . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'N/A'));
     error_log("HTTP_REFERER: " . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'N/A'));
+    error_log("QUERY_STRING: " . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : 'N/A'));
+    error_log("PHP_SELF: " . (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : 'N/A'));
 }
 
 include_once 'append/connection.php';
@@ -121,9 +124,13 @@ if (!empty($shop)) {
     
     if (isset($_GET['code']) && !empty($shop)) {
         // Shop is already normalized above, use it directly
+        error_log("=== OAuth Callback Processing Started ===");
         error_log("OAuth Callback: Processing shop installation for: $shop");
         error_log("OAuth Callback: Shop parameter from GET: " . (isset($_GET['shop']) ? $_GET['shop'] : 'not set'));
         error_log("OAuth Callback: Normalized shop: $shop");
+        error_log("OAuth Callback: Code parameter present: " . (isset($_GET['code']) ? 'YES (length: ' . strlen($_GET['code']) . ')' : 'NO'));
+        error_log("OAuth Callback: CLS_API_KEY: " . (isset($CLS_API_KEY) && !empty($CLS_API_KEY) ? 'SET (' . substr($CLS_API_KEY, 0, 10) . '...)' : 'NOT SET'));
+        error_log("OAuth Callback: SHOPIFY_SECRET: " . (isset($SHOPIFY_SECRET) && !empty($SHOPIFY_SECRET) ? 'SET' : 'NOT SET'));
         
         // Get OAuth code and exchange for access token
         $shopifyClient = new ShopifyClient($shop, "", $CLS_API_KEY, $SHOPIFY_SECRET);
