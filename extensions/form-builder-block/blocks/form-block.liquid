@@ -149,8 +149,77 @@
       
       console.log('Current form_id:', currentFormId, '→ Valid ID:', validFormId);
       
-      // Populate the select dropdown in the settings panel (right sidebar)
-      // Function to populate the select dropdown
+      // Show dropdown in preview area (primary method)
+      // Shopify's settings panel select might be in shadow DOM or React component we can't access
+      let previewHtml = '<div style="padding: 20px; border: 2px solid #008060; border-radius: 6px; background: #f0fdf4; margin-bottom: 20px;">' +
+        '<label style="font-weight: bold; display: block; margin-bottom: 10px; font-size: 16px; color: #008060;">📋 Select Form</label>' +
+        '<select id="form-select-{{ block.id }}" style="width: 100%; padding: 12px; border: 2px solid #008060; border-radius: 4px; font-size: 14px; background: white; cursor: pointer; margin-bottom: 10px;">' +
+        '<option value="0">-- Select a form --</option>';
+      
+      formList.forEach(form => {
+        const selected = form.id == validFormId ? 'selected' : '';
+        previewHtml += `<option value="${form.id}" ${selected}>${form.name} (ID: ${form.id})</option>`;
+      });
+      
+      previewHtml += '</select>' +
+        '<div style="font-size: 12px; color: #637381; padding: 8px; background: white; border-radius: 4px;">' +
+        '<strong>Selected Form ID:</strong> <span id="current-form-id-{{ block.id }}" style="font-weight: bold; color: #008060;">' + (validFormId > 0 ? validFormId : 'None') + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<div class="form-preview-container"></div>';
+      
+      blockContainer.innerHTML = previewHtml;
+      console.log('✅ Dropdown created in preview area with ' + formList.length + ' forms');
+      
+      // Load preview if a form is already selected
+      if (validFormId && validFormId > 0) {
+        console.log('📋 Form already selected (ID: ' + validFormId + '), loading preview...');
+        await loadFormPreview(validFormId);
+      }
+      
+      // Add change handler to dropdown
+      const formSelect = document.getElementById('form-select-{{ block.id }}');
+      if (formSelect) {
+        formSelect.addEventListener('change', async function(e) {
+          const formId = e.target.value;
+          const numericFormId = parseInt(formId);
+          const currentFormIdSpan = document.getElementById('current-form-id-{{ block.id }}');
+          
+          console.log('🔄 Form selected:', formId, 'Numeric ID:', numericFormId);
+          
+          if (currentFormIdSpan) {
+            currentFormIdSpan.textContent = numericFormId || 'None';
+          }
+          
+          if (Shopify && Shopify.designMode && Shopify.theme && Shopify.theme.editor) {
+            try {
+              await Shopify.theme.editor.setBlockSettings({
+                id: "{{ block.id }}",
+                settings: {
+                  form_id: numericFormId ? String(numericFormId) : "0"
+                }
+              });
+              
+              console.log('✅ Block settings saved with form_id:', numericFormId);
+              
+              // Load preview of selected form
+              if (numericFormId && numericFormId > 0) {
+                await loadFormPreview(numericFormId);
+              } else {
+                const container = blockContainer.querySelector('.form-preview-container');
+                if (container) {
+                  container.innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the dropdown above</div>';
+                }
+              }
+            } catch (error) {
+              console.error('❌ Error saving form selection:', error);
+            }
+          }
+        });
+      }
+      
+      // Also try to populate the settings panel select (if it exists)
+      // This is a secondary attempt - the preview dropdown is the primary method
       const populateSettingsSelect = (selectElement) => {
         if (!selectElement) return false;
         
@@ -212,6 +281,14 @@
         const newSelect = selectElement.cloneNode(true);
         selectElement.parentNode.replaceChild(newSelect, selectElement);
         newSelect.addEventListener('change', changeHandler);
+        
+        // Load preview if a form is already selected
+        if (validFormId && validFormId > 0) {
+          console.log('📋 Form already selected in settings (ID: ' + validFormId + '), loading preview...');
+          loadFormPreview(validFormId).catch(err => {
+            console.error('Error loading preview after populating settings:', err);
+          });
+        }
         
         console.log('✅ Settings panel dropdown populated with ' + formList.length + ' forms');
         return true;
@@ -415,21 +492,7 @@
           }
         }, 5000);
       }
-      
-      // Show preview area (not the dropdown) - just a container for the form
-      // Only if we haven't shown the fallback dropdown
-      if (blockContainer.innerHTML.includes('form-preview-container') || blockContainer.innerHTML.trim() === '') {
-        blockContainer.innerHTML = '<div class="form-preview-container"></div>';
-        
-        // Load preview if form is already selected
-        if (validFormId && validFormId > 0) {
-          console.log('Loading preview for already selected form ID:', validFormId);
-          await loadFormPreview(validFormId);
-        } else {
-          blockContainer.querySelector('.form-preview-container').innerHTML = '<div style="padding: 20px; text-align: center; color: #637381; border: 1px dashed #e1e3e5; border-radius: 4px;">Please select a form from the settings panel on the right →</div>';
-        }
-      }
-      
+            
     } catch (error) {
       console.error('Error loading form list:', error);
       blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; border: 1px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
