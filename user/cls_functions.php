@@ -8,6 +8,7 @@ if (!class_exists('common_function')) {
     }
 }
 include_once ABS_PATH . '/collection/form_validation.php';
+
 include_once ABS_PATH . '/user/cls_load_language_file.php';
 include_once '../append/Login.php';
 
@@ -149,6 +150,11 @@ class Client_functions extends common_function {
 
                       $response_data = $this->post_data(TABLE_FORMS, array($fields_arr));
                       $response_data = json_decode($response_data);
+                      
+                      // Auto-sync blocks after form creation
+                      if (isset($response_data->status) && $response_data->status == 1) {
+                          $this->autoSyncFormBlocks();
+                      }
                 }
             }
         }
@@ -4911,6 +4917,11 @@ class Client_functions extends common_function {
             $where_query = array(["", "id", "=", "$form_id"]);
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $response_data = array('data' => 'success', 'msg' => 'Update successfully','outcome' => $comeback); 
+            
+            // Auto-sync blocks after form name update
+            if (isset($response_data['data']) && $response_data['data'] == 'success') {
+                $this->autoSyncFormBlocks();
+            }
         }
         $response = json_encode($response_data);
         return $response;
@@ -5074,6 +5085,50 @@ class Client_functions extends common_function {
         $response = json_encode($response_data);
         return $response;
     }
+    
+    /**
+     * Auto-sync form blocks after form creation/update
+     * This automatically generates block files for all active forms
+     */
+    function autoSyncFormBlocks() {
+        try {
+            // Get current shop
+            $shop = isset($this->current_store_obj['shop_name']) ? $this->current_store_obj['shop_name'] : '';
+            if (empty($shop)) {
+                return false;
+            }
+            
+            // Build sync URL
+            $sync_url = CLS_SITE_URL . '/shopify/sync-form-blocks.php?shop=' . urlencode($shop);
+            
+            // Use curl to trigger sync (non-blocking)
+            if (function_exists('curl_init')) {
+                $ch = curl_init($sync_url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 1); // 1 second timeout - don't wait
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+                curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
+                curl_exec($ch);
+                curl_close($ch);
+            } else {
+                // Fallback: use file_get_contents with short timeout
+                $context = stream_context_create([
+                    'http' => [
+                        'timeout' => 1,
+                        'ignore_errors' => true
+                    ]
+                ]);
+                @file_get_contents($sync_url, false, $context);
+            }
+            
+            return true;
+        } catch (Exception $e) {
+            // Silently fail - don't break form operations
+            error_log('Auto-sync blocks error: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
     // For FRONTEND
    
 }
