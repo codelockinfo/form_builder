@@ -86,7 +86,7 @@ try {
         
         // Replace placeholders in template
         $block_content = str_replace('{{ FORM_ID }}', $form_id, $template_content);
-        $block_content = str_replace('{{ FORM_NAME }}', addslashes($form_name), $template_content);
+        $block_content = str_replace('{{ FORM_NAME }}', addslashes($form_name), $block_content);
         $block_content = str_replace('{{ FORM_NAME_DISPLAY }}', addslashes($form_name_display), $block_content);
         
         // Write the block file

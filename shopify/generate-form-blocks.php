@@ -67,7 +67,7 @@ function generateFormBlock($form, $template_content, $blocks_dir) {
     $filename = 'form-' . $form_id . '-' . strtolower($safe_form_name) . '.liquid';
     $filepath = $blocks_dir . $filename;
     
-    // Replace placeholders in template
+    // Replace placeholders in template (must replace in order, updating $block_content each time)
     $block_content = str_replace('{{ FORM_ID }}', $form_id, $template_content);
     $block_content = str_replace('{{ FORM_NAME }}', addslashes($form_name), $block_content);
     $block_content = str_replace('{{ FORM_NAME_DISPLAY }}', addslashes($form_name_display), $block_content);
