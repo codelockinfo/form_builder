@@ -36,6 +36,19 @@ require_once(ABS_PATH . '/cls_shopifyapps/config.php');
 require_once(ABS_PATH . '/cls_shopifyapps/cls_shopify.php');
 require_once(ABS_PATH . '/cls_shopifyapps/cls_shopify_call.php');
 
+// Get API keys first (needed for both OAuth callback and initial redirect)
+// Initialize without shop to get API keys
+$temp_cls = new common_function('');
+$where_query = array(["", "status", "=", "1"]);
+$comeback = $temp_cls->select_result(CLS_TABLE_THIRDPARTY_APIKEY, '*', $where_query);
+$CLS_API_KEY = (isset($comeback['data'][1]['thirdparty_apikey']) && $comeback['data'][1]['thirdparty_apikey'] !== '') ? $comeback['data'][1]['thirdparty_apikey'] : '';
+$SHOPIFY_SECRET = (isset($comeback['data'][2]['thirdparty_apikey']) && $comeback['data'][2]['thirdparty_apikey'] !== '') ? $comeback['data'][2]['thirdparty_apikey'] : '';
+
+if (mysqli_connect_errno()) {
+    echo "Failed : connect to MySQL: " . mysqli_connect_error();
+    die;
+}
+
 $__webhook_arr = array(
     'app/uninstalled',
     'products/create',
@@ -103,15 +116,9 @@ if (!empty($shop)) {
     $shop = rtrim($shop, '/');
     $shop = strtolower($shop);
     
+    // Initialize with shop for OAuth callback processing
     $cls_functions = new common_function($shop);
-    $where_query = array(["", "status", "=", "1"]);
-    $comeback= $cls_functions->select_result(CLS_TABLE_THIRDPARTY_APIKEY, '*',$where_query);
-    $CLS_API_KEY = (isset($comeback['data'][1]['thirdparty_apikey']) && $comeback['data'][1]['thirdparty_apikey'] !== '') ? $comeback['data'][1]['thirdparty_apikey'] : '';
-    $SHOPIFY_SECRET = (isset($comeback['data'][2]['thirdparty_apikey']) && $comeback['data'][2]['thirdparty_apikey'] !== '') ? $comeback['data'][2]['thirdparty_apikey'] : '';
-    if (mysqli_connect_errno()) {
-        echo "Failed : connect to MySQL: " . mysqli_connect_error();
-        die;
-    }
+    
     if (isset($_GET['code']) && !empty($shop)) {
         // Shop is already normalized above, use it directly
         error_log("OAuth Callback: Processing shop installation for: $shop");
@@ -220,6 +227,7 @@ if (!empty($shop)) {
             exit;
         }
     } else {
+        // No OAuth code, this is initial visit or store check
         $shop = isset($_POST['shop']) ? $_POST['shop'] : (isset($_GET['shop']) ? $_GET['shop'] : '');
         
         if (empty($shop)) {
@@ -231,19 +239,34 @@ if (!empty($shop)) {
         $shop = rtrim($shop, '/');
         $shop = strtolower($shop);
         
+        error_log("Initial visit: Checking store existence for: $shop");
+        
+        // Initialize common_function without shop (since shop might not exist yet)
+        $temp_cls_functions = new common_function('');
+        
         // Check if store exists (check both shop_name and store_name fields)
         $where_query = array(["", "shop_name", "=", "$shop"], ["OR", "store_name", "=", "$shop"]);
-        $comeback = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
+        $comeback = $temp_cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
         
         if ($comeback['status'] == 1) {
             // Store exists, redirect to admin
+            error_log("Store exists, redirecting to admin: $shop");
             header('Location: ' . SITE_CLIENT_URL . '?store=' . $shop);
             exit;
         } else {
             // Store doesn't exist, redirect to OAuth installation
+            error_log("Store doesn't exist, redirecting to OAuth for: $shop");
+            
             // Use the full URL with shop parameter for redirect_uri
-            $redirect_uri = SITE_PATH . '/?shop=' . urlencode($shop);
+            // IMPORTANT: The redirect_uri MUST match EXACTLY what's in Shopify Partner Dashboard
+            // Partner Dashboard shows: https://codelocksolutions.com/form_builder/index.php
+            // So we use: https://codelocksolutions.com/form_builder/index.php?shop=...
+            $redirect_uri = SITE_PATH . '/index.php?shop=' . urlencode($shop);
             $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
+            
+            error_log("OAuth redirect URL: $install_url");
+            error_log("Redirect URI: $redirect_uri");
+            
             header("Location: " . $install_url);
             exit;
         }
