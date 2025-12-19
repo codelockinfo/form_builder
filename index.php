@@ -277,7 +277,11 @@ if (!empty($shop)) {
         $shop = rtrim($shop, '/');
         $shop = strtolower($shop);
         
+        // Check if this is an embedded app request (has hmac/host) vs direct visit
+        $is_embedded_app = isset($_GET['hmac']) && isset($_GET['host']);
+        
         error_log("Initial visit: Checking store existence for: $shop");
+        error_log("Is embedded app request: " . ($is_embedded_app ? 'YES' : 'NO'));
         
         // Initialize common_function without shop (since shop might not exist yet)
         $temp_cls_functions = new common_function('');
@@ -292,21 +296,36 @@ if (!empty($shop)) {
             header('Location: ' . SITE_CLIENT_URL . '?store=' . $shop);
             exit;
         } else {
-            // Store doesn't exist, redirect to OAuth installation
-            error_log("Store doesn't exist, redirecting to OAuth for: $shop");
-            
-            // Use the full URL with shop parameter for redirect_uri
-            // IMPORTANT: The redirect_uri MUST match EXACTLY what's in Shopify Partner Dashboard
-            // Partner Dashboard shows: https://codelocksolutions.com/form_builder/index.php
-            // So we use: https://codelocksolutions.com/form_builder/index.php?shop=...
-            $redirect_uri = SITE_PATH . '/index.php?shop=' . urlencode($shop);
-            $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
-            
-            error_log("OAuth redirect URL: $install_url");
-            error_log("Redirect URI: $redirect_uri");
-            
-            header("Location: " . $install_url);
-            exit;
+            // Store doesn't exist
+            if ($is_embedded_app) {
+                // This is an embedded app request but store doesn't exist
+                // Redirect to OAuth installation page (not in iframe)
+                error_log("Embedded app request but store doesn't exist, redirecting to OAuth for: $shop");
+                
+                // Use the full URL with shop parameter for redirect_uri
+                // IMPORTANT: The redirect_uri MUST match EXACTLY what's in Shopify Partner Dashboard
+                $redirect_uri = SITE_PATH . '/index.php?shop=' . urlencode($shop);
+                $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
+                
+                error_log("OAuth redirect URL: $install_url");
+                error_log("Redirect URI: $redirect_uri");
+                
+                // For embedded apps, we need to break out of iframe first
+                echo '<!DOCTYPE html><html><head><script>top.location.href = "' . htmlspecialchars($install_url) . '";</script></head><body>Redirecting to install...</body></html>';
+                exit;
+            } else {
+                // Direct visit, redirect to OAuth installation
+                error_log("Store doesn't exist, redirecting to OAuth for: $shop");
+                
+                $redirect_uri = SITE_PATH . '/index.php?shop=' . urlencode($shop);
+                $install_url = "https://" . $shop . "/admin/oauth/authorize?client_id=" . $CLS_API_KEY . "&scope=" . urlencode(SHOPIFY_SCOPE) . "&redirect_uri=" . urlencode($redirect_uri);
+                
+                error_log("OAuth redirect URL: $install_url");
+                error_log("Redirect URI: $redirect_uri");
+                
+                header("Location: " . $install_url);
+                exit;
+            }
         }
     }
 }
