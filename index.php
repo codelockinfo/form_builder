@@ -198,21 +198,43 @@ if (!empty($shop)) {
             );
           
             error_log("OAuth Callback: Attempting to register store: $shop");
-            $result = $cls_functions->registerNewClientApi($store_information);
+            error_log("OAuth Callback: Store information: " . json_encode($store_information));
             
-            if ($result === false) {
-                error_log("OAuth Callback Error: Failed to register store: $shop");
-                die('Error: Failed to register store. Please check error logs and try again.');
-            }
-            
-            error_log("OAuth Callback: Store successfully registered: $shop");
-            
-            // Verify store was saved
-            $verify_query = array(["", "shop_name", "=", "$shop"]);
-            $verify = $cls_functions->select_result(TABLE_USER_SHOP, 'store_user_id', $verify_query, ['single' => true]);
-            if ($verify['status'] != 1) {
-                error_log("OAuth Callback Error: Store registration verification failed for: $shop");
-                die('Error: Store registration failed verification. Please contact support.');
+            try {
+                $result = $cls_functions->registerNewClientApi($store_information);
+                
+                error_log("OAuth Callback: registerNewClientApi returned: " . ($result === false ? 'false' : 'true'));
+                
+                if ($result === false) {
+                    error_log("OAuth Callback Error: Failed to register store: $shop");
+                    error_log("OAuth Callback Error: Registration errors: " . json_encode($cls_functions->errors));
+                    die('Error: Failed to register store. Please check error logs and try again. Errors: ' . json_encode($cls_functions->errors));
+                }
+                
+                error_log("OAuth Callback: Store successfully registered: $shop");
+                
+                // Verify store was saved immediately
+                $verify_query = array(["", "shop_name", "=", "$shop"]);
+                $verify = $cls_functions->select_result(TABLE_USER_SHOP, 'store_user_id', $verify_query, ['single' => true]);
+                
+                error_log("OAuth Callback: Verification query result status: " . (isset($verify['status']) ? $verify['status'] : 'NOT SET'));
+                error_log("OAuth Callback: Verification query result: " . json_encode($verify));
+                
+                if ($verify['status'] != 1 || empty($verify['data'])) {
+                    error_log("OAuth Callback Error: Store registration verification failed for: $shop");
+                    error_log("OAuth Callback Error: Verification query returned status: " . (isset($verify['status']) ? $verify['status'] : 'NOT SET'));
+                    die('Error: Store registration failed verification. The store was not saved to the database. Please contact support.');
+                }
+                
+                error_log("OAuth Callback: Store verified successfully. Store User ID: " . (isset($verify['data']['store_user_id']) ? $verify['data']['store_user_id'] : 'unknown'));
+            } catch (Exception $e) {
+                error_log("OAuth Callback Exception: " . $e->getMessage());
+                error_log("OAuth Callback Exception Trace: " . $e->getTraceAsString());
+                die('Error: Exception during store registration: ' . $e->getMessage());
+            } catch (Error $e) {
+                error_log("OAuth Callback Fatal Error: " . $e->getMessage());
+                error_log("OAuth Callback Fatal Error Trace: " . $e->getTraceAsString());
+                die('Error: Fatal error during store registration: ' . $e->getMessage());
             }
            
             $message = file_get_contents('user/thankemail_template.php');

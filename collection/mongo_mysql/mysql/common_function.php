@@ -283,17 +283,49 @@ if (!class_exists('base_function')) {
                 $row['updated_at'] = DATE;
                 $row['updated_on'] = DATE;
                 $resource_array = array('primary_key' => 'store_user_id');
-                $result = $this->post_data(TABLE_USER_SHOP, array($row), $resource_array);
-                error_log("registerNewClientApi: Insert result: " . json_encode($result));
+                
+                error_log("registerNewClientApi: About to insert store data: " . json_encode($row));
+                error_log("registerNewClientApi: Table: " . TABLE_USER_SHOP);
+                error_log("registerNewClientApi: Primary key: store_user_id");
+                
+                $result_json = $this->post_data(TABLE_USER_SHOP, array($row), $resource_array);
+                error_log("registerNewClientApi: Insert result (JSON): " . $result_json);
+                
+                // Decode the JSON result
+                $result = json_decode($result_json, true);
+                error_log("registerNewClientApi: Insert result (decoded): " . json_encode($result));
+                
+                // Check if post_data returned an error
+                if (!isset($result['status']) || $result['status'] != '1') {
+                    error_log("registerNewClientApi: ERROR - post_data returned failure: " . json_encode($result));
+                    return false;
+                }
+                
+                // Check if insert_id was returned
+                if (isset($result['data']) && !empty($result['data'])) {
+                    error_log("registerNewClientApi: Insert successful, insert_id: " . $result['data']);
+                } else {
+                    error_log("registerNewClientApi: WARNING - Insert returned success but no insert_id");
+                }
+                
+                // Wait a moment for database to commit (if needed)
+                usleep(100000); // 0.1 second
                 
                 // Verify the store was created
                 $verify_query = array(["", "shop_name", "=", "$shop_name"]);
                 $verify = $this->select_result(TABLE_USER_SHOP, 'store_user_id', $verify_query, ['single' => true]);
-                if ($verify['status'] == 1) {
-                    error_log("registerNewClientApi: Store successfully created with ID: " . (isset($verify['data']['store_user_id']) ? $verify['data']['store_user_id'] : 'unknown'));
+                
+                error_log("registerNewClientApi: Verification query status: " . (isset($verify['status']) ? $verify['status'] : 'NOT SET'));
+                error_log("registerNewClientApi: Verification query data: " . json_encode($verify));
+                
+                if ($verify['status'] == 1 && !empty($verify['data'])) {
+                    $store_id = isset($verify['data']['store_user_id']) ? $verify['data']['store_user_id'] : 'unknown';
+                    error_log("registerNewClientApi: Store successfully created with ID: $store_id");
                     return true;
                 } else {
                     error_log("registerNewClientApi: ERROR - Store creation failed verification");
+                    error_log("registerNewClientApi: Verification status: " . (isset($verify['status']) ? $verify['status'] : 'NOT SET'));
+                    error_log("registerNewClientApi: Verification data empty: " . (empty($verify['data']) ? 'YES' : 'NO'));
                     return false;
                 }
             }
