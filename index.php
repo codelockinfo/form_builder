@@ -1,24 +1,33 @@
 <?php
-// Enable error logging for OAuth debugging
+// Enable error logging for OAuth debugging - MUST BE FIRST
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/oauth-debug.log');
+
+// Log EVERY request to index.php for debugging
+error_log("=== INDEX.PHP ACCESSED ===");
+error_log("Timestamp: " . date('Y-m-d H:i:s'));
+error_log("REQUEST_URI: " . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'N/A'));
+error_log("QUERY_STRING: " . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : 'N/A'));
+error_log("GET parameters: " . json_encode($_GET));
+error_log("Has code parameter: " . (isset($_GET['code']) ? 'YES' : 'NO'));
+error_log("Has shop parameter: " . (isset($_GET['shop']) ? 'YES (' . $_GET['shop'] . ')' : 'NO'));
 
 // Handle Shopify App Proxy requests first
 $request_uri = $_SERVER['REQUEST_URI'];
 if (strpos($request_uri, '/apps/form-builder/') !== false || strpos($request_uri, '/apps/easy-form-builder/') !== false) {
+    error_log("Redirecting to app-proxy.php");
     include_once 'shopify/app-proxy.php';
     exit;
 }
 
 // Log OAuth callback attempts - MUST be at the very top before any output
 if (isset($_GET['code'])) {
-    error_log("=== OAuth Callback Started ===");
-    error_log("Timestamp: " . date('Y-m-d H:i:s'));
-    error_log("GET parameters: " . json_encode($_GET));
-    error_log("REQUEST_URI: " . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'N/A'));
-    error_log("HTTP_REFERER: " . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'N/A'));
-    error_log("QUERY_STRING: " . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : 'N/A'));
-    error_log("PHP_SELF: " . (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : 'N/A'));
+    error_log("=== OAUTH CALLBACK DETECTED ===");
+    error_log("OAuth Callback: Code parameter present!");
+    error_log("OAuth Callback: Full GET array: " . json_encode($_GET));
+    error_log("OAuth Callback: REQUEST_URI: " . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'N/A'));
+    error_log("OAuth Callback: HTTP_REFERER: " . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'N/A'));
+    error_log("OAuth Callback: QUERY_STRING: " . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : 'N/A'));
 }
 
 include_once 'append/connection.php';
