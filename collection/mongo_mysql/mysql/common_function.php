@@ -236,30 +236,68 @@ if (!class_exists('base_function')) {
     
      public function registerNewClientApi($store_information) {
         extract($store_information);
-        $email = trim($store_information['email']);
-        $store_name = $store_information['store_name'];
-        $password = $store_information['password'];
+        $email = isset($store_information['email']) ? trim($store_information['email']) : '';
+        $store_name = isset($store_information['store_name']) ? $store_information['store_name'] : '';
+        $shop_name = isset($store_information['shop_name']) ? $store_information['shop_name'] : $store_name;
+        $password = isset($store_information['password']) ? $store_information['password'] : '';
+        
+        // Use shop_name as primary identifier (normalize it)
+        if (empty($shop_name) && !empty($store_name)) {
+            $shop_name = $store_name;
+        }
+        $shop_name = preg_replace('#^https?://#', '', $shop_name);
+        $shop_name = rtrim($shop_name, '/');
+        $shop_name = strtolower($shop_name);
+        
         if (empty($password)) {
             $this->errors[] = MSG_store_PASSWORD_EMPTY;
+            error_log("registerNewClientApi: Password is empty for shop: $shop_name");
+            return false;
         } else if ($this->db_connection) {
-            $where_query = array(["", "store_name", "=", "$store_name"]);
+            // Check if store exists (check both shop_name and store_name)
+            $where_query = array(["", "shop_name", "=", "$shop_name"], ["OR", "store_name", "=", "$shop_name"]);
             $resource_array = array('single' => true);
             $comeback = $this->select_result(TABLE_USER_SHOP, '*', $where_query, $resource_array);
+            
             if (isset($comeback['status']) && $comeback['status'] == 1) {
+                // Store exists, update it
+                error_log("registerNewClientApi: Store exists, updating: $shop_name");
                 $row = $store_information;
+                $row['shop_name'] = $shop_name;
+                $row['store_name'] = $shop_name;
                 $row['status'] = '1';
                 $row['updated_at'] = DATE;
-                $where_query = array(["", "store_name", "=", "$store_name"]);
-                $this->put_data(TABLE_USER_SHOP, $row,$where_query, false);
+                $row['updated_on'] = DATE;
+                $where_query = array(["", "shop_name", "=", "$shop_name"]);
+                $result = $this->put_data(TABLE_USER_SHOP, $row, $where_query, false);
+                error_log("registerNewClientApi: Update result: " . json_encode($result));
+                return true;
             } else {
-//                echo "HERE FOR INSERT";
+                // Store doesn't exist, create it
+                error_log("registerNewClientApi: Creating new store: $shop_name");
                 $row = $store_information;
+                $row['shop_name'] = $shop_name;
+                $row['store_name'] = $shop_name;
                 $row['status'] = '1';
                 $row['created_at'] = DATE;
                 $row['updated_at'] = DATE;
+                $row['updated_on'] = DATE;
                 $resource_array = array('primary_key' => 'store_user_id');
-                $this->post_data(TABLE_USER_SHOP, array($row), $resource_array);
+                $result = $this->post_data(TABLE_USER_SHOP, array($row), $resource_array);
+                error_log("registerNewClientApi: Insert result: " . json_encode($result));
+                
+                // Verify the store was created
+                $verify_query = array(["", "shop_name", "=", "$shop_name"]);
+                $verify = $this->select_result(TABLE_USER_SHOP, 'store_user_id', $verify_query, ['single' => true]);
+                if ($verify['status'] == 1) {
+                    error_log("registerNewClientApi: Store successfully created with ID: " . (isset($verify['data']['store_user_id']) ? $verify['data']['store_user_id'] : 'unknown'));
+                    return true;
+                } else {
+                    error_log("registerNewClientApi: ERROR - Store creation failed verification");
+                    return false;
+                }
             }
         }
+        return false;
     }
 }
