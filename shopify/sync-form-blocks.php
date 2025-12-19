@@ -37,12 +37,29 @@ try {
     
     // Path to the blocks directory
     $blocks_dir = __DIR__ . '/../extensions/form-builder-block/blocks/';
+    // Resolve to absolute path
+    $blocks_dir = realpath(dirname($blocks_dir)) . '/' . basename($blocks_dir) . '/';
+    // Fallback if realpath fails
+    if (!$blocks_dir || !is_dir($blocks_dir)) {
+        $blocks_dir = __DIR__ . '/../extensions/form-builder-block/blocks/';
+    }
+    
     $template_file = $blocks_dir . 'form-block-template.liquid';
+    
+    // Debug output
+    $output_messages[] = "=== Debug Info ===";
+    $output_messages[] = "__DIR__: " . __DIR__;
+    $output_messages[] = "Blocks directory: $blocks_dir";
+    $output_messages[] = "Directory exists: " . (is_dir($blocks_dir) ? 'YES' : 'NO');
+    $output_messages[] = "Directory writable: " . (is_writable($blocks_dir) ? 'YES' : 'NO');
     
     // Verify template exists
     if (!file_exists($template_file)) {
         throw new Exception("Template file not found: $template_file");
     }
+    
+    $output_messages[] = "Template file: $template_file";
+    $output_messages[] = "Template exists: " . (file_exists($template_file) ? 'YES' : 'NO');
     
     // Read template
     $template_content = file_get_contents($template_file);
@@ -89,13 +106,41 @@ try {
         $block_content = str_replace('{{ FORM_NAME }}', addslashes($form_name), $block_content);
         $block_content = str_replace('{{ FORM_NAME_DISPLAY }}', addslashes($form_name_display), $block_content);
         
+        // Ensure directory exists and is writable
+        if (!is_dir($blocks_dir)) {
+            if (!mkdir($blocks_dir, 0755, true)) {
+                return array(
+                    'success' => false,
+                    'error' => "Failed to create blocks directory: $blocks_dir"
+                );
+            }
+        }
+        
         // Write the block file
         $result = file_put_contents($filepath, $block_content);
         
         if ($result === false) {
+            $error = error_get_last();
             return array(
                 'success' => false,
-                'error' => "Failed to write file: $filepath"
+                'error' => "Failed to write file: $filepath (Directory writable: " . (is_writable($blocks_dir) ? 'yes' : 'no') . ", Error: " . ($error ? $error['message'] : 'unknown') . ")"
+            );
+        }
+        
+        // Verify file was actually created
+        if (!file_exists($filepath)) {
+            return array(
+                'success' => false,
+                'error' => "File was not created: $filepath (Written bytes: $result)"
+            );
+        }
+        
+        // Verify file content
+        $actual_size = filesize($filepath);
+        if ($actual_size != $result) {
+            return array(
+                'success' => false,
+                'error' => "File size mismatch: Expected $result bytes, got $actual_size bytes"
             );
         }
         
