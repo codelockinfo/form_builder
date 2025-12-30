@@ -292,6 +292,11 @@ class Client_functions extends common_function {
                                             <div class="main_left_ clsmain_form">
                                             <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
                                                 <div class="sp-font-size">'.$templates['form_name'].'</div>
+                                                <div class="form-id-display" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
+                                                    <span style="font-weight: 500;">Form ID: </span>
+                                                    <span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId('.$templates['id'].', this)" title="Click to copy Form ID">'.$templates['id'].'</span>
+                                                    <span class="copy-success" style="margin-left: 6px; color: #10b981; display: none; font-size: 11px;">✓ Copied!</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -4916,11 +4921,14 @@ class Client_functions extends common_function {
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $response_data = array('data' => 'success', 'msg' => 'Update successfully','outcome' => $comeback); 
             
-            // Generate block file when save button is clicked
-            if (isset($response_data['data']) && $response_data['data'] == 'success') {
-                // Generate block file for this specific form
-                $this->generateFormBlockFile($form_id, $form_name);
-            }
+            // NOTE: Individual block file generation is DISABLED
+            // We now use a SINGLE dynamic block (form-dynamic.liquid) that works for all forms
+            // Users enter Form ID in theme customizer settings - no file generation needed
+            
+            // OLD APPROACH (DISABLED):
+            // if (isset($response_data['data']) && $response_data['data'] == 'success') {
+            //     $this->generateFormBlockFile($form_id, $form_name);
+            // }
         }
         $response = json_encode($response_data);
         return $response;
@@ -5091,10 +5099,25 @@ class Client_functions extends common_function {
      */
     /**
      * Generate Liquid block file for a specific form
-     * This creates a Shopify theme block file that can be used in the theme customizer
-     * IMPORTANT: Only generates blocks for forms belonging to the current shop
+     * 
+     * ⚠️ DEPRECATED: This function is no longer used
+     * We now use a SINGLE dynamic block (form-dynamic.liquid) that works for all forms
+     * Users enter Form ID in theme customizer settings instead of having separate blocks per form
+     * 
+     * This approach was problematic because:
+     * - Shopify only reads extension files at deployment time, not runtime
+     * - Creating new files requires redeploying the app (impractical)
+     * - Better solution: One dynamic block that loads forms via app proxy
+     * 
+     * @deprecated Use form-dynamic.liquid block instead
      */
     function generateFormBlockFile($form_id, $form_name) {
+        // Function disabled - return false to prevent file generation
+        error_log("generateFormBlockFile() called but is deprecated. Use form-dynamic.liquid block instead. Form ID: $form_id");
+        return false;
+        
+        // OLD CODE BELOW (DISABLED - kept for reference):
+        /*
         try {
             // Verify form belongs to current shop (security check)
             $shopinfo = (object)$this->current_store_obj;
@@ -5224,6 +5247,7 @@ class Client_functions extends common_function {
             ]);
             return false;
         }
+        */
     }
     
     /**

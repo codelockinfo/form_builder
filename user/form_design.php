@@ -18,6 +18,19 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             value="" readonly>
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
+                                    <div class="form-id-display-header" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                        <span style="font-size: 13px; color: #6b7280; font-weight: 500;">Form ID:</span>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span id="form-id-display" class="form-id-value" style="font-family: monospace; font-size: 13px; background: #f3f4f6; padding: 4px 10px; border-radius: 4px; color: #1f2937; font-weight: 600;"><?php echo $form_id; ?></span>
+                                            <button type="button" onclick="copyFormIdToClipboard(<?php echo $form_id; ?>)" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;" title="Copy Form ID">
+                                                <span class="Polaris-Button__Content">
+                                                    <span class="Polaris-Button__Text">Copy ID</span>
+                                                </span>
+                                            </button>
+                                            <span id="copy-success-msg" style="font-size: 11px; color: #10b981; display: none;">✓ Copied!</span>
+                                        </div>
+                                        <span style="font-size: 11px; color: #6b7280; margin-left: 8px;">(Use this ID in Theme Customizer)</span>
+                                    </div>
                                     <!-- <button class="Polaris-Button Polaris-Button--primary btnFormSubmit save_loader_show" aria-disabled="false"
                                         type="button">
                                         <span class="Polaris-Button__Content">
@@ -4882,6 +4895,59 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
         </div>
     </div>
         <script>
+    // Function to copy Form ID to clipboard
+    function copyFormIdToClipboard(formId) {
+        const formIdText = formId.toString();
+        
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(formIdText).then(function() {
+                showCopySuccess();
+            }).catch(function(err) {
+                console.error('Failed to copy:', err);
+                fallbackCopy(formIdText);
+            });
+        } else {
+            // Fallback for older browsers
+            fallbackCopy(formIdText);
+        }
+    }
+    
+    function fallbackCopy(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopySuccess();
+            } else {
+                alert('Failed to copy Form ID. Please copy manually: ' + text);
+            }
+        } catch (err) {
+            console.error('Fallback copy failed:', err);
+            alert('Failed to copy Form ID. Please copy manually: ' + text);
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function showCopySuccess() {
+        const successMsg = document.getElementById('copy-success-msg');
+        if (successMsg) {
+            successMsg.style.display = 'inline';
+            setTimeout(function() {
+                successMsg.style.display = 'none';
+            }, 2000);
+        }
+    }
+    
     $(document).ready(function() {
         get_selected_elements(<?php echo $form_id; ?>);
         seeting_enable_disable(<?php echo $form_id; ?>);

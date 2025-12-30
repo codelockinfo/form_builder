@@ -1080,4 +1080,59 @@ var BACKTO = 0;
             });
         };
 
-        // File 
+        // Function to copy Form ID to clipboard (for form list)
+        window.copyFormId = function(formId, element) {
+            const formIdText = formId.toString();
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(formIdText).then(function() {
+                    showCopySuccessInList(element);
+                }).catch(function(err) {
+                    console.error('Failed to copy:', err);
+                    fallbackCopyFormId(formIdText, element);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopyFormId(formIdText, element);
+            }
+        };
+        
+        function fallbackCopyFormId(text, element) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccessInList(element);
+                } else {
+                    alert('Failed to copy Form ID. Please copy manually: ' + text);
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('Failed to copy Form ID. Please copy manually: ' + text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopySuccessInList(element) {
+            if (element && element.parentElement) {
+                const successMsg = element.parentElement.querySelector('.copy-success');
+                if (successMsg) {
+                    successMsg.style.display = 'inline';
+                    setTimeout(function() {
+                        successMsg.style.display = 'none';
+                    }, 2000);
+                }
+            }
+        }
+
+        // File  
