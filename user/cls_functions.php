@@ -5206,8 +5206,14 @@ class Client_functions extends common_function {
                 'form_name' => $db_form_name,
                 'filename' => $filename,
                 'shop' => $shopinfo->shop_name,
-                'store_user_id' => $store_user_id
+                'store_user_id' => $store_user_id,
+                'filepath' => $filepath
             ]);
+            
+            // IMPORTANT: For the block to appear in Shopify theme customizer, you need to:
+            // 1. Deploy the app extension using: shopify app deploy
+            // 2. Or push changes via Shopify CLI: shopify app deploy --reset
+            // 3. The store owner may need to refresh the theme customizer or reinstall the app
             
             return true;
         } catch (Exception $e) {
