@@ -496,13 +496,39 @@ if ($is_list_request) {
             ["AND", "store_client_id", "=", "$store_user_id"], 
             ["AND", "status", "=", "1"]
         );
+        
+        error_log("App Proxy - Looking up form by public_id: $form_public_id for shop: $shop, store_user_id: $store_user_id");
+        
         $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id', $form_check_query, ['single' => true]);
         
+        error_log("App Proxy - Form lookup result status: " . (isset($form_check['status']) ? $form_check['status'] : 'NOT SET'));
+        error_log("App Proxy - Form lookup data: " . (isset($form_check['data']) ? json_encode($form_check['data']) : 'EMPTY'));
+        
+        // If lookup by public_id fails, try fallback to database ID (for backward compatibility)
         if ($form_check['status'] != 1 || empty($form_check['data'])) {
-            http_response_code(403);
+            // Fallback: Try looking up by database ID (in case public_id column doesn't exist or is empty)
+            error_log("App Proxy - public_id lookup failed, trying fallback to database ID");
+            $form_id_fallback = (int)$form_public_id;
+            if ($form_id_fallback > 0) {
+                $form_check_query_fallback = array(
+                    ["", "id", "=", "$form_id_fallback"], 
+                    ["AND", "store_client_id", "=", "$store_user_id"], 
+                    ["AND", "status", "=", "1"]
+                );
+                $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id', $form_check_query_fallback, ['single' => true]);
+                error_log("App Proxy - Fallback lookup result: " . (isset($form_check['status']) ? $form_check['status'] : 'NOT SET'));
+            }
+        }
+        
+        if ($form_check['status'] != 1 || empty($form_check['data'])) {
+            http_response_code(404);
             echo '<div style="padding: 20px; color: #d32f2f;">Error: Form not found or access denied. This form does not belong to your store.</div>';
+            error_log("App Proxy - Form lookup failed for public_id: $form_public_id, shop: $shop");
             exit;
         }
+        
+        // Get the actual database form ID from the lookup
+        $form_id = (int)$form_check['data']['id'];
         
         // Set POST data to simulate the get_selected_elements_fun call
         $_POST['store'] = $shop;
