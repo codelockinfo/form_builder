@@ -1,6 +1,22 @@
 <?php 
 include_once('cls_header.php'); 
 $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
+
+// Get public_id (6-digit ID) for this form
+$public_id = '';
+if ($form_id > 0) {
+    $where_query = array(["", "id", "=", "$form_id"]);
+    $form_check = $functions->select_result(TABLE_FORMS, 'public_id', $where_query, ['single' => true]);
+    if ($form_check['status'] == 1 && !empty($form_check['data'])) {
+        $public_id = isset($form_check['data']['public_id']) && !empty($form_check['data']['public_id']) 
+            ? $form_check['data']['public_id'] 
+            : $form_id; // Fallback to database ID if public_id not set
+    } else {
+        $public_id = $form_id; // Fallback
+    }
+} else {
+    $public_id = '';
+}
 ?>
     <div>
         <div class=" form_header">
@@ -18,11 +34,11 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             value="" readonly>
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
-                                    <div class="form-id-display-header" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                                    <div class="form-id-display-header" style="margin-left: 10px; display: flex; align-items: center; gap: 8px;">
                                         <span style="font-size: 13px; color: #6b7280; font-weight: 500;">Form ID:</span>
                                         <div style="display: flex; align-items: center; gap: 6px;">
-                                            <span id="form-id-display" class="form-id-value" style="font-family: monospace; font-size: 13px; background: #f3f4f6; padding: 4px 10px; border-radius: 4px; color: #1f2937; font-weight: 600;"><?php echo $form_id; ?></span>
-                                            <button type="button" onclick="copyFormIdToClipboard(<?php echo $form_id; ?>)" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;" title="Copy Form ID">
+                                            <span id="form-id-display" class="form-id-value" style="font-family: monospace; font-size: 13px; background: #f3f4f6; padding: 4px 10px; border-radius: 4px; color: #1f2937; font-weight: 600;"><?php echo htmlspecialchars($public_id); ?></span>
+                                            <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;" title="Copy Form ID">
                                                 <span class="Polaris-Button__Content">
                                                     <span class="Polaris-Button__Text">Copy ID</span>
                                                 </span>
@@ -4897,7 +4913,8 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
         <script>
     // Function to copy Form ID to clipboard
     function copyFormIdToClipboard(formId) {
-        const formIdText = formId.toString();
+        // Handle both string and number types
+        const formIdText = String(formId);
         
         // Try modern clipboard API first
         if (navigator.clipboard && navigator.clipboard.writeText) {

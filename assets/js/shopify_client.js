@@ -1082,7 +1082,8 @@ var BACKTO = 0;
 
         // Function to copy Form ID to clipboard (for form list)
         window.copyFormId = function(formId, element) {
-            const formIdText = formId.toString();
+            // Handle both string and number types (for 6-digit IDs)
+            const formIdText = String(formId);
             
             // Try modern clipboard API first
             if (navigator.clipboard && navigator.clipboard.writeText) {

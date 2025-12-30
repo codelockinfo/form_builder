@@ -118,6 +118,39 @@ class Client_functions extends common_function {
     // start 014
     function generateUniqueTextUsingUniqid($prefix = '', $moreEntropy = false) {
         return uniqid($prefix, $moreEntropy);
+    }
+    
+    /**
+     * Generate a unique 6-digit public ID for forms
+     * This is a secure, non-sequential ID that's harder to guess than database IDs
+     * 
+     * @param int $store_user_id The store user ID to ensure uniqueness per shop
+     * @return string 6-digit numeric ID
+     */
+    function generateFormPublicId($store_user_id) {
+        // Generate a random 6-digit number (100000 to 999999)
+        $maxAttempts = 100; // Prevent infinite loop
+        $attempts = 0;
+        
+        do {
+            $public_id = str_pad(rand(100000, 999999), 6, '0', STR_PAD_LEFT);
+            
+            // Check if this ID already exists for this shop
+            $where_query = array(
+                ["", "public_id", "=", "$public_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
+            );
+            $check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+            
+            $attempts++;
+            if ($attempts >= $maxAttempts) {
+                // Fallback: use timestamp-based ID if too many collisions
+                $public_id = substr(str_replace('.', '', microtime(true)), -6);
+                break;
+            }
+        } while ($check['status'] == 1 && !empty($check['data']));
+        
+        return $public_id;
     } 
 
     function function_create_form() {
@@ -136,6 +169,10 @@ class Client_functions extends common_function {
                 $publishdataserialize = serialize(array("",'Please a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true))));
                 if (isset($_POST['selectedType']) && $_POST['selectedType'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
+                    
+                    // Generate unique 6-digit public ID for this form
+                    $public_id = $this->generateFormPublicId($shopinfo->store_user_id);
+                    
                     $fields_arr = array(
                         '`id`' => '',
                         '`store_client_id`' => $shopinfo->store_user_id,
@@ -144,6 +181,7 @@ class Client_functions extends common_function {
                         '`form_header_data`' => $headerserialize,
                         '`form_footer_data`' => $footerserialize,
                         '`publishdata`' => $publishdataserialize,
+                        '`public_id`' => $public_id,
                         '`created`' => $mysql_date,
                         '`updated`' => $mysql_date
                     );
@@ -260,7 +298,8 @@ class Client_functions extends common_function {
         $shopinfo = (object)$this->current_store_obj;
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
-            $comeback_client = $this->select_result(TABLE_FORMS, '*', $where_query);
+            // Select public_id field to display 6-digit ID
+            $comeback_client = $this->select_result(TABLE_FORMS, 'id, form_name, status, store_client_id, public_id', $where_query);
             $html="";
             
             foreach($comeback_client['data'] as $templates){
@@ -294,7 +333,7 @@ class Client_functions extends common_function {
                                                 <div class="sp-font-size">'.$templates['form_name'].'</div>
                                                 <div class="form-id-display" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
                                                     <span style="font-weight: 500;">Form ID: </span>
-                                                    <span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId('.$templates['id'].', this)" title="Click to copy Form ID">'.$templates['id'].'</span>
+                                                    '.((isset($templates['public_id']) && !empty($templates['public_id'])) ? '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\''.$templates['public_id'].'\', this)" title="Click to copy Form ID">'.$templates['public_id'].'</span>' : '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\''.$templates['id'].'\', this)" title="Click to copy Form ID">'.$templates['id'].'</span>').'
                                                     <span class="copy-success" style="margin-left: 6px; color: #10b981; display: none; font-size: 11px;">✓ Copied!</span>
                                                 </div>
                                             </div>

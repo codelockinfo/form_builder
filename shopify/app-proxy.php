@@ -470,9 +470,9 @@ if ($is_list_request) {
     // Output buffering disabled - no need to clean
     header('Content-Type: text/html; charset=utf-8');
     
-    $form_id = isset($_GET['form_id']) ? (int)$_GET['form_id'] : 0;
+    $form_public_id = isset($_GET['form_id']) ? trim($_GET['form_id']) : '';
     
-    if ($form_id <= 0) {
+    if (empty($form_public_id)) {
         http_response_code(400);
         echo '<div style="padding: 20px; color: #d32f2f;">Error: Form ID is required</div>';
         exit;
@@ -489,8 +489,14 @@ if ($is_list_request) {
             exit;
         }
         
-        $form_check_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
-        $form_check = $cls_functions->select_result(TABLE_FORMS, 'id', $form_check_query, ['single' => true]);
+        // Look up form by public_id (6-digit ID) instead of database ID
+        // This provides better security as IDs are not sequential
+        $form_check_query = array(
+            ["", "public_id", "=", "$form_public_id"], 
+            ["AND", "store_client_id", "=", "$store_user_id"], 
+            ["AND", "status", "=", "1"]
+        );
+        $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id', $form_check_query, ['single' => true]);
         
         if ($form_check['status'] != 1 || empty($form_check['data'])) {
             http_response_code(403);
