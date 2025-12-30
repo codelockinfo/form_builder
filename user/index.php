@@ -32,7 +32,7 @@ die;
 //$common_function->post_data(TABLE_CUSTOMIZE, array($fields_arr));
 //
 //if ($ologin->isUserLoggedIn() == true) {
-//    header('Location: dashboard.php?key='.$key.'&store=' . $store);
+//    header('Location: dashboard.php?key='.$key.'&shop=' . $store);
 //    exit;
 //} elseif (!isset($_GET['destroy'])) {
 //    include 'welcome.php';

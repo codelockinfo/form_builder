@@ -88,17 +88,736 @@ $(document).ready(function(){
             input.val(parseInt(inputValue) - 1); 
         });
 
-        $('.owl-carousel').owlCarousel({
-            items:1,
-            loop:false,
-            margin:10,
-            nav:false,
-    	    mouseDrag: false,
-        })
+        // Function to initialize owl carousel (make it globally accessible)
+        window.initOwlCarousel = function() {
+            var $carousel = $('.owl-carousel');
+            if ($carousel.length > 0) {
+                console.log('=== Initializing Owl Carousel ===');
+                console.log('Carousel element found');
+                
+                // Clear slide mapping cache when reinitializing
+                slideMappingCache = null;
+                
+                // Destroy existing instance completely and restore original structure
+                var existingInstance = $carousel.data('owl.carousel');
+                if (existingInstance) {
+                    console.log('Destroying existing carousel instance');
+                    try {
+                        $carousel.trigger('destroy.owl.carousel');
+                        $carousel.removeData('owl.carousel');
+                    } catch(e) {
+                        console.log('Error destroying carousel:', e.message);
+                    }
+                    
+                    // Manually unwrap owl carousel structure to restore original slides
+                    var $stageOuter = $carousel.find('.owl-stage-outer');
+                    if ($stageOuter.length > 0) {
+                        var $stage = $stageOuter.find('.owl-stage');
+                        if ($stage.length > 0) {
+                            // Unwrap owl-items back to original divs
+                            $stage.find('.owl-item').each(function() {
+                                var $item = $(this);
+                                var $content = $item.children();
+                                if ($content.length > 0) {
+                                    $item.replaceWith($content);
+                                } else {
+                                    $item.remove();
+                                }
+                            });
+                            // Unwrap owl-stage - move its children to stage-outer
+                            $stage.children().each(function() {
+                                $(this).appendTo($stageOuter);
+                            });
+                            $stage.remove();
+                        }
+                        // Unwrap owl-stage-outer - move its children to carousel
+                        $stageOuter.children().each(function() {
+                            $(this).appendTo($carousel);
+                        });
+                        $stageOuter.remove();
+                    }
+                    
+                    // Remove owl carousel classes and elements
+                    $carousel.removeClass('owl-carousel owl-loaded owl-drag owl-grab owl-rtl');
+                    $carousel.find('.owl-nav, .owl-dots').remove();
+                    
+                    // Small delay to ensure DOM is updated
+                    setTimeout(function() {
+                        console.log('DOM structure restored after destroy');
+                    }, 50);
+                }
+                
+                // Now count the ACTUAL slide divs (should be direct children)
+                // After destroy, slides should be direct children again
+                // First, let's check the raw HTML to see what's actually there
+                var carouselHTML = $carousel[0].innerHTML;
+                var polarisCount = (carouselHTML.match(/polarisformcontrol/g) || []).length;
+                console.log('Found', polarisCount, 'occurrences of "polarisformcontrol" in carousel HTML');
+                
+                // Also check the actual DOM structure using native methods
+                var nativeChildren = $carousel[0].children;
+                console.log('Native DOM children count:', nativeChildren.length);
+                for (var i = 0; i < nativeChildren.length; i++) {
+                    var child = nativeChildren[i];
+                    var classes = child.className || '(no class)';
+                    console.log('  Native child', i + ':', child.tagName, classes.substring(0, 50));
+                }
+                
+                var $actualSlides = $carousel.children().filter(function() {
+                    var $child = $(this);
+                    // Count divs that are actual slides (not owl carousel elements)
+                    return !$child.hasClass('owl-stage-outer') && 
+                           !$child.hasClass('owl-nav') && 
+                           !$child.hasClass('owl-dots') &&
+                           !$child.hasClass('owl-stage') &&
+                           !$child.hasClass('owl-item') &&
+                           $child.is('div');
+                });
+                
+                var slideCount = $actualSlides.length;
+                console.log('Number of actual slide divs found:', slideCount);
+                
+                // Log all actual slides with full details
+                $actualSlides.each(function(index) {
+                    var $slide = $(this);
+                    var classes = $slide.attr('class') || '(no class)';
+                    var id = $slide.attr('id') || '';
+                    var isVisible = $slide.is(':visible');
+                    var display = $slide.css('display');
+                    var computedStyle = window.getComputedStyle($slide[0]);
+                    console.log('Actual slide ' + index + ':', classes.substring(0, 60), id ? 'id=' + id : '', 
+                                'visible=' + isVisible, 'display=' + display, 
+                                'computed-display=' + computedStyle.display);
+                    
+                    // Force visibility for hidden slides (owl carousel might skip them)
+                    if (!isVisible || display === 'none' || computedStyle.display === 'none') {
+                        console.log('  Making slide visible for carousel initialization');
+                        $slide.css('display', 'block');
+                    }
+                });
+                
+                // Also log ALL children for debugging
+                console.log('ALL direct children of owl-carousel:');
+                $carousel.children().each(function(index) {
+                    var $child = $(this);
+                    var tag = $child.prop('tagName');
+                    var classes = $child.attr('class') || '(no class)';
+                    var htmlPreview = $child.html().substring(0, 100).replace(/\s+/g, ' ');
+                    console.log('  Child ' + index + ':', tag, classes.substring(0, 50), 'HTML preview:', htmlPreview);
+                });
+                
+                // Check if slides exist elsewhere in the DOM (maybe they're siblings but not direct children yet)
+                var $allPotentialSlides = $('.polarisformcontrol.headerData, .polarisformcontrol:has(.setvalue_element), .polarisformcontrol:has(.footerData), .polarisformcontrol');
+                console.log('Searching for potential slides in entire DOM...');
+                console.log('Found', $allPotentialSlides.length, 'elements with class polarisformcontrol');
+                
+                // Find slides that should be in the carousel but aren't direct children
+                var $missingSlides = $allPotentialSlides.filter(function() {
+                    var $slide = $(this);
+                    var parent = $slide.parent();
+                    var isDirectChild = parent[0] === $carousel[0];
+                    if (!isDirectChild) {
+                        var parentClass = parent.attr('class') || 'no-class';
+                        console.log('  Found slide NOT as direct child. Parent:', parentClass.substring(0, 50));
+                        return true;
+                    }
+                    return false;
+                });
+                
+                if ($missingSlides.length > 0) {
+                    console.log('Found', $missingSlides.length, 'slides that need to be moved to carousel');
+                }
+                
+                if (slideCount === 0) {
+                    console.error('ERROR: No actual slides found! Cannot initialize carousel.');
+                    return;
+                }
+                
+                // If we found less than 4 slides, try to find missing slides elsewhere and move them
+                if (slideCount < 4) {
+                    console.warn('WARNING: Only found', slideCount, 'slides. Expected at least 4.');
+                    console.log('Searching for missing slides in DOM...');
+                    
+                    // Get ALL polarisformcontrol divs in the entire document
+                    var $allPolarisSlides = $('.polarisformcontrol');
+                    console.log('Total .polarisformcontrol elements found:', $allPolarisSlides.length);
+                    
+                    // Check which ones are direct children vs not
+                    var movedCount = 0;
+                    $allPolarisSlides.each(function() {
+                        var $slide = $(this);
+                        var parent = $slide.parent();
+                        var isDirectChild = parent[0] === $carousel[0];
+                        
+                        if (!isDirectChild) {
+                            var slideType = '';
+                            if ($slide.hasClass('headerData')) slideType = 'Header';
+                            else if ($slide.find('.footerData').length > 0) slideType = 'Footer';
+                            else if ($slide.find('.setvalue_element').length > 0) slideType = 'Add element';
+                            else slideType = 'Other';
+                            
+                            console.log('Moving', slideType, 'slide to carousel...');
+                            $slide.appendTo($carousel);
+                            movedCount++;
+                            slideCount++;
+                        }
+                    });
+                    
+                    // Also check for the first empty div (main panel) - it might be the only one found
+                    // Look for other empty divs or divs with specific content that should be slides
+                    var $allDivs = $carousel.parent().find('> .owl-carousel > div, > div').not('.owl-stage-outer, .owl-nav, .owl-dots');
+                    console.log('Checking for other slide divs in parent container...');
+                    
+                    if (movedCount > 0) {
+                        console.log('SUCCESS: Moved', movedCount, 'slides to carousel!');
+                        // Recount after moving
+                        $actualSlides = $carousel.children().filter(function() {
+                            var $child = $(this);
+                            return !$child.hasClass('owl-stage-outer') && 
+                                   !$child.hasClass('owl-nav') && 
+                                   !$child.hasClass('owl-dots') &&
+                                   !$child.hasClass('owl-stage') &&
+                                   !$child.hasClass('owl-item') &&
+                                   $child.is('div');
+                        });
+                        slideCount = $actualSlides.length;
+                        console.log('After moving, total slides:', slideCount);
+                    } else {
+                        console.warn('No slides found to move. They might be nested inside the first div or loaded dynamically.');
+                        // Check if slides are nested inside the first div
+                        var $firstSlide = $carousel.children().first();
+                        if ($firstSlide.length > 0) {
+                            var $nestedSlides = $firstSlide.find('> .polarisformcontrol, > div.polarisformcontrol');
+                            if ($nestedSlides.length > 0) {
+                                console.log('Found', $nestedSlides.length, 'slides nested inside first div. Moving them out...');
+                                $nestedSlides.each(function() {
+                                    $(this).appendTo($carousel);
+                                    slideCount++;
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (slideCount < 4) {
+                        console.warn('Still only found', slideCount, 'slides after search. Slides might need to be in HTML as direct children.');
+                    }
+                }
+                
+                // Ensure carousel has the owl-carousel class
+                $carousel.addClass('owl-carousel');
+                
+                // Initialize carousel
+                try {
+                    $carousel.owlCarousel({
+                        items:1,
+                        loop:false,
+                        margin:10,
+                        nav:false,
+                        mouseDrag: false,
+                        onInitialized: function(event) {
+                            console.log('Owl carousel initialized successfully');
+                            var instance = event.target;
+                            var $instance = $(instance);
+                            var itemCount = $instance.find('.owl-item').length;
+                            console.log('Total owl-items after init:', itemCount);
+                            console.log('Current index:', event.item.index);
+                            
+                            // Detect slide mapping after initialization
+                            slideMappingCache = detectSlideMapping($instance);
+                            
+                            // Log all slides
+                            $instance.find('.owl-item').each(function(index) {
+                                var $item = $(this);
+                                var $content = $item.children().first();
+                                var classes = $content.attr('class') || '';
+                                var title = $content.find('.title').text().trim();
+                                console.log('Owl-item ' + index + ' contains:', classes.substring(0, 50), 'title: "' + title + '"');
+                            });
+                        }
+                    });
+                    
+                    // Verify initialization after a delay
+                    setTimeout(function() {
+                        var instance = $carousel.data('owl.carousel');
+                        if (instance) {
+                            var itemCount = instance.items().length;
+                            console.log('Carousel verified. Items:', itemCount);
+                            if (itemCount <= 1) {
+                                console.warn('WARNING: Carousel only has 1 item! Expected', slideCount, 'slides.');
+                                console.log('Actual slide divs count:', slideCount);
+                                console.log('Owl-item count:', $carousel.find('.owl-item').length);
+                            } else {
+                                console.log('SUCCESS: Carousel has', itemCount, 'slides!');
+                            }
+                        } else {
+                            console.error('Carousel initialization failed - no instance found');
+                        }
+                    }, 200);
+                } catch(e) {
+                    console.error('Error initializing owl carousel:', e);
+                    console.error('Error details:', e.message, e.stack);
+                }
+                console.log('=== End Initialize ===');
+            } else {
+                console.warn('Owl carousel element not found');
+            }
+        }
+        
+        // Function to check if all slides are present before initializing
+        function checkAndInitCarousel() {
+            var $carousel = $('.owl-carousel');
+            if ($carousel.length === 0) {
+                console.log('Carousel element not found yet, retrying...');
+                return false;
+            }
+            
+            // Check if carousel is already initialized
+            var existingInstance = $carousel.data('owl.carousel');
+            var slideCount = 0;
+            var $actualSlides;
+            
+            if (existingInstance) {
+                // Carousel already initialized - unwrap to check original slides
+                var $stageOuter = $carousel.find('.owl-stage-outer');
+                if ($stageOuter.length > 0) {
+                    // Get slides from owl-items
+                    $actualSlides = $stageOuter.find('.owl-item > div');
+                    slideCount = $actualSlides.length;
+                    console.log('Carousel initialized. Found', slideCount, 'slides in owl-items');
+                } else {
+                    // No owl-stage-outer, count direct children
+                    $actualSlides = $carousel.children().filter(function() {
+                        var $child = $(this);
+                        return !$child.hasClass('owl-stage-outer') && 
+                               !$child.hasClass('owl-nav') && 
+                               !$child.hasClass('owl-dots') &&
+                               $child.is('div');
+                    });
+                    slideCount = $actualSlides.length;
+                }
+            } else {
+                // Carousel not initialized - count direct children
+                $actualSlides = $carousel.children().filter(function() {
+                    var $child = $(this);
+                    return !$child.hasClass('owl-stage-outer') && 
+                           !$child.hasClass('owl-nav') && 
+                           !$child.hasClass('owl-dots') &&
+                           $child.is('div');
+                });
+                slideCount = $actualSlides.length;
+                console.log('Carousel not initialized. Found', slideCount, 'direct child divs');
+            }
+            
+            // Log what we found
+            if ($actualSlides && $actualSlides.length > 0) {
+                $actualSlides.each(function(index) {
+                    var $slide = $(this);
+                    var classes = $slide.attr('class') || '(no class)';
+                    console.log('  Slide', index + ':', classes.substring(0, 50));
+                });
+            }
+            
+            // We expect at least 4 slides: main tab panel, header, add element, footer
+            if (slideCount >= 4) {
+                console.log('All slides present! Initializing carousel...');
+                // If already initialized but has wrong count, destroy first
+                if (existingInstance && slideCount !== existingInstance.items().length) {
+                    console.log('Destroying existing instance to reinitialize with correct slide count');
+                    try {
+                        $carousel.trigger('destroy.owl.carousel');
+                        // Unwrap structure
+                        var $so = $carousel.find('.owl-stage-outer');
+                        if ($so.length > 0) {
+                            $so.find('.owl-item').each(function() {
+                                $(this).children().unwrap();
+                            });
+                            $so.find('.owl-stage').children().unwrap();
+                            $so.children().unwrap();
+                        }
+                        $carousel.removeClass('owl-carousel owl-loaded');
+                    } catch(e) {
+                        console.log('Error destroying:', e.message);
+                    }
+                }
+                initOwlCarousel();
+                return true;
+            } else {
+                console.log('Not all slides present yet (found', slideCount, ', expected at least 4). Waiting...');
+                return false;
+            }
+        }
+        
+        // Initialize owl carousel on page load - wait for DOM to be fully ready
+        $(window).on('load', function() {
+            setTimeout(function() {
+                console.log('Window loaded, checking carousel readiness...');
+                if (!checkAndInitCarousel()) {
+                    // Retry a few times if slides aren't ready
+                    var retries = 0;
+                    var checkInterval = setInterval(function() {
+                        retries++;
+                        if (checkAndInitCarousel() || retries >= 10) {
+                            clearInterval(checkInterval);
+                            if (retries >= 10) {
+                                console.warn('Gave up waiting for all slides. Initializing with what we have...');
+                                initOwlCarousel();
+                            }
+                        }
+                    }, 200);
+                }
+            }, 500);
+        });
+        
+        // Also try to initialize after DOM ready (in case window.load already fired)
+        setTimeout(function() {
+            var $carousel = $('.owl-carousel');
+            if ($carousel.length > 0) {
+                var instance = $carousel.data('owl.carousel');
+                if (!instance) {
+                    console.log('DOM ready, checking carousel readiness...');
+                    if (!checkAndInitCarousel()) {
+                        // Retry
+                        setTimeout(function() {
+                            checkAndInitCarousel();
+                        }, 500);
+                    }
+                } else {
+                    console.log('Carousel already initialized');
+                }
+            }
+        }, 1000);
 
         $(document).on("click",".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item",function(){
             var slideTo = $(this).data("owl");
-            $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
+            if (slideTo !== undefined && slideTo !== null) {
+                $('.owl-carousel').trigger('to.owl.carousel',  [slideTo, 40, true]);
+            }
+        });
+        
+        // Function to detect slide type by content and create mapping
+        function detectSlideMapping($carousel) {
+            var mapping = {};
+            
+            // Get slides - try both ways (if carousel initialized or not)
+            var $slides;
+            var $stageOuter = $carousel.find('.owl-stage-outer');
+            if ($stageOuter.length > 0) {
+                // Carousel initialized - get from owl-items
+                $slides = $stageOuter.find('.owl-item > div');
+            } else {
+                // Carousel not initialized - get direct children
+                $slides = $carousel.children('div').not('.owl-stage-outer, .owl-nav, .owl-dots, .owl-stage');
+            }
+            
+            console.log('Detecting slide mapping. Found', $slides.length, 'slides');
+            
+            $slides.each(function(index) {
+                var $slide = $(this);
+                var slideType = 'unknown';
+                var title = $slide.find('.title').text().trim();
+                var hasHeaderData = $slide.hasClass('headerData') || $slide.find('.headerData').length > 0;
+                var hasFooterData = $slide.find('.footerData').length > 0;
+                var hasSetValueElement = $slide.find('.setvalue_element').length > 0;
+                // Check if this slide has elementAppend class (element edit panel)
+                var hasElementAppend = $slide.hasClass('elementAppend') || $slide.find('.elementAppend').length > 0 || $slide.is('.elementAppend');
+                
+                // Detect slide type by content (check in order of specificity)
+                if (hasHeaderData || title === 'Header') {
+                    slideType = 'header';
+                    mapping[2] = index; // data-owl="2" maps to Header
+                    console.log('  Slide', index, '→ Header (data-owl="2")');
+                } else if (hasElementAppend) {
+                    // This is the element edit panel (shows when clicking on an element)
+                    // It's the slide with class "elementAppend" - this is where element properties are edited
+                    slideType = 'element-edit';
+                    mapping[3] = index; // data-owl="3" maps to Element edit panel
+                    console.log('  Slide', index, '→ Element edit panel (data-owl="3") - elementAppend class detected');
+                } else if (title === 'Add element') {
+                    // Check for the correct Add element slide - it should have:
+                    // 1. nested toggle class
+                    // 2. setvalue_element containers (even if empty)
+                    // 3. builder-item-wrapper with subheading "Input", "Selects", etc.
+                    var hasNestedToggle = $slide.find('.nested.toggle').length > 0;
+                    var hasSetValueContainers = $slide.find('.setvalue_element, .setvalue_element_select, .setvalue_element_static, .setvalue_element_structure, .setvalue_element_customization').length > 0;
+                    var hasBuilderItems = $slide.find('.builder-item-wrapper .subheading').length > 0;
+                    var hasInputSubheading = $slide.find('.subheading').text().indexOf('Input') !== -1;
+                    
+                    console.log('  Checking Add element slide', index, ':', {
+                        hasNestedToggle: hasNestedToggle,
+                        hasSetValueContainers: hasSetValueContainers,
+                        hasBuilderItems: hasBuilderItems,
+                        hasInputSubheading: hasInputSubheading
+                    });
+                    
+                    // The correct Add element panel MUST have nested toggle AND (setvalue containers OR builder items with Input subheading)
+                    if (hasNestedToggle && (hasSetValueContainers || (hasBuilderItems && hasInputSubheading))) {
+                        // This is the correct Add element panel
+                        slideType = 'add-element';
+                        mapping[6] = index; // data-owl="6" maps to Add element
+                        console.log('  ✓ Slide', index, '→ Add element (data-owl="6") - CORRECT PANEL');
+                    } else {
+                        // This is the other Add element panel (element edit panel) - don't map it
+                        slideType = 'add-element-edit';
+                        console.log('  ✗ Slide', index, '→ Add element (edit panel) - NOT mapping to data-owl="6"');
+                    }
+                } else if (hasFooterData || title === 'Footer') {
+                    slideType = 'footer';
+                    mapping[7] = index; // data-owl="7" maps to Footer
+                    console.log('  Slide', index, '→ Footer (data-owl="7")');
+                } else if (title === 'Other page') {
+                    slideType = 'other-page';
+                    console.log('  Slide', index, '→ Other page');
+                } else if (title === 'Mail') {
+                    slideType = 'mail';
+                    mapping[8] = index;
+                    console.log('  Slide', index, '→ Mail (data-owl="8")');
+                } else if (title === 'Appearance') {
+                    slideType = 'appearance';
+                    mapping[9] = index;
+                    console.log('  Slide', index, '→ Appearance (data-owl="9")');
+                } else if (index === 0 || title === '' || $slide.find('.Polaris-Tabs__Wrapper').length > 0) {
+                    slideType = 'main-panel';
+                    mapping[0] = index;
+                    mapping[1] = index;
+                    console.log('  Slide', index, '→ Main panel (data-owl="0" or "1")');
+                } else {
+                    console.log('  Slide', index, '→ Unknown (title: "' + title + '")');
+                }
+            });
+            
+            console.log('Final slide mapping:', mapping);
+            return mapping;
+        }
+        
+        // Mapping function to convert data-owl values to actual slide indices
+        var slideMappingCache = null;
+        function mapDataOwlToSlideIndex(dataOwl, $carousel) {
+            // Detect mapping if not cached
+            if (!slideMappingCache && $carousel && $carousel.length > 0) {
+                slideMappingCache = detectSlideMapping($carousel);
+                console.log('Slide mapping detected:', slideMappingCache);
+            }
+            
+            // Use cached mapping or fallback
+            if (slideMappingCache && slideMappingCache[dataOwl] !== undefined) {
+                var mappedIndex = slideMappingCache[dataOwl];
+                console.log('Mapping data-owl="' + dataOwl + '" to slide index', mappedIndex);
+                return mappedIndex;
+            }
+            
+            console.warn('No mapping found for data-owl="' + dataOwl + '", using fallback');
+            // Fallback mapping based on expected structure
+            var fallbackMapping = {
+                0: 0, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6,
+                8: 7, 9: 8, 10: 9, 11: 10, 12: 11, 13: 12
+            };
+            var fallbackIndex = fallbackMapping[dataOwl] !== undefined ? fallbackMapping[dataOwl] : dataOwl;
+            console.log('Using fallback mapping: data-owl="' + dataOwl + '" → slide index', fallbackIndex);
+            return fallbackIndex;
+        }
+        
+        // Function to ensure carousel is initialized and navigate to a slide
+        // Make it globally accessible
+        window.navigateToSlide = function(slideTo) {
+            if (slideTo === undefined || slideTo === null) {
+                return false;
+            }
+            console.log('=== Navigate to Slide ===');
+            console.log('Requested slide index (data-owl):', slideTo);
+            
+            var $carousel = $('.owl-carousel');
+            if ($carousel.length === 0) {
+                console.warn('Owl carousel element not found');
+                return false;
+            }
+            
+            // Map data-owl value to actual slide index
+            var actualSlideIndex = mapDataOwlToSlideIndex(slideTo, $carousel);
+            console.log('Mapped to actual slide index:', actualSlideIndex);
+            
+            // Check carousel state
+            var carouselInstance = $carousel.data('owl.carousel');
+            
+            // Always verify and correct mapping for Add element (data-owl="6") BEFORE navigation
+            if (slideTo === 6 && carouselInstance) {
+                console.log('=== Verifying Add element mapping ===');
+                
+                // Get items - carouselInstance.items() returns an array, need to wrap in jQuery
+                var items = carouselInstance.items();
+                var $mappedSlide = $(items[actualSlideIndex]);
+                var slideTitle = '';
+                var slideHasNestedToggle = false;
+                
+                if ($mappedSlide.length > 0) {
+                    var $slideContent = $mappedSlide.children().first();
+                    slideTitle = $slideContent.find('.title').text().trim();
+                    slideHasNestedToggle = $slideContent.find('.nested.toggle').length > 0;
+                    console.log('Current mapped slide (index', actualSlideIndex, '):', {
+                        title: slideTitle,
+                        hasNestedToggle: slideHasNestedToggle
+                    });
+                }
+                
+                var isCorrectSlide = slideTitle === 'Add element' && slideHasNestedToggle;
+                if (!isCorrectSlide) {
+                    console.warn('✗ Mapping is WRONG! Searching for correct Add element slide...');
+                    var foundCorrectSlide = false;
+                    
+                    // Iterate through all items
+                    for (var idx = 0; idx < items.length; idx++) {
+                        var $item = $(items[idx]);
+                        var $content = $item.children().first();
+                        var title = $content.find('.title').text().trim();
+                        var hasToggle = $content.find('.nested.toggle').length > 0;
+                        var hasSetValue = $content.find('.setvalue_element').length > 0;
+                        var hasBuilderItems = $content.find('.builder-item-wrapper .subheading').length > 0;
+                        var hasInputSubheading = $content.find('.subheading').text().indexOf('Input') !== -1;
+                        
+                        console.log('  Checking slide', idx, ':', {
+                            title: title,
+                            hasToggle: hasToggle,
+                            hasSetValue: hasSetValue,
+                            hasBuilderItems: hasBuilderItems,
+                            hasInputSubheading: hasInputSubheading
+                        });
+                        
+                        // The correct Add element slide must have: title="Add element" AND nested toggle AND (setvalue OR builder items with Input)
+                        if (title === 'Add element' && hasToggle && (hasSetValue || (hasBuilderItems && hasInputSubheading))) {
+                            console.log('  ✓✓✓ FOUND CORRECT Add element slide at index', idx);
+                            actualSlideIndex = idx;
+                            foundCorrectSlide = true;
+                            // Update cache immediately
+                            if (slideMappingCache) {
+                                slideMappingCache[6] = idx;
+                                console.log('  Updated mapping cache: data-owl="6" → slide index', idx);
+                            }
+                            break; // Exit loop
+                        }
+                    }
+                    
+                    if (!foundCorrectSlide) {
+                        console.error('✗✗✗ Could not find correct Add element slide!');
+                    } else {
+                        console.log('✓✓✓ Using CORRECTED slide index:', actualSlideIndex);
+                    }
+                } else {
+                    console.log('✓ Mapping is correct - slide', actualSlideIndex, 'is the Add element panel');
+                }
+                console.log('=== End Verification ===');
+            }
+            
+            slideTo = actualSlideIndex;
+            
+            // $carousel and carouselInstance already defined above
+            if ($carousel.length > 0) {
+                // carouselInstance already checked above
+                console.log('Carousel instance:', carouselInstance ? 'exists' : 'undefined');
+                
+                // Count actual slide divs (not owl carousel wrapper elements)
+                var $actualSlides = $carousel.children().filter(function() {
+                    var $child = $(this);
+                    return !$child.hasClass('owl-stage-outer') && 
+                           !$child.hasClass('owl-nav') && 
+                           !$child.hasClass('owl-dots') &&
+                           $child.is('div');
+                });
+                var actualSlideCount = $actualSlides.length;
+                
+                // If carousel is initialized, check owl-items
+                var owlItemCount = 0;
+                if (carouselInstance) {
+                    owlItemCount = carouselInstance.items().length;
+                    console.log('Total slides in carousel (owl-items):', owlItemCount);
+                    console.log('Current slide:', carouselInstance.current());
+                }
+                console.log('Actual slide divs in DOM:', actualSlideCount);
+                
+                // If carousel only has 1 slide but DOM has more actual slides, reinitialize
+                if (carouselInstance && owlItemCount === 1 && actualSlideCount > 1) {
+                    console.warn('MISMATCH: Carousel has 1 owl-item but DOM has', actualSlideCount, 'actual slides. Reinitializing...');
+                    initOwlCarousel();
+                    setTimeout(function() {
+                        var newInstance = $carousel.data('owl.carousel');
+                        if (newInstance) {
+                            var newItemCount = newInstance.items().length;
+                            console.log('Reinitialized. Now has', newItemCount, 'owl-items');
+                            if (newItemCount > 1) {
+                                try {
+                                    $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                                    console.log('Navigation triggered after reinit to slide', slideTo);
+                                } catch(e) {
+                                    console.error('Error navigating after reinit:', e);
+                                }
+                            } else {
+                                console.error('Reinitialization still only has 1 slide. Actual slides:', actualSlideCount);
+                            }
+                        } else {
+                            console.error('Reinitialization failed - no instance found');
+                        }
+                    }, 400);
+                    return true;
+                }
+                
+                // Ensure carousel is initialized
+                if (!carouselInstance) {
+                    console.log('Carousel not initialized, initializing now...');
+                    initOwlCarousel();
+                    // Wait for carousel to be ready before navigating
+                    setTimeout(function() {
+                        try {
+                            var newInstance = $carousel.data('owl.carousel');
+                            if (newInstance) {
+                                console.log('Carousel initialized. Total slides:', newInstance.items().length);
+                                console.log('Navigating to slide:', slideTo);
+                                $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                                console.log('Navigation triggered');
+                            } else {
+                                console.error('Carousel still not initialized after timeout');
+                            }
+                        } catch(e) {
+                            console.error('Error navigating carousel:', e);
+                        }
+                    }, 300);
+                } else {
+                    // Carousel is already initialized, navigate immediately
+                    try {
+                        console.log('Carousel ready. Navigating to slide:', slideTo);
+                        $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                        console.log('Navigation triggered successfully');
+                    } catch(e) {
+                        console.error('Error navigating carousel:', e);
+                        console.error('Error details:', e.message, e.stack);
+                    }
+                }
+                console.log('=== End Navigate ===');
+                return true;
+            } else {
+                console.warn('Owl carousel element not found');
+                return false;
+            }
+        }
+        
+        // Handle clicks on list-item elements anywhere (for Header, Footer, etc.)
+        $(document).on("click",".list-item[data-owl]",function(e){
+            var slideTo = $(this).data("owl");
+            if (navigateToSlide(slideTo)) {
+                // Don't prevent default to allow other handlers to work
+            }
+        });
+        
+        // Also handle clicks on builder-item-wrapper that contains list-item (for better event capture)
+        $(document).on("click",".builder-item-wrapper",function(e){
+            // Skip if this is the btn_add_element wrapper (handled separately)
+            if ($(this).hasClass('btn_add_element')) {
+                return;
+            }
+            var $listItem = $(this).find('.list-item[data-owl]').first();
+            if ($listItem.length > 0) {
+                var slideTo = $listItem.data("owl");
+                if (navigateToSlide(slideTo)) {
+                    // Don't prevent default to allow other handlers to work
+                }
+            }
         });
     
         $(document).on("click",".backBtn",function(){

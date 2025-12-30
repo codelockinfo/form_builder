@@ -151,10 +151,8 @@ class Client_functions extends common_function {
                       $response_data = $this->post_data(TABLE_FORMS, array($fields_arr));
                       $response_data = json_decode($response_data);
                       
-                      // Auto-sync blocks after form creation
-                      if (isset($response_data->status) && $response_data->status == 1) {
-                          $this->autoSyncFormBlocks();
-                      }
+                      // Note: Block file will be generated when user clicks Save button
+                      // No need to generate here as form name might change before save
                 }
             }
         }
@@ -307,7 +305,7 @@ class Client_functions extends common_function {
                                         </div>
                                         <div class="indexButton">
                                         <button><a href="#">view</a></button>
-                                        <button><a href="form_design.php?form_id='.$templates['id'].'&store='.$shopinfo->shop_name.'">Customize</a></button>
+                                        <button><a href="form_design.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Customize</a></button>
                                         </div>
                                     </div>
                                 </div>
@@ -4918,9 +4916,10 @@ class Client_functions extends common_function {
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $response_data = array('data' => 'success', 'msg' => 'Update successfully','outcome' => $comeback); 
             
-            // Auto-sync blocks after form name update
+            // Generate block file when save button is clicked
             if (isset($response_data['data']) && $response_data['data'] == 'success') {
-                $this->autoSyncFormBlocks();
+                // Generate block file for this specific form
+                $this->generateFormBlockFile($form_id, $form_name);
             }
         }
         $response = json_encode($response_data);
@@ -5090,41 +5089,193 @@ class Client_functions extends common_function {
      * Auto-sync form blocks after form creation/update
      * This automatically generates block files for all active forms
      */
-    function autoSyncFormBlocks() {
+    /**
+     * Generate Liquid block file for a specific form
+     * This creates a Shopify theme block file that can be used in the theme customizer
+     * IMPORTANT: Only generates blocks for forms belonging to the current shop
+     */
+    function generateFormBlockFile($form_id, $form_name) {
         try {
-            // Get current shop
-            $shop = isset($this->current_store_obj['shop_name']) ? $this->current_store_obj['shop_name'] : '';
-            if (empty($shop)) {
+            // Verify form belongs to current shop (security check)
+            $shopinfo = (object)$this->current_store_obj;
+            if (empty($shopinfo) || empty($shopinfo->store_user_id)) {
+                error_log("Generate block: No shop info available");
                 return false;
             }
             
-            // Build sync URL
-            $sync_url = CLS_SITE_URL . '/shopify/sync-form-blocks.php?shop=' . urlencode($shop);
+            $store_user_id = $shopinfo->store_user_id;
             
-            // Use curl to trigger sync (non-blocking)
-            if (function_exists('curl_init')) {
-                $ch = curl_init($sync_url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 1); // 1 second timeout - don't wait
-                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
-                curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
-                curl_exec($ch);
-                curl_close($ch);
-            } else {
-                // Fallback: use file_get_contents with short timeout
-                $context = stream_context_create([
-                    'http' => [
-                        'timeout' => 1,
-                        'ignore_errors' => true
-                    ]
+            // Verify form belongs to this shop before generating block
+            $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
+            $form_check = $this->select_result(TABLE_FORMS, 'id, form_name', $where_query, ['single' => true]);
+            
+            if ($form_check['status'] != 1 || empty($form_check['data'])) {
+                error_log("Generate block: Form ID $form_id does not belong to shop or is inactive");
+                generate_log('BLOCK_GENERATION_DENIED', 'Block generation denied - form does not belong to shop', [
+                    'form_id' => $form_id,
+                    'shop' => $shopinfo->shop_name,
+                    'store_user_id' => $store_user_id
                 ]);
-                @file_get_contents($sync_url, false, $context);
+                return false;
             }
+            
+            // Use form name from database (more reliable)
+            $db_form_name = isset($form_check['data']['form_name']) ? $form_check['data']['form_name'] : $form_name;
+            
+            // Path to the blocks directory
+            $blocks_dir = ABS_PATH . '/extensions/form-builder-block/blocks/';
+            $template_file = $blocks_dir . 'form-block-template.liquid';
+            
+            // Verify template exists
+            if (!file_exists($template_file)) {
+                error_log("Template file not found: $template_file");
+                return false;
+            }
+            
+            // Read template
+            $template_content = file_get_contents($template_file);
+            if ($template_content === false) {
+                error_log("Could not read template file: $template_file");
+                return false;
+            }
+            
+            // Sanitize form name for filename (remove special characters)
+            $safe_form_name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $db_form_name);
+            $safe_form_name = preg_replace('/_+/', '_', $safe_form_name); // Replace multiple underscores with single
+            $safe_form_name = trim($safe_form_name, '_');
+            
+            // If form name is empty after sanitization, use form ID
+            if (empty($safe_form_name)) {
+                $safe_form_name = 'form_' . $form_id;
+            }
+            
+            // Create display name for Shopify (max 25 characters)
+            $suffix = ' Form';
+            $max_form_name_length = 25 - strlen($suffix);
+            if (strlen($db_form_name) > $max_form_name_length) {
+                $form_name_display = substr($db_form_name, 0, $max_form_name_length - 3) . '...' . $suffix;
+            } else {
+                $form_name_display = $db_form_name . $suffix;
+            }
+            
+            // Ensure it doesn't exceed 25 characters (safety check)
+            if (strlen($form_name_display) > 25) {
+                $form_name_display = substr($form_name_display, 0, 22) . '...';
+            }
+            
+            // Create filename: form-{id}-{name}.liquid
+            $filename = 'form-' . $form_id . '-' . strtolower($safe_form_name) . '.liquid';
+            $filepath = $blocks_dir . $filename;
+            
+            // Ensure directory exists and is writable
+            if (!is_dir($blocks_dir)) {
+                if (!mkdir($blocks_dir, 0755, true)) {
+                    error_log("Failed to create blocks directory: $blocks_dir");
+                    return false;
+                }
+            }
+            
+            if (!is_writable($blocks_dir)) {
+                error_log("Blocks directory is not writable: $blocks_dir");
+                return false;
+            }
+            
+            // Replace placeholders in template
+            $block_content = str_replace('{{ FORM_ID }}', (int)$form_id, $template_content);
+            $block_content = str_replace('{{ FORM_NAME }}', addslashes($db_form_name), $block_content);
+            // Replace FORM_NAME_DISPLAY in JSON schema (needs proper JSON string escaping)
+            $form_name_display_json = json_encode($form_name_display, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $block_content = str_replace('"FORM_NAME_PLACEHOLDER"', $form_name_display_json, $block_content);
+            
+            // Write the block file
+            $result = file_put_contents($filepath, $block_content);
+            
+            if ($result === false) {
+                error_log("Failed to write block file: $filepath");
+                return false;
+            }
+            
+            // Verify file was created
+            if (!file_exists($filepath)) {
+                error_log("Block file was not created: $filepath");
+                return false;
+            }
+            
+            generate_log('BLOCK_GENERATED', 'Form block file generated', [
+                'form_id' => $form_id,
+                'form_name' => $db_form_name,
+                'filename' => $filename,
+                'shop' => $shopinfo->shop_name,
+                'store_user_id' => $store_user_id
+            ]);
+            
+            return true;
+        } catch (Exception $e) {
+            error_log('Generate block file error: ' . $e->getMessage());
+            generate_log('BLOCK_GENERATION_ERROR', 'Failed to generate block file', [
+                'form_id' => $form_id,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+    
+    /**
+     * Auto-sync form blocks - generates Liquid block files for all forms belonging to current shop
+     * This is called automatically when forms are created or updated
+     */
+    function autoSyncFormBlocks() {
+        try {
+            // Get current shop info
+            $shopinfo = (object)$this->current_store_obj;
+            if (empty($shopinfo) || empty($shopinfo->store_user_id)) {
+                error_log('Auto-sync blocks: No shop info available');
+                return false;
+            }
+            
+            $store_user_id = $shopinfo->store_user_id;
+            
+            // Get all active forms for this shop
+            $where_query = array(["", "store_client_id", "=", "$store_user_id"], ["AND", "status", "=", "1"]);
+            $forms_result = $this->select_result(TABLE_FORMS, 'id, form_name', $where_query);
+            
+            if ($forms_result['status'] != 1 || empty($forms_result['data'])) {
+                // No forms to generate blocks for - this is OK
+                return true;
+            }
+            
+            $forms = $forms_result['data'];
+            $generated_count = 0;
+            $failed_count = 0;
+            
+            // Generate block for each form
+            foreach ($forms as $form) {
+                $form_id = isset($form['id']) ? (int)$form['id'] : 0;
+                $form_name = isset($form['form_name']) ? $form['form_name'] : 'Unnamed Form';
+                
+                if ($form_id > 0) {
+                    if ($this->generateFormBlockFile($form_id, $form_name)) {
+                        $generated_count++;
+                    } else {
+                        $failed_count++;
+                    }
+                }
+            }
+            
+            generate_log('BLOCKS_SYNCED', 'Form blocks synchronized', [
+                'shop' => $shopinfo->shop_name,
+                'generated' => $generated_count,
+                'failed' => $failed_count,
+                'total_forms' => count($forms)
+            ]);
             
             return true;
         } catch (Exception $e) {
             // Silently fail - don't break form operations
             error_log('Auto-sync blocks error: ' . $e->getMessage());
+            generate_log('BLOCKS_SYNC_ERROR', 'Failed to sync blocks', [
+                'error' => $e->getMessage()
+            ]);
             return false;
         }
     }

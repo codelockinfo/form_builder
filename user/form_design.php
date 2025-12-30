@@ -4,7 +4,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
 ?>
     <div>
         <div class=" form_header">
-        <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
+            <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
             <div class="context">
                 <div class="context-inner">
                     <div class="item form-name-wrapper">
@@ -4880,6 +4880,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                 </div>
             </div>
         </div>
+    </div>
         <script>
     $(document).ready(function() {
         get_selected_elements(<?php echo $form_id; ?>);

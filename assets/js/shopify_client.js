@@ -254,7 +254,59 @@ var BACKTO = 0;
 
          // start 014
         $(document).on("click", ".btn_add_element", function(event) {
-            event.preventDefault();    
+            // Prevent default first to stop any other handlers
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Navigate to the add element panel (data-owl="6")
+            // Use the navigateToSlide function which handles mapping correctly
+            var $carousel = $('.owl-carousel');
+            if ($carousel.length > 0) {
+                // Ensure carousel is initialized
+                if (typeof $carousel.data('owl.carousel') === 'undefined') {
+                    // Use the global initOwlCarousel function if available, otherwise initialize directly
+                    if (typeof window.initOwlCarousel === 'function') {
+                        window.initOwlCarousel();
+                        // Wait for carousel to be ready before navigating
+                        setTimeout(function() {
+                            if (typeof window.navigateToSlide === 'function') {
+                                window.navigateToSlide(6); // data-owl="6" for Add element
+                            } else {
+                                console.warn('navigateToSlide function not available');
+                            }
+                        }, 200);
+                    } else {
+                        $carousel.owlCarousel({
+                            items:1,
+                            loop:false,
+                            margin:10,
+                            nav:false,
+                            mouseDrag: false,
+                        });
+                        setTimeout(function() {
+                            if (typeof window.navigateToSlide === 'function') {
+                                window.navigateToSlide(6); // data-owl="6" for Add element
+                            } else {
+                                console.warn('navigateToSlide function not available');
+                            }
+                        }, 200);
+                    }
+                } else {
+                    // Carousel is already initialized, use navigateToSlide for proper mapping
+                    if (typeof window.navigateToSlide === 'function') {
+                        window.navigateToSlide(6); // data-owl="6" for Add element
+                    } else {
+                        console.warn('navigateToSlide function not available, falling back to direct navigation');
+                        try {
+                            $carousel.trigger('to.owl.carousel', [6, 40, true]);
+                        } catch(e) {
+                            console.error('Error navigating to Add element panel:', e);
+                        }
+                    }
+                }
+            }
+            
+            // Then load the element data
             $.ajax({
                 url: "ajax_call.php",
                 type: "post",
@@ -485,6 +537,26 @@ var BACKTO = 0;
                                 }
                             });
                             
+                            // Ensure owl carousel is initialized after content loads
+                            setTimeout(function() {
+                                var $carousel = $('.owl-carousel');
+                                if ($carousel.length > 0 && typeof $carousel.data('owl.carousel') === 'undefined') {
+                                    console.log('Initializing owl carousel after form data load');
+                                    if (typeof initOwlCarousel === 'function') {
+                                        initOwlCarousel();
+                                    } else {
+                                        // Fallback initialization
+                                        $carousel.owlCarousel({
+                                            items:1,
+                                            loop:false,
+                                            margin:10,
+                                            nav:false,
+                                            mouseDrag: false,
+                                        });
+                                    }
+                                }
+                            }, 200);
+                            
                             // Initialize CKEditor for header and footer
                             if (typeof CKEDITOR !== 'undefined') {
                                 setTimeout(function() {
@@ -602,7 +674,7 @@ var BACKTO = 0;
                         $(".text_image_list").removeClass("first_txt_image");
                         $(".firstone_").addClass("first_txt_image");
                         insertDefaultElements(response["data"],selectedType);
-                        window.location.href = "form_design.php?form_id="+response["data"]+"&store="+store;
+                        window.location.href = "form_design.php?form_id="+response["data"]+"&shop="+store;
                     }
                     loading_hide('.save_loader_show', 'Create Form');
                 }

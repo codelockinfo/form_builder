@@ -413,8 +413,27 @@
 /*vertical tab css end*/
 
 /*owl carousel css start*/
+.owl-carousel {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+}
 .owl-carousel .owl-stage-outer{
-    overflow: visible !important
+    overflow: hidden !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+.owl-carousel .owl-stage {
+    width: 100% !important;
+    display: flex !important;
+}
+.owl-carousel .owl-item {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+.element_start .owl-carousel {
+    height: 100vh !important;
 }
 /*owl carousel css end*/
 footer css start
