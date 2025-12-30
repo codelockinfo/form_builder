@@ -39,7 +39,7 @@ $store = (isset($_GET['store']) && $_GET['store'] != '') ? $_GET['store'] : "man
                                                             </div>
                                                             <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required="">
                                                         </div>
-                                                        <a href="password-reset.php?store=<?php echo $store; ?>"><small style="font-size: 100% ! important;">Forgot password?</small></a>
+                                                        <a href="password-reset.php?shop=<?php echo $store; ?>"><small style="font-size: 100% ! important;">Forgot password?</small></a>
                                                         <button type="submit" name="login" id="submitLogin"  class="Polaris-Button Polaris-Button--primary" style="float: right;">Login</button>
                                                     </form>
                                                 </div>

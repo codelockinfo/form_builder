@@ -9,7 +9,7 @@
                 <div class="Polaris-EmptyState__Actions">
                     <div class="Polaris-ButtonGroup">
                         <div class="Polaris-ButtonGroup__Item step-1">
-                            <a  class="Polaris-Button Polaris-Button--primary dash-view-btn" href="<?php echo SITE_CLIENT_URL . 'dashboard.php?store=' . $store . '&key=' . $key ?>" > 
+                            <a  class="Polaris-Button Polaris-Button--primary dash-view-btn" href="<?php echo SITE_CLIENT_URL . 'dashboard.php?shop=' . $store . '&key=' . $key ?>" > 
                                 <span class="Polaris-Button__Content">
                                     <span>View Dashboard</span>
                                 </span>

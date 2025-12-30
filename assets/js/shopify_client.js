@@ -107,7 +107,7 @@ var BACKTO = 0;
                                 $('#totalShippingMethod').html(response['total_method']);
                             }
                         } else {
-                            window.location = 'index.php?store=' + store;
+                            window.location = 'index.php?shop=' + store;
                             setCookie('flash_message', response['message'], 2);
                         }
                     

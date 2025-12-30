@@ -21,7 +21,7 @@ include_once('dashboard_header.php');
                                     <div class="Polaris-Stack Polaris-Stack--alignmentBaseline">
                                         <h2 class="Polaris-Heading"><div class="allist"> Page's list</div></h2>
                                         <div class="btnadd">
-                                            <a  class="Polaris-Button Polaris-Button--primary save_loader_show" onclick="loading_show('.save_loader_show')" href="addpages.php?store=<?php echo $_SESSION['store']; ?>">
+                                            <a  class="Polaris-Button Polaris-Button--primary save_loader_show" onclick="loading_show('.save_loader_show')" href="addpages.php?shop=<?php echo $_SESSION['store']; ?>">
                                                 <span>Add Page</span>
                                             </a>
                                         </div>

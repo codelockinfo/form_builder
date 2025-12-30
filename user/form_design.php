@@ -95,7 +95,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
             </div>
             <div class="brand desktop">
                 <div class="logo">
-                    <a href="index.php?store=<?php echo $store; ?>">
+                    <a href="index.php?shop=<?php echo $store; ?>">
                         <button type="button" class="Polaris-Link backtoindex">
                             <span class="Polaris-Icon">
                                 <span class="Polaris-VisuallyHidden"></span>

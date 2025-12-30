@@ -25,7 +25,7 @@ $store = ($params['store']);
                             <div class="Polaris-Card">
                                 <div class="Polaris-Card__Section">
                                     <nav role="navigation" class="product-detail-view">
-                                       <a href="collection.php?store=<?php echo $store;?>"  class="Polaris-Breadcrumbs__Breadcrumb" data-polaris-unstyled="true">
+                                       <a href="collection.php?shop=<?php echo $store;?>"  class="Polaris-Breadcrumbs__Breadcrumb" data-polaris-unstyled="true">
                                             <span class="Polaris-Breadcrumbs__Icon">
                                                 <span class="Polaris-Icon">
                                                     <svg class="Polaris-Icon__Svg" viewBox="0 0 20 20">

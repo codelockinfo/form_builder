@@ -109,7 +109,7 @@ If you get 404 when testing the endpoint:
 ### Fix 2: No Forms Found
 
 If you get empty array `[]`:
-1. Go to your app: `https://codelocksolutions.com/form_builder/user/?store=YOUR-STORE`
+1. Go to your app: `https://codelocksolutions.com/form_builder/user/?shop=YOUR-STORE`
 2. Create a form
 3. Make sure form status is active
 4. Test the endpoint again

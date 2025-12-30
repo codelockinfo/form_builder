@@ -20,7 +20,7 @@
                             <div class="Polaris-Card">
                                 <div class="Polaris-Card__Section">
                                      <nav role="navigation" class="product-detail-view">
-                                            <a href="pages.php?store=<?php echo $_SESSION['store'];?>" class="Polaris-Breadcrumbs__Breadcrumb" data-polaris-unstyled="true">
+                                            <a href="pages.php?shop=<?php echo $_SESSION['store'];?>" class="Polaris-Breadcrumbs__Breadcrumb" data-polaris-unstyled="true">
                                                 <span class="Polaris-Breadcrumbs__Icon">
                                                     <span class="Polaris-Icon">
                                                         <svg class="Polaris-Icon__Svg" viewBox="0 0 20 20">
