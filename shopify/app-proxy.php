@@ -12,7 +12,9 @@ ini_set('log_errors', 1);
 
 // Set JSON header FIRST before any output
 header('Content-Type: application/json; charset=utf-8');
-
+if (!defined('ABS_PATH')) {
+    define('ABS_PATH', realpath(__DIR__ . '/..')); // shopify → form_builder
+}
 // Register shutdown function to catch fatal errors
 register_shutdown_function(function() {
     $error = error_get_last();
@@ -59,7 +61,7 @@ if (isset($_GET['debug']) && $_GET['debug'] == '1') {
 // Try to include connection file
 // Use output buffering to catch any output from includes
 try {
-    if (!file_exists('../append/connection.php')) {
+    if (!file_exists(ABS_PATH . '/append/connection.php')) {
         throw new Exception('connection.php not found');
     }
     
@@ -92,17 +94,13 @@ try {
     if (!defined('ABS_PATH')) {
         throw new Exception('ABS_PATH not defined after including connection.php');
     }
-    if (!defined('DB_OBJECT')) {
-        throw new Exception('DB_OBJECT not defined after including connection.php');
-    }
-    
 } catch (Exception $e) {
     if (ob_get_level() > 0) {
         ob_end_clean();
     }
     http_response_code(500);
     echo json_encode([
-        'error' => 'Configuration error', 
+        'error' => 'Configuration error 121321231', 
         'message' => $e->getMessage(),
         'file' => $e->getFile(),
         'line' => $e->getLine()

@@ -1,11 +1,10 @@
 <?php
 ob_start();
-
 include_once('cls_header.php');
 //include_once('../append/session.php');
 $common_function = new common_function();
 
-if (isset($_GET['store']) && $_GET['store'] != '') {
+if (isset($_GET['shop']) && $_GET['shop'] != '') {
     include_once('dashboard_header.php');
     include("create-new-form.php");
 } else {

@@ -1,7 +1,9 @@
 <?php
+
 error_reporting(E_ALL);
 ini_set("error_reporting", E_ALL);
- session_start();
+session_start();
+
 if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_SERVER", "localhost");
     define("DB_DATABASE", "u402017191_form_builder");
@@ -9,7 +11,6 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_PASSWORD", "");
     define("DB_OBJECT", "mysql"); 
     define('MODE', 'dev');
-    define('ABS_PATH', dirname(dirname(__FILE__)));
     define('MAIN_URL', 'http://localhost/form_builder');
     define('CLS_SITE_URL', 'http://localhost/form_builder');
     define('SITE_CLIENT_URL', 'http://localhost/form_builder/user/');
@@ -22,7 +23,6 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     define("DB_PASSWORD", "Codelock@99");
     define("DB_OBJECT", "mysql");
     define('MODE', 'live');
-    define('ABS_PATH', dirname(dirname(__FILE__)));
     define('MAIN_URL', 'https://codelocksolutions.com/form_builder/');
     define('CLS_SITE_URL', 'https://codelocksolutions.com/form_builder/');
      define('CLS_TRACK_PATH', $_SERVER['DOCUMENT_ROOT']);
@@ -32,6 +32,8 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
     echo 'Undefine host';
     exit;
 }
+define('ABS_PATH', dirname(dirname(__FILE__)));
+
 if (!function_exists('main_url')) {
     function main_url($uri = '') {
         $main_url = '';
@@ -212,7 +214,7 @@ if (!isset($__variousLanguageNeeded) || (isset($__variousLanguageNeeded) && $__v
     }
     $calder_locale_obj = new Calender_Locale();
 }
-function  generate_log($inventory = 'General', $log_information = 'test') {
+function  generate_log_old($inventory = 'General', $log_information = 'test') {
 
   
     if (MODE == 'live') {

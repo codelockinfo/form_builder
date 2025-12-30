@@ -1,4 +1,9 @@
 <?php
+
+error_reporting(E_ALL);          // Report all PHP errors
+ini_set('display_errors', 1);    // Display errors on the page (for development)
+ini_set('log_errors', 1);
+
 require_once('include.php');
 include_once('cls_header.php');
 $common_function = new common_function();
