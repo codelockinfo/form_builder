@@ -21,6 +21,7 @@ if (!function_exists('generate_log')) {
         ];
 
         file_put_contents(
+            
             $file,
             "----------------------------------\n" . json_encode($log, JSON_PRETTY_PRINT) . "\n",
             FILE_APPEND
