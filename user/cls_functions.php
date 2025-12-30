@@ -331,7 +331,7 @@ class Client_functions extends common_function {
                                             <div class="main_left_ clsmain_form">
                                             <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
                                                 <div class="sp-font-size">'.$templates['form_name'].'</div>
-                                                <div class="form-id-display" style="margin-top: 4px; font-size: 12px; color: #6b7280;">
+                                                <div class="form-id-display" style="margin-left: 10px; font-size: 12px; color: #6b7280;">
                                                     <span style="font-weight: 500;">Form ID: </span>
                                                     '.((isset($templates['public_id']) && !empty($templates['public_id'])) ? '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\''.$templates['public_id'].'\', this)" title="Click to copy Form ID">'.$templates['public_id'].'</span>' : '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\''.$templates['id'].'\', this)" title="Click to copy Form ID">'.$templates['id'].'</span>').'
                                                     <span class="copy-success" style="margin-left: 6px; color: #10b981; display: none; font-size: 11px;">✓ Copied!</span>
