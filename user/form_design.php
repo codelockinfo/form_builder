@@ -5167,26 +5167,31 @@ if ($form_id > 0) {
             }, 500);
         });
         
-        // Load store pages from Shopify API
-        function loadStorePages(pageNo, searchKeyword) {
+        // Load store pages from Shopify API (using GraphQL)
+        function loadStorePages(pageNo, searchKeyword, cursor) {
             currentPageNo = pageNo;
             $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
+            
+            var ajaxData = {
+                routine_name: 'take_api_shopify_data',
+                shopify_api: 'pages',
+                store: store,
+                limit: 10,
+                pageno: pageNo,
+                listing_id: 'pagesData',
+                pagination_method: 'pagination'
+            };
+            
+            // Add cursor for GraphQL pagination
+            if (cursor) {
+                ajaxData.cursor = cursor;
+            }
             
             $.ajax({
                 url: "ajax_call.php",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    routine_name: 'take_api_shopify_data',
-                    shopify_api: 'pages',
-                    store: store,
-                    limit: 10,
-                    pageno: pageNo,
-                    search_keyword: searchKeyword,
-                    search_fields: 'title',
-                    listing_id: 'pagesData',
-                    pagination_method: 'pagination'
-                },
+                data: ajaxData,
                 success: function(response) {
                     console.log('Pages API Response:', response);
                     
@@ -5259,9 +5264,14 @@ if ($form_id > 0) {
                             $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
                         }
                         
-                        // Add pagination
-                        if (response.pagination_html) {
-                            $('#pagesPagination').html(response.pagination_html);
+                        // Add pagination (GraphQL uses cursor-based pagination)
+                        if (response.hasNextPage && response.endCursor) {
+                            var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
+                            paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '">';
+                            paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
+                            paginationHtml += '</button>';
+                            paginationHtml += '</div>';
+                            $('#pagesPagination').html(paginationHtml);
                         } else {
                             $('#pagesPagination').html('');
                         }
@@ -5299,12 +5309,73 @@ if ($form_id > 0) {
             });
         }
         
-        // Handle pagination clicks
+        // Handle pagination clicks (for REST API)
         $(document).on('click', '.page-link', function(e) {
             e.preventDefault();
             var pageNo = $(this).data('page') || $(this).attr('data-page');
             if (pageNo) {
                 loadStorePages(pageNo, searchKeyword);
+            }
+        });
+        
+        // Handle "Load More" for GraphQL cursor-based pagination
+        $(document).on('click', '.loadMorePages', function(e) {
+            e.preventDefault();
+            var cursor = $(this).data('cursor');
+            var pageNo = $(this).data('page') || currentPageNo + 1;
+            if (cursor) {
+                // Append new pages instead of replacing
+                var $loadingRow = $('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading more pages...</span></td></tr>');
+                $('#pagesListBody').append($loadingRow);
+                
+                $.ajax({
+                    url: "ajax_call.php",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        routine_name: 'take_api_shopify_data',
+                        shopify_api: 'pages',
+                        store: store,
+                        limit: 10,
+                        pageno: pageNo,
+                        cursor: cursor,
+                        listing_id: 'pagesData',
+                        pagination_method: 'pagination'
+                    },
+                    success: function(response) {
+                        $loadingRow.remove();
+                        
+                        if (response['code'] != undefined && response['code'] == '403') {
+                            redirect403();
+                            return;
+                        }
+                        
+                        if (response.outcome == 'true' && response.html && response.html.length > 0) {
+                            // Append new pages to existing list
+                            response.html.forEach(function(htmlRow) {
+                                if (typeof htmlRow === 'string') {
+                                    $('#pagesListBody').append(htmlRow);
+                                }
+                            });
+                            
+                            // Update pagination
+                            if (response.hasNextPage && response.endCursor) {
+                                var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
+                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '">';
+                                paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
+                                paginationHtml += '</button>';
+                                paginationHtml += '</div>';
+                                $('#pagesPagination').html(paginationHtml);
+                            } else {
+                                $('#pagesPagination').html('');
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $loadingRow.remove();
+                        console.error('Error loading more pages:', error);
+                    }
+                });
             }
         });
         

@@ -31,18 +31,83 @@ class Client_functions extends common_function {
     function cls_get_shopify_list($shopify_api_name_arr = array(), $shopify_url_param_array = [], $type = '', $shopify_is_object = 1) {
         $shopinfo = $this->current_store_obj;
         $store_name = $shopinfo->shop_name;
-        $password = $shopinfo->password;
-        $shopify_url_array = array_merge(array('/admin/' . CLS_API_VERSIION), $shopify_api_name_arr);
+        $access_token = $shopinfo->password; // This is the access token stored in database (TABLE_USER_SHOP.password)
+        
+        // Use API version from config (already includes 'api/' prefix) or default
+        $api_version = defined('CLS_API_VERSIION') ? CLS_API_VERSIION : 'api/2023-10';
+        
+        // Build the API endpoint URL - CLS_API_VERSIION already includes 'api/'
+        $shopify_url_array = array_merge(array('/admin/' . $api_version), $shopify_api_name_arr);
         $shopify_main_url = implode('/', $shopify_url_array) . '.json';
-        $comeback= $this->select_result(CLS_TABLE_THIRDPARTY_APIKEY, '*',$where_query);
-        $CLS_API_KEY = (isset($comeback['data'][1]['thirdparty_apikey']) && $comeback['data'][1]['thirdparty_apikey'] !== '') ? $comeback['data'][1]['thirdparty_apikey'] : '';
-        $shopify_data_list = cls_api_call(CLS_API_KEY, $password, $store_name, $shopify_main_url, $shopify_url_param_array, $type);
+        
+        // Use shopify_call which properly uses X-Shopify-Access-Token header with stored access token
+        // This uses the access token from the database to authenticate with Shopify Admin API
+        $shopify_data_list = shopify_call($access_token, $store_name, $shopify_main_url, $shopify_url_param_array, 'GET');
         
         if ($shopify_is_object) {
             return json_decode($shopify_data_list['response']);
         } else {
             return json_decode($shopify_data_list['response'], TRUE);
         }
+    }
+    
+    /**
+     * Make GraphQL API call to Shopify using stored access token
+     */
+    function cls_shopify_graphql_call($query, $variables = array()) {
+        $shopinfo = $this->current_store_obj;
+        $store_name = $shopinfo->shop_name;
+        $access_token = $shopinfo->password; // Access token from database
+        
+        // GraphQL endpoint
+        $graphql_url = "https://" . $store_name . "/admin/api/2023-10/graphql.json";
+        
+        // Prepare GraphQL request
+        $payload = array(
+            'query' => $query
+        );
+        
+        if (!empty($variables)) {
+            $payload['variables'] = $variables;
+        }
+        
+        // Setup cURL
+        $curl = curl_init($graphql_url);
+        curl_setopt($curl, CURLOPT_HEADER, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'My New Shopify App v.1');
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        
+        // Setup headers
+        $request_headers = array(
+            'Content-Type: application/json',
+            'X-Shopify-Access-Token: ' . $access_token
+        );
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $request_headers);
+        
+        // Set POST data
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+        
+        // Execute request
+        $response = curl_exec($curl);
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+        
+        $error_number = curl_errno($curl);
+        $error_message = curl_error($curl);
+        curl_close($curl);
+        
+        if ($error_number) {
+            return array('error' => $error_message, 'response' => null);
+        }
+        
+        return array('headers' => $header, 'response' => $body);
     }
 
     function take_api_shopify_data() {
@@ -52,9 +117,16 @@ class Client_functions extends common_function {
                 $shopify_api = $_POST['shopify_api'];
                 $shopinfo = $this->current_store_obj;
                 $pages = defined('PAGE_PER') ? PAGE_PER : 10;
-                $limit = isset($_POST['limit']) ? $_POST['limit'] : $pages;
+                $limit = isset($_POST['limit']) ? intval($_POST['limit']) : intval($pages);
                 $page_no = isset($_POST['pageno']) ? $_POST['pageno'] : '1';
+                $cursor = isset($_POST['cursor']) ? $_POST['cursor'] : null;
                 
+                // Use GraphQL for pages API
+                if ($shopify_api == 'pages') {
+                    return $this->get_pages_via_graphql($limit, $cursor);
+                }
+                
+                // For other APIs, use REST API
                 // Shopify API uses 'page' parameter, not 'pageno'
                 $shopify_url_param_array = array(
                     'limit' => $limit,
@@ -137,6 +209,126 @@ class Client_functions extends common_function {
             return $comeback;
         }
         return $comeback;
+    }
+    
+    /**
+     * Get pages using GraphQL API
+     */
+    function get_pages_via_graphql($limit = 10, $cursor = null) {
+        try {
+            // Build GraphQL query
+            $query = '
+                query PageList($first: Int!, $after: String) {
+                    pages(first: $first, after: $after) {
+                        edges {
+                            node {
+                                id
+                                title
+                                handle
+                                body
+                                createdAt
+                                updatedAt
+                            }
+                        }
+                        pageInfo {
+                            hasNextPage
+                            endCursor
+                        }
+                    }
+                }
+            ';
+            
+            // Prepare variables
+            $variables = array(
+                'first' => $limit
+            );
+            
+            if ($cursor) {
+                $variables['after'] = $cursor;
+            }
+            
+            // Make GraphQL call
+            $graphql_response = $this->cls_shopify_graphql_call($query, $variables);
+            
+            if (isset($graphql_response['error'])) {
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'GraphQL Error: ' . $graphql_response['error'],
+                    'html' => array()
+                );
+            }
+            
+            $response_data = json_decode($graphql_response['response'], true);
+            
+            // Check for GraphQL errors
+            if (isset($response_data['errors'])) {
+                $error_message = isset($response_data['errors'][0]['message']) ? $response_data['errors'][0]['message'] : 'Unknown GraphQL error';
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'GraphQL Error: ' . $error_message,
+                    'html' => array()
+                );
+            }
+            
+            // Extract pages data
+            $tr_html = array();
+            $has_next_page = false;
+            $end_cursor = null;
+            
+            if (isset($response_data['data']['pages']['edges'])) {
+                foreach ($response_data['data']['pages']['edges'] as $edge) {
+                    $page = $edge['node'];
+                    
+                    // Extract page ID (format: gid://shopify/OnlineStorePage/123456)
+                    $page_id = '';
+                    if (isset($page['id'])) {
+                        $id_parts = explode('/', $page['id']);
+                        $page_id = end($id_parts);
+                    }
+                    
+                    $page_title = isset($page['title']) ? htmlspecialchars($page['title']) : 'Untitled';
+                    $page_handle = isset($page['handle']) ? htmlspecialchars($page['handle']) : '';
+                    
+                    $tr_html[] = '<tr class="page-item-row" data-page-id="' . $page_id . '" data-page-title="' . htmlspecialchars($page_title) . '" data-page-handle="' . htmlspecialchars($page_handle) . '">' .
+                        '<td>' . $page_id . '</td>' .
+                        '<td>' . htmlspecialchars($page_title) . '</td>' .
+                        '<td>' . htmlspecialchars($page_handle) . '</td>' .
+                        '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>' .
+                        '</tr>';
+                }
+                
+                // Get pagination info
+                if (isset($response_data['data']['pages']['pageInfo'])) {
+                    $page_info = $response_data['data']['pages']['pageInfo'];
+                    $has_next_page = isset($page_info['hasNextPage']) ? $page_info['hasNextPage'] : false;
+                    $end_cursor = isset($page_info['endCursor']) ? $page_info['endCursor'] : null;
+                }
+            }
+            
+            // Generate pagination HTML (simplified for GraphQL cursor-based pagination)
+            $pagination_html = '';
+            if ($has_next_page && $end_cursor) {
+                $pagination_html = '<div class="pagination"><button class="page-link" data-cursor="' . htmlspecialchars($end_cursor) . '">Load More</button></div>';
+            }
+            
+            return array(
+                'outcome' => 'true',
+                'total_record' => count($tr_html),
+                'recordsFiltered' => count($tr_html),
+                'pagination_html' => $pagination_html,
+                'html' => $tr_html,
+                'hasNextPage' => $has_next_page,
+                'endCursor' => $end_cursor
+            );
+            
+        } catch (Exception $e) {
+            error_log('get_pages_via_graphql error: ' . $e->getMessage());
+            return array(
+                'outcome' => 'false',
+                'report' => 'Error: ' . $e->getMessage(),
+                'html' => array()
+            );
+        }
     }
 
     function take_table_shopify_data() {
