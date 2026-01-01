@@ -4914,7 +4914,7 @@ if ($form_id > 0) {
     <!-- Modal 1: Select Store Page -->
     <div id="publishPageModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10000;">
         <div class="Polaris-Modal-Dialog Polaris-Modal-Dialog--sizeLarge">
-            <div class="Polaris-Modal-Dialog__Modal">
+            <div class="Polaris-Modal-Dialog__Modal" style="height: auto;">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
                         <div class="Polaris-Page" style="padding: 0;">
@@ -4925,7 +4925,7 @@ if ($form_id > 0) {
                                             <div class="Polaris-Card__Header">
                                                 <h2 class="Polaris-Heading">Select Store Page</h2>
                                             </div>
-                                            <div class="Polaris-Card__Section">
+                                            <div class="Polaris-Card__Section" style="padding-bottom: 0;">
                                                 <div class="Polaris-TextField">
                                                     <input type="text" id="pageSearchInput" class="Polaris-TextField__Input" placeholder="Search pages..." aria-invalid="false">
                                                     <div class="Polaris-TextField__Backdrop"></div>
@@ -4982,15 +4982,15 @@ if ($form_id > 0) {
             <div class="Polaris-Modal-Dialog__Modal">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
-                        <div class="Polaris-Page">
-                            <div class="Polaris-Page__Content">
-                                <div class="Polaris-Card">
-                                    <div class="Polaris-Card__Section">
+                        <div class="Polaris-Page" style="padding: 0;">
+                            <div class="Polaris-Page__Content" style="padding: 0;">
+                                <div class="Polaris-Card" style="border-radius: 0; box-shadow: none; padding: 0;">
+                                    <div class="Polaris-Card__Section" style="padding: 0;">
                                         <h2 class="Polaris-Heading">Publish Form</h2>
                                         <div style="margin-top: 20px;">
                                             <p><strong>Selected Page:</strong> <span id="selectedPageTitle"></span></p>
-                                            <p style="margin-top: 15px;"><strong>Form ID:</strong></p>
                                             <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                                                <p style="margin-top: 15px;"><strong>Form ID:</strong></p>
                                                 <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
                                                 <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
                                                     <span class="Polaris-Button__Content">
@@ -4998,7 +4998,35 @@ if ($form_id > 0) {
                                                     </span>
                                                 </button>
                                             </div>
-                                            <p style="margin-top: 15px; font-size: 13px; color: #6b7280;">Click Publish to redirect to the page customizer.</p>
+                                            
+                                            <!-- Guidance Steps -->
+                                            <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+                                                <h3 class="Polaris-Heading" style="font-size: 16px; margin-bottom: 20px;">How to Add Form to Your Page:</h3>
+                                                
+                                                <!-- Step 1: How to Add section -->
+                                                <div style="margin-bottom: 25px;">
+                                                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                                        <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">1</span>
+                                                        <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to Add section?</h4>
+                                                    </div>
+                                                    <div style="margin-left: 40px; margin-top: 10px;">
+                                                        <img src="<?php echo main_url('assets/images/ADD_SECTION.png'); ?>" alt="How to Add Section" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Step 2: How to Get Form -->
+                                                <div style="margin-bottom: 20px;">
+                                                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                                        <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">2</span>
+                                                        <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to get Form?</h4>
+                                                    </div>
+                                                    <div style="margin-left: 40px; margin-top: 10px;">
+                                                        <img src="<?php echo main_url('assets/images/GET_FORM.png'); ?>" alt="How to Get Form" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Click Publish to redirect to the page customizer.</p>
                                         </div>
                                     </div>
                                 </div>
