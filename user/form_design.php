@@ -4914,7 +4914,7 @@ if ($form_id > 0) {
     <!-- Modal 1: Select Store Page -->
     <div id="publishPageModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10000;">
         <div class="Polaris-Modal-Dialog Polaris-Modal-Dialog--sizeLarge">
-            <div class="Polaris-Modal-Dialog__Modal" style="height: auto; width: 500px!important;">
+            <div class="Polaris-Modal-Dialog__Modal" style="height: auto;  width: 500px!important;">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
                         <div class="Polaris-Page" style="padding: 0;">
@@ -4926,21 +4926,14 @@ if ($form_id > 0) {
                                                 <h2 class="Polaris-Heading">Select Store Page</h2>
                                             </div>
                                             <div class="Polaris-Card__Section" style="padding-bottom: 0;">
-                                                <!-- Loader -->
-                                                <div id="pageSelectionLoader" style="text-align: center; padding: 40px 20px;">
-                                                    <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
-                                                    <span style="margin-left: 10px;">Loading...</span>
-                                                </div>
-                                                
-                                                <!-- Content (hidden initially) -->
-                                                <div id="pageSelectionContent" style="display: none;">
+                                                <!-- Content -->
+                                                <div id="pageSelectionContent">
                                                     <div class="Polaris-TextField">
                                                         <input type="text" id="pageSearchInput" class="Polaris-TextField__Input" placeholder="Search pages..." aria-invalid="false">
                                                         <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                     <div class="Polaris-DataTable" style="margin-top: 20px;">
-                                                        <div class="table-responsive">
-                                                        <table class="table" style="width: 100%!important;">
+                                                        <table class="table" style="width: 100%!important; margin-bottom: 0;">
                                                             <thead style="text-align: left!important;">
                                                                 <tr>
                                                                     <th>Title</th>
@@ -4951,8 +4944,7 @@ if ($form_id > 0) {
                                                                 <!-- Pages will be loaded here -->
                                                             </tbody>
                                                         </table>
-                                                        </div>
-                                                        <div id="pagesPagination" class="cls-page-pagination mb-4" style="margin-top: 20px;"></div>
+                                                        <!-- <div id="pagesPagination" class="cls-page-pagination mb-4" style="margin-top: 20px;"></div> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -5256,22 +5248,29 @@ if ($form_id > 0) {
             html += '<td></td>';
             html += '</tr>';
             
-            // Add sub-items for pages (initially visible/expanded by default)
-            // Show first 10 pages by default, rest will be loaded via "Load More"
-            var pagesToShow = pages.slice(0, 10); // Show first 10 pages initially
-            var remainingPages = pages.slice(10); // Store remaining pages for "Load More"
+            // Add scrollable container row for page sub-items only
+            html += '<tr class="page-scrollable-container-row">';
+            html += '<td colspan="2" style="padding: 0;">';
+            html += '<div class="page-sub-items-scrollable" style="max-height: 350px; overflow-y: auto; overflow-x: hidden; background-color: #f9fafb;">';
+            html += '<table class="table" style="width: 100%; margin-bottom: 0; background-color: #f9fafb;">';
+            html += '<tbody class="page-sub-items-body">';
             
-            if (pagesToShow.length > 0) {
-                pagesToShow.forEach(function(page) {
+            // Add sub-items for pages (initially visible/expanded by default)
+            // Show all pages at once (no pagination)
+            if (pages.length > 0) {
+                pages.forEach(function(page) {
                     html += '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="background-color: #f9fafb;">';
-                    html += '<td style="padding-left: 30px;">' + escapeHtml(page.title) + '</td>';
-                    html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                    html += '<td style="padding-left: 30px; padding: 5px;">' + escapeHtml(page.title) + '</td>';
+                    html += '<td style="text-align: right; padding: 5px;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
                     html += '</tr>';
                 });
             }
             
-            // Store remaining pages globally for "Load More" functionality
-            window.remainingPagesForLoadMore = remainingPages;
+            html += '</tbody>';
+            html += '</table>';
+            html += '</div>';
+            html += '</td>';
+            html += '</tr>';
             
             return html;
         }
@@ -5279,14 +5278,14 @@ if ($form_id > 0) {
         // Toggle page sub-items visibility
         $(document).on('click', '.page-parent-row, .page-toggle-icon', function(e) {
             e.stopPropagation();
-            var $subItems = $('.page-sub-item');
+            var $scrollableContainer = $('.page-scrollable-container-row');
             var $icon = $('.page-toggle-icon');
             
-            if ($subItems.first().is(':visible')) {
-                $subItems.hide();
+            if ($scrollableContainer.is(':visible')) {
+                $scrollableContainer.hide();
                 $icon.text('▶');
             } else {
-                $subItems.show();
+                $scrollableContainer.show();
                 $icon.text('▼');
             }
         });
@@ -5294,8 +5293,6 @@ if ($form_id > 0) {
         // Open page selection modal
         $(document).on('click', '.publish-form-btn', function() {
             $('#publishPageModal').show();
-            $('#pageSelectionLoader').show();
-            $('#pageSelectionContent').hide();
             loadStorePages(1, '');
         });
         
@@ -5332,19 +5329,13 @@ if ($form_id > 0) {
             console.log('Cursor:', cursor);
             console.log('Store:', store);
             
-            // Show loader if this is the first load
-            if (!cursor) {
-                $('#pageSelectionLoader').show();
-                $('#pageSelectionContent').hide();
-            }
-            
             $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
             
             var ajaxData = {
                 routine_name: 'take_api_shopify_data',
                 shopify_api: 'pages',
                 store: store,
-                limit: 10,
+                limit: 250, // Load all pages at once (Shopify max is 250)
                 pageno: pageNo,
                 listing_id: 'pagesData',
                 pagination_method: 'pagination'
@@ -5385,10 +5376,6 @@ if ($form_id > 0) {
                     console.log('Response html is array:', Array.isArray(response.html));
                     console.log('Response html length:', response.html ? (Array.isArray(response.html) ? response.html.length : 'N/A') : 'null/undefined');
                     
-                    // Hide loader and show content
-                    $('#pageSelectionLoader').hide();
-                    $('#pageSelectionContent').show();
-                    
                     if (response.outcome == 'true' || response.outcome === 'true') {
                         // Store API response for later use
                         window.lastAPIResponse = {
@@ -5410,42 +5397,8 @@ if ($form_id > 0) {
                             $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
                         }
                         
-                        // Add pagination (GraphQL uses cursor-based pagination)
-                        // Check if there are more pages to load (either from stored pages or from API)
-                        console.log('Pagination check - hasNextPage:', response.hasNextPage, 'endCursor:', response.endCursor);
-                        console.log('Remaining pages for Load More:', window.remainingPagesForLoadMore ? window.remainingPagesForLoadMore.length : 0);
-                        
-                        // Check if there are more pages from API
-                        var hasMorePagesFromAPI = false;
-                        if (response.hasNextPage === true || response.hasNextPage === 'true') {
-                            if (response.endCursor && response.endCursor !== null && response.endCursor !== '' && response.endCursor !== 'null') {
-                                hasMorePagesFromAPI = true;
-                            }
-                        }
-                        
-                        // Check if there are remaining pages stored locally
-                        var hasRemainingPages = window.remainingPagesForLoadMore && window.remainingPagesForLoadMore.length > 0;
-                        
-                        // Show "Load More" if there are more pages from API OR remaining pages locally
-                        if (hasMorePagesFromAPI || hasRemainingPages) {
-                            var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
-                            if (hasRemainingPages) {
-                                // Load from local stored pages first
-                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-load-type="local">';
-                            } else if (hasMorePagesFromAPI) {
-                                // Load from API
-                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '" data-load-type="api">';
-                            }
-                            paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
-                            paginationHtml += '</button>';
-                            paginationHtml += '</div>';
-                            $('#pagesPagination').html(paginationHtml);
-                            console.log('Pagination HTML added - hasMorePagesFromAPI:', hasMorePagesFromAPI, 'hasRemainingPages:', hasRemainingPages);
-                        } else {
-                            // All pages loaded - hide the Load More button
-                            $('#pagesPagination').html('');
-                            console.log('All pages loaded - no pagination needed.');
-                        }
+                        // No pagination needed - all pages loaded at once
+                        $('#pagesPagination').html('');
                     } else {
                         console.warn('=== Response outcome is false ===');
                         console.warn('Full Response Object:', response);
