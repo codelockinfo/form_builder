@@ -5170,6 +5170,12 @@ if ($form_id > 0) {
         // Load store pages from Shopify API (using GraphQL)
         function loadStorePages(pageNo, searchKeyword, cursor) {
             currentPageNo = pageNo;
+            console.log('=== loadStorePages called ===');
+            console.log('Page No:', pageNo);
+            console.log('Search Keyword:', searchKeyword);
+            console.log('Cursor:', cursor);
+            console.log('Store:', store);
+            
             $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
             
             var ajaxData = {
@@ -5187,24 +5193,43 @@ if ($form_id > 0) {
                 ajaxData.cursor = cursor;
             }
             
+            console.log('=== AJAX Request Data ===');
+            console.log('URL:', 'ajax_call.php');
+            console.log('Request Data:', ajaxData);
+            console.log('Request Data (JSON):', JSON.stringify(ajaxData, null, 2));
+            
             $.ajax({
                 url: "ajax_call.php",
                 type: "POST",
                 dataType: "json",
                 data: ajaxData,
+                beforeSend: function() {
+                    console.log('=== AJAX Request Starting ===');
+                },
                 success: function(response) {
-                    console.log('Pages API Response:', response);
+                    console.log('=== AJAX Success Response ===');
+                    console.log('Full Response:', response);
+                    console.log('Response Type:', typeof response);
+                    console.log('Response (JSON):', JSON.stringify(response, null, 2));
                     
                     if (response['code'] != undefined && response['code'] == '403') {
+                        console.error('403 Error - Access Denied');
                         redirect403();
                         return;
                     }
                     
+                    console.log('Response outcome:', response.outcome);
+                    console.log('Response html type:', typeof response.html);
+                    console.log('Response html is array:', Array.isArray(response.html));
+                    console.log('Response html length:', response.html ? (Array.isArray(response.html) ? response.html.length : 'N/A') : 'null/undefined');
+                    
                     if (response.outcome == 'true' || response.outcome === 'true') {
                         var html = '';
+                        console.log('Processing successful response...');
                         
                         // Check if html is an array or a string
                         if (Array.isArray(response.html)) {
+                            console.log('HTML is an array with', response.html.length, 'items');
                             // If it's an array of objects
                             if (response.html.length > 0 && typeof response.html[0] === 'object') {
                                 response.html.forEach(function(page) {
@@ -5235,8 +5260,12 @@ if ($form_id > 0) {
                             html = response.html;
                         }
                         
+                        console.log('Final HTML length:', html.length);
+                        console.log('Final HTML preview:', html.substring(0, 200));
+                        
                         if (html) {
                             $('#pagesListBody').html(html);
+                            console.log('HTML inserted into table. Row count:', $('#pagesListBody .page-item-row').length);
                             
                             // Update select buttons to work with our handler
                             $('#pagesListBody .page-item-row').each(function() {
@@ -5265,6 +5294,7 @@ if ($form_id > 0) {
                         }
                         
                         // Add pagination (GraphQL uses cursor-based pagination)
+                        console.log('Pagination check - hasNextPage:', response.hasNextPage, 'endCursor:', response.endCursor);
                         if (response.hasNextPage && response.endCursor) {
                             var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
                             paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '">';
@@ -5272,39 +5302,67 @@ if ($form_id > 0) {
                             paginationHtml += '</button>';
                             paginationHtml += '</div>';
                             $('#pagesPagination').html(paginationHtml);
+                            console.log('Pagination HTML added');
                         } else {
                             $('#pagesPagination').html('');
+                            console.log('No pagination needed');
                         }
                     } else {
+                        console.warn('=== Response outcome is false ===');
+                        console.warn('Full Response Object:', response);
+                        console.warn('Response (JSON):', JSON.stringify(response, null, 2));
+                        
                         var errorMsg = 'No pages found.';
                         if (response.report) {
                             errorMsg = response.report;
+                            console.error('Error Report:', response.report);
                         }
+                        
+                        // Log errors array if present
+                        if (response.errors) {
+                            console.error('GraphQL Errors Array:', response.errors);
+                            console.error('GraphQL Errors (JSON):', JSON.stringify(response.errors, null, 2));
+                        }
+                        
+                        // Log full response if present
+                        if (response.full_response) {
+                            console.error('Full GraphQL Response:', response.full_response);
+                            console.error('Full GraphQL Response (JSON):', JSON.stringify(response.full_response, null, 2));
+                        }
+                        
+                        console.error('Displaying error message:', errorMsg);
                         $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">' + errorMsg + '</td></tr>');
                         $('#pagesPagination').html('');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error loading pages:', {
-                        xhr: xhr,
-                        status: status,
-                        error: error,
-                        responseText: xhr.responseText
-                    });
+                    console.error('=== AJAX Error ===');
+                    console.error('Status:', status);
+                    console.error('Error:', error);
+                    console.error('XHR Status:', xhr.status);
+                    console.error('XHR Status Text:', xhr.statusText);
+                    console.error('Response Text:', xhr.responseText);
+                    console.error('Full XHR Object:', xhr);
                     
                     var errorMsg = 'Error loading pages. Please try again.';
                     if (xhr.responseText) {
                         try {
                             var errorResponse = JSON.parse(xhr.responseText);
+                            console.error('Parsed Error Response:', errorResponse);
                             if (errorResponse.report) {
                                 errorMsg = errorResponse.report;
                             }
                         } catch (e) {
-                            // Use default message
+                            console.error('Failed to parse error response:', e);
+                            console.error('Raw response text:', xhr.responseText);
                         }
                     }
                     
+                    console.error('Final Error Message:', errorMsg);
                     $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc2626;">' + errorMsg + '</td></tr>');
+                },
+                complete: function() {
+                    console.log('=== AJAX Request Complete ===');
                 }
             });
         }
