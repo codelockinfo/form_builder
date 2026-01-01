@@ -301,6 +301,28 @@ if ($form_id > 0) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="root">
+                                <div class="builder-item-wrapper ">
+                                    <div class="list-item theme-settings-item" data-owl="15">
+                                        <div class="row">
+                                            <div class="icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false"
+                                                        aria-hidden="true">
+                                                        <path
+                                                            d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-1-9a1 1 0 0 0 0 2h2a1 1 0 1 0 0-2H9zm0 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H9z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="title">
+                                                <div>Theme Settings</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="Polaris-Tabs__Panel  tab-content" id="tab-2" role="tabpanel" aria-labelledby="settings"
@@ -2264,6 +2286,92 @@ if ($form_id > 0) {
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+                <div class="polarisformcontrol theme-settings-content">
+                    <div class="header backheader">
+                        <button class="ui-btn back-icon">
+                            <span class="Polaris-Icon backBtn" data-id='0'>
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path
+                                        d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="title">Theme Settings</div>
+                    </div>
+                    <div class="" style="height: calc(100vh - 5.6rem); overflow: hidden;">
+                        <div class="themeSettingsData" style="height: 100%; overflow-y: auto; padding: 20px;">
+                                    <!-- Loader -->
+                                    <div id="themeSettingsLoader" style="display: none; text-align: center; padding: 40px 20px;">
+                                        <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
+                                        <span style="margin-left: 10px;">Loading theme settings...</span>
+                                    </div>
+                                    
+                                    <!-- Content -->
+                                    <div id="themeSettingsContent" style="display: block;">
+                                        <!-- Colors Section -->
+                                        <div class="theme-settings-section">
+                                            <div class="theme-settings-section-header">
+                                                <h3 class="theme-settings-section-title">Colors</h3>
+                                                <button class="theme-settings-expand-btn" data-section="colors">
+                                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="theme-settings-section-content" id="colorsSectionContent">
+                                                <!-- Schemes Subsection -->
+                                                <div class="theme-settings-subsection">
+                                                    <h4 class="theme-settings-subsection-title">Schemes</h4>
+                                                    <p class="theme-settings-subsection-description">Color schemes can be applied to sections throughout your online store.</p>
+                                                    <div id="colorSchemaContainer" class="color-schemes-grid">
+                                                        <!-- Color schemes will be loaded here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Fonts Section -->
+                                        <div class="theme-settings-section">
+                                            <div class="theme-settings-section-header">
+                                                <h3 class="theme-settings-section-title">Fonts</h3>
+                                                <button class="theme-settings-expand-btn" data-section="fonts">
+                                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="theme-settings-section-content" id="fontsSectionContent">
+                                                <div id="fontsContainer" class="fonts-list">
+                                                    <!-- Fonts will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+                                        <!-- Text Presets Section -->
+                                        <div class="theme-settings-section">
+                                            <div class="theme-settings-section-header">
+                                                <h3 class="theme-settings-section-title">Text presets</h3>
+                                                <button class="theme-settings-expand-btn" data-section="textPresets">
+                                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="theme-settings-section-content" id="textPresetsSectionContent">
+                                                <p class="theme-settings-note">Sizes automatically scale for all screen sizes.</p>
+                                                <div id="typographyContainer" class="text-presets-list">
+                                                    <!-- Text presets will be loaded here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="polarisformcontrol">
@@ -5103,6 +5211,281 @@ if ($form_id > 0) {
         .page-item-row.selected {
             background-color: #e0f2fe;
         }
+        
+        /* Theme Settings Styles */
+        .theme-settings-section {
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 24px;
+        }
+        .theme-settings-section:last-child {
+            border-bottom: none;
+        }
+        .theme-settings-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .theme-settings-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202223;
+            margin: 0;
+        }
+        .theme-settings-expand-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: #6d7175;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        .theme-settings-expand-btn:hover {
+            color: #202223;
+        }
+        .theme-settings-expand-btn.expanded {
+            transform: rotate(180deg);
+        }
+        .theme-settings-section-content {
+            display: block;
+        }
+        .theme-settings-section-content.collapsed {
+            display: none;
+        }
+        .theme-settings-subsection {
+            margin-top: 16px;
+        }
+        .theme-settings-subsection-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #202223;
+            margin: 0 0 8px 0;
+        }
+        .theme-settings-subsection-description {
+            font-size: 13px;
+            color: #6d7175;
+            margin: 0 0 16px 0;
+        }
+        .theme-settings-note {
+            font-size: 13px;
+            color: #6d7175;
+            margin: 0 0 16px 0;
+        }
+        
+        /* Color Schemes Grid */
+        .color-schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .color-scheme-box {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .color-scheme-box:hover {
+            border-color: #c9cccf;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .color-scheme-box.add-scheme {
+            border: 2px dashed #008060;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+        }
+        .color-scheme-box.add-scheme:hover {
+            border-color: #006e52;
+            background: #f6fbf9;
+        }
+        .color-scheme-preview {
+            width: 100%;
+            height: 120px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .color-scheme-preview.transparent {
+            background-image: 
+                linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 12px 12px;
+            background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+        }
+        .color-scheme-preview-text {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1;
+        }
+        .color-scheme-swatches {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .color-scheme-swatch {
+            width: 24px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .color-scheme-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #202223;
+            text-align: center;
+        }
+        .add-scheme-icon {
+            width: 24px;
+            height: 24px;
+            color: #008060;
+            margin-bottom: 8px;
+        }
+        .add-scheme-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #008060;
+        }
+        
+        /* Fonts List */
+        .fonts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .font-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .font-item-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202223;
+            flex: 0 0 120px;
+        }
+        .font-item-control {
+            flex: 1;
+            max-width: 300px;
+        }
+        .font-preview-select {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .font-preview-icon {
+            font-size: 16px;
+            color: #6d7175;
+        }
+        
+        /* Text Presets List */
+        .text-presets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .text-preset-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 24px;
+        }
+        .text-preset-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .text-preset-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #202223;
+            margin-bottom: 16px;
+        }
+        .text-preset-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .text-preset-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .text-preset-control-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202223;
+            flex: 0 0 120px;
+        }
+        .text-preset-control-input {
+            flex: 1;
+            max-width: 200px;
+        }
+        .font-toggle-group {
+            display: flex;
+            gap: 4px;
+            background: #f6f6f7;
+            border-radius: 6px;
+            padding: 2px;
+        }
+        .font-toggle-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6d7175;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .font-toggle-btn.active {
+            background: #fff;
+            color: #202223;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .case-toggle-group {
+            display: flex;
+            gap: 4px;
+            background: #f6f6f7;
+            border-radius: 6px;
+            padding: 2px;
+        }
+        .case-toggle-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6d7175;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .case-toggle-btn.active {
+            background: #fff;
+            color: #202223;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .color-scheme-box.selected {
+            border-color: #008060;
+            border-width: 2px;
+            box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.1);
+        }
     </style>
     
         <script>
@@ -5164,6 +5547,7 @@ if ($form_id > 0) {
         get_selected_elements(<?php echo $form_id; ?>);
         seeting_enable_disable(<?php echo $form_id; ?>);
         // getFormTitle(<?php echo $form_id; ?>);
+        
         
         // Publish Form Functionality
         var selectedPageId = null;
@@ -5645,6 +6029,381 @@ if ($form_id > 0) {
                     }
                 });
             }
+        });
+        
+        // Helper function to initialize theme settings UI
+        function initializeThemeSettings() {
+            $('#themeSettingsLoader').hide();
+            $('#themeSettingsContent').show();
+            
+            // Display default theme settings first (will be updated by API)
+            displayThemeSettings([], [], [], []);
+            
+            // Initialize sections as expanded
+            $('.theme-settings-expand-btn').each(function() {
+                var $btn = $(this);
+                var section = $btn.data('section');
+                var $content = $('#' + section + 'SectionContent');
+                if ($content.length) {
+                    $content.removeClass('collapsed');
+                    $btn.addClass('expanded');
+                }
+            });
+            
+            // Load from API to get real data
+            loadThemeSettingsFromAPI();
+        }
+        
+        // Handle Theme Settings click - initialize when carousel navigates to slide 15
+        $(document).on('click', '.theme-settings-item', function() {
+            setTimeout(function() {
+                initializeThemeSettings();
+            }, 300);
+        });
+        
+        // Listen for carousel change events to initialize theme settings when slide 15 is shown
+        $('.owl-carousel').on('changed.owl.carousel', function(event) {
+            var currentSlide = event.item.index;
+            var $currentSlide = $(event.target).find('.owl-item').eq(currentSlide);
+            if ($currentSlide.find('.theme-settings-content').length > 0) {
+                initializeThemeSettings();
+            }
+        });
+        
+        // Function to load theme settings from API (optional, runs in background)
+        function loadThemeSettingsFromAPI() {
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'take_api_shopify_data',
+                    shopify_api: 'theme_settings',
+                    store: store
+                },
+                success: function(response) {
+                    if (response['code'] != undefined && response['code'] == '403') {
+                        redirect403();
+                        return;
+                    }
+                    
+                    console.log('Theme Settings API Response:', response);
+                    
+                    if (response.outcome == 'true' || response.outcome === 'true') {
+                        console.log('Color Schemes:', response.color_schemes);
+                        console.log('Colors:', response.colors);
+                        console.log('Typography:', response.typography);
+                        console.log('Text Presets:', response.text_presets);
+                        
+                        displayThemeSettings(
+                            response.color_schemes || [],
+                            response.colors || [],
+                            response.typography || [],
+                            response.text_presets || []
+                        );
+                    } else {
+                        console.warn('Theme Settings API returned false:', response.report || 'Unknown error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Theme settings API error (using defaults):', error);
+                }
+            });
+        }
+        
+        // Function to display theme settings
+        function displayThemeSettings(colorSchemes, colors, typography, textPresets) {
+            // Use API color schemes if available, otherwise use defaults
+            var schemesToDisplay = colorSchemes && colorSchemes.length > 0 ? colorSchemes : [
+                { id: 1, bg: '#ffffff', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' },
+                { id: 2, bg: '#7B5C50', text: '#E5E5E5', swatch1: '#7B5C50', swatch2: '#E5E5E5' },
+                { id: 3, bg: '#4A5B63', text: '#E5E5E5', swatch1: '#4A5B63', swatch2: '#E5E5E5' },
+                { id: 4, bg: '#E0DCD5', text: '#7B5C50', swatch1: '#7B5C50', swatch2: '#E0DCD5' },
+                { id: 5, bg: '#4A5B4A', text: '#E5E5E5', swatch1: '#000000', swatch2: '#E5E5E5' },
+                { id: 6, bg: 'transparent', text: '#ffffff', swatch1: '#000000', swatch2: '#ffffff' },
+                { id: 7, bg: 'transparent', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' }
+            ];
+            
+            // Generate color schemes HTML
+            var colorsHtml = '';
+            schemesToDisplay.forEach(function(scheme) {
+                var bgStyle = scheme.bg === 'transparent' ? 'background: transparent;' : 'background-color: ' + scheme.bg + ';';
+                var transparentClass = scheme.bg === 'transparent' ? ' transparent' : '';
+                colorsHtml += '<div class="color-scheme-box" data-scheme-id="' + scheme.id + '">';
+                colorsHtml += '<div class="color-scheme-preview' + transparentClass + '" style="' + bgStyle + '">';
+                colorsHtml += '<div class="color-scheme-preview-text" style="color: ' + scheme.text + ';">Aa</div>';
+                    colorsHtml += '</div>';
+                colorsHtml += '<div class="color-scheme-swatches">';
+                colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch1 + ';"></div>';
+                colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch2 + ';"></div>';
+                    colorsHtml += '</div>';
+                colorsHtml += '<div class="color-scheme-label">Scheme ' + scheme.id + '</div>';
+                    colorsHtml += '</div>';
+                });
+            // Add Scheme button
+            colorsHtml += '<div class="color-scheme-box add-scheme">';
+            colorsHtml += '<svg class="add-scheme-icon" viewBox="0 0 20 20" fill="currentColor">';
+            colorsHtml += '<path d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z"></path>';
+            colorsHtml += '</svg>';
+            colorsHtml += '<div class="add-scheme-label">Add Scheme</div>';
+            colorsHtml += '</div>';
+            
+            $('#colorSchemaContainer').html(colorsHtml);
+            
+            // Use API typography if available, otherwise use defaults
+            var fontsToDisplay = typography && typography.length > 0 ? typography : [
+                { id: 'body', label: 'Body', value: 'Newsreader' },
+                { id: 'subheading', label: 'Subheading', value: 'Newsreader' },
+                { id: 'heading', label: 'Heading', value: 'Newsreader' },
+                { id: 'accent', label: 'Accent', value: 'Red Hat Display' }
+            ];
+            
+            // Common font list (for dropdowns) - collect unique fonts from API data
+            var fontList = ['Newsreader', 'Red Hat Display', 'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins', 'Playfair Display', 'Merriweather'];
+            if (typography && typography.length > 0) {
+                typography.forEach(function(font) {
+                    if (font.value && fontList.indexOf(font.value) === -1) {
+                        fontList.push(font.value);
+                    }
+                });
+            }
+            
+            // Generate fonts HTML
+            var fontsHtml = '';
+            fontsToDisplay.forEach(function(font) {
+                fontsHtml += '<div class="font-item">';
+                fontsHtml += '<div class="font-item-label">' + escapeHtml(font.label) + '</div>';
+                fontsHtml += '<div class="font-item-control">';
+                fontsHtml += '<div class="Polaris-Select">';
+                fontsHtml += '<select class="Polaris-Select__Input font-select" data-font-type="' + font.id + '">';
+                fontList.forEach(function(fontOption) {
+                    var selected = fontOption === font.value ? 'selected' : '';
+                    fontsHtml += '<option value="' + escapeHtml(fontOption) + '" ' + selected + ' style="font-family: ' + escapeHtml(fontOption) + ';">' + escapeHtml(fontOption) + '</option>';
+                });
+                fontsHtml += '</select>';
+                fontsHtml += '<div class="Polaris-Select__Content" aria-hidden="true">';
+                fontsHtml += '<span class="Polaris-Select__SelectedOption">' + escapeHtml(font.value) + '</span>';
+                fontsHtml += '<span class="Polaris-Select__Icon">';
+                fontsHtml += '<svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">';
+                fontsHtml += '<path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>';
+                fontsHtml += '</svg>';
+                fontsHtml += '</span>';
+                fontsHtml += '</div>';
+                fontsHtml += '<div class="Polaris-Select__Backdrop"></div>';
+                fontsHtml += '</div>';
+                fontsHtml += '</div>';
+                fontsHtml += '</div>';
+            });
+            $('#fontsContainer').html(fontsHtml);
+            
+            // Generate text presets HTML
+            var typographyHtml = '';
+            
+            // Group text presets by type (paragraph, heading, etc.)
+            var paragraphPresets = textPresets ? textPresets.filter(function(p) { 
+                return p.label.toLowerCase().indexOf('paragraph') !== -1 || p.id.toLowerCase().indexOf('paragraph') !== -1; 
+            }) : [];
+            var headingPresets = textPresets ? textPresets.filter(function(p) { 
+                return p.label.toLowerCase().indexOf('heading') !== -1 || p.id.toLowerCase().indexOf('heading') !== -1; 
+            }) : [];
+            
+            // Get paragraph size and line height from API or use defaults
+            var paragraphSize = '14';
+            var paragraphLineHeight = 'Normal';
+            if (paragraphPresets.length > 0) {
+                var sizePreset = paragraphPresets.find(function(p) { return p.label.toLowerCase().indexOf('size') !== -1 || p.id.toLowerCase().indexOf('size') !== -1; });
+                var lineHeightPreset = paragraphPresets.find(function(p) { return p.label.toLowerCase().indexOf('line') !== -1 || p.id.toLowerCase().indexOf('line') !== -1; });
+                if (sizePreset && sizePreset.value) paragraphSize = sizePreset.value;
+                if (lineHeightPreset && lineHeightPreset.value) paragraphLineHeight = lineHeightPreset.value;
+            }
+            
+            // Paragraph preset
+            typographyHtml += '<div class="text-preset-item" data-preset="paragraph">';
+            typographyHtml += '<div class="text-preset-title">Paragraph</div>';
+            typographyHtml += '<div class="text-preset-controls">';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Size</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="Polaris-TextField Polaris-TextField--hasValue">';
+            typographyHtml += '<input type="number" class="Polaris-TextField__Input text-preset-size" data-preset="paragraph" value="' + escapeHtml(paragraphSize) + '">';
+            typographyHtml += '<div class="Polaris-TextField__Spinner" aria-hidden="true">';
+            typographyHtml += '<div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path></svg>';
+            typographyHtml += '</div></div><div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>';
+            typographyHtml += '</div></div></div>';
+            typographyHtml += '<div class="Polaris-TextField__Backdrop"></div>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Line height</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="Polaris-TextField Polaris-TextField--hasValue">';
+            typographyHtml += '<input type="text" class="Polaris-TextField__Input text-preset-line-height" data-preset="paragraph" value="' + escapeHtml(paragraphLineHeight) + '">';
+            typographyHtml += '<div class="Polaris-TextField__Spinner" aria-hidden="true">';
+            typographyHtml += '<div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path></svg>';
+            typographyHtml += '</div></div><div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>';
+            typographyHtml += '</div></div></div>';
+            typographyHtml += '<div class="Polaris-TextField__Backdrop"></div>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '</div></div>';
+            
+            // Get heading 1 presets from API or use defaults
+            var heading1Size = '72';
+            var heading1LineHeight = 'Normal';
+            var heading1LetterSpacing = 'Normal';
+            if (headingPresets.length > 0) {
+                var h1SizePreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('size') !== -1 || p.id.toLowerCase().indexOf('size') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
+                var h1LineHeightPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('line') !== -1 || p.id.toLowerCase().indexOf('line') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
+                var h1LetterSpacingPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('letter') !== -1 || p.id.toLowerCase().indexOf('letter') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
+                if (h1SizePreset && h1SizePreset.value) heading1Size = h1SizePreset.value;
+                if (h1LineHeightPreset && h1LineHeightPreset.value) heading1LineHeight = h1LineHeightPreset.value;
+                if (h1LetterSpacingPreset && h1LetterSpacingPreset.value) heading1LetterSpacing = h1LetterSpacingPreset.value;
+            }
+            
+            // Heading 1 preset
+            typographyHtml += '<div class="text-preset-item" data-preset="heading1">';
+            typographyHtml += '<div class="text-preset-title">Heading 1</div>';
+            typographyHtml += '<div class="text-preset-controls">';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Font</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="font-toggle-group">';
+            typographyHtml += '<button type="button" class="font-toggle-btn active" data-font-type="heading">Heading</button>';
+            typographyHtml += '<button type="button" class="font-toggle-btn" data-font-type="accent">Accent</button>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Size</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="Polaris-TextField Polaris-TextField--hasValue">';
+            typographyHtml += '<input type="number" class="Polaris-TextField__Input text-preset-size" data-preset="heading1" value="' + escapeHtml(heading1Size) + '">';
+            typographyHtml += '<div class="Polaris-TextField__Spinner" aria-hidden="true">';
+            typographyHtml += '<div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path></svg>';
+            typographyHtml += '</div></div><div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>';
+            typographyHtml += '</div></div></div>';
+            typographyHtml += '<div class="Polaris-TextField__Backdrop"></div>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Line height</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="Polaris-TextField Polaris-TextField--hasValue">';
+            typographyHtml += '<input type="text" class="Polaris-TextField__Input text-preset-line-height" data-preset="heading1" value="' + escapeHtml(heading1LineHeight) + '">';
+            typographyHtml += '<div class="Polaris-TextField__Spinner" aria-hidden="true">';
+            typographyHtml += '<div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path></svg>';
+            typographyHtml += '</div></div><div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>';
+            typographyHtml += '</div></div></div>';
+            typographyHtml += '<div class="Polaris-TextField__Backdrop"></div>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Letter spacing</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="Polaris-TextField Polaris-TextField--hasValue">';
+            typographyHtml += '<input type="text" class="Polaris-TextField__Input text-preset-letter-spacing" data-preset="heading1" value="' + escapeHtml(heading1LetterSpacing) + '">';
+            typographyHtml += '<div class="Polaris-TextField__Spinner" aria-hidden="true">';
+            typographyHtml += '<div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path></svg>';
+            typographyHtml += '</div></div><div role="button" class="Polaris-TextField__Segment" tabindex="-1"><div class="Polaris-TextField__SpinnerIcon">';
+            typographyHtml += '<svg viewBox="0 0 20 20" width="12" height="12"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>';
+            typographyHtml += '</div></div></div>';
+            typographyHtml += '<div class="Polaris-TextField__Backdrop"></div>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '<div class="text-preset-control">';
+            typographyHtml += '<div class="text-preset-control-label">Case</div>';
+            typographyHtml += '<div class="text-preset-control-input">';
+            typographyHtml += '<div class="case-toggle-group">';
+            typographyHtml += '<button type="button" class="case-toggle-btn active" data-case="default">Default</button>';
+            typographyHtml += '<button type="button" class="case-toggle-btn" data-case="uppercase">Uppercase</button>';
+            typographyHtml += '</div></div></div>';
+            
+            typographyHtml += '</div></div>';
+            
+            $('#typographyContainer').html(typographyHtml);
+        }
+        
+        // Handle back button for theme settings
+        $(document).on('click', '.theme-settings-content .backBtn', function() {
+            $('.theme-settings-content').hide();
+        });
+        
+        // Handle expand/collapse for theme settings sections
+        $(document).on('click', '.theme-settings-expand-btn', function() {
+            var $btn = $(this);
+            var section = $btn.data('section');
+            var $content = $('#' + section + 'SectionContent');
+            var isExpanded = !$content.hasClass('collapsed');
+            
+            if (isExpanded) {
+                $content.addClass('collapsed');
+                $btn.removeClass('expanded');
+            } else {
+                $content.removeClass('collapsed');
+                $btn.addClass('expanded');
+            }
+        });
+        
+        // Handle font select changes
+        $(document).on('change', '.font-select', function() {
+            var $select = $(this);
+            var fontType = $select.data('font-type');
+            var selectedFont = $select.val();
+            var $selectedOption = $select.closest('.Polaris-Select').find('.Polaris-Select__SelectedOption');
+            $selectedOption.text(selectedFont);
+            // Here you would typically save the font selection via AJAX
+            console.log('Font changed:', fontType, selectedFont);
+        });
+        
+        // Handle font toggle buttons (Heading/Accent)
+        $(document).on('click', '.font-toggle-btn', function() {
+            var $btn = $(this);
+            var $group = $btn.closest('.font-toggle-group');
+            $group.find('.font-toggle-btn').removeClass('active');
+            $btn.addClass('active');
+            var fontType = $btn.data('font-type');
+            // Here you would typically update the font selection based on the toggle
+            console.log('Font type selected:', fontType);
+        });
+        
+        // Handle case toggle buttons (Default/Uppercase)
+        $(document).on('click', '.case-toggle-btn', function() {
+            var $btn = $(this);
+            var $group = $btn.closest('.case-toggle-group');
+            $group.find('.case-toggle-btn').removeClass('active');
+            $btn.addClass('active');
+            var caseType = $btn.data('case');
+            // Here you would typically save the case setting via AJAX
+            console.log('Case changed:', caseType);
+        });
+        
+        // Handle color scheme box clicks
+        $(document).on('click', '.color-scheme-box:not(.add-scheme)', function() {
+            var $box = $(this);
+            var schemeId = $box.data('scheme-id');
+            // Remove selected state from all boxes
+            $('.color-scheme-box').removeClass('selected');
+            // Add selected state to clicked box
+            $box.addClass('selected');
+            // Here you would typically apply the color scheme via AJAX
+            console.log('Color scheme selected:', schemeId);
+        });
+        
+        // Handle add scheme button click
+        $(document).on('click', '.color-scheme-box.add-scheme', function() {
+            // Here you would typically open a modal or form to create a new color scheme
+            alert('Add new color scheme functionality - to be implemented');
+            console.log('Add scheme clicked');
         });
         
         // Select page

@@ -183,6 +183,11 @@ class Client_functions extends common_function {
                     return $this->get_pages_via_graphql($limit, $cursor);
                 }
                 
+                // Get theme settings
+                if ($shopify_api == 'theme_settings') {
+                    return $this->get_theme_settings();
+                }
+                
                 // For other APIs, use REST API
                 // Shopify API uses 'page' parameter, not 'pageno'
                 $shopify_url_param_array = array(
@@ -543,6 +548,358 @@ class Client_functions extends common_function {
                 'outcome' => 'false',
                 'report' => 'Error: ' . $e->getMessage(),
                 'html' => array()
+            );
+        }
+    }
+    
+    /**
+     * Get theme settings (colors and typography) from Shopify
+     */
+    function get_theme_settings() {
+        try {
+            $shopinfo = $this->current_store_obj;
+            $store_name = is_object($shopinfo) ? (isset($shopinfo->shop_name) ? $shopinfo->shop_name : '') : (isset($shopinfo['shop_name']) ? $shopinfo['shop_name'] : '');
+            $access_token = is_object($shopinfo) ? (isset($shopinfo->password) ? $shopinfo->password : '') : (isset($shopinfo['password']) ? $shopinfo['password'] : '');
+            
+            if (empty($store_name) || empty($access_token)) {
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Store name or access token is missing',
+                    'colors' => array(),
+                    'typography' => array()
+                );
+            }
+            
+            // Normalize store name
+            $store_name = preg_replace('#^https?://#', '', $store_name);
+            $store_name = rtrim($store_name, '/');
+            
+            // Step 1: Get active theme
+            $themes_url = "/admin/api/2023-10/themes.json";
+            $themes_response = shopify_call($access_token, $store_name, $themes_url, array(), 'GET');
+            
+            if (!isset($themes_response['response'])) {
+                error_log('Theme settings error: No response from themes API');
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Failed to fetch themes',
+                    'colors' => array(),
+                    'typography' => array()
+                );
+            }
+            
+            $themes_data = json_decode($themes_response['response'], true);
+            
+            if (isset($themes_data['errors'])) {
+                error_log('Theme settings error: ' . json_encode($themes_data['errors']));
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Error fetching themes: ' . (is_array($themes_data['errors']) ? implode(', ', $themes_data['errors']) : $themes_data['errors']),
+                    'colors' => array(),
+                    'typography' => array()
+                );
+            }
+            
+            $active_theme_id = null;
+            if (isset($themes_data['themes']) && is_array($themes_data['themes'])) {
+                foreach ($themes_data['themes'] as $theme) {
+                    if (isset($theme['role']) && $theme['role'] == 'main') {
+                        $active_theme_id = $theme['id'];
+                        break;
+                    }
+                }
+            }
+            
+            if (!$active_theme_id) {
+                error_log('Theme settings error: No active theme found');
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'No active theme found',
+                    'colors' => array(),
+                    'typography' => array()
+                );
+            }
+            
+            // Step 2: Get theme settings.json file
+            $settings_url = "/admin/api/2023-10/themes/{$active_theme_id}/assets.json";
+            $settings_params = array('asset[key]' => 'config/settings_schema.json');
+            $settings_response = shopify_call($access_token, $store_name, $settings_url, $settings_params, 'GET');
+            
+            // Also try to get settings_data.json which contains current values
+            $settings_data_url = "/admin/api/2023-10/themes/{$active_theme_id}/assets.json";
+            $settings_data_params = array('asset[key]' => 'config/settings_data.json');
+            $settings_data_response = shopify_call($access_token, $store_name, $settings_data_url, $settings_data_params, 'GET');
+            
+            $colors = array();
+            $typography = array();
+            $color_schemes = array();
+            $text_presets = array();
+            
+            // Try to get settings from settings_schema.json first
+            if (isset($settings_response['response'])) {
+                $settings_data = json_decode($settings_response['response'], true);
+                if (isset($settings_data['asset']['value'])) {
+                    $settings_schema = json_decode($settings_data['asset']['value'], true);
+                    if ($settings_schema && is_array($settings_schema)) {
+                        foreach ($settings_schema as $section) {
+                            if (isset($section['settings']) && is_array($section['settings'])) {
+                                foreach ($section['settings'] as $setting) {
+                                    // Color schemes - Shopify uses both 'color_scheme' and 'color_scheme_group'
+                                    if (isset($setting['type']) && ($setting['type'] == 'color_scheme' || $setting['type'] == 'color_scheme_group')) {
+                                        $color_schemes[] = array(
+                                            'id' => isset($setting['id']) ? $setting['id'] : '',
+                                            'label' => isset($setting['label']) ? $setting['label'] : 'Color Scheme',
+                                            'settings' => isset($setting['settings']) ? $setting['settings'] : array()
+                                        );
+                                    }
+                                    // Individual colors
+                                    elseif (isset($setting['type']) && $setting['type'] == 'color') {
+                                        $colors[] = array(
+                                            'label' => isset($setting['label']) ? $setting['label'] : 'Color',
+                                            'id' => isset($setting['id']) ? $setting['id'] : '',
+                                            'default' => isset($setting['default']) ? $setting['default'] : '#000000'
+                                        );
+                                    }
+                                    // Fonts
+                                    elseif (isset($setting['type']) && ($setting['type'] == 'font_picker' || ($setting['type'] == 'select' && isset($setting['options']) && strpos(strtolower($setting['label']), 'font') !== false))) {
+                                        $typography[] = array(
+                                            'label' => isset($setting['label']) ? $setting['label'] : 'Font',
+                                            'id' => isset($setting['id']) ? $setting['id'] : '',
+                                            'default' => isset($setting['default']) ? $setting['default'] : ''
+                                        );
+                                    }
+                                    // Text presets (font_size, line_height, etc.)
+                                    elseif (isset($setting['type']) && in_array($setting['type'], array('range', 'number', 'text', 'select')) && 
+                                            (strpos(strtolower($setting['label']), 'size') !== false || 
+                                             strpos(strtolower($setting['label']), 'line height') !== false ||
+                                             strpos(strtolower($setting['label']), 'letter spacing') !== false ||
+                                             strpos(strtolower($setting['label']), 'case') !== false ||
+                                             strpos(strtolower($setting['label']), 'paragraph') !== false ||
+                                             strpos(strtolower($setting['label']), 'heading') !== false)) {
+                                        $text_presets[] = array(
+                                            'label' => isset($setting['label']) ? $setting['label'] : 'Text Setting',
+                                            'id' => isset($setting['id']) ? $setting['id'] : '',
+                                            'type' => $setting['type'],
+                                            'default' => isset($setting['default']) ? $setting['default'] : '',
+                                            'min' => isset($setting['min']) ? $setting['min'] : null,
+                                            'max' => isset($setting['max']) ? $setting['max'] : null,
+                                            'step' => isset($setting['step']) ? $setting['step'] : null,
+                                            'options' => isset($setting['options']) ? $setting['options'] : null
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Step 3: Get actual theme settings (current values) from settings_data.json
+            $current_colors = array();
+            $current_typography = array();
+            $current_color_schemes = array();
+            $current_text_presets = array();
+            
+            if (isset($settings_data_response['response'])) {
+                $settings_data_json = json_decode($settings_data_response['response'], true);
+                if (isset($settings_data_json['asset']['value'])) {
+                    $settings_data = json_decode($settings_data_json['asset']['value'], true);
+                    if ($settings_data && isset($settings_data['current'])) {
+                        $current_settings = $settings_data['current'];
+                        
+                        // First check if color_schemes exists as a direct array key (common format)
+                        if (isset($current_settings['color_schemes']) && is_array($current_settings['color_schemes'])) {
+                            foreach ($current_settings['color_schemes'] as $idx => $scheme) {
+                                if (is_array($scheme) && isset($scheme['colors'])) {
+                                    $current_color_schemes['scheme_' . ($idx + 1)] = $scheme;
+                                }
+                            }
+                        }
+                        
+                        // Extract all settings values
+                        foreach ($current_settings as $key => $value) {
+                            // Color schemes - check for array with 'colors' key (individual scheme format)
+                            if (is_array($value) && isset($value['colors']) && is_array($value['colors']) && $key != 'color_schemes') {
+                                $current_color_schemes[$key] = $value;
+                            }
+                            // Color values (hex or rgba strings)
+                            elseif (is_string($value) && (preg_match('/^#[0-9A-Fa-f]{6}$/', $value) || preg_match('/^#[0-9A-Fa-f]{3}$/', $value) || preg_match('/^rgba?\(/', $value))) {
+                                // Skip if it's part of a color scheme
+                                if (strpos($key, 'color_scheme') === false) {
+                                    $current_colors[$key] = $value;
+                                }
+                            }
+                            // Font/typography values (string values with font in key name)
+                            elseif (is_string($value) && (strpos(strtolower($key), 'font') !== false || strpos(strtolower($key), 'typography') !== false || strpos(strtolower($key), 'type') !== false)) {
+                                $current_typography[$key] = $value;
+                            }
+                            // Text preset values (size, line height, etc.) - string or numeric
+                            elseif (is_string($value) || is_numeric($value)) {
+                                if (strpos(strtolower($key), 'size') !== false || 
+                                    strpos(strtolower($key), 'line') !== false ||
+                                    strpos(strtolower($key), 'spacing') !== false ||
+                                    strpos(strtolower($key), 'case') !== false) {
+                                    $current_text_presets[$key] = $value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Merge schema with current values
+            $final_colors = array();
+            foreach ($colors as $color) {
+                $color_id = $color['id'];
+                $final_colors[] = array(
+                    'label' => $color['label'],
+                    'id' => $color_id,
+                    'value' => isset($current_colors[$color_id]) ? $current_colors[$color_id] : $color['default']
+                );
+            }
+            
+            $final_typography = array();
+            foreach ($typography as $font) {
+                $font_id = $font['id'];
+                $final_typography[] = array(
+                    'label' => $font['label'],
+                    'id' => $font_id,
+                    'value' => isset($current_typography[$font_id]) ? $current_typography[$font_id] : $font['default']
+                );
+            }
+            
+            // Process color schemes from extracted current_color_schemes
+            $final_color_schemes = array();
+            $scheme_index = 1;
+            
+            if (!empty($current_color_schemes)) {
+                foreach ($current_color_schemes as $scheme_key => $scheme_data) {
+                    if (is_array($scheme_data) && isset($scheme_data['colors']) && is_array($scheme_data['colors'])) {
+                        $scheme_colors = $scheme_data['colors'];
+                        
+                        // Extract background color (common keys: background, bg, base)
+                        $bg_color = '#ffffff';
+                        foreach (array('background', 'bg', 'base', 'background_label') as $bg_key) {
+                            if (isset($scheme_colors[$bg_key])) {
+                                $bg_color = $scheme_colors[$bg_key];
+                                break;
+                            }
+                        }
+                        
+                        // Extract text/foreground color
+                        $text_color = '#000000';
+                        foreach (array('text', 'foreground', 'foreground_label', 'text_label') as $text_key) {
+                            if (isset($scheme_colors[$text_key])) {
+                                $text_color = $scheme_colors[$text_key];
+                                break;
+                            }
+                        }
+                        
+                        // Extract accent colors - try multiple common key names
+                        $accent1 = $text_color;
+                        $accent2 = $bg_color;
+                        $color_keys = array_keys($scheme_colors);
+                        $used_keys = array();
+                        
+                        // Try to find accent colors by common names
+                        foreach (array('accent1', 'accent_1', 'accent', 'primary', 'primary_label') as $acc_key) {
+                            if (isset($scheme_colors[$acc_key]) && !in_array($acc_key, array('background', 'bg', 'base', 'text', 'foreground', 'foreground_label'))) {
+                                $accent1 = $scheme_colors[$acc_key];
+                                $used_keys[] = $acc_key;
+                                break;
+                            }
+                        }
+                        
+                        foreach (array('accent2', 'accent_2', 'secondary', 'secondary_label') as $acc_key) {
+                            if (isset($scheme_colors[$acc_key]) && !in_array($acc_key, array('background', 'bg', 'base', 'text', 'foreground', 'foreground_label')) && !in_array($acc_key, $used_keys)) {
+                                $accent2 = $scheme_colors[$acc_key];
+                                $used_keys[] = $acc_key;
+                                break;
+                            }
+                        }
+                        
+                        // If accent colors not found by name, use first two available colors (excluding bg/text)
+                        if ($accent1 == $text_color || $accent2 == $bg_color) {
+                            $available_colors = array();
+                            foreach ($color_keys as $ck) {
+                                if (!in_array($ck, array('background', 'bg', 'base', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label')) && !in_array($ck, $used_keys)) {
+                                    $available_colors[] = $scheme_colors[$ck];
+                                }
+                            }
+                            if (count($available_colors) > 0 && $accent1 == $text_color) {
+                                $accent1 = $available_colors[0];
+                            }
+                            if (count($available_colors) > 1 && $accent2 == $bg_color) {
+                                $accent2 = $available_colors[1];
+                            }
+                        }
+                        
+                        $final_color_schemes[] = array(
+                            'id' => $scheme_index,
+                            'key' => $scheme_key,
+                            'bg' => $bg_color,
+                            'text' => $text_color,
+                            'swatch1' => $accent1,
+                            'swatch2' => $accent2
+                        );
+                        $scheme_index++;
+                    }
+                }
+            }
+            
+            // Process text presets
+            $final_text_presets = array();
+            foreach ($text_presets as $preset) {
+                $preset_id = $preset['id'];
+                $final_text_presets[] = array(
+                    'label' => $preset['label'],
+                    'id' => $preset_id,
+                    'type' => $preset['type'],
+                    'value' => isset($current_text_presets[$preset_id]) ? $current_text_presets[$preset_id] : $preset['default'],
+                    'min' => $preset['min'],
+                    'max' => $preset['max'],
+                    'step' => $preset['step'],
+                    'options' => $preset['options']
+                );
+            }
+            
+            // If no colors/typography found in schema, use current settings
+            if (empty($final_colors) && !empty($current_colors)) {
+                foreach ($current_colors as $key => $value) {
+                    $final_colors[] = array(
+                        'label' => ucwords(str_replace('_', ' ', $key)),
+                        'id' => $key,
+                        'value' => $value
+                    );
+                }
+            }
+            
+            if (empty($final_typography) && !empty($current_typography)) {
+                foreach ($current_typography as $key => $value) {
+                    $final_typography[] = array(
+                        'label' => ucwords(str_replace('_', ' ', $key)),
+                        'id' => $key,
+                        'value' => $value
+                    );
+                }
+            }
+            
+            return array(
+                'outcome' => 'true',
+                'report' => 'Theme settings loaded successfully',
+                'colors' => $final_colors,
+                'typography' => $final_typography,
+                'color_schemes' => $final_color_schemes,
+                'text_presets' => $final_text_presets
+            );
+            
+        } catch (Exception $e) {
+            error_log('get_theme_settings error: ' . $e->getMessage());
+            return array(
+                'outcome' => 'false',
+                'report' => 'Error: ' . $e->getMessage(),
+                'colors' => array(),
+                'typography' => array()
             );
         }
     }

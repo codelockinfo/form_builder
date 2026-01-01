@@ -575,6 +575,10 @@ $(document).ready(function(){
                     slideType = 'appearance';
                     mapping[9] = index;
                     console.log('  Slide', index, '→ Appearance (data-owl="9")');
+                } else if (title === 'Theme Settings' || $slide.find('.theme-settings-content').length > 0) {
+                    slideType = 'theme-settings';
+                    mapping[15] = index;
+                    console.log('  Slide', index, '→ Theme Settings (data-owl="15")');
                 } else if (index === 0 || title === '' || $slide.find('.Polaris-Tabs__Wrapper').length > 0) {
                     slideType = 'main-panel';
                     mapping[0] = index;
@@ -609,7 +613,7 @@ $(document).ready(function(){
             // Fallback mapping based on expected structure
             var fallbackMapping = {
                 0: 0, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6,
-                8: 7, 9: 8, 10: 9, 11: 10, 12: 11, 13: 12
+                8: 7, 9: 8, 10: 9, 11: 10, 12: 11, 13: 12, 15: 14
             };
             var fallbackIndex = fallbackMapping[dataOwl] !== undefined ? fallbackMapping[dataOwl] : dataOwl;
             console.log('Using fallback mapping: data-owl="' + dataOwl + '" → slide index', fallbackIndex);
