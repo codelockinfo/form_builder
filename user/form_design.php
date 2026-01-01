@@ -5188,12 +5188,14 @@ if ($form_id > 0) {
                     pagination_method: 'pagination'
                 },
                 success: function(response) {
+                    console.log('Pages API Response:', response);
+                    
                     if (response['code'] != undefined && response['code'] == '403') {
                         redirect403();
                         return;
                     }
                     
-                    if (response.outcome == 'true') {
+                    if (response.outcome == 'true' || response.outcome === 'true') {
                         var html = '';
                         
                         // Check if html is an array or a string
@@ -5264,13 +5266,35 @@ if ($form_id > 0) {
                             $('#pagesPagination').html('');
                         }
                     } else {
-                        $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
+                        var errorMsg = 'No pages found.';
+                        if (response.report) {
+                            errorMsg = response.report;
+                        }
+                        $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">' + errorMsg + '</td></tr>');
                         $('#pagesPagination').html('');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error loading pages:', error);
-                    $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc2626;">Error loading pages. Please try again.</td></tr>');
+                    console.error('Error loading pages:', {
+                        xhr: xhr,
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
+                    
+                    var errorMsg = 'Error loading pages. Please try again.';
+                    if (xhr.responseText) {
+                        try {
+                            var errorResponse = JSON.parse(xhr.responseText);
+                            if (errorResponse.report) {
+                                errorMsg = errorResponse.report;
+                            }
+                        } catch (e) {
+                            // Use default message
+                        }
+                    }
+                    
+                    $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc2626;">' + errorMsg + '</td></tr>');
                 }
             });
         }

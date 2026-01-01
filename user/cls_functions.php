@@ -47,41 +47,96 @@ class Client_functions extends common_function {
 
     function take_api_shopify_data() {
         $comeback = array('outcome' => 'false', 'report' => CLS_SOMETHING_WENT_WRONG);
-        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['shopify_api'])) {
-            $shopify_api = $_POST['shopify_api'];
-            $shopinfo = $this->current_store_obj;
-            $pages = defined('PAGE_PER') ? PAGE_PER : 10;
-            $limit = isset($_POST['limit']) ? $_POST['limit'] : $pages;
-            $page_no = isset($_POST['pageno']) ? $_POST['pageno'] : '1';
-            $shopify_url_param_array = array(
-                'limit' => $limit,
-                'pageno' => $page_no
-            );
-            $shopify_api_name_arr = array('main_api' => $shopify_api, 'count' => 'count');
-            $filtered_count = $total_product_count = $this->cls_get_shopify_list($shopify_api_name_arr)->count;
+        try {
+            if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['shopify_api'])) {
+                $shopify_api = $_POST['shopify_api'];
+                $shopinfo = $this->current_store_obj;
+                $pages = defined('PAGE_PER') ? PAGE_PER : 10;
+                $limit = isset($_POST['limit']) ? $_POST['limit'] : $pages;
+                $page_no = isset($_POST['pageno']) ? $_POST['pageno'] : '1';
+                
+                // Shopify API uses 'page' parameter, not 'pageno'
+                $shopify_url_param_array = array(
+                    'limit' => $limit,
+                    'page' => $page_no
+                );
+                
+                // Get count first
+                $shopify_api_name_arr = array('main_api' => $shopify_api, 'count' => 'count');
+                $count_response = $this->cls_get_shopify_list($shopify_api_name_arr);
+                $filtered_count = $total_product_count = 0;
+                
+                if (isset($count_response->count)) {
+                    $filtered_count = $total_product_count = intval($count_response->count);
+                }
 
-            $search_word = isset($_POST['search_keyword']) ? $_POST['search_keyword'] : '';
-            if ($search_word != '') {
-                $shopify_url_param_array = array_merge($shopify_url_param_array, $this->make_api_search_query($search_word, $_POST['search_fields']));
-                $filtered_count = $this->cls_get_shopify_list($shopify_api_name_arr, $shopify_url_param_array)->count;
+                $search_word = isset($_POST['search_keyword']) ? $_POST['search_keyword'] : '';
+                if ($search_word != '') {
+                    $shopify_url_param_array = array_merge($shopify_url_param_array, $this->make_api_search_query($search_word, $_POST['search_fields']));
+                    $count_response = $this->cls_get_shopify_list($shopify_api_name_arr, $shopify_url_param_array);
+                    if (isset($count_response->count)) {
+                        $filtered_count = intval($count_response->count);
+                    }
+                }
+                
+                // Get actual data
+                $shopify_api_name_arr = array('main_api' => $shopify_api);
+                $api_shopify_data_list = $this->cls_get_shopify_list($shopify_api_name_arr, $shopify_url_param_array);
+                $tr_html = array();
+                
+                // Check if we have valid data
+                if ($api_shopify_data_list && isset($api_shopify_data_list->$shopify_api)) {
+                    $pages_array = $api_shopify_data_list->$shopify_api;
+                    if (is_array($pages_array) && count($pages_array) > 0) {
+                        // Check if the formatting function exists
+                        $listing_id = isset($_POST['listing_id']) ? $_POST['listing_id'] : '';
+                        if ($listing_id && method_exists($this, 'make_api_data_' . $listing_id)) {
+                            $tr_html = call_user_func(array($this, 'make_api_data_' . $listing_id), $api_shopify_data_list);
+                        } else {
+                            // Fallback: format directly if function doesn't exist
+                            foreach ($pages_array as $page) {
+                                if (is_object($page)) {
+                                    $page_id = isset($page->id) ? $page->id : '';
+                                    $page_title = isset($page->title) ? htmlspecialchars($page->title) : 'Untitled';
+                                    $page_handle = isset($page->handle) ? htmlspecialchars($page->handle) : '';
+                                    
+                                    $tr_html[] = '<tr class="page-item-row" data-page-id="' . $page_id . '" data-page-title="' . htmlspecialchars($page_title) . '" data-page-handle="' . htmlspecialchars($page_handle) . '">' .
+                                        '<td>' . $page_id . '</td>' .
+                                        '<td>' . htmlspecialchars($page_title) . '</td>' .
+                                        '<td>' . htmlspecialchars($page_handle) . '</td>' .
+                                        '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>' .
+                                        '</tr>';
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                $total_pages = $filtered_count > 0 ? ceil($filtered_count / $limit) : 0;
+                $pagination_html = '';
+                if (isset($_POST['pagination_method']) && isset($_POST['listing_id'])) {
+                    $pagination_html = $this->pagination_btn_html($total_pages, $page_no, $_POST['pagination_method'], $_POST['listing_id']);
+                }
+                
+                $comeback = array(
+                    "outcome" => 'true',
+                    "total_record" => intval($total_product_count),
+                    "recordsFiltered" => intval($filtered_count),
+                    'pagination_html' => $pagination_html,
+                    'html' => $tr_html
+                );
+                return $comeback;
             }
-            $shopify_api_name_arr = array('main_api' => $shopify_api);
-            $api_shopify_data_list = $this->cls_get_shopify_list($shopify_api_name_arr, $shopify_url_param_array);
-            $tr_html = array();
-            if (count($api_shopify_data_list->$shopify_api) > 0) {
-                $tr_html = call_user_func(array($this, 'make_api_data_' . $_POST['listing_id']), $api_shopify_data_list);
-            }
-            $total_pages = ceil($filtered_count / $limit);
-            $pagination_html = $this->pagination_btn_html($total_pages, $page_no, $_POST['pagination_method'], $_POST['listing_id']);
+        } catch (Exception $e) {
+            error_log('take_api_shopify_data error: ' . $e->getMessage());
             $comeback = array(
-                "outcome" => 'true',
-                "total_record" => intval($total_product_count),
-                "recordsFiltered" => intval($filtered_count),
-                'pagination_html' => $pagination_html,
-                'html' => $tr_html
+                'outcome' => 'false', 
+                'report' => 'Error: ' . $e->getMessage(),
+                'html' => array()
             );
             return $comeback;
         }
+        return $comeback;
     }
 
     function take_table_shopify_data() {
