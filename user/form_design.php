@@ -4926,32 +4926,34 @@ if ($form_id > 0) {
                                                 <h2 class="Polaris-Heading">Select Store Page</h2>
                                             </div>
                                             <div class="Polaris-Card__Section" style="padding-bottom: 0;">
-                                                <div class="Polaris-TextField">
-                                                    <input type="text" id="pageSearchInput" class="Polaris-TextField__Input" placeholder="Search pages..." aria-invalid="false">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                <!-- Loader -->
+                                                <div id="pageSelectionLoader" style="text-align: center; padding: 40px 20px;">
+                                                    <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
+                                                    <span style="margin-left: 10px;">Loading...</span>
                                                 </div>
-                                                <div class="Polaris-DataTable" style="margin-top: 20px;">
-                                                    <div class="table-responsive">
+                                                
+                                                <!-- Content (hidden initially) -->
+                                                <div id="pageSelectionContent" style="display: none;">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="text" id="pageSearchInput" class="Polaris-TextField__Input" placeholder="Search pages..." aria-invalid="false">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                    <div class="Polaris-DataTable" style="margin-top: 20px;">
+                                                        <div class="table-responsive">
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>ID</th>
                                                                     <th>Title</th>
-                                                                    <th>Handle</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="pagesListBody">
-                                                                <tr>
-                                                                    <td colspan="4" style="text-align: center; padding: 20px;">
-                                                                        <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
-                                                                        <span style="margin-left: 10px;">Loading pages...</span>
-                                                                    </td>
-                                                                </tr>
+                                                                <!-- Pages will be loaded here -->
                                                             </tbody>
                                                         </table>
+                                                        </div>
+                                                        <div id="pagesPagination" class="cls-page-pagination mb-4" style="margin-top: 20px;"></div>
                                                     </div>
-                                                    <div id="pagesPagination" class="cls-page-pagination mb-4" style="margin-top: 20px;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -4978,55 +4980,68 @@ if ($form_id > 0) {
     
     <!-- Modal 2: Confirm Publish with Form ID -->
     <div id="publishConfirmModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10001;">
-        <div class="Polaris-Modal-Dialog">
-            <div class="Polaris-Modal-Dialog__Modal">
+        <div class="Polaris-Modal-Dialog Polaris-Modal-Dialog--sizeLarge">
+            <div class="Polaris-Modal-Dialog__Modal" style="height: auto;">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
                         <div class="Polaris-Page" style="padding: 0;">
-                            <div class="Polaris-Page__Content" style="padding: 0;">
-                                <div class="Polaris-Card" style="border-radius: 0; box-shadow: none; padding: 0;">
-                                    <div class="Polaris-Card__Section" style="padding: 0;">
-                                        <h2 class="Polaris-Heading">Publish Form</h2>
-                                        <div style="margin-top: 20px;">
-                                            <p><strong>Selected Page:</strong> <span id="selectedPageTitle"></span></p>
-                                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                                                <p><strong>Form ID:</strong></p>
-                                                <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
-                                                <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
-                                                    <span class="Polaris-Button__Content">
-                                                        <span class="Polaris-Button__Text">Copy ID</span>
-                                                    </span>
-                                                </button>
+                            <div class="Polaris-Page__Content">
+                                <div class="Polaris-Layout">
+                                    <div class="Polaris-Layout__Section" style="margin-top: 0;">
+                                        <div class="Polaris-Card" style="border-radius: 0; box-shadow: none; padding: 0;">
+                                            <div class="Polaris-Card__Header">
+                                                <h2 class="Polaris-Heading">Publish Form</h2>
                                             </div>
-                                            
-                                            <!-- Guidance Steps -->
-                                            <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-                                                <h3 class="Polaris-Heading" style="font-size: 16px; margin-bottom: 20px;">How to Add Form to Your Page:</h3>
-                                                
-                                                <!-- Step 1: How to Add section -->
-                                                <div style="margin-bottom: 25px;">
-                                                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                                                        <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">1</span>
-                                                        <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to Add section?</h4>
-                                                    </div>
-                                                    <div style="margin-left: 40px; margin-top: 10px;">
-                                                        <img src="<?php echo main_url('assets/images/ADD_SECTION.png'); ?>" alt="How to Add Section" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                                                    </div>
+                                            <div class="Polaris-Card__Section" style="padding-bottom: 0;">
+                                                <!-- Loader -->
+                                                <div id="publishConfirmLoader" style="text-align: center; padding: 40px 20px;">
+                                                    <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
+                                                    <span style="margin-left: 10px;">Loading...</span>
                                                 </div>
                                                 
-                                                <!-- Step 2: How to Get Form -->
-                                                <div style="margin-bottom: 20px;">
-                                                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                                                        <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">2</span>
-                                                        <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to get Form?</h4>
+                                                <!-- Content (hidden initially) -->
+                                                <div id="publishConfirmContent" style="display: none;">
+                                                    <p style="margin-bottom: 15px;"><strong>Selected Page:</strong> <span id="selectedPageTitle"></span></p>
+                                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+                                                        <p style="margin: 0;"><strong>Form ID:</strong></p>
+                                                        <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
+                                                        <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
+                                                            <span class="Polaris-Button__Content">
+                                                                <span class="Polaris-Button__Text">Copy ID</span>
+                                                            </span>
+                                                        </button>
                                                     </div>
-                                                    <div style="margin-left: 40px; margin-top: 10px;">
-                                                        <img src="<?php echo main_url('assets/images/GET_FORM.png'); ?>" alt="How to Get Form" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                    
+                                                    <!-- Guidance Steps -->
+                                                    <div style="border-top: 1px solid #e5e7eb; padding-top: 20px;">
+                                                        <h3 class="Polaris-Heading" style="font-size: 16px; margin-bottom: 20px;">How to Add Form to Your Page:</h3>
+                                                        
+                                                        <!-- Step 1: How to Add section -->
+                                                        <div style="margin-bottom: 25px;">
+                                                            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                                                <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">1</span>
+                                                                <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to Add section?</h4>
+                                                            </div>
+                                                            <div style="margin-left: 40px; margin-top: 10px;">
+                                                                <img src="<?php echo main_url('assets/images/ADD_SECTION.png'); ?>" alt="How to Add Section" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <!-- Step 2: How to Get Form -->
+                                                        <div style="margin-bottom: 20px;">
+                                                            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                                                <span style="background: #00848e; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px;">2</span>
+                                                                <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to get Form?</h4>
+                                                            </div>
+                                                            <div style="margin-left: 40px; margin-top: 10px;">
+                                                                <img src="<?php echo main_url('assets/images/GET_FORM.png'); ?>" alt="How to Get Form" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                    
+                                                    <p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Click Publish to redirect to the page customizer.</p>
                                                 </div>
                                             </div>
-                                            
-                                            <p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Click Publish to redirect to the page customizer.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -5044,7 +5059,7 @@ if ($form_id > 0) {
                             </button>
                         </div>
                         <div class="Polaris-ButtonGroup__Item">
-                            <button type="button" class="Polaris-Button Polaris-Button--primary confirmPublishBtn">
+                            <button type="button" class="Polaris-Button Polaris-Button--primary confirmPublishBtn" id="confirmPublishBtn" style="display: none;">
                                 <span class="Polaris-Button__Content">
                                     <span class="Polaris-Button__Text">Publish</span>
                                 </span>
@@ -5162,12 +5177,118 @@ if ($form_id > 0) {
         var selectedPageId = null;
         var selectedPageTitle = null;
         var selectedPageHandle = null;
+        var selectedPageType = null; // 'home', 'product', 'collection', 'collections-list', 'page'
         var currentPageNo = 1;
         var searchKeyword = '';
+        var allPages = []; // Store all pages for hierarchical display
+        
+        // Build hierarchical selection structure
+        function buildHierarchicalSelection(response) {
+            var html = '';
+            var pages = [];
+            
+            // Extract pages from response
+            if (Array.isArray(response.html)) {
+                if (response.html.length > 0 && typeof response.html[0] === 'object') {
+                    pages = response.html;
+                } else if (typeof response.html[0] === 'string') {
+                    // Parse HTML strings to extract page data
+                    response.html.forEach(function(htmlRow) {
+                        if (typeof htmlRow === 'string') {
+                            var $row = $(htmlRow);
+                            var $cells = $row.find('td');
+                            if ($cells.length >= 3) {
+                                pages.push({
+                                    id: $cells.eq(0).text().trim(),
+                                    title: $cells.eq(1).text().trim(),
+                                    handle: $cells.eq(2).text().trim()
+                                });
+                            }
+                        }
+                    });
+                }
+            } else if (typeof response.html === 'string') {
+                // Parse HTML string to extract pages
+                var $rows = $(response.html);
+                $rows.each(function() {
+                    var $cells = $(this).find('td');
+                    if ($cells.length >= 3) {
+                        pages.push({
+                            id: $cells.eq(0).text().trim(),
+                            title: $cells.eq(1).text().trim(),
+                            handle: $cells.eq(2).text().trim()
+                        });
+                    }
+                });
+            }
+            
+            // Store pages for later use
+            allPages = pages;
+            
+            // Build hierarchical structure
+            // 1. Home Page
+            html += '<tr class="hierarchical-item" data-page-type="home" data-page-handle="index">';
+            html += '<td><strong>Home Page</strong></td>';
+            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '</tr>';
+            
+            // 2. Product
+            html += '<tr class="hierarchical-item" data-page-type="product" data-page-handle="product">';
+            html += '<td><strong>Product</strong></td>';
+            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '</tr>';
+            
+            // 3. Collections
+            html += '<tr class="hierarchical-item" data-page-type="collection" data-page-handle="collection">';
+            html += '<td><strong>Collections</strong></td>';
+            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '</tr>';
+            
+            // 4. Collections List
+            html += '<tr class="hierarchical-item" data-page-type="collections-list" data-page-handle="collections">';
+            html += '<td><strong>Collections List</strong></td>';
+            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '</tr>';
+            
+            // 5. Page (with expandable sub-items)
+            html += '<tr class="hierarchical-item page-parent-row" data-page-type="page-parent">';
+            html += '<td><strong>Page</strong> <span class="page-toggle-icon" style="margin-left: 10px; cursor: pointer;">▼</span></td>';
+            html += '<td>-</td>';
+            html += '</tr>';
+            
+            // Add sub-items for pages (initially hidden)
+            if (pages.length > 0) {
+                pages.forEach(function(page) {
+                    html += '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="display: none; background-color: #f9fafb;">';
+                    html += '<td style="padding-left: 30px;">' + escapeHtml(page.title) + '</td>';
+                    html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                    html += '</tr>';
+                });
+            }
+            
+            return html;
+        }
+        
+        // Toggle page sub-items visibility
+        $(document).on('click', '.page-parent-row, .page-toggle-icon', function(e) {
+            e.stopPropagation();
+            var $subItems = $('.page-sub-item');
+            var $icon = $('.page-toggle-icon');
+            
+            if ($subItems.first().is(':visible')) {
+                $subItems.hide();
+                $icon.text('▶');
+            } else {
+                $subItems.show();
+                $icon.text('▼');
+            }
+        });
         
         // Open page selection modal
         $(document).on('click', '.publish-form-btn', function() {
             $('#publishPageModal').show();
+            $('#pageSelectionLoader').show();
+            $('#pageSelectionContent').hide();
             loadStorePages(1, '');
         });
         
@@ -5204,7 +5325,13 @@ if ($form_id > 0) {
             console.log('Cursor:', cursor);
             console.log('Store:', store);
             
-            $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
+            // Show loader if this is the first load
+            if (!cursor) {
+                $('#pageSelectionLoader').show();
+                $('#pageSelectionContent').hide();
+            }
+            
+            $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
             
             var ajaxData = {
                 routine_name: 'take_api_shopify_data',
@@ -5251,74 +5378,22 @@ if ($form_id > 0) {
                     console.log('Response html is array:', Array.isArray(response.html));
                     console.log('Response html length:', response.html ? (Array.isArray(response.html) ? response.html.length : 'N/A') : 'null/undefined');
                     
+                    // Hide loader and show content
+                    $('#pageSelectionLoader').hide();
+                    $('#pageSelectionContent').show();
+                    
                     if (response.outcome == 'true' || response.outcome === 'true') {
-                        var html = '';
-                        console.log('Processing successful response...');
-                        
-                        // Check if html is an array or a string
-                        if (Array.isArray(response.html)) {
-                            console.log('HTML is an array with', response.html.length, 'items');
-                            // If it's an array of objects
-                            if (response.html.length > 0 && typeof response.html[0] === 'object') {
-                                response.html.forEach(function(page) {
-                                    var pageId = page.page_id || page.id || '';
-                                    var pageTitle = page.title || 'Untitled';
-                                    var pageHandle = page.handle || '';
-                                    html += '<tr class="page-item-row" data-page-id="' + pageId + '" data-page-title="' + escapeHtml(pageTitle) + '" data-page-handle="' + escapeHtml(pageHandle) + '">';
-                                    html += '<td>' + pageId + '</td>';
-                                    html += '<td>' + escapeHtml(pageTitle) + '</td>';
-                                    html += '<td>' + escapeHtml(pageHandle) + '</td>';
-                                    html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
-                                    html += '</tr>';
-                                });
-                            } else {
-                                // If it's an array of HTML strings, parse them
-                                response.html.forEach(function(htmlRow) {
-                                    if (typeof htmlRow === 'string') {
-                                        var $row = $(htmlRow);
-                                        var pageId = $row.find('td:first').text() || $row.find('td').eq(1).text();
-                                        var pageTitle = $row.find('td').eq(2).text();
-                                        var pageHandle = $row.find('td').eq(2).text(); // Adjust based on actual structure
-                                        html += htmlRow;
-                                    }
-                                });
-                            }
-                        } else if (typeof response.html === 'string' && response.html.trim() !== '') {
-                            // If html is a string (HTML table rows), use it directly
-                            html = response.html;
-                        }
+                        // Build hierarchical selection structure
+                        var html = buildHierarchicalSelection(response);
                         
                         console.log('Final HTML length:', html.length);
                         console.log('Final HTML preview:', html.substring(0, 200));
                         
                         if (html) {
                             $('#pagesListBody').html(html);
-                            console.log('HTML inserted into table. Row count:', $('#pagesListBody .page-item-row').length);
-                            
-                            // Update select buttons to work with our handler
-                            $('#pagesListBody .page-item-row').each(function() {
-                                var $row = $(this);
-                                if (!$row.find('.selectPageBtn').length) {
-                                    // Extract data from row if not already set
-                                    var $cells = $row.find('td');
-                                    if ($cells.length >= 3) {
-                                        var pageId = $cells.eq(0).text().trim() || $cells.eq(1).text().trim();
-                                        var pageTitle = $cells.eq(2).text().trim();
-                                        var pageHandle = $cells.eq(2).text().trim(); // May need adjustment
-                                        
-                                        $row.attr('data-page-id', pageId);
-                                        $row.attr('data-page-title', pageTitle);
-                                        $row.attr('data-page-handle', pageHandle);
-                                        
-                                        // Add select button if not present
-                                        if ($cells.length >= 4) {
-                                            $cells.eq(3).html('<button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button>');
-                                        }
-                                    }
-                                }
-                            });
+                            console.log('HTML inserted into table. Row count:', $('#pagesListBody .page-item-row, #pagesListBody .hierarchical-item').length);
                         } else {
-                            $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
+                            $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
                         }
                         
                         // Add pagination (GraphQL uses cursor-based pagination)
@@ -5359,7 +5434,7 @@ if ($form_id > 0) {
                         }
                         
                         console.error('Displaying error message:', errorMsg);
-                        $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">' + errorMsg + '</td></tr>');
+                        $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;">' + errorMsg + '</td></tr>');
                         $('#pagesPagination').html('');
                     }
                 },
@@ -5387,7 +5462,7 @@ if ($form_id > 0) {
                     }
                     
                     console.error('Final Error Message:', errorMsg);
-                    $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc2626;">' + errorMsg + '</td></tr>');
+                    $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px; color: #dc2626;">' + errorMsg + '</td></tr>');
                 },
                 complete: function() {
                     console.log('=== AJAX Request Complete ===');
@@ -5411,7 +5486,7 @@ if ($form_id > 0) {
             var pageNo = $(this).data('page') || currentPageNo + 1;
             if (cursor) {
                 // Append new pages instead of replacing
-                var $loadingRow = $('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading more pages...</span></td></tr>');
+                var $loadingRow = $('<tr><td colspan="2" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading more pages...</span></td></tr>');
                 $('#pagesListBody').append($loadingRow);
                 
                 $.ajax({
@@ -5469,41 +5544,48 @@ if ($form_id > 0) {
         $(document).on('click', '.selectPageBtn', function(e) {
             e.stopPropagation();
             var row = $(this).closest('tr');
+            console.log('Select button clicked. Row:', row);
+            
+            // Get page type
+            selectedPageType = row.data('page-type');
             
             // Try to get data from data attributes first
-            selectedPageId = row.data('page-id');
-            selectedPageTitle = row.data('page-title');
+            selectedPageId = row.data('page-id') || '-';
+            selectedPageTitle = row.data('page-title') || row.find('td').eq(0).text().trim();
             selectedPageHandle = row.data('page-handle');
             
-            // If not in data attributes, extract from table cells
-            if (!selectedPageId || !selectedPageTitle || !selectedPageHandle) {
-                var $cells = row.find('td');
-                if ($cells.length >= 3) {
-                    // Assuming structure: ID, Pages ID, Title, Handle (or similar)
-                    selectedPageId = $cells.eq(0).text().trim() || $cells.eq(1).text().trim();
-                    selectedPageTitle = $cells.eq(2).text().trim();
-                    // Handle might be in a different column or need to be extracted differently
-                    // For now, try to get it from the row or use title as fallback
-                    selectedPageHandle = $cells.eq(2).text().trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-                    
-                    // Try to find handle in other cells
-                    $cells.each(function(index) {
-                        var cellText = $(this).text().trim();
-                        if (cellText && cellText.indexOf('/') === -1 && cellText.length > 0 && cellText.length < 50) {
-                            // Might be a handle if it's a short alphanumeric string
-                            if (index > 2 && /^[a-z0-9-]+$/.test(cellText.toLowerCase())) {
-                                selectedPageHandle = cellText;
-                            }
-                        }
-                    });
-                }
+            // If not in data attributes, handle is stored in data attributes
+            // No need to extract from cells since we only have Title and Action columns
+            
+            // Set display title based on type
+            var displayTitle = selectedPageTitle;
+            if (selectedPageType === 'home') {
+                displayTitle = 'Home Page';
+            } else if (selectedPageType === 'product') {
+                displayTitle = 'Product';
+            } else if (selectedPageType === 'collection') {
+                displayTitle = 'Collections';
+            } else if (selectedPageType === 'collections-list') {
+                displayTitle = 'Collections List';
+            } else if (selectedPageType === 'page') {
+                displayTitle = 'Page: ' + selectedPageTitle;
             }
             
-            if (selectedPageId && selectedPageTitle) {
-                // Close first modal and open confirm modal
+            if (selectedPageHandle) {
+                // Close first modal and open confirm modal with loader
                 $('#publishPageModal').hide();
-                $('#selectedPageTitle').text(selectedPageTitle);
+                $('#publishConfirmLoader').show();
+                $('#publishConfirmContent').hide();
+                $('#confirmPublishBtn').hide();
                 $('#publishConfirmModal').show();
+                
+                // Simulate loading delay, then show content
+                setTimeout(function() {
+                    $('#selectedPageTitle').text(displayTitle);
+                    $('#publishConfirmLoader').hide();
+                    $('#publishConfirmContent').show();
+                    $('#confirmPublishBtn').show();
+                }, 500);
             } else {
                 alert('Unable to extract page information. Please try selecting again.');
             }
@@ -5511,10 +5593,25 @@ if ($form_id > 0) {
         
         // Confirm and redirect to customizer
         $(document).on('click', '.confirmPublishBtn', function() {
-            if (selectedPageId && selectedPageHandle) {
-                // Redirect to Shopify theme customizer for the selected page
-                // Format: /admin/themes/current/editor?template=pages/{handle}
-                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/pages/' + encodeURIComponent(selectedPageHandle);
+            if (selectedPageHandle) {
+                var customizerUrl = '';
+                
+                // Build customizer URL based on page type
+                if (selectedPageType === 'home') {
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/';
+                } else if (selectedPageType === 'product') {
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/products';
+                } else if (selectedPageType === 'collection') {
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/collections';
+                } else if (selectedPageType === 'collections-list') {
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/collections/all';
+                } else if (selectedPageType === 'page') {
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/pages/' + encodeURIComponent(selectedPageHandle);
+                } else {
+                    // Fallback to pages
+                    customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/pages/' + encodeURIComponent(selectedPageHandle);
+                }
+                
                 window.location.href = customizerUrl;
             } else {
                 alert('Please select a page first.');
