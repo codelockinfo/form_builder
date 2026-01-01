@@ -5486,7 +5486,7 @@ if ($form_id > 0) {
             if (selectedPageId && selectedPageHandle) {
                 // Redirect to Shopify theme customizer for the selected page
                 // Format: /admin/themes/current/editor?template=pages/{handle}
-                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?template=pages/' + encodeURIComponent(selectedPageHandle);
+                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=pages/' + encodeURIComponent(selectedPageHandle);
                 window.location.href = customizerUrl;
             } else {
                 alert('Please select a page first.');
