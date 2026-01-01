@@ -65,15 +65,22 @@ class Client_functions extends common_function {
             $store_name = isset($shopinfo['shop_name']) ? $shopinfo['shop_name'] : (isset($shopinfo['store_name']) ? $shopinfo['store_name'] : '');
             $access_token = isset($shopinfo['password']) ? $shopinfo['password'] : '';
         } else {
+            error_log('GraphQL Error: Invalid store information - shopinfo type: ' . gettype($shopinfo));
             return array('error' => 'Invalid store information', 'response' => null);
         }
         
+        // Log for debugging
+        error_log('GraphQL Debug - Store name (raw): ' . $store_name);
+        error_log('GraphQL Debug - Access token (length): ' . strlen($access_token));
+        
         // Validate store name and access token
         if (empty($store_name)) {
+            error_log('GraphQL Error: Store name is empty. Available properties: ' . (is_object($shopinfo) ? implode(', ', array_keys(get_object_vars($shopinfo))) : (is_array($shopinfo) ? implode(', ', array_keys($shopinfo)) : 'N/A')));
             return array('error' => 'Store name is empty', 'response' => null);
         }
         
         if (empty($access_token)) {
+            error_log('GraphQL Error: Access token is empty');
             return array('error' => 'Access token is empty', 'response' => null);
         }
         
@@ -84,6 +91,9 @@ class Client_functions extends common_function {
         // GraphQL endpoint - use same pattern as shopify_call function
         $api_endpoint = "/admin/api/2023-10/graphql.json";
         $graphql_url = "https://" . $store_name . $api_endpoint;
+        
+        // Log final URL (without token)
+        error_log('GraphQL Debug - Final URL: ' . $graphql_url);
         
         // Prepare GraphQL request
         $payload = array(
