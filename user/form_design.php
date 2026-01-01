@@ -4990,7 +4990,7 @@ if ($form_id > 0) {
                                         <div style="margin-top: 20px;">
                                             <p><strong>Selected Page:</strong> <span id="selectedPageTitle"></span></p>
                                             <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                                                <p style="margin-top: 15px;"><strong>Form ID:</strong></p>
+                                                <p><strong>Form ID:</strong></p>
                                                 <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
                                                 <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
                                                     <span class="Polaris-Button__Content">
