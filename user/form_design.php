@@ -4917,11 +4917,11 @@ if ($form_id > 0) {
             <div class="Polaris-Modal-Dialog__Modal">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
-                        <div class="Polaris-Page">
+                        <div class="Polaris-Page" style="padding: 0;">
                             <div class="Polaris-Page__Content">
                                 <div class="Polaris-Layout">
-                                    <div class="Polaris-Layout__Section">
-                                        <div class="Polaris-Card">
+                                    <div class="Polaris-Layout__Section" style="margin-top: 0;">
+                                        <div class="Polaris-Card" style="border-radius: 0; box-shadow: none; padding: 0;">
                                             <div class="Polaris-Card__Header">
                                                 <h2 class="Polaris-Heading">Select Store Page</h2>
                                             </div>
@@ -5486,7 +5486,7 @@ if ($form_id > 0) {
             if (selectedPageId && selectedPageHandle) {
                 // Redirect to Shopify theme customizer for the selected page
                 // Format: /admin/themes/current/editor?template=pages/{handle}
-                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=pages/' + encodeURIComponent(selectedPageHandle);
+                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?previewPath=/pages/' + encodeURIComponent(selectedPageHandle);
                 window.location.href = customizerUrl;
             } else {
                 alert('Please select a page first.');
