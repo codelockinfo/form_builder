@@ -380,41 +380,42 @@ class Client_functions extends common_function {
                 
                 // Handle array format: {"errors": [{"message": "..."}]}
                 if (is_array($response_data['errors']) && count($response_data['errors']) > 0) {
-                $error_details = array();
-                foreach ($response_data['errors'] as $index => $error) {
-                    // Handle different error formats
-                    if (is_array($error)) {
-                        $error_msg = isset($error['message']) ? $error['message'] : 
-                                    (isset($error['error']) ? $error['error'] : 
-                                    (isset($error['description']) ? $error['description'] : 
-                                    (isset($error['code']) ? 'Error code: ' . $error['code'] : 'Unknown error')));
-                        $error_path = isset($error['path']) ? ' (path: ' . json_encode($error['path']) . ')' : '';
-                        $error_extensions = isset($error['extensions']) ? $error['extensions'] : array();
-                        $error_details[] = $error_msg . $error_path;
-                        
-                        // Log detailed error
-                        error_log('GraphQL Error #' . $index . ': ' . $error_msg);
-                        error_log('GraphQL Error Full Object: ' . json_encode($error));
-                        if (!empty($error_extensions)) {
-                            error_log('GraphQL Error Extensions: ' . json_encode($error_extensions));
+                    $error_details = array();
+                    foreach ($response_data['errors'] as $index => $error) {
+                        // Handle different error formats
+                        if (is_array($error)) {
+                            $error_msg = isset($error['message']) ? $error['message'] : 
+                                        (isset($error['error']) ? $error['error'] : 
+                                        (isset($error['description']) ? $error['description'] : 
+                                        (isset($error['code']) ? 'Error code: ' . $error['code'] : 'Unknown error')));
+                            $error_path = isset($error['path']) ? ' (path: ' . json_encode($error['path']) . ')' : '';
+                            $error_extensions = isset($error['extensions']) ? $error['extensions'] : array();
+                            $error_details[] = $error_msg . $error_path;
+                            
+                            // Log detailed error
+                            error_log('GraphQL Error #' . $index . ': ' . $error_msg);
+                            error_log('GraphQL Error Full Object: ' . json_encode($error));
+                            if (!empty($error_extensions)) {
+                                error_log('GraphQL Error Extensions: ' . json_encode($error_extensions));
+                            }
+                        } else if (is_string($error)) {
+                            $error_details[] = $error;
+                            error_log('GraphQL Error (string): ' . $error);
+                        } else {
+                            $error_details[] = 'Error: ' . json_encode($error);
+                            error_log('GraphQL Error (other type): ' . json_encode($error));
                         }
-                    } else if (is_string($error)) {
-                        $error_details[] = $error;
-                        error_log('GraphQL Error (string): ' . $error);
-                    } else {
-                        $error_details[] = 'Error: ' . json_encode($error);
-                        error_log('GraphQL Error (other type): ' . json_encode($error));
                     }
+                    
+                    $error_message = implode('; ', $error_details);
+                    return array(
+                        'outcome' => 'false',
+                        'report' => 'GraphQL Error: ' . $error_message,
+                        'html' => array(),
+                        'errors' => $response_data['errors'],
+                        'full_response' => $response_data // Include for debugging
+                    );
                 }
-                
-                $error_message = implode('; ', $error_details);
-                return array(
-                    'outcome' => 'false',
-                    'report' => 'GraphQL Error: ' . $error_message,
-                    'html' => array(),
-                    'errors' => $response_data['errors'],
-                    'full_response' => $response_data // Include for debugging
-                );
             }
             
             // Check if data exists
