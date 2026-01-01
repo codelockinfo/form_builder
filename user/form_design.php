@@ -2311,7 +2311,7 @@ if ($form_id > 0) {
                                     </div>
                                     
                                     <!-- Content -->
-                                    <div id="themeSettingsContent" style="display: block;">
+                                    <div id="themeSettingsContent" style="display: none;">
                                         <!-- Colors Section -->
                                         <div class="theme-settings-section">
                                             <div class="theme-settings-section-header">
@@ -6033,13 +6033,11 @@ if ($form_id > 0) {
         
         // Helper function to initialize theme settings UI
         function initializeThemeSettings() {
-            $('#themeSettingsLoader').hide();
-            $('#themeSettingsContent').show();
+            // Show loader and hide content initially
+            $('#themeSettingsLoader').show();
+            $('#themeSettingsContent').hide();
             
-            // Display default theme settings first (will be updated by API)
-            displayThemeSettings([], [], [], []);
-            
-            // Initialize sections as expanded
+            // Initialize sections as expanded (will be used when content loads)
             $('.theme-settings-expand-btn').each(function() {
                 var $btn = $(this);
                 var section = $btn.data('section');
@@ -6050,7 +6048,7 @@ if ($form_id > 0) {
                 }
             });
             
-            // Load from API to get real data
+            // Load theme settings from API
             loadThemeSettingsFromAPI();
         }
         
@@ -6070,8 +6068,12 @@ if ($form_id > 0) {
             }
         });
         
-        // Function to load theme settings from API (optional, runs in background)
+        // Function to load theme settings from API
         function loadThemeSettingsFromAPI() {
+            // Ensure loader is visible and content is hidden
+            $('#themeSettingsLoader').show();
+            $('#themeSettingsContent').hide();
+            
             $.ajax({
                 url: "ajax_call.php",
                 type: "POST",
@@ -6082,6 +6084,9 @@ if ($form_id > 0) {
                     store: store
                 },
                 success: function(response) {
+                    // Hide loader
+                    $('#themeSettingsLoader').hide();
+                    
                     if (response['code'] != undefined && response['code'] == '403') {
                         redirect403();
                         return;
@@ -6091,10 +6096,42 @@ if ($form_id > 0) {
                     
                     if (response.outcome == 'true' || response.outcome === 'true') {
                         console.log('Color Schemes:', response.color_schemes);
+                        console.log('Color Schemes Length:', response.color_schemes ? response.color_schemes.length : 0);
                         console.log('Colors:', response.colors);
                         console.log('Typography:', response.typography);
                         console.log('Text Presets:', response.text_presets);
                         
+                        // Debug: Log debug info if available
+                        if (response.debug) {
+                            console.log('=== DEBUG INFO ===');
+                            console.log('Current Color Schemes Found:', response.debug.current_color_schemes_count);
+                            console.log('Final Color Schemes Count:', response.debug.final_color_schemes_count);
+                            console.log('Color Schemes Count in Settings:', response.debug.color_schemes_count);
+                            console.log('Color Schemes Type:', response.debug.color_schemes_type);
+                            console.log('First Scheme Type:', response.debug.first_scheme_type);
+                            console.log('First Scheme Keys:', response.debug.first_scheme_keys);
+                            console.log('First Scheme Colors Type:', response.debug.first_scheme_colors_type);
+                            console.log('First Scheme Color Keys:', response.debug.first_scheme_color_keys);
+                            if (response.debug.color_schemes_sample) {
+                                console.log('Color Schemes Sample (first scheme colors):', response.debug.color_schemes_sample);
+                            }
+                            if (response.debug.first_scheme_full) {
+                                console.log('First Scheme Full Data:', response.debug.first_scheme_full);
+                                if (response.debug.first_scheme_full.settings) {
+                                    console.log('First Scheme Settings Content:', response.debug.first_scheme_full.settings);
+                                    console.log('First Scheme Settings Keys:', Object.keys(response.debug.first_scheme_full.settings || {}));
+                                }
+                            }
+                            if (response.debug.first_scheme_settings_keys) {
+                                console.log('First Scheme Settings Keys (from debug):', response.debug.first_scheme_settings_keys);
+                                console.log('First Scheme Settings Sample:', response.debug.first_scheme_settings_sample);
+                            }
+                            console.log('Full Debug Object:', response.debug);
+                            console.log('==================');
+                        }
+                        
+                        // Show content and display theme settings
+                        $('#themeSettingsContent').show();
                         displayThemeSettings(
                             response.color_schemes || [],
                             response.colors || [],
@@ -6103,6 +6140,9 @@ if ($form_id > 0) {
                         );
                     } else {
                         console.warn('Theme Settings API returned false:', response.report || 'Unknown error');
+                        
+                        // Show content even on error (it will be empty)
+                        $('#themeSettingsContent').show();
                         
                         // Show user-friendly error message if scope is missing
                         if (response.scope_error) {
@@ -6114,7 +6154,11 @@ if ($form_id > 0) {
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Theme settings API error (using defaults):', error);
+                    console.error('Theme settings API error:', error);
+                    
+                    // Hide loader and show content (will be empty)
+                    $('#themeSettingsLoader').hide();
+                    $('#themeSettingsContent').show();
                 }
             });
         }
@@ -6123,7 +6167,7 @@ if ($form_id > 0) {
         function displayThemeSettings(colorSchemes, colors, typography, textPresets) {
             console.log('Displaying theme settings with colorSchemes:', colorSchemes);
             
-            // Use API color schemes if available, otherwise use defaults
+            // Use API color schemes only - no fallback to defaults
             var schemesToDisplay = [];
             if (colorSchemes && colorSchemes.length > 0) {
                 // Use real data from API
@@ -6138,52 +6182,41 @@ if ($form_id > 0) {
                 });
                 console.log('Using API color schemes:', schemesToDisplay);
             } else {
-                // Fallback to defaults
-                schemesToDisplay = [
-                    { id: 1, bg: '#ffffff', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' },
-                    { id: 2, bg: '#7B5C50', text: '#E5E5E5', swatch1: '#7B5C50', swatch2: '#E5E5E5' },
-                    { id: 3, bg: '#4A5B63', text: '#E5E5E5', swatch1: '#4A5B63', swatch2: '#E5E5E5' },
-                    { id: 4, bg: '#E0DCD5', text: '#7B5C50', swatch1: '#7B5C50', swatch2: '#E0DCD5' },
-                    { id: 5, bg: '#4A5B4A', text: '#E5E5E5', swatch1: '#000000', swatch2: '#E5E5E5' },
-                    { id: 6, bg: 'transparent', text: '#ffffff', swatch1: '#000000', swatch2: '#ffffff' },
-                    { id: 7, bg: 'transparent', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' }
-                ];
-                console.log('Using default color schemes (API returned empty)');
+                console.log('No color schemes available from API');
             }
             
             // Generate color schemes HTML
             var colorsHtml = '';
-            schemesToDisplay.forEach(function(scheme) {
-                var bgStyle = scheme.bg === 'transparent' ? 'background: transparent;' : 'background-color: ' + scheme.bg + ';';
-                var transparentClass = scheme.bg === 'transparent' ? ' transparent' : '';
-                colorsHtml += '<div class="color-scheme-box" data-scheme-id="' + scheme.id + '">';
-                colorsHtml += '<div class="color-scheme-preview' + transparentClass + '" style="' + bgStyle + '">';
-                colorsHtml += '<div class="color-scheme-preview-text" style="color: ' + scheme.text + ';">Aa</div>';
-                    colorsHtml += '</div>';
-                colorsHtml += '<div class="color-scheme-swatches">';
-                colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch1 + ';"></div>';
-                colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch2 + ';"></div>';
-                    colorsHtml += '</div>';
-                colorsHtml += '<div class="color-scheme-label">Scheme ' + scheme.id + '</div>';
-                    colorsHtml += '</div>';
-                });
-            // Add Scheme button
-            colorsHtml += '<div class="color-scheme-box add-scheme">';
-            colorsHtml += '<svg class="add-scheme-icon" viewBox="0 0 20 20" fill="currentColor">';
-            colorsHtml += '<path d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z"></path>';
-            colorsHtml += '</svg>';
-            colorsHtml += '<div class="add-scheme-label">Add Scheme</div>';
-            colorsHtml += '</div>';
+            if (schemesToDisplay.length === 0) {
+                colorsHtml = '<div style="padding: 20px; text-align: center; color: #666;">No color schemes available</div>';
+            } else {
+                schemesToDisplay.forEach(function(scheme) {
+                    var bgStyle = scheme.bg === 'transparent' ? 'background: transparent;' : 'background-color: ' + scheme.bg + ';';
+                    var transparentClass = scheme.bg === 'transparent' ? ' transparent' : '';
+                    colorsHtml += '<div class="color-scheme-box" data-scheme-id="' + scheme.id + '">';
+                    colorsHtml += '<div class="color-scheme-preview' + transparentClass + '" style="' + bgStyle + '">';
+                    colorsHtml += '<div class="color-scheme-preview-text" style="color: ' + scheme.text + ';">Aa</div>';
+                        colorsHtml += '</div>';
+                    colorsHtml += '<div class="color-scheme-swatches">';
+                    colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch1 + ';"></div>';
+                    colorsHtml += '<div class="color-scheme-swatch" style="background-color: ' + scheme.swatch2 + ';"></div>';
+                        colorsHtml += '</div>';
+                    colorsHtml += '<div class="color-scheme-label">Scheme ' + scheme.id + '</div>';
+                        colorsHtml += '</div>';
+                    });
+                // Add Scheme button (only show if we have schemes)
+                colorsHtml += '<div class="color-scheme-box add-scheme">';
+                colorsHtml += '<svg class="add-scheme-icon" viewBox="0 0 20 20" fill="currentColor">';
+                colorsHtml += '<path d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z"></path>';
+                colorsHtml += '</svg>';
+                colorsHtml += '<div class="add-scheme-label">Add Scheme</div>';
+                colorsHtml += '</div>';
+            }
             
             $('#colorSchemaContainer').html(colorsHtml);
             
-            // Use API typography if available, otherwise use defaults
-            var fontsToDisplay = typography && typography.length > 0 ? typography : [
-                { id: 'body', label: 'Body', value: 'Newsreader' },
-                { id: 'subheading', label: 'Subheading', value: 'Newsreader' },
-                { id: 'heading', label: 'Heading', value: 'Newsreader' },
-                { id: 'accent', label: 'Accent', value: 'Red Hat Display' }
-            ];
+            // Use API typography only - no fallback to defaults
+            var fontsToDisplay = typography && typography.length > 0 ? typography : [];
             
             // Common font list (for dropdowns) - collect unique fonts from API data
             var fontList = ['Newsreader', 'Red Hat Display', 'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins', 'Playfair Display', 'Merriweather'];
@@ -6197,34 +6230,45 @@ if ($form_id > 0) {
             
             // Generate fonts HTML
             var fontsHtml = '';
-            fontsToDisplay.forEach(function(font) {
-                fontsHtml += '<div class="font-item">';
-                fontsHtml += '<div class="font-item-label">' + escapeHtml(font.label) + '</div>';
-                fontsHtml += '<div class="font-item-control">';
-                fontsHtml += '<div class="Polaris-Select">';
-                fontsHtml += '<select class="Polaris-Select__Input font-select" data-font-type="' + font.id + '">';
-                fontList.forEach(function(fontOption) {
-                    var selected = fontOption === font.value ? 'selected' : '';
-                    fontsHtml += '<option value="' + escapeHtml(fontOption) + '" ' + selected + ' style="font-family: ' + escapeHtml(fontOption) + ';">' + escapeHtml(fontOption) + '</option>';
+            if (fontsToDisplay.length === 0) {
+                fontsHtml = '<div style="padding: 20px; text-align: center; color: #666;">No fonts available</div>';
+            } else {
+                fontsToDisplay.forEach(function(font) {
+                    fontsHtml += '<div class="font-item">';
+                    fontsHtml += '<div class="font-item-label">' + escapeHtml(font.label) + '</div>';
+                    fontsHtml += '<div class="font-item-control">';
+                    fontsHtml += '<div class="Polaris-Select">';
+                    fontsHtml += '<select class="Polaris-Select__Input font-select" data-font-type="' + font.id + '">';
+                    fontList.forEach(function(fontOption) {
+                        var selected = fontOption === font.value ? 'selected' : '';
+                        fontsHtml += '<option value="' + escapeHtml(fontOption) + '" ' + selected + ' style="font-family: ' + escapeHtml(fontOption) + ';">' + escapeHtml(fontOption) + '</option>';
+                    });
+                    fontsHtml += '</select>';
+                    fontsHtml += '<div class="Polaris-Select__Content" aria-hidden="true">';
+                    fontsHtml += '<span class="Polaris-Select__SelectedOption">' + escapeHtml(font.value) + '</span>';
+                    fontsHtml += '<span class="Polaris-Select__Icon">';
+                    fontsHtml += '<svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">';
+                    fontsHtml += '<path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>';
+                    fontsHtml += '</svg>';
+                    fontsHtml += '</span>';
+                    fontsHtml += '</div>';
+                    fontsHtml += '<div class="Polaris-Select__Backdrop"></div>';
+                    fontsHtml += '</div>';
+                    fontsHtml += '</div>';
+                    fontsHtml += '</div>';
                 });
-                fontsHtml += '</select>';
-                fontsHtml += '<div class="Polaris-Select__Content" aria-hidden="true">';
-                fontsHtml += '<span class="Polaris-Select__SelectedOption">' + escapeHtml(font.value) + '</span>';
-                fontsHtml += '<span class="Polaris-Select__Icon">';
-                fontsHtml += '<svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">';
-                fontsHtml += '<path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>';
-                fontsHtml += '</svg>';
-                fontsHtml += '</span>';
-                fontsHtml += '</div>';
-                fontsHtml += '<div class="Polaris-Select__Backdrop"></div>';
-                fontsHtml += '</div>';
-                fontsHtml += '</div>';
-                fontsHtml += '</div>';
-            });
+            }
             $('#fontsContainer').html(fontsHtml);
             
             // Generate text presets HTML
             var typographyHtml = '';
+            
+            // Check if we have any text presets
+            if (!textPresets || textPresets.length === 0) {
+                typographyHtml = '<div style="padding: 20px; text-align: center; color: #666;">No text presets available</div>';
+                $('#typographyContainer').html(typographyHtml);
+                return; // Early return if no data
+            }
             
             // Group text presets by type (paragraph, heading, etc.)
             var paragraphPresets = textPresets ? textPresets.filter(function(p) { 
@@ -6234,9 +6278,9 @@ if ($form_id > 0) {
                 return p.label.toLowerCase().indexOf('heading') !== -1 || p.id.toLowerCase().indexOf('heading') !== -1; 
             }) : [];
             
-            // Get paragraph size and line height from API or use defaults
-            var paragraphSize = '14';
-            var paragraphLineHeight = 'Normal';
+            // Get paragraph size and line height from API only
+            var paragraphSize = '';
+            var paragraphLineHeight = '';
             if (paragraphPresets.length > 0) {
                 var sizePreset = paragraphPresets.find(function(p) { return p.label.toLowerCase().indexOf('size') !== -1 || p.id.toLowerCase().indexOf('size') !== -1; });
                 var lineHeightPreset = paragraphPresets.find(function(p) { return p.label.toLowerCase().indexOf('line') !== -1 || p.id.toLowerCase().indexOf('line') !== -1; });
@@ -6279,14 +6323,14 @@ if ($form_id > 0) {
             
             typographyHtml += '</div></div>';
             
-            // Get heading 1 presets from API or use defaults
-            var heading1Size = '72';
-            var heading1LineHeight = 'Normal';
-            var heading1LetterSpacing = 'Normal';
+            // Get heading 1 presets from API only
+            var heading1Size = '';
+            var heading1LineHeight = '';
+            var heading1LetterSpacing = '';
             if (headingPresets.length > 0) {
-                var h1SizePreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('size') !== -1 || p.id.toLowerCase().indexOf('size') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
-                var h1LineHeightPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('line') !== -1 || p.id.toLowerCase().indexOf('line') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
-                var h1LetterSpacingPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('letter') !== -1 || p.id.toLowerCase().indexOf('letter') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1); });
+                var h1SizePreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('size') !== -1 || p.id.toLowerCase().indexOf('size') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('h1') !== -1); });
+                var h1LineHeightPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('line') !== -1 || p.id.toLowerCase().indexOf('line') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('h1') !== -1); });
+                var h1LetterSpacingPreset = headingPresets.find(function(p) { return (p.label.toLowerCase().indexOf('letter') !== -1 || p.id.toLowerCase().indexOf('letter') !== -1) && (p.label.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('1') !== -1 || p.id.toLowerCase().indexOf('h1') !== -1); });
                 if (h1SizePreset && h1SizePreset.value) heading1Size = h1SizePreset.value;
                 if (h1LineHeightPreset && h1LineHeightPreset.value) heading1LineHeight = h1LineHeightPreset.value;
                 if (h1LetterSpacingPreset && h1LetterSpacingPreset.value) heading1LetterSpacing = h1LetterSpacingPreset.value;

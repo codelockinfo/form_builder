@@ -716,23 +716,152 @@ class Client_functions extends common_function {
             $current_typography = array();
             $current_color_schemes = array();
             $current_text_presets = array();
+            $settings_data = null; // Initialize for debug info later
             
             if (isset($settings_data_response['response'])) {
                 $settings_data_json = json_decode($settings_data_response['response'], true);
                 if (isset($settings_data_json['asset']['value'])) {
                     $settings_data = json_decode($settings_data_json['asset']['value'], true);
+                    
+                    // Ensure all nested objects are converted to arrays (recursive conversion)
+                    // Sometimes json_decode with true still leaves nested objects as stdClass
+                    $settings_data = json_decode(json_encode($settings_data), true);
+                    
+                    // Debug: Log the structure to see what we're working with
+                    error_log('Settings data structure: ' . json_encode(array_keys($settings_data ?: array())));
+                    
                     if ($settings_data && isset($settings_data['current'])) {
                         $current_settings = $settings_data['current'];
                         
+                        // Debug: Log available keys in current settings
+                        error_log('Current settings keys: ' . json_encode(array_keys($current_settings)));
+                        
                         // First check if color_schemes exists as a direct array key (common format)
                         // This is the primary way Shopify stores color schemes
-                        if (isset($current_settings['color_schemes']) && is_array($current_settings['color_schemes'])) {
-                            foreach ($current_settings['color_schemes'] as $idx => $scheme) {
-                                if (is_array($scheme) && isset($scheme['colors']) && is_array($scheme['colors'])) {
-                                    // Store with index as key, but preserve the scheme data including ID
-                                    $current_color_schemes[$idx] = $scheme;
+                        if (isset($current_settings['color_schemes'])) {
+                            // Handle both arrays and objects (JSON decode can return objects)
+                            $color_schemes_data = $current_settings['color_schemes'];
+                            
+                            // ALWAYS convert to array recursively - sometimes json_decode leaves nested objects
+                            $color_schemes_data = json_decode(json_encode($color_schemes_data), true);
+                            
+                            error_log('Raw color_schemes_data type: ' . gettype($color_schemes_data) . ', is_array: ' . (is_array($color_schemes_data) ? 'yes' : 'no'));
+                            
+                            if (is_array($color_schemes_data) && count($color_schemes_data) > 0) {
+                                $scheme_keys = array_keys($color_schemes_data);
+                                error_log('Found color_schemes with ' . count($color_schemes_data) . ' schemes. Keys: ' . json_encode($scheme_keys));
+                                
+                                // Use array_values to ensure we iterate through all items regardless of key type
+                                $scheme_index = 0; // Use numeric index for storage
+                                foreach ($color_schemes_data as $original_key => $scheme) {
+                                    error_log("Processing scheme with key: $original_key, type: " . gettype($scheme));
+                                    
+                                    // Convert scheme to array recursively
+                                    if (!is_array($scheme)) {
+                                        $scheme = json_decode(json_encode($scheme), true);
+                                    }
+                                    
+                                    if (!is_array($scheme)) {
+                                        error_log("Scheme $original_key is not an array after conversion. Type: " . gettype($scheme));
+                                        continue;
+                                    }
+                                    
+                                    error_log("Scheme $original_key keys: " . json_encode(array_keys($scheme)));
+                                    
+                                    // Check for 'colors' key directly, or 'settings' key (Shopify theme format)
+                                    $scheme_colors = null;
+                                    if (isset($scheme['colors'])) {
+                                        $scheme_colors = $scheme['colors'];
+                                        error_log("Scheme $original_key: Found 'colors' key");
+                                    } elseif (isset($scheme['settings'])) {
+                                        // Convert settings to array first
+                                        $settings_temp = $scheme['settings'];
+                                        if (!is_array($settings_temp)) {
+                                            $settings_temp = json_decode(json_encode($settings_temp), true);
+                                        }
+                                        
+                                        if (is_array($settings_temp)) {
+                                            // Check if settings contains color-like keys (background, foreground, text, etc.)
+                                            $color_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label', 'accent1', 'accent2', 'surface', 'surface_label');
+                                            $has_color_keys = false;
+                                            foreach ($color_keys as $ck) {
+                                                if (isset($settings_temp[$ck])) {
+                                                    $has_color_keys = true;
+                                                    break;
+                                                }
+                                            }
+                                            
+                                            // Also check if any value looks like a color (hex or rgba)
+                                            if (!$has_color_keys && count($settings_temp) > 0) {
+                                                foreach ($settings_temp as $sk => $sv) {
+                                                    if (is_string($sv) && (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $sv) || preg_match('/^rgba?\(/', $sv))) {
+                                                        $has_color_keys = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if ($has_color_keys || count($settings_temp) > 0) {
+                                                // Settings contains color data - use it as colors
+                                                $scheme_colors = $settings_temp;
+                                                error_log("Scheme $original_key: Using 'settings' as colors. Settings keys: " . json_encode(array_keys($settings_temp)));
+                                            } else {
+                                                error_log("Scheme $original_key: 'settings' exists but doesn't contain color data. Keys: " . json_encode(array_keys($settings_temp)));
+                                            }
+                                        }
+                                    }
+                                    
+                                    if ($scheme_colors === null) {
+                                        error_log("Scheme $original_key does not have 'colors' or valid 'settings' key. Available keys: " . json_encode(array_keys($scheme)));
+                                        continue;
+                                    }
+                                    
+                                    // Convert colors to array recursively
+                                    if (!is_array($scheme_colors)) {
+                                        $scheme_colors = json_decode(json_encode($scheme_colors), true);
+                                    }
+                                    
+                                    if (!is_array($scheme_colors)) {
+                                        error_log("Scheme $original_key colors/settings is not an array after conversion. Type: " . gettype($scheme_colors));
+                                        continue;
+                                    }
+                                    
+                                    // If we got colors from 'settings', update the scheme structure
+                                    if (isset($scheme['settings']) && !isset($scheme['colors'])) {
+                                        $scheme['colors'] = $scheme_colors;
+                                    }
+                                    
+                                    $colors_count = count($scheme_colors);
+                                    error_log("Scheme $original_key has $colors_count color entries. Color keys: " . json_encode(array_keys($scheme_colors)));
+                                    
+                                    // Check if we have at least one valid color value
+                                    $has_valid_colors = false;
+                                    foreach ($scheme_colors as $ck => $cv) {
+                                        if (is_string($cv) && !empty($cv) && (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $cv) || preg_match('/^rgba?\(/', $cv) || $cv === 'transparent')) {
+                                            $has_valid_colors = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if ($has_valid_colors || $colors_count > 0) {
+                                        // Store with numeric index for processing, but preserve the scheme data including ID
+                                        // Ensure 'colors' key exists in the stored scheme
+                                        if (!isset($scheme['colors'])) {
+                                            $scheme['colors'] = $scheme_colors;
+                                        }
+                                        $current_color_schemes[$scheme_index] = $scheme;
+                                        error_log("✓ Added color scheme $scheme_index (original key: $original_key) with $colors_count colors");
+                                        $scheme_index++;
+                                    } else {
+                                        error_log("✗ Scheme $original_key has empty colors array");
+                                    }
                                 }
+                                error_log('Total color schemes extracted: ' . count($current_color_schemes));
+                            } else {
+                                error_log('color_schemes_data is not an array or is empty. Type: ' . gettype($color_schemes_data) . ', Count: ' . (is_array($color_schemes_data) ? count($color_schemes_data) : 'N/A'));
                             }
+                        } else {
+                            error_log('No color_schemes key found in current_settings. Available keys: ' . json_encode(array_keys($current_settings)));
                         }
                         
                         // Extract all settings values
@@ -790,100 +919,180 @@ class Client_functions extends common_function {
             // Process color schemes from extracted current_color_schemes
             $final_color_schemes = array();
             
+            error_log('Processing color schemes. Found ' . count($current_color_schemes) . ' schemes in current_color_schemes');
+            
             if (!empty($current_color_schemes)) {
+                $scheme_processing_index = 1;
                 foreach ($current_color_schemes as $scheme_key => $scheme_data) {
-                    if (is_array($scheme_data) && isset($scheme_data['colors']) && is_array($scheme_data['colors'])) {
-                        $scheme_colors = $scheme_data['colors'];
-                        
-                        // Extract background color - prioritize 'background' then 'background_label'
-                        $bg_color = '#ffffff';
-                        if (isset($scheme_colors['background'])) {
-                            $bg_color = $scheme_colors['background'];
-                        } elseif (isset($scheme_colors['background_label'])) {
-                            $bg_color = $scheme_colors['background_label'];
+                    // Ensure scheme_data is an array
+                    if (!is_array($scheme_data)) {
+                        $scheme_data = json_decode(json_encode($scheme_data), true);
+                    }
+                    
+                    // Check for 'colors' or 'settings' key
+                    $processing_colors = null;
+                    if (isset($scheme_data['colors'])) {
+                        $processing_colors = $scheme_data['colors'];
+                    } elseif (isset($scheme_data['settings']) && is_array($scheme_data['settings'])) {
+                        $processing_colors = $scheme_data['settings'];
+                    }
+                    
+                    if ($processing_colors !== null) {
+                        // Ensure colors is an array
+                        if (!is_array($processing_colors)) {
+                            $processing_colors = json_decode(json_encode($processing_colors), true);
                         }
                         
-                        // Extract text/foreground color - prioritize 'text' then 'foreground' then 'foreground_label'
-                        $text_color = '#000000';
-                        if (isset($scheme_colors['text'])) {
-                            $text_color = $scheme_colors['text'];
-                        } elseif (isset($scheme_colors['foreground'])) {
-                            $text_color = $scheme_colors['foreground'];
-                        } elseif (isset($scheme_colors['foreground_label'])) {
-                            $text_color = $scheme_colors['foreground_label'];
-                        }
-                        
-                        // Get all other color values (excluding background and text)
-                        $other_colors = array();
-                        $excluded_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label');
-                        
-                        foreach ($scheme_colors as $color_key => $color_value) {
-                            if (!in_array($color_key, $excluded_keys) && is_string($color_value) && !empty($color_value)) {
-                                // Only add valid color values (hex or rgba)
-                                if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $color_value) || preg_match('/^rgba?\(/', $color_value)) {
-                                    $other_colors[] = $color_value;
+                        if (is_array($processing_colors)) {
+                            // Ensure scheme_data has 'colors' key for consistency
+                            if (!isset($scheme_data['colors'])) {
+                                $scheme_data['colors'] = $processing_colors;
+                            }
+                            $scheme_colors = $processing_colors;
+                            
+                            // Extract background color - prioritize 'background' then 'background_label'
+                            $bg_color = '#ffffff';
+                            if (isset($scheme_colors['background'])) {
+                                $bg_color = $scheme_colors['background'];
+                            } elseif (isset($scheme_colors['background_label'])) {
+                                $bg_color = $scheme_colors['background_label'];
+                            }
+                            
+                            // Extract text/foreground color - prioritize 'text' then 'foreground' then 'foreground_label'
+                            $text_color = '#000000';
+                            if (isset($scheme_colors['text'])) {
+                                $text_color = $scheme_colors['text'];
+                            } elseif (isset($scheme_colors['foreground'])) {
+                                $text_color = $scheme_colors['foreground'];
+                            } elseif (isset($scheme_colors['foreground_label'])) {
+                                $text_color = $scheme_colors['foreground_label'];
+                            }
+                            
+                            // Get all other color values (excluding background and text)
+                            $other_colors = array();
+                            $excluded_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label');
+                            
+                            foreach ($scheme_colors as $color_key => $color_value) {
+                                if (!in_array($color_key, $excluded_keys) && is_string($color_value) && !empty($color_value)) {
+                                    // Only add valid color values (hex or rgba)
+                                    if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $color_value) || preg_match('/^rgba?\(/', $color_value)) {
+                                        $other_colors[] = $color_value;
+                                    }
                                 }
                             }
+                            
+                            // Use other colors as swatches, or fallback to text/bg
+                            $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
+                            $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                            
+                            // Get scheme ID - use scheme_data id if available, otherwise use processing index
+                            $scheme_id = isset($scheme_data['id']) ? $scheme_data['id'] : (is_numeric($scheme_key) ? ((int)$scheme_key + 1) : $scheme_processing_index);
+                            
+                            $final_color_schemes[] = array(
+                                'id' => $scheme_id,
+                                'key' => $scheme_key,
+                                'bg' => $bg_color,
+                                'text' => $text_color,
+                                'swatch1' => $accent1,
+                                'swatch2' => $accent2
+                            );
+                            
+                            error_log("Processed color scheme $scheme_processing_index: bg=$bg_color, text=$text_color, swatch1=$accent1, swatch2=$accent2");
+                            $scheme_processing_index++;
                         }
-                        
-                        // Use other colors as swatches, or fallback to text/bg
-                        $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
-                        $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
-                        
-                        // Get scheme ID - use scheme_data id if available, otherwise use key (which should be index), otherwise use array position
-                        $scheme_id = isset($scheme_data['id']) ? $scheme_data['id'] : (is_numeric($scheme_key) ? ((int)$scheme_key + 1) : (count($final_color_schemes) + 1));
-                        
-                        $final_color_schemes[] = array(
-                            'id' => $scheme_id,
-                            'key' => $scheme_key,
-                            'bg' => $bg_color,
-                            'text' => $text_color,
-                            'swatch1' => $accent1,
-                            'swatch2' => $accent2
-                        );
                     }
                 }
                 
                 // Sort by ID to maintain order
-                usort($final_color_schemes, function($a, $b) {
-                    return $a['id'] - $b['id'];
-                });
+                if (count($final_color_schemes) > 0) {
+                    usort($final_color_schemes, function($a, $b) {
+                        return $a['id'] - $b['id'];
+                    });
+                }
+                
+                error_log('Final color schemes after processing: ' . count($final_color_schemes));
+            } else {
+                error_log('No color schemes in current_color_schemes array');
             }
             
-            // If no color schemes found, try to extract from settings_data directly
+            // If no color schemes found in first pass, try alternative extraction
+            // This is a fallback in case the first extraction method didn't work
             if (empty($final_color_schemes) && isset($settings_data_response['response'])) {
+                error_log('First pass failed, trying fallback extraction method');
                 $settings_data_json = json_decode($settings_data_response['response'], true);
                 if (isset($settings_data_json['asset']['value'])) {
-                    $settings_data = json_decode($settings_data_json['asset']['value'], true);
-                    if ($settings_data && isset($settings_data['current']['color_schemes']) && is_array($settings_data['current']['color_schemes'])) {
-                        foreach ($settings_data['current']['color_schemes'] as $scheme) {
-                            if (isset($scheme['colors']) && is_array($scheme['colors'])) {
-                                $scheme_colors = $scheme['colors'];
+                    $settings_data_fallback = json_decode($settings_data_json['asset']['value'], true);
+                    // Ensure all nested objects are converted to arrays
+                    $settings_data_fallback = json_decode(json_encode($settings_data_fallback), true);
+                    
+                    if ($settings_data_fallback && isset($settings_data_fallback['current']['color_schemes'])) {
+                        $color_schemes_data_fallback = $settings_data_fallback['current']['color_schemes'];
+                        // Convert object to array if needed
+                        if (!is_array($color_schemes_data_fallback)) {
+                            $color_schemes_data_fallback = json_decode(json_encode($color_schemes_data_fallback), true);
+                        }
+                        
+                        error_log('Fallback: Found color_schemes, type: ' . gettype($color_schemes_data_fallback) . ', count: ' . (is_array($color_schemes_data_fallback) ? count($color_schemes_data_fallback) : 'N/A'));
+                        
+                        if (is_array($color_schemes_data_fallback) && count($color_schemes_data_fallback) > 0) {
+                            $fallback_index = 1;
+                            foreach ($color_schemes_data_fallback as $scheme_key => $scheme) {
+                                error_log("Fallback: Processing scheme key: $scheme_key");
                                 
-                                $bg_color = isset($scheme_colors['background']) ? $scheme_colors['background'] : (isset($scheme_colors['background_label']) ? $scheme_colors['background_label'] : '#ffffff');
-                                $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#000000'));
-                                
-                                // Get all other colors
-                                $other_colors = array();
-                                foreach ($scheme_colors as $ck => $cv) {
-                                    if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label')) && is_string($cv)) {
-                                        $other_colors[] = $cv;
-                                    }
+                                // Convert scheme object to array if needed
+                                if (!is_array($scheme)) {
+                                    $scheme = json_decode(json_encode($scheme), true);
                                 }
                                 
-                                $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
-                                $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                                // Check for 'colors' or 'settings' key
+                                $fallback_colors = null;
+                                if (isset($scheme['colors'])) {
+                                    $fallback_colors = $scheme['colors'];
+                                } elseif (isset($scheme['settings']) && is_array($scheme['settings'])) {
+                                    $fallback_colors = $scheme['settings'];
+                                }
                                 
-                                $final_color_schemes[] = array(
-                                    'id' => isset($scheme['id']) ? $scheme['id'] : $scheme_index,
-                                    'key' => 'scheme_' . $scheme_index,
-                                    'bg' => $bg_color,
-                                    'text' => $text_color,
-                                    'swatch1' => $accent1,
-                                    'swatch2' => $accent2
-                                );
-                                $scheme_index++;
+                                if ($fallback_colors !== null) {
+                                    // Convert colors object to array if needed
+                                    if (!is_array($fallback_colors)) {
+                                        $fallback_colors = json_decode(json_encode($fallback_colors), true);
+                                    }
+                                    
+                                    if (is_array($fallback_colors) && count($fallback_colors) > 0) {
+                                        $scheme_colors = $fallback_colors;
+                                        
+                                        $bg_color = isset($scheme_colors['background']) ? $scheme_colors['background'] : (isset($scheme_colors['background_label']) ? $scheme_colors['background_label'] : '#ffffff');
+                                        $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#000000'));
+                                        
+                                        // Get all other colors
+                                        $other_colors = array();
+                                        foreach ($scheme_colors as $ck => $cv) {
+                                            if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label')) && is_string($cv) && !empty($cv)) {
+                                                if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $cv) || preg_match('/^rgba?\(/', $cv)) {
+                                                    $other_colors[] = $cv;
+                                                }
+                                            }
+                                        }
+                                        
+                                        $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
+                                        $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                                        
+                                        $final_color_schemes[] = array(
+                                            'id' => isset($scheme['id']) ? $scheme['id'] : $fallback_index,
+                                            'key' => 'scheme_' . $fallback_index,
+                                            'bg' => $bg_color,
+                                            'text' => $text_color,
+                                            'swatch1' => $accent1,
+                                            'swatch2' => $accent2
+                                        );
+                                        
+                                        error_log("Fallback: Added scheme $fallback_index: bg=$bg_color, text=$text_color");
+                                        $fallback_index++;
+                                    }
+                                }
                             }
+                            
+                            error_log('Fallback extraction complete: ' . count($final_color_schemes) . ' schemes found');
                         }
                     }
                 }
@@ -926,13 +1135,130 @@ class Client_functions extends common_function {
                 }
             }
             
+            // Final attempt: If still no color schemes, try direct extraction from settings_data
+            if (empty($final_color_schemes) && isset($settings_data) && isset($settings_data['current']['color_schemes'])) {
+                error_log('Final attempt: Direct extraction from settings_data');
+                $color_schemes_direct = $settings_data['current']['color_schemes'];
+                $color_schemes_direct = json_decode(json_encode($color_schemes_direct), true);
+                
+                if (is_array($color_schemes_direct) && count($color_schemes_direct) > 0) {
+                    error_log('Direct extraction: Found ' . count($color_schemes_direct) . ' schemes');
+                    $direct_index = 1;
+                    foreach ($color_schemes_direct as $direct_key => $direct_scheme) {
+                        $direct_scheme = json_decode(json_encode($direct_scheme), true);
+                        
+                        // Check for 'colors' or 'settings' key
+                        $direct_colors_source = null;
+                        if (isset($direct_scheme['colors'])) {
+                            $direct_colors_source = $direct_scheme['colors'];
+                        } elseif (isset($direct_scheme['settings']) && is_array($direct_scheme['settings'])) {
+                            $direct_colors_source = $direct_scheme['settings'];
+                        }
+                        
+                        if ($direct_colors_source !== null) {
+                            $direct_colors = json_decode(json_encode($direct_colors_source), true);
+                            
+                            if (is_array($direct_colors) && count($direct_colors) > 0) {
+                                $bg_color = isset($direct_colors['background']) ? $direct_colors['background'] : (isset($direct_colors['background_label']) ? $direct_colors['background_label'] : '#ffffff');
+                                $text_color = isset($direct_colors['text']) ? $direct_colors['text'] : (isset($direct_colors['foreground']) ? $direct_colors['foreground'] : (isset($direct_colors['foreground_label']) ? $direct_colors['foreground_label'] : '#000000'));
+                                
+                                $other_colors = array();
+                                foreach ($direct_colors as $ck => $cv) {
+                                    if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label')) && is_string($cv) && !empty($cv)) {
+                                        if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $cv) || preg_match('/^rgba?\(/', $cv)) {
+                                            $other_colors[] = $cv;
+                                        }
+                                    }
+                                }
+                                
+                                $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
+                                $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                                
+                                $final_color_schemes[] = array(
+                                    'id' => isset($direct_scheme['id']) ? $direct_scheme['id'] : $direct_index,
+                                    'key' => 'scheme_' . $direct_index,
+                                    'bg' => $bg_color,
+                                    'text' => $text_color,
+                                    'swatch1' => $accent1,
+                                    'swatch2' => $accent2
+                                );
+                                
+                                error_log("Direct extraction: Added scheme $direct_index");
+                                $direct_index++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Debug: Log final results
+            error_log('Final results - Color schemes: ' . count($final_color_schemes) . ', Colors: ' . count($final_colors) . ', Typography: ' . count($final_typography) . ', Text presets: ' . count($final_text_presets));
+            
+            // Build debug info - include sample of settings_data structure
+            $debug_info = array(
+                'current_color_schemes_count' => count($current_color_schemes),
+                'final_color_schemes_count' => count($final_color_schemes)
+            );
+            
+            if (isset($settings_data) && isset($settings_data['current'])) {
+                $debug_info['settings_data_keys'] = array_keys($settings_data['current']);
+                $debug_info['has_color_schemes_key'] = isset($settings_data['current']['color_schemes']);
+                if (isset($settings_data['current']['color_schemes'])) {
+                    $color_schemes_debug = $settings_data['current']['color_schemes'];
+                    // Convert for debug if needed
+                    if (!is_array($color_schemes_debug)) {
+                        $color_schemes_debug = json_decode(json_encode($color_schemes_debug), true);
+                    }
+                    $debug_info['color_schemes_count'] = is_array($color_schemes_debug) ? count($color_schemes_debug) : 0;
+                    $debug_info['color_schemes_type'] = gettype($settings_data['current']['color_schemes']);
+                    $debug_info['color_schemes_keys'] = is_array($color_schemes_debug) ? array_keys($color_schemes_debug) : 'not_array';
+                    
+                    // Log first scheme structure if available - use array_values to get numeric indices
+                    if (is_array($color_schemes_debug) && count($color_schemes_debug) > 0) {
+                        $color_schemes_values = array_values($color_schemes_debug); // Convert to numeric-indexed array
+                        $first_scheme = $color_schemes_values[0];
+                        $debug_info['first_scheme_type'] = gettype($first_scheme);
+                        // Convert for debug
+                        if (!is_array($first_scheme)) {
+                            $first_scheme = json_decode(json_encode($first_scheme), true);
+                        }
+                        $debug_info['first_scheme_keys'] = is_array($first_scheme) ? array_keys($first_scheme) : 'not_array';
+                        if (isset($first_scheme['colors'])) {
+                            $colors_debug = $first_scheme['colors'];
+                            $debug_info['first_scheme_colors_type'] = gettype($colors_debug);
+                            if (!is_array($colors_debug)) {
+                                $colors_debug = json_decode(json_encode($colors_debug), true);
+                            }
+                            $debug_info['first_scheme_color_keys'] = is_array($colors_debug) ? array_keys($colors_debug) : 'not_array';
+                            // Include a sample of the actual data - first scheme's colors
+                            if (is_array($colors_debug)) {
+                                $debug_info['color_schemes_sample'] = $colors_debug; // All colors from first scheme
+                            }
+                        }
+                        // Include the full first scheme for debugging
+                        $debug_info['first_scheme_full'] = $first_scheme;
+                        
+                        // If settings exists, log what's inside it
+                        if (isset($first_scheme['settings'])) {
+                            $settings_content = $first_scheme['settings'];
+                            if (!is_array($settings_content)) {
+                                $settings_content = json_decode(json_encode($settings_content), true);
+                            }
+                            $debug_info['first_scheme_settings_keys'] = is_array($settings_content) ? array_keys($settings_content) : 'not_array';
+                            $debug_info['first_scheme_settings_sample'] = is_array($settings_content) ? array_slice($settings_content, 0, 5, true) : 'not_array';
+                        }
+                    }
+                }
+            }
+            
             return array(
                 'outcome' => 'true',
                 'report' => 'Theme settings loaded successfully',
                 'colors' => $final_colors,
                 'typography' => $final_typography,
                 'color_schemes' => $final_color_schemes,
-                'text_presets' => $final_text_presets
+                'text_presets' => $final_text_presets,
+                'debug' => $debug_info
             );
             
         } catch (Exception $e) {
