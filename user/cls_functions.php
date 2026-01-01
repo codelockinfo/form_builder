@@ -354,8 +354,32 @@ class Client_functions extends common_function {
             error_log('GraphQL Response Keys: ' . (is_array($response_data) ? implode(', ', array_keys($response_data)) : 'Not an array'));
             error_log('GraphQL Full Response: ' . json_encode($response_data));
             
-            // Check for GraphQL errors
-            if (isset($response_data['errors']) && is_array($response_data['errors']) && count($response_data['errors']) > 0) {
+            // Check for GraphQL errors - handle both array and string formats
+            if (isset($response_data['errors'])) {
+                // Handle string format: {"errors": "error message"}
+                if (is_string($response_data['errors'])) {
+                    $error_msg = $response_data['errors'];
+                    error_log('GraphQL Error (string format): ' . $error_msg);
+                    
+                    // Check if it's an authentication error
+                    if (stripos($error_msg, 'Invalid API key') !== false || 
+                        stripos($error_msg, 'access token') !== false || 
+                        stripos($error_msg, 'unrecognized login') !== false ||
+                        stripos($error_msg, 'wrong password') !== false) {
+                        $error_msg = 'Authentication failed. The access token may be invalid or expired. Please re-authenticate your store.';
+                    }
+                    
+                    return array(
+                        'outcome' => 'false',
+                        'report' => $error_msg,
+                        'html' => array(),
+                        'errors' => $response_data['errors'],
+                        'full_response' => $response_data
+                    );
+                }
+                
+                // Handle array format: {"errors": [{"message": "..."}]}
+                if (is_array($response_data['errors']) && count($response_data['errors']) > 0) {
                 $error_details = array();
                 foreach ($response_data['errors'] as $index => $error) {
                     // Handle different error formats
