@@ -5349,6 +5349,26 @@ class Client_functions extends common_function {
         }
     }
     
+    // Function to format pages data for API response
+    function make_api_data_pagesData($api_shopify_data_list) {
+        $tr_html = array();
+        if (isset($api_shopify_data_list->pages) && is_array($api_shopify_data_list->pages)) {
+            foreach ($api_shopify_data_list->pages as $page) {
+                $page_id = isset($page->id) ? $page->id : '';
+                $page_title = isset($page->title) ? htmlspecialchars($page->title) : 'Untitled';
+                $page_handle = isset($page->handle) ? htmlspecialchars($page->handle) : '';
+                
+                $tr_html[] = '<tr class="page-item-row" data-page-id="' . $page_id . '" data-page-title="' . htmlspecialchars($page_title) . '" data-page-handle="' . htmlspecialchars($page_handle) . '">' .
+                    '<td>' . $page_id . '</td>' .
+                    '<td>' . htmlspecialchars($page_title) . '</td>' .
+                    '<td>' . htmlspecialchars($page_handle) . '</td>' .
+                    '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>' .
+                    '</tr>';
+            }
+        }
+        return $tr_html;
+    }
+    
     // For FRONTEND
    
 }

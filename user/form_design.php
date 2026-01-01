@@ -87,13 +87,12 @@ if ($form_id > 0) {
                     </div>
                     <div class="item action">
                         <div class="Polaris-ButtonGroup">
-                          
                             <div class="Polaris-ButtonGroup__Item cls_design_enaDisa">
-                                <button class="Polaris-Button enable-btn" type="button" value="">
+                                <button class="Polaris-Button Polaris-Button--primary publish-form-btn" type="button">
                                     <span class="Polaris-Button__Content">
                                         <span class="Polaris-Button__Text">
-                                            <span></span>
-                                        </span>
+                                            <span>Publish</span>
+                                        </span> 
                                     </span>
                                 </button>
                             </div>
@@ -4910,6 +4909,167 @@ if ($form_id > 0) {
             </div>
         </div>
     </div>
+    
+    <!-- Publish Form Modals -->
+    <!-- Modal 1: Select Store Page -->
+    <div id="publishPageModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10000;">
+        <div class="Polaris-Modal-Dialog Polaris-Modal-Dialog--sizeLarge">
+            <div class="Polaris-Modal-Dialog__Modal">
+                <div class="Polaris-Modal-Dialog__Body">
+                    <div class="Polaris-Modal-Dialog__Content">
+                        <div class="Polaris-Page">
+                            <div class="Polaris-Page__Content">
+                                <div class="Polaris-Layout">
+                                    <div class="Polaris-Layout__Section">
+                                        <div class="Polaris-Card">
+                                            <div class="Polaris-Card__Header">
+                                                <h2 class="Polaris-Heading">Select Store Page</h2>
+                                            </div>
+                                            <div class="Polaris-Card__Section">
+                                                <div class="Polaris-TextField">
+                                                    <input type="text" id="pageSearchInput" class="Polaris-TextField__Input" placeholder="Search pages..." aria-invalid="false">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                                <div class="Polaris-DataTable" style="margin-top: 20px;">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>ID</th>
+                                                                    <th>Title</th>
+                                                                    <th>Handle</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="pagesListBody">
+                                                                <tr>
+                                                                    <td colspan="4" style="text-align: center; padding: 20px;">
+                                                                        <div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div>
+                                                                        <span style="margin-left: 10px;">Loading pages...</span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div id="pagesPagination" class="cls-page-pagination mb-4" style="margin-top: 20px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="Polaris-Modal-Dialog__Footer">
+                    <div class="Polaris-ButtonGroup">
+                        <div class="Polaris-ButtonGroup__Item">
+                            <button type="button" class="Polaris-Button closePageModal">
+                                <span class="Polaris-Button__Content">
+                                    <span class="Polaris-Button__Text">Cancel</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal 2: Confirm Publish with Form ID -->
+    <div id="publishConfirmModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10001;">
+        <div class="Polaris-Modal-Dialog">
+            <div class="Polaris-Modal-Dialog__Modal">
+                <div class="Polaris-Modal-Dialog__Body">
+                    <div class="Polaris-Modal-Dialog__Content">
+                        <div class="Polaris-Page">
+                            <div class="Polaris-Page__Content">
+                                <div class="Polaris-Card">
+                                    <div class="Polaris-Card__Section">
+                                        <h2 class="Polaris-Heading">Publish Form</h2>
+                                        <div style="margin-top: 20px;">
+                                            <p><strong>Selected Page:</strong> <span id="selectedPageTitle"></span></p>
+                                            <p style="margin-top: 15px;"><strong>Form ID:</strong></p>
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                                                <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
+                                                <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
+                                                    <span class="Polaris-Button__Content">
+                                                        <span class="Polaris-Button__Text">Copy ID</span>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <p style="margin-top: 15px; font-size: 13px; color: #6b7280;">Click Publish to redirect to the page customizer.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="Polaris-Modal-Dialog__Footer">
+                    <div class="Polaris-ButtonGroup">
+                        <div class="Polaris-ButtonGroup__Item">
+                            <button type="button" class="Polaris-Button closeConfirmModal">
+                                <span class="Polaris-Button__Content">
+                                    <span class="Polaris-Button__Text">Cancel</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="Polaris-ButtonGroup__Item">
+                            <button type="button" class="Polaris-Button Polaris-Button--primary confirmPublishBtn">
+                                <span class="Polaris-Button__Content">
+                                    <span class="Polaris-Button__Text">Publish</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .Polaris-Modal-Dialog__Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+        }
+        .Polaris-Modal-Dialog__Modal {
+            background: #fff;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .Polaris-Modal-Dialog__Body {
+            padding: 20px;
+        }
+        .Polaris-Modal-Dialog__Footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .page-item-row {
+            cursor: pointer;
+        }
+        .page-item-row:hover {
+            background-color: #f3f4f6;
+        }
+        .page-item-row.selected {
+            background-color: #e0f2fe;
+        }
+    </style>
+    
         <script>
     // Function to copy Form ID to clipboard
     function copyFormIdToClipboard(formId) {
@@ -4969,6 +5129,235 @@ if ($form_id > 0) {
         get_selected_elements(<?php echo $form_id; ?>);
         seeting_enable_disable(<?php echo $form_id; ?>);
         // getFormTitle(<?php echo $form_id; ?>);
+        
+        // Publish Form Functionality
+        var selectedPageId = null;
+        var selectedPageTitle = null;
+        var selectedPageHandle = null;
+        var currentPageNo = 1;
+        var searchKeyword = '';
+        
+        // Open page selection modal
+        $(document).on('click', '.publish-form-btn', function() {
+            $('#publishPageModal').show();
+            loadStorePages(1, '');
+        });
+        
+        // Close page selection modal
+        $(document).on('click', '.closePageModal', function() {
+            $('#publishPageModal').hide();
+            selectedPageId = null;
+            selectedPageTitle = null;
+            selectedPageHandle = null;
+        });
+        
+        // Close confirm modal
+        $(document).on('click', '.closeConfirmModal', function() {
+            $('#publishConfirmModal').hide();
+        });
+        
+        // Search pages
+        var searchTimeout;
+        $('#pageSearchInput').on('keyup', function() {
+            clearTimeout(searchTimeout);
+            var keyword = $(this).val();
+            searchTimeout = setTimeout(function() {
+                searchKeyword = keyword;
+                loadStorePages(1, keyword);
+            }, 500);
+        });
+        
+        // Load store pages from Shopify API
+        function loadStorePages(pageNo, searchKeyword) {
+            currentPageNo = pageNo;
+            $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
+            
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'take_api_shopify_data',
+                    shopify_api: 'pages',
+                    store: store,
+                    limit: 10,
+                    pageno: pageNo,
+                    search_keyword: searchKeyword,
+                    search_fields: 'title',
+                    listing_id: 'pagesData',
+                    pagination_method: 'pagination'
+                },
+                success: function(response) {
+                    if (response['code'] != undefined && response['code'] == '403') {
+                        redirect403();
+                        return;
+                    }
+                    
+                    if (response.outcome == 'true') {
+                        var html = '';
+                        
+                        // Check if html is an array or a string
+                        if (Array.isArray(response.html)) {
+                            // If it's an array of objects
+                            if (response.html.length > 0 && typeof response.html[0] === 'object') {
+                                response.html.forEach(function(page) {
+                                    var pageId = page.page_id || page.id || '';
+                                    var pageTitle = page.title || 'Untitled';
+                                    var pageHandle = page.handle || '';
+                                    html += '<tr class="page-item-row" data-page-id="' + pageId + '" data-page-title="' + escapeHtml(pageTitle) + '" data-page-handle="' + escapeHtml(pageHandle) + '">';
+                                    html += '<td>' + pageId + '</td>';
+                                    html += '<td>' + escapeHtml(pageTitle) + '</td>';
+                                    html += '<td>' + escapeHtml(pageHandle) + '</td>';
+                                    html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                                    html += '</tr>';
+                                });
+                            } else {
+                                // If it's an array of HTML strings, parse them
+                                response.html.forEach(function(htmlRow) {
+                                    if (typeof htmlRow === 'string') {
+                                        var $row = $(htmlRow);
+                                        var pageId = $row.find('td:first').text() || $row.find('td').eq(1).text();
+                                        var pageTitle = $row.find('td').eq(2).text();
+                                        var pageHandle = $row.find('td').eq(2).text(); // Adjust based on actual structure
+                                        html += htmlRow;
+                                    }
+                                });
+                            }
+                        } else if (typeof response.html === 'string' && response.html.trim() !== '') {
+                            // If html is a string (HTML table rows), use it directly
+                            html = response.html;
+                        }
+                        
+                        if (html) {
+                            $('#pagesListBody').html(html);
+                            
+                            // Update select buttons to work with our handler
+                            $('#pagesListBody .page-item-row').each(function() {
+                                var $row = $(this);
+                                if (!$row.find('.selectPageBtn').length) {
+                                    // Extract data from row if not already set
+                                    var $cells = $row.find('td');
+                                    if ($cells.length >= 3) {
+                                        var pageId = $cells.eq(0).text().trim() || $cells.eq(1).text().trim();
+                                        var pageTitle = $cells.eq(2).text().trim();
+                                        var pageHandle = $cells.eq(2).text().trim(); // May need adjustment
+                                        
+                                        $row.attr('data-page-id', pageId);
+                                        $row.attr('data-page-title', pageTitle);
+                                        $row.attr('data-page-handle', pageHandle);
+                                        
+                                        // Add select button if not present
+                                        if ($cells.length >= 4) {
+                                            $cells.eq(3).html('<button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button>');
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
+                        }
+                        
+                        // Add pagination
+                        if (response.pagination_html) {
+                            $('#pagesPagination').html(response.pagination_html);
+                        } else {
+                            $('#pagesPagination').html('');
+                        }
+                    } else {
+                        $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
+                        $('#pagesPagination').html('');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading pages:', error);
+                    $('#pagesListBody').html('<tr><td colspan="4" style="text-align: center; padding: 20px; color: #dc2626;">Error loading pages. Please try again.</td></tr>');
+                }
+            });
+        }
+        
+        // Handle pagination clicks
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var pageNo = $(this).data('page') || $(this).attr('data-page');
+            if (pageNo) {
+                loadStorePages(pageNo, searchKeyword);
+            }
+        });
+        
+        // Select page
+        $(document).on('click', '.selectPageBtn', function(e) {
+            e.stopPropagation();
+            var row = $(this).closest('tr');
+            
+            // Try to get data from data attributes first
+            selectedPageId = row.data('page-id');
+            selectedPageTitle = row.data('page-title');
+            selectedPageHandle = row.data('page-handle');
+            
+            // If not in data attributes, extract from table cells
+            if (!selectedPageId || !selectedPageTitle || !selectedPageHandle) {
+                var $cells = row.find('td');
+                if ($cells.length >= 3) {
+                    // Assuming structure: ID, Pages ID, Title, Handle (or similar)
+                    selectedPageId = $cells.eq(0).text().trim() || $cells.eq(1).text().trim();
+                    selectedPageTitle = $cells.eq(2).text().trim();
+                    // Handle might be in a different column or need to be extracted differently
+                    // For now, try to get it from the row or use title as fallback
+                    selectedPageHandle = $cells.eq(2).text().trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    
+                    // Try to find handle in other cells
+                    $cells.each(function(index) {
+                        var cellText = $(this).text().trim();
+                        if (cellText && cellText.indexOf('/') === -1 && cellText.length > 0 && cellText.length < 50) {
+                            // Might be a handle if it's a short alphanumeric string
+                            if (index > 2 && /^[a-z0-9-]+$/.test(cellText.toLowerCase())) {
+                                selectedPageHandle = cellText;
+                            }
+                        }
+                    });
+                }
+            }
+            
+            if (selectedPageId && selectedPageTitle) {
+                // Close first modal and open confirm modal
+                $('#publishPageModal').hide();
+                $('#selectedPageTitle').text(selectedPageTitle);
+                $('#publishConfirmModal').show();
+            } else {
+                alert('Unable to extract page information. Please try selecting again.');
+            }
+        });
+        
+        // Confirm and redirect to customizer
+        $(document).on('click', '.confirmPublishBtn', function() {
+            if (selectedPageId && selectedPageHandle) {
+                // Redirect to Shopify theme customizer for the selected page
+                // Format: /admin/themes/current/editor?template=pages/{handle}
+                var customizerUrl = 'https://' + store + '/admin/themes/current/editor?template=pages/' + encodeURIComponent(selectedPageHandle);
+                window.location.href = customizerUrl;
+            } else {
+                alert('Please select a page first.');
+            }
+        });
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text ? text.replace(/[&<>"']/g, function(m) { return map[m]; }) : '';
+        }
+        
+        // Close modals when clicking outside
+        $(document).on('click', '.Polaris-Modal-Dialog__Container', function(e) {
+            if ($(e.target).hasClass('Polaris-Modal-Dialog__Container')) {
+                $(this).hide();
+            }
+        });
     });
 
 </script>
