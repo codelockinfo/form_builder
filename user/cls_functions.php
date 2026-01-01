@@ -56,11 +56,34 @@ class Client_functions extends common_function {
      */
     function cls_shopify_graphql_call($query, $variables = array()) {
         $shopinfo = $this->current_store_obj;
-        $store_name = $shopinfo->shop_name;
-        $access_token = $shopinfo->password; // Access token from database
         
-        // GraphQL endpoint
-        $graphql_url = "https://" . $store_name . "/admin/api/2023-10/graphql.json";
+        // Get store name - handle both object and array formats
+        if (is_object($shopinfo)) {
+            $store_name = isset($shopinfo->shop_name) ? $shopinfo->shop_name : (isset($shopinfo->store_name) ? $shopinfo->store_name : '');
+            $access_token = isset($shopinfo->password) ? $shopinfo->password : '';
+        } else if (is_array($shopinfo)) {
+            $store_name = isset($shopinfo['shop_name']) ? $shopinfo['shop_name'] : (isset($shopinfo['store_name']) ? $shopinfo['store_name'] : '');
+            $access_token = isset($shopinfo['password']) ? $shopinfo['password'] : '';
+        } else {
+            return array('error' => 'Invalid store information', 'response' => null);
+        }
+        
+        // Validate store name and access token
+        if (empty($store_name)) {
+            return array('error' => 'Store name is empty', 'response' => null);
+        }
+        
+        if (empty($access_token)) {
+            return array('error' => 'Access token is empty', 'response' => null);
+        }
+        
+        // Ensure store name doesn't have protocol prefix
+        $store_name = preg_replace('#^https?://#', '', $store_name);
+        $store_name = rtrim($store_name, '/');
+        
+        // GraphQL endpoint - use same pattern as shopify_call function
+        $api_endpoint = "/admin/api/2023-10/graphql.json";
+        $graphql_url = "https://" . $store_name . $api_endpoint;
         
         // Prepare GraphQL request
         $payload = array(
@@ -71,7 +94,7 @@ class Client_functions extends common_function {
             $payload['variables'] = $variables;
         }
         
-        // Setup cURL
+        // Setup cURL - use same pattern as shopify_call
         $curl = curl_init($graphql_url);
         curl_setopt($curl, CURLOPT_HEADER, TRUE);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -83,7 +106,7 @@ class Client_functions extends common_function {
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
         
-        // Setup headers
+        // Setup headers - match shopify_call pattern
         $request_headers = array(
             'Content-Type: application/json',
             'X-Shopify-Access-Token: ' . $access_token
@@ -95,17 +118,22 @@ class Client_functions extends common_function {
         
         // Execute request
         $response = curl_exec($curl);
+        
+        $error_number = curl_errno($curl);
+        $error_message = curl_error($curl);
+        
+        if ($error_number) {
+            curl_close($curl);
+            error_log('GraphQL cURL Error: ' . $error_message . ' | URL: ' . $graphql_url);
+            return array('error' => $error_message, 'response' => null);
+        }
+        
+        // Parse response - use same pattern as shopify_call
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
         
-        $error_number = curl_errno($curl);
-        $error_message = curl_error($curl);
         curl_close($curl);
-        
-        if ($error_number) {
-            return array('error' => $error_message, 'response' => null);
-        }
         
         return array('headers' => $header, 'response' => $body);
     }
@@ -216,6 +244,17 @@ class Client_functions extends common_function {
      */
     function get_pages_via_graphql($limit = 10, $cursor = null) {
         try {
+            // Validate store info
+            $shopinfo = $this->current_store_obj;
+            if (empty($shopinfo)) {
+                error_log('get_pages_via_graphql: current_store_obj is empty');
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Store information not available',
+                    'html' => array()
+                );
+            }
+            
             // Build GraphQL query
             $query = '
                 query PageList($first: Int!, $after: String) {
@@ -240,7 +279,7 @@ class Client_functions extends common_function {
             
             // Prepare variables
             $variables = array(
-                'first' => $limit
+                'first' => intval($limit)
             );
             
             if ($cursor) {
@@ -251,9 +290,19 @@ class Client_functions extends common_function {
             $graphql_response = $this->cls_shopify_graphql_call($query, $variables);
             
             if (isset($graphql_response['error'])) {
+                error_log('GraphQL call error: ' . $graphql_response['error']);
                 return array(
                     'outcome' => 'false',
                     'report' => 'GraphQL Error: ' . $graphql_response['error'],
+                    'html' => array()
+                );
+            }
+            
+            if (empty($graphql_response['response'])) {
+                error_log('GraphQL response is empty');
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Empty response from GraphQL API',
                     'html' => array()
                 );
             }
