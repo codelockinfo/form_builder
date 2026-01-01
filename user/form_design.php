@@ -6103,6 +6103,14 @@ if ($form_id > 0) {
                         );
                     } else {
                         console.warn('Theme Settings API returned false:', response.report || 'Unknown error');
+                        
+                        // Show user-friendly error message if scope is missing
+                        if (response.scope_error) {
+                            alert('Theme Settings Access Required\n\n' + 
+                                  'To access your Shopify theme settings, the app needs the "read_themes" permission.\n\n' +
+                                  'Please reinstall the app from your Shopify admin to grant this permission.\n\n' +
+                                  'After reinstalling, refresh this page to see your theme color schemes.');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
@@ -6113,16 +6121,35 @@ if ($form_id > 0) {
         
         // Function to display theme settings
         function displayThemeSettings(colorSchemes, colors, typography, textPresets) {
+            console.log('Displaying theme settings with colorSchemes:', colorSchemes);
+            
             // Use API color schemes if available, otherwise use defaults
-            var schemesToDisplay = colorSchemes && colorSchemes.length > 0 ? colorSchemes : [
-                { id: 1, bg: '#ffffff', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' },
-                { id: 2, bg: '#7B5C50', text: '#E5E5E5', swatch1: '#7B5C50', swatch2: '#E5E5E5' },
-                { id: 3, bg: '#4A5B63', text: '#E5E5E5', swatch1: '#4A5B63', swatch2: '#E5E5E5' },
-                { id: 4, bg: '#E0DCD5', text: '#7B5C50', swatch1: '#7B5C50', swatch2: '#E0DCD5' },
-                { id: 5, bg: '#4A5B4A', text: '#E5E5E5', swatch1: '#000000', swatch2: '#E5E5E5' },
-                { id: 6, bg: 'transparent', text: '#ffffff', swatch1: '#000000', swatch2: '#ffffff' },
-                { id: 7, bg: 'transparent', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' }
-            ];
+            var schemesToDisplay = [];
+            if (colorSchemes && colorSchemes.length > 0) {
+                // Use real data from API
+                schemesToDisplay = colorSchemes.map(function(scheme, index) {
+                    return {
+                        id: scheme.id || (index + 1),
+                        bg: scheme.bg || '#ffffff',
+                        text: scheme.text || '#000000',
+                        swatch1: scheme.swatch1 || scheme.text || '#000000',
+                        swatch2: scheme.swatch2 || scheme.bg || '#ffffff'
+                    };
+                });
+                console.log('Using API color schemes:', schemesToDisplay);
+            } else {
+                // Fallback to defaults
+                schemesToDisplay = [
+                    { id: 1, bg: '#ffffff', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' },
+                    { id: 2, bg: '#7B5C50', text: '#E5E5E5', swatch1: '#7B5C50', swatch2: '#E5E5E5' },
+                    { id: 3, bg: '#4A5B63', text: '#E5E5E5', swatch1: '#4A5B63', swatch2: '#E5E5E5' },
+                    { id: 4, bg: '#E0DCD5', text: '#7B5C50', swatch1: '#7B5C50', swatch2: '#E0DCD5' },
+                    { id: 5, bg: '#4A5B4A', text: '#E5E5E5', swatch1: '#000000', swatch2: '#E5E5E5' },
+                    { id: 6, bg: 'transparent', text: '#ffffff', swatch1: '#000000', swatch2: '#ffffff' },
+                    { id: 7, bg: 'transparent', text: '#000000', swatch1: '#000000', swatch2: '#ffffff' }
+                ];
+                console.log('Using default color schemes (API returned empty)');
+            }
             
             // Generate color schemes HTML
             var colorsHtml = '';

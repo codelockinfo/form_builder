@@ -591,12 +591,29 @@ class Client_functions extends common_function {
             $themes_data = json_decode($themes_response['response'], true);
             
             if (isset($themes_data['errors'])) {
+                $error_message = is_array($themes_data['errors']) ? implode(', ', $themes_data['errors']) : $themes_data['errors'];
                 error_log('Theme settings error: ' . json_encode($themes_data['errors']));
+                
+                // Check if it's a scope issue
+                if (strpos($error_message, 'read_themes') !== false || strpos($error_message, 'merchant approval') !== false) {
+                    return array(
+                        'outcome' => 'false',
+                        'report' => 'Theme access requires read_themes scope. Please reinstall the app to grant this permission.',
+                        'colors' => array(),
+                        'typography' => array(),
+                        'color_schemes' => array(),
+                        'text_presets' => array(),
+                        'scope_error' => true
+                    );
+                }
+                
                 return array(
                     'outcome' => 'false',
-                    'report' => 'Error fetching themes: ' . (is_array($themes_data['errors']) ? implode(', ', $themes_data['errors']) : $themes_data['errors']),
+                    'report' => 'Error fetching themes: ' . $error_message,
                     'colors' => array(),
-                    'typography' => array()
+                    'typography' => array(),
+                    'color_schemes' => array(),
+                    'text_presets' => array()
                 );
             }
             
@@ -708,10 +725,12 @@ class Client_functions extends common_function {
                         $current_settings = $settings_data['current'];
                         
                         // First check if color_schemes exists as a direct array key (common format)
+                        // This is the primary way Shopify stores color schemes
                         if (isset($current_settings['color_schemes']) && is_array($current_settings['color_schemes'])) {
                             foreach ($current_settings['color_schemes'] as $idx => $scheme) {
-                                if (is_array($scheme) && isset($scheme['colors'])) {
-                                    $current_color_schemes['scheme_' . ($idx + 1)] = $scheme;
+                                if (is_array($scheme) && isset($scheme['colors']) && is_array($scheme['colors'])) {
+                                    // Store with index as key, but preserve the scheme data including ID
+                                    $current_color_schemes[$idx] = $scheme;
                                 }
                             }
                         }
@@ -770,79 +789,102 @@ class Client_functions extends common_function {
             
             // Process color schemes from extracted current_color_schemes
             $final_color_schemes = array();
-            $scheme_index = 1;
             
             if (!empty($current_color_schemes)) {
                 foreach ($current_color_schemes as $scheme_key => $scheme_data) {
                     if (is_array($scheme_data) && isset($scheme_data['colors']) && is_array($scheme_data['colors'])) {
                         $scheme_colors = $scheme_data['colors'];
                         
-                        // Extract background color (common keys: background, bg, base)
+                        // Extract background color - prioritize 'background' then 'background_label'
                         $bg_color = '#ffffff';
-                        foreach (array('background', 'bg', 'base', 'background_label') as $bg_key) {
-                            if (isset($scheme_colors[$bg_key])) {
-                                $bg_color = $scheme_colors[$bg_key];
-                                break;
-                            }
+                        if (isset($scheme_colors['background'])) {
+                            $bg_color = $scheme_colors['background'];
+                        } elseif (isset($scheme_colors['background_label'])) {
+                            $bg_color = $scheme_colors['background_label'];
                         }
                         
-                        // Extract text/foreground color
+                        // Extract text/foreground color - prioritize 'text' then 'foreground' then 'foreground_label'
                         $text_color = '#000000';
-                        foreach (array('text', 'foreground', 'foreground_label', 'text_label') as $text_key) {
-                            if (isset($scheme_colors[$text_key])) {
-                                $text_color = $scheme_colors[$text_key];
-                                break;
-                            }
+                        if (isset($scheme_colors['text'])) {
+                            $text_color = $scheme_colors['text'];
+                        } elseif (isset($scheme_colors['foreground'])) {
+                            $text_color = $scheme_colors['foreground'];
+                        } elseif (isset($scheme_colors['foreground_label'])) {
+                            $text_color = $scheme_colors['foreground_label'];
                         }
                         
-                        // Extract accent colors - try multiple common key names
-                        $accent1 = $text_color;
-                        $accent2 = $bg_color;
-                        $color_keys = array_keys($scheme_colors);
-                        $used_keys = array();
+                        // Get all other color values (excluding background and text)
+                        $other_colors = array();
+                        $excluded_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label');
                         
-                        // Try to find accent colors by common names
-                        foreach (array('accent1', 'accent_1', 'accent', 'primary', 'primary_label') as $acc_key) {
-                            if (isset($scheme_colors[$acc_key]) && !in_array($acc_key, array('background', 'bg', 'base', 'text', 'foreground', 'foreground_label'))) {
-                                $accent1 = $scheme_colors[$acc_key];
-                                $used_keys[] = $acc_key;
-                                break;
-                            }
-                        }
-                        
-                        foreach (array('accent2', 'accent_2', 'secondary', 'secondary_label') as $acc_key) {
-                            if (isset($scheme_colors[$acc_key]) && !in_array($acc_key, array('background', 'bg', 'base', 'text', 'foreground', 'foreground_label')) && !in_array($acc_key, $used_keys)) {
-                                $accent2 = $scheme_colors[$acc_key];
-                                $used_keys[] = $acc_key;
-                                break;
-                            }
-                        }
-                        
-                        // If accent colors not found by name, use first two available colors (excluding bg/text)
-                        if ($accent1 == $text_color || $accent2 == $bg_color) {
-                            $available_colors = array();
-                            foreach ($color_keys as $ck) {
-                                if (!in_array($ck, array('background', 'bg', 'base', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label')) && !in_array($ck, $used_keys)) {
-                                    $available_colors[] = $scheme_colors[$ck];
+                        foreach ($scheme_colors as $color_key => $color_value) {
+                            if (!in_array($color_key, $excluded_keys) && is_string($color_value) && !empty($color_value)) {
+                                // Only add valid color values (hex or rgba)
+                                if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $color_value) || preg_match('/^rgba?\(/', $color_value)) {
+                                    $other_colors[] = $color_value;
                                 }
                             }
-                            if (count($available_colors) > 0 && $accent1 == $text_color) {
-                                $accent1 = $available_colors[0];
-                            }
-                            if (count($available_colors) > 1 && $accent2 == $bg_color) {
-                                $accent2 = $available_colors[1];
-                            }
                         }
                         
+                        // Use other colors as swatches, or fallback to text/bg
+                        $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
+                        $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                        
+                        // Get scheme ID - use scheme_data id if available, otherwise use key (which should be index), otherwise use array position
+                        $scheme_id = isset($scheme_data['id']) ? $scheme_data['id'] : (is_numeric($scheme_key) ? ((int)$scheme_key + 1) : (count($final_color_schemes) + 1));
+                        
                         $final_color_schemes[] = array(
-                            'id' => $scheme_index,
+                            'id' => $scheme_id,
                             'key' => $scheme_key,
                             'bg' => $bg_color,
                             'text' => $text_color,
                             'swatch1' => $accent1,
                             'swatch2' => $accent2
                         );
-                        $scheme_index++;
+                    }
+                }
+                
+                // Sort by ID to maintain order
+                usort($final_color_schemes, function($a, $b) {
+                    return $a['id'] - $b['id'];
+                });
+            }
+            
+            // If no color schemes found, try to extract from settings_data directly
+            if (empty($final_color_schemes) && isset($settings_data_response['response'])) {
+                $settings_data_json = json_decode($settings_data_response['response'], true);
+                if (isset($settings_data_json['asset']['value'])) {
+                    $settings_data = json_decode($settings_data_json['asset']['value'], true);
+                    if ($settings_data && isset($settings_data['current']['color_schemes']) && is_array($settings_data['current']['color_schemes'])) {
+                        foreach ($settings_data['current']['color_schemes'] as $scheme) {
+                            if (isset($scheme['colors']) && is_array($scheme['colors'])) {
+                                $scheme_colors = $scheme['colors'];
+                                
+                                $bg_color = isset($scheme_colors['background']) ? $scheme_colors['background'] : (isset($scheme_colors['background_label']) ? $scheme_colors['background_label'] : '#ffffff');
+                                $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#000000'));
+                                
+                                // Get all other colors
+                                $other_colors = array();
+                                foreach ($scheme_colors as $ck => $cv) {
+                                    if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label')) && is_string($cv)) {
+                                        $other_colors[] = $cv;
+                                    }
+                                }
+                                
+                                $accent1 = !empty($other_colors) ? $other_colors[0] : $text_color;
+                                $accent2 = count($other_colors) > 1 ? $other_colors[1] : (count($other_colors) > 0 ? $other_colors[0] : $bg_color);
+                                
+                                $final_color_schemes[] = array(
+                                    'id' => isset($scheme['id']) ? $scheme['id'] : $scheme_index,
+                                    'key' => 'scheme_' . $scheme_index,
+                                    'bg' => $bg_color,
+                                    'text' => $text_color,
+                                    'swatch1' => $accent1,
+                                    'swatch2' => $accent2
+                                );
+                                $scheme_index++;
+                            }
+                        }
                     }
                 }
             }
