@@ -69,9 +69,22 @@ class Client_functions extends common_function {
             return array('error' => 'Invalid store information', 'response' => null);
         }
         
-        // Log for debugging
+        // Log for debugging - show what we're actually using
         error_log('GraphQL Debug - Store name (raw): ' . $store_name);
         error_log('GraphQL Debug - Access token (length): ' . strlen($access_token));
+        error_log('GraphQL Debug - Access token (first 20 chars): ' . substr($access_token, 0, 20) . '...');
+        error_log('GraphQL Debug - Access token prefix: ' . substr($access_token, 0, 5));
+        
+        // Log full shopinfo for debugging (without sensitive data)
+        if (is_object($shopinfo)) {
+            $debug_info = get_object_vars($shopinfo);
+            unset($debug_info['password']); // Don't log full password
+            error_log('GraphQL Debug - Shopinfo keys: ' . implode(', ', array_keys($debug_info)));
+        } else if (is_array($shopinfo)) {
+            $debug_info = $shopinfo;
+            unset($debug_info['password']); // Don't log full password
+            error_log('GraphQL Debug - Shopinfo keys: ' . implode(', ', array_keys($debug_info)));
+        }
         
         // Validate store name and access token
         if (empty($store_name)) {
@@ -82,6 +95,12 @@ class Client_functions extends common_function {
         if (empty($access_token)) {
             error_log('GraphQL Error: Access token is empty');
             return array('error' => 'Access token is empty', 'response' => null);
+        }
+        
+        // Validate access token format (should start with shpat_ for Admin API)
+        if (strpos($access_token, 'shpat_') !== 0 && strpos($access_token, 'shpua_') !== 0) {
+            error_log('GraphQL Warning: Access token does not start with shpat_ or shpua_. Token starts with: ' . substr($access_token, 0, 10));
+            // Don't fail here, just log - some tokens might have different formats
         }
         
         // Ensure store name doesn't have protocol prefix
@@ -265,6 +284,19 @@ class Client_functions extends common_function {
                 );
             }
             
+            // Debug: Log store info
+            if (is_object($shopinfo)) {
+                error_log('get_pages_via_graphql - Store Object Properties: ' . implode(', ', array_keys(get_object_vars($shopinfo))));
+                error_log('get_pages_via_graphql - shop_name: ' . (isset($shopinfo->shop_name) ? $shopinfo->shop_name : 'NOT SET'));
+                error_log('get_pages_via_graphql - store_name: ' . (isset($shopinfo->store_name) ? $shopinfo->store_name : 'NOT SET'));
+                error_log('get_pages_via_graphql - password (first 20): ' . (isset($shopinfo->password) ? substr($shopinfo->password, 0, 20) . '...' : 'NOT SET'));
+            } else if (is_array($shopinfo)) {
+                error_log('get_pages_via_graphql - Store Array Keys: ' . implode(', ', array_keys($shopinfo)));
+                error_log('get_pages_via_graphql - shop_name: ' . (isset($shopinfo['shop_name']) ? $shopinfo['shop_name'] : 'NOT SET'));
+                error_log('get_pages_via_graphql - store_name: ' . (isset($shopinfo['store_name']) ? $shopinfo['store_name'] : 'NOT SET'));
+                error_log('get_pages_via_graphql - password (first 20): ' . (isset($shopinfo['password']) ? substr($shopinfo['password'], 0, 20) . '...' : 'NOT SET'));
+            }
+            
             // Build GraphQL query
             $query = '
                 query PageList($first: Int!, $after: String) {
@@ -294,6 +326,31 @@ class Client_functions extends common_function {
             
             if ($cursor) {
                 $variables['after'] = $cursor;
+            }
+            
+            // First, test if the access token works with a simple REST API call
+            // This helps identify if it's a token issue or GraphQL-specific issue
+            $shopinfo = $this->current_store_obj;
+            $test_store_name = is_object($shopinfo) ? (isset($shopinfo->shop_name) ? $shopinfo->shop_name : '') : (isset($shopinfo['shop_name']) ? $shopinfo['shop_name'] : '');
+            $test_token = is_object($shopinfo) ? (isset($shopinfo->password) ? $shopinfo->password : '') : (isset($shopinfo['password']) ? $shopinfo['password'] : '');
+            
+            if (!empty($test_store_name) && !empty($test_token)) {
+                $test_store_name = preg_replace('#^https?://#', '', $test_store_name);
+                $test_store_name = rtrim($test_store_name, '/');
+                
+                // Test with a simple REST API call to verify token
+                $test_url = "/admin/api/2023-10/shop.json";
+                $test_response = shopify_call($test_token, $test_store_name, $test_url, array(), 'GET');
+                
+                if (isset($test_response['response'])) {
+                    $test_data = json_decode($test_response['response'], true);
+                    if (isset($test_data['errors']) || (isset($test_response['http_code']) && $test_response['http_code'] >= 400)) {
+                        error_log('Token validation failed - REST API test also failed');
+                        error_log('Test response: ' . substr($test_response['response'], 0, 500));
+                    } else {
+                        error_log('Token validation passed - REST API test successful');
+                    }
+                }
             }
             
             // Make GraphQL call
@@ -366,7 +423,7 @@ class Client_functions extends common_function {
                         stripos($error_msg, 'access token') !== false || 
                         stripos($error_msg, 'unrecognized login') !== false ||
                         stripos($error_msg, 'wrong password') !== false) {
-                        $error_msg = 'Authentication failed. The access token may be invalid or expired. Please re-authenticate your store.';
+                        $error_msg = 'Authentication failed. The access token stored in the database may be invalid or expired. Please re-authenticate your store through the Shopify app installation process to refresh the access token.';
                     }
                     
                     return array(
