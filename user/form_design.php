@@ -4914,7 +4914,7 @@ if ($form_id > 0) {
     <!-- Modal 1: Select Store Page -->
     <div id="publishPageModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10000;">
         <div class="Polaris-Modal-Dialog Polaris-Modal-Dialog--sizeLarge">
-            <div class="Polaris-Modal-Dialog__Modal" style="height: auto;">
+            <div class="Polaris-Modal-Dialog__Modal" style="height: auto; width: 500px!important;">
                 <div class="Polaris-Modal-Dialog__Body">
                     <div class="Polaris-Modal-Dialog__Content">
                         <div class="Polaris-Page" style="padding: 0;">
@@ -4940,11 +4940,11 @@ if ($form_id > 0) {
                                                     </div>
                                                     <div class="Polaris-DataTable" style="margin-top: 20px;">
                                                         <div class="table-responsive">
-                                                        <table class="table">
-                                                            <thead>
+                                                        <table class="table" style="width: 100%!important;">
+                                                            <thead style="text-align: left!important;">
                                                                 <tr>
                                                                     <th>Title</th>
-                                                                    <th>Action</th>
+                                                                    <th style="text-align: right!important;">Action</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="pagesListBody">
@@ -5229,42 +5229,49 @@ if ($form_id > 0) {
             // 1. Home Page
             html += '<tr class="hierarchical-item" data-page-type="home" data-page-handle="index">';
             html += '<td><strong>Home Page</strong></td>';
-            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
             html += '</tr>';
             
             // 2. Product
             html += '<tr class="hierarchical-item" data-page-type="product" data-page-handle="product">';
             html += '<td><strong>Product</strong></td>';
-            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
             html += '</tr>';
             
             // 3. Collections
             html += '<tr class="hierarchical-item" data-page-type="collection" data-page-handle="collection">';
             html += '<td><strong>Collections</strong></td>';
-            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
             html += '</tr>';
             
             // 4. Collections List
             html += '<tr class="hierarchical-item" data-page-type="collections-list" data-page-handle="collections">';
             html += '<td><strong>Collections List</strong></td>';
-            html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+            html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
             html += '</tr>';
             
             // 5. Page (with expandable sub-items)
             html += '<tr class="hierarchical-item page-parent-row" data-page-type="page-parent">';
             html += '<td><strong>Page</strong> <span class="page-toggle-icon" style="margin-left: 10px; cursor: pointer;">▼</span></td>';
-            html += '<td>-</td>';
+            html += '<td></td>';
             html += '</tr>';
             
-            // Add sub-items for pages (initially hidden)
-            if (pages.length > 0) {
-                pages.forEach(function(page) {
-                    html += '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="display: none; background-color: #f9fafb;">';
+            // Add sub-items for pages (initially visible/expanded by default)
+            // Show first 10 pages by default, rest will be loaded via "Load More"
+            var pagesToShow = pages.slice(0, 10); // Show first 10 pages initially
+            var remainingPages = pages.slice(10); // Store remaining pages for "Load More"
+            
+            if (pagesToShow.length > 0) {
+                pagesToShow.forEach(function(page) {
+                    html += '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="background-color: #f9fafb;">';
                     html += '<td style="padding-left: 30px;">' + escapeHtml(page.title) + '</td>';
-                    html += '<td><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                    html += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
                     html += '</tr>';
                 });
             }
+            
+            // Store remaining pages globally for "Load More" functionality
+            window.remainingPagesForLoadMore = remainingPages;
             
             return html;
         }
@@ -5383,6 +5390,13 @@ if ($form_id > 0) {
                     $('#pageSelectionContent').show();
                     
                     if (response.outcome == 'true' || response.outcome === 'true') {
+                        // Store API response for later use
+                        window.lastAPIResponse = {
+                            hasNextPage: response.hasNextPage,
+                            endCursor: response.endCursor,
+                            pageNo: pageNo
+                        };
+                        
                         // Build hierarchical selection structure
                         var html = buildHierarchicalSelection(response);
                         
@@ -5397,18 +5411,40 @@ if ($form_id > 0) {
                         }
                         
                         // Add pagination (GraphQL uses cursor-based pagination)
+                        // Check if there are more pages to load (either from stored pages or from API)
                         console.log('Pagination check - hasNextPage:', response.hasNextPage, 'endCursor:', response.endCursor);
-                        if (response.hasNextPage && response.endCursor) {
+                        console.log('Remaining pages for Load More:', window.remainingPagesForLoadMore ? window.remainingPagesForLoadMore.length : 0);
+                        
+                        // Check if there are more pages from API
+                        var hasMorePagesFromAPI = false;
+                        if (response.hasNextPage === true || response.hasNextPage === 'true') {
+                            if (response.endCursor && response.endCursor !== null && response.endCursor !== '' && response.endCursor !== 'null') {
+                                hasMorePagesFromAPI = true;
+                            }
+                        }
+                        
+                        // Check if there are remaining pages stored locally
+                        var hasRemainingPages = window.remainingPagesForLoadMore && window.remainingPagesForLoadMore.length > 0;
+                        
+                        // Show "Load More" if there are more pages from API OR remaining pages locally
+                        if (hasMorePagesFromAPI || hasRemainingPages) {
                             var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
-                            paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '">';
+                            if (hasRemainingPages) {
+                                // Load from local stored pages first
+                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-load-type="local">';
+                            } else if (hasMorePagesFromAPI) {
+                                // Load from API
+                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '" data-load-type="api">';
+                            }
                             paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
                             paginationHtml += '</button>';
                             paginationHtml += '</div>';
                             $('#pagesPagination').html(paginationHtml);
-                            console.log('Pagination HTML added');
+                            console.log('Pagination HTML added - hasMorePagesFromAPI:', hasMorePagesFromAPI, 'hasRemainingPages:', hasRemainingPages);
                         } else {
+                            // All pages loaded - hide the Load More button
                             $('#pagesPagination').html('');
-                            console.log('No pagination needed');
+                            console.log('All pages loaded - no pagination needed.');
                         }
                     } else {
                         console.warn('=== Response outcome is false ===');
@@ -5482,8 +5518,56 @@ if ($form_id > 0) {
         // Handle "Load More" for GraphQL cursor-based pagination
         $(document).on('click', '.loadMorePages', function(e) {
             e.preventDefault();
+            var loadType = $(this).data('load-type'); // 'api' or 'local'
             var cursor = $(this).data('cursor');
             var pageNo = $(this).data('page') || currentPageNo + 1;
+            
+            // Check if we should load from local remaining pages first
+            if (loadType === 'local' && window.remainingPagesForLoadMore && window.remainingPagesForLoadMore.length > 0) {
+                // Load next 10 pages from local storage
+                var pagesToLoad = window.remainingPagesForLoadMore.slice(0, 10);
+                window.remainingPagesForLoadMore = window.remainingPagesForLoadMore.slice(10);
+                
+                // Append pages to the list (make them visible if Page section is expanded)
+                pagesToLoad.forEach(function(page) {
+                    var pageRow = '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="background-color: #f9fafb;">';
+                    pageRow += '<td style="padding-left: 30px;">' + escapeHtml(page.title) + '</td>';
+                    pageRow += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                    pageRow += '</tr>';
+                    $('#pagesListBody').append(pageRow);
+                });
+                
+                // Update pagination - check if there are more local pages or API pages
+                var hasMoreLocalPages = window.remainingPagesForLoadMore && window.remainingPagesForLoadMore.length > 0;
+                var hasMoreAPIPages = false;
+                
+                // Check last API response info
+                if (window.lastAPIResponse) {
+                    if (window.lastAPIResponse.hasNextPage === true || window.lastAPIResponse.hasNextPage === 'true') {
+                        if (window.lastAPIResponse.endCursor && window.lastAPIResponse.endCursor !== null && window.lastAPIResponse.endCursor !== '' && window.lastAPIResponse.endCursor !== 'null') {
+                            hasMoreAPIPages = true;
+                        }
+                    }
+                }
+                
+                if (hasMoreLocalPages || hasMoreAPIPages) {
+                    var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
+                    if (hasMoreLocalPages) {
+                        paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-load-type="local">';
+                    } else if (hasMoreAPIPages) {
+                        paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(window.lastAPIResponse.endCursor) + '" data-page="' + (parseInt(window.lastAPIResponse.pageNo || 1) + 1) + '" data-load-type="api">';
+                    }
+                    paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
+                    paginationHtml += '</button>';
+                    paginationHtml += '</div>';
+                    $('#pagesPagination').html(paginationHtml);
+                } else {
+                    $('#pagesPagination').html('');
+                }
+                return;
+            }
+            
+            // Load from API
             if (cursor) {
                 // Append new pages instead of replacing
                 var $loadingRow = $('<tr><td colspan="2" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading more pages...</span></td></tr>');
@@ -5512,22 +5596,92 @@ if ($form_id > 0) {
                         }
                         
                         if (response.outcome == 'true' && response.html && response.html.length > 0) {
-                            // Append new pages to existing list
-                            response.html.forEach(function(htmlRow) {
-                                if (typeof htmlRow === 'string') {
-                                    $('#pagesListBody').append(htmlRow);
+                            // Format and append new pages to existing list (under Page sub-items)
+                            var pages = [];
+                            
+                            // Extract pages from response
+                            if (Array.isArray(response.html)) {
+                                if (response.html.length > 0 && typeof response.html[0] === 'object') {
+                                    pages = response.html;
+                                } else if (typeof response.html[0] === 'string') {
+                                    // Parse HTML strings to extract page data
+                                    response.html.forEach(function(htmlRow) {
+                                        if (typeof htmlRow === 'string') {
+                                            var $row = $(htmlRow);
+                                            var $cells = $row.find('td');
+                                            if ($cells.length >= 3) {
+                                                pages.push({
+                                                    id: $cells.eq(0).text().trim(),
+                                                    title: $cells.eq(1).text().trim(),
+                                                    handle: $cells.eq(2).text().trim()
+                                                });
+                                            } else if ($cells.length >= 2) {
+                                                // Handle case where we might have different structure
+                                                var pageId = $row.data('page-id') || $cells.eq(0).text().trim();
+                                                var pageTitle = $row.data('page-title') || $cells.eq(0).text().trim();
+                                                var pageHandle = $row.data('page-handle') || '';
+                                                pages.push({
+                                                    id: pageId,
+                                                    title: pageTitle,
+                                                    handle: pageHandle
+                                                });
+                                            }
+                                        }
+                                    });
                                 }
+                            } else if (typeof response.html === 'string') {
+                                // Parse HTML string to extract pages
+                                var $rows = $(response.html);
+                                $rows.each(function() {
+                                    var $row = $(this);
+                                    var $cells = $row.find('td');
+                                    if ($cells.length >= 3) {
+                                        pages.push({
+                                            id: $cells.eq(0).text().trim(),
+                                            title: $cells.eq(1).text().trim(),
+                                            handle: $cells.eq(2).text().trim()
+                                        });
+                                    } else if ($cells.length >= 2) {
+                                        var pageId = $row.data('page-id') || $cells.eq(0).text().trim();
+                                        var pageTitle = $row.data('page-title') || $cells.eq(0).text().trim();
+                                        var pageHandle = $row.data('page-handle') || '';
+                                        pages.push({
+                                            id: pageId,
+                                            title: pageTitle,
+                                            handle: pageHandle
+                                        });
+                                    }
+                                });
+                            }
+                            
+                            // Format pages with 2 columns and append as sub-items
+                            pages.forEach(function(page) {
+                                var pageRow = '<tr class="page-item-row page-sub-item" data-page-id="' + escapeHtml(page.id) + '" data-page-title="' + escapeHtml(page.title) + '" data-page-handle="' + escapeHtml(page.handle) + '" data-page-type="page" style="background-color: #f9fafb;">';
+                                pageRow += '<td style="padding-left: 30px;">' + escapeHtml(page.title) + '</td>';
+                                pageRow += '<td style="text-align: right;"><button class="Polaris-Button Polaris-Button--primary selectPageBtn" type="button" style="padding: 4px 12px; font-size: 12px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Select</span></span></button></td>';
+                                pageRow += '</tr>';
+                                $('#pagesListBody').append(pageRow);
                             });
                             
-                            // Update pagination
-                            if (response.hasNextPage && response.endCursor) {
+                            // Update pagination - only show "Load More" if there are more pages
+                            var hasMorePages = false;
+                            if (response.hasNextPage === true || response.hasNextPage === 'true') {
+                                if (response.endCursor && response.endCursor !== null && response.endCursor !== '' && response.endCursor !== 'null') {
+                                    if (pages.length > 0) {
+                                        hasMorePages = true;
+                                    }
+                                }
+                            }
+                            
+                            if (hasMorePages) {
                                 var paginationHtml = '<div class="pagination" style="margin-top: 20px; text-align: center;">';
-                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '">';
+                                paginationHtml += '<button class="Polaris-Button Polaris-Button--primary loadMorePages" type="button" data-cursor="' + escapeHtml(response.endCursor) + '" data-page="' + (parseInt(pageNo) + 1) + '" data-load-type="api">';
                                 paginationHtml += '<span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Load More</span></span>';
                                 paginationHtml += '</button>';
                                 paginationHtml += '</div>';
                                 $('#pagesPagination').html(paginationHtml);
                             } else {
+                                // All pages loaded - hide the Load More button
                                 $('#pagesPagination').html('');
                             }
                         }
