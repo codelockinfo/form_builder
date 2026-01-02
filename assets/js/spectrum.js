@@ -57,7 +57,7 @@
         }
         var elem = document.createElement('div');
         var style = elem.style;
-        style.cssText = 'background-color:rgba(0,0,0,.5)';
+        style1.cssText = 'background-color:rgba(0,0,0,.5)';
         return contains(style.backgroundColor, 'rgba') || contains(style.backgroundColor, 'hsla');
     })(),
     replaceInput = [

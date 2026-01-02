@@ -2728,7 +2728,7 @@ class Client_functions extends common_function {
                     $css_links = '';
                     if (!empty($base_css_url)) {
                         // Try to include CSS file, but also add inline fallback
-                        $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style.css') . '" type="text/css">';
+                        $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style1.css') . '" type="text/css">';
                     }
                     
                     // Base inline CSS for form styling (critical styles)
