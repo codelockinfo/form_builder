@@ -7374,6 +7374,30 @@ class Client_functions extends common_function {
     border: none;
     box-sizing: border-box;
 }
+/* Override pointer-events for storefront forms - enable interaction */
+.form-builder-wrapper .contact-form input,
+.form-builder-wrapper .contact-form textarea,
+.form-builder-wrapper .contact-form select {
+    pointer-events: auto !important;
+    user-select: text !important;
+    cursor: text !important;
+}
+.form-builder-wrapper .contact-form input:focus,
+.form-builder-wrapper .contact-form textarea:focus,
+.form-builder-wrapper .contact-form select:focus {
+    pointer-events: auto !important;
+    user-select: text !important;
+    cursor: text !important;
+    outline: 2px solid #5c6ac4 !important;
+    outline-offset: 2px !important;
+}
+.form-builder-wrapper .code-form-app input,
+.form-builder-wrapper .code-form-app textarea,
+.form-builder-wrapper .code-form-app select {
+    pointer-events: auto !important;
+    user-select: text !important;
+    cursor: text !important;
+}
 .code-form-app .content .code-form-control textarea {
     height: initial;
     min-height: 100px;
