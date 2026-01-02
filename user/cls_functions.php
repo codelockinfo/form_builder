@@ -2022,6 +2022,9 @@ class Client_functions extends common_function {
                         }
                     }
                     
+                    // Wrap form in proper container with contact-form class for styling
+                    $form_html = '<div class="code-form-app boxed-layout contact-form">' . $form_html;
+                    
                     if(!empty($element_data_array)) {
                         $form_html .='<form class="get_selected_elements" name="get_selected_elements" method="post">
                         <input type="hidden" class="form_id" name="form_id"  value='.$_POST['form_id'].'>';
@@ -2678,6 +2681,8 @@ class Client_functions extends common_function {
                                 <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
                             </div>';
                     }
+                    // Close the code-form-app wrapper
+                    $form_html .= '</div>';
                     // Debug: Log final response
                     error_log("Final response - HTML length: " . strlen($html) . " chars");
                     error_log("Final response - Form HTML length: " . strlen($form_html) . " chars");
@@ -2717,19 +2722,33 @@ class Client_functions extends common_function {
                     
                     // Generate CSS from design_settings and apply to form HTML
                     $design_css = $this->generate_design_css($design_settings, $form_id);
-                    if (!empty($design_css)) {
-                        // Wrap form HTML with style tag containing design CSS and form-specific wrapper
-                        $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
-                        $form_html = '<div class="' . $form_wrapper_class . '">' . 
-                                    '<style type="text/css">' . $design_css . '</style>' . 
-                                    $form_html . 
-                                    '</div>';
-                        error_log("Design CSS applied to form HTML with wrapper class: " . $form_wrapper_class);
-                    } else {
-                        // Still wrap with form-specific class even if no design settings
-                        $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
-                        $form_html = '<div class="' . $form_wrapper_class . '">' . $form_html . '</div>';
+                    
+                    // Get base CSS for the form - include inline base styles for storefront
+                    $base_css_url = defined('MAIN_URL') ? MAIN_URL : '';
+                    $css_links = '';
+                    if (!empty($base_css_url)) {
+                        // Try to include CSS file, but also add inline fallback
+                        $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style.css') . '" type="text/css">';
                     }
+                    
+                    // Base inline CSS for form styling (critical styles)
+                    $base_inline_css = $this->get_base_form_css();
+                    
+                    // Combine base CSS and design CSS
+                    $all_css = '<style type="text/css">' . $base_inline_css;
+                    if (!empty($design_css)) {
+                        $all_css .= "\n" . $design_css;
+                    }
+                    $all_css .= '</style>';
+                    
+                    // Wrap form HTML with CSS and form-specific wrapper
+                    $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
+                    $form_html = '<div class="' . $form_wrapper_class . '">' . 
+                                $css_links . 
+                                $all_css . 
+                                $form_html . 
+                                '</div>';
+                    error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
                     
                     $response_data = array(
                         'data' => 'success', 
@@ -7247,6 +7266,175 @@ class Client_functions extends common_function {
             return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
         }
         return '';
+    }
+    
+    /**
+     * Get base CSS for form styling (critical styles for storefront)
+     * @return string Base CSS string
+     */
+    function get_base_form_css() {
+        return '
+/* Base Form Styles */
+.code-form-app {
+    max-width: 600px;
+    background-color: #FFF;
+    margin: 30px auto;
+    padding: 30px;
+    position: relative;
+    transition: box-shadow .25s;
+    border-radius: 2px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
+}
+.code-form-app .header {
+    margin-bottom: 4%;
+}
+.code-form-app .header .title {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    line-height: 1.5;
+    font-size: 26px;
+    color: #000;
+}
+.code-form-app .header .description {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #6c757d;
+}
+.code-form-app .content {
+    margin: 0 -5px;
+    padding: 0;
+}
+.code-form-app .content .code-form-control {
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    padding: 0 5px;
+    width: 100%;
+    position: relative;
+}
+.code-form-app .content .code-form-control label {
+    color: #212b36;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 400;
+    line-height: 20px;
+    text-transform: initial;
+    letter-spacing: initial;
+    cursor: default;
+    font-size: 14px;
+    color: #000;
+    text-align: left !important;
+}
+.code-form-app .content .code-form-control input,
+.code-form-app .content .code-form-control textarea,
+.code-form-app .content .code-form-control select {
+    display: block;
+    height: 41px;
+    padding: 10px 12px;
+    color: #000;
+    background-color: #f1f1f1;
+    border-radius: 2px;
+    font-size: 14px;
+    position: relative;
+    flex: 1 1 auto;
+    margin-bottom: 0;
+    width: 100%;
+    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+    transition: box-shadow .15s ease;
+    outline: none;
+    background-image: none !important;
+    border: none;
+    box-sizing: border-box;
+}
+.code-form-app .content .code-form-control textarea {
+    height: initial;
+    min-height: 100px;
+}
+.code-form-app .content .code-form-control.layout-1-column {
+    width: 100%;
+}
+.code-form-app .content .code-form-control.layout-2-column {
+    width: 50%;
+}
+.code-form-app .content .code-form-control.layout-3-column {
+    width: 33.33%;
+}
+.code-form-app .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+.code-form-app .footer {
+    margin-top: 4%;
+}
+.code-form-app .footer .action.submit.classic-button {
+    background-color: #EB1256;
+    color: #ffffff;
+    border: 1px solid #EB1256;
+    text-transform: none;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    transition: all .25s ease-in-out;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    border-radius: 2px;
+    padding: 11px 22px;
+    min-width: 100px;
+    cursor: pointer;
+    position: relative;
+    margin: 10px 0;
+}
+.code-form-app .footer .action.reset.classic-button {
+    text-transform: none;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    transition: all .25s ease-in-out;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    border-radius: 2px;
+    padding: 11px 22px;
+    min-width: 100px;
+    cursor: pointer;
+    position: relative;
+    background-color: #FFFFFF;
+    color: #EB1256;
+    border: 1px solid #EB1256;
+    margin: 10px 0;
+}
+.code-form-app .footer.align-left {
+    text-align: left;
+}
+.code-form-app .footer.align-center {
+    text-align: center;
+}
+.code-form-app .footer.align-right {
+    text-align: right;
+}
+.code-form-app .w100 {
+    width: 100%;
+}
+.code-form-app .text-smaller {
+    font-size: 12px;
+}
+.code-form-app .text-danger {
+    color: #d32f2f;
+}
+@media (max-width: 768px) {
+    .code-form-app {
+        margin: 15px;
+        padding: 20px;
+    }
+    .code-form-app .content .code-form-control.layout-2-column,
+    .code-form-app .content .code-form-control.layout-3-column {
+        width: 100%;
+    }
+}
+';
     }
     
     function make_api_data_pagesData($api_shopify_data_list) {
