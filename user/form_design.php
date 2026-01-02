@@ -161,7 +161,7 @@ if ($form_id > 0) {
                 </div>
                 <div class="preview-box iframe-wrapper desktop">
                     <div class="contact-form">
-                        <div class="code-form-app boxed-layout" style="padding: 0; ">
+                        <div class="code-form-app boxed-layout" style="padding: 0;">
                          
                             
                         </div> 

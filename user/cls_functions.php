@@ -1849,6 +1849,19 @@ class Client_functions extends common_function {
             $shopinfo = $this->current_store_obj;
             $shopinfo = (object)$shopinfo;
             $form_id = (isset($_POST['form_id']) && $_POST['form_id'] != '') ? $_POST['form_id'] : "";
+            
+            // Detect if this is for storefront (not preview)
+            // Check if called from app-proxy.php or if storefront_mode is set
+            $is_storefront = (isset($_GET['storefront']) && $_GET['storefront'] == '1') || 
+                            (isset($_POST['storefront']) && $_POST['storefront'] == '1') ||
+                            (strpos($_SERVER['REQUEST_URI'], 'app-proxy.php') !== false) ||
+                            (strpos($_SERVER['REQUEST_URI'], '/render') !== false);
+            
+            // If not explicitly set, check if we're NOT in form_design.php (storefront mode)
+            if (!$is_storefront && strpos($_SERVER['REQUEST_URI'], 'form_design.php') === false) {
+                $is_storefront = true;
+            }
+            
             if($form_id != ""){
 
                     // Query form_data - use direct database query as PRIMARY method to ensure we get ALL elements
@@ -2143,11 +2156,13 @@ class Client_functions extends common_function {
                                 }
 
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2171,10 +2186,12 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-email" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Email" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2198,9 +2215,11 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-textarea-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly></textarea>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2224,10 +2243,12 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-phone-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2251,11 +2272,13 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2280,6 +2303,8 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $layout_col = isset($unserialize_elementdata[16]) ? $unserialize_elementdata[16] : '2';
                                 $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Password';
                                 $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
@@ -2287,7 +2312,7 @@ class Client_functions extends common_function {
                                 $form_html .= ' <div class="code-form-control layout-'.$layout_col.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password" data-formdataid="'.$form_data_id.'">'.$label_text.'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$description_text.'</small>
                                 </div>';
@@ -2310,10 +2335,12 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[4] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input datepicker">
-                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
+                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';

@@ -533,6 +533,7 @@ if ($is_list_request) {
         // Set POST data to simulate the get_selected_elements_fun call
         $_POST['store'] = $shop;
         $_POST['form_id'] = $form_id;
+        $_POST['storefront'] = '1'; // Mark as storefront mode to remove readonly attributes
         
         // Get form HTML
         $result = $cls_functions->get_selected_elements_fun();
