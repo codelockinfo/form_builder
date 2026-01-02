@@ -18,6 +18,7 @@ if ($form_id > 0) {
     $public_id = '';
 }
 ?>
+<body style="padding: 0; margin: 0;">
     <div>
         <div class=" form_header">
             <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
@@ -194,7 +195,6 @@ if ($form_id > 0) {
                                     aria-controls="publishs-fitted-content">
                                     <span class="Polaris-Tabs__Title">Publish</span>
                                 </button>
-
                             </li>
                             <li class="Polaris-Tabs__DisclosureTab" role="presentation">
                                 <div>
@@ -1534,7 +1534,7 @@ if ($form_id > 0) {
                         </button>
                         <div class="title">Header</div>
                     </div>
-                    <div class="">
+                    <div class="container">
                         <form class="add_headerdata" method="POST">
                             <input type="hidden" class="form_id" name="form_id"  value=''>
                             <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox12"><span
@@ -1578,6 +1578,61 @@ if ($form_id > 0) {
                                 </div>
                                 <textarea name="contentheader" class="myeditor"></textarea>
                             </div>
+                            
+                            <!-- Header Design Customization -->
+                            <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                <div style="margin-bottom: 16px;">
+                                    <div class="Polaris-Label">
+                                        <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Font Size -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Font Size</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="number" name="header_font_size" id="headerFontSize" class="Polaris-TextField__Input header-design-font-size" value="24" min="10" max="72" step="1" placeholder="24">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                    <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Text Align -->
+                                <div class="form-control">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Text Align</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Select" style="position: relative;">
+                                            <select name="header_text_align" id="headerTextAlign" class="Polaris-Select__Input header-design-text-align" aria-invalid="false">
+                                                <option value="left">Left</option>
+                                                <option value="center" selected>Center</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                            <div class="Polaris-Select__Backdrop"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Ensure proper spacing at bottom -->
+                            <div style="margin-bottom: 20px;"></div>
                         </form>
                     </div>
                 </div>
@@ -5017,7 +5072,7 @@ if ($form_id > 0) {
             </div>
         </div>
     </div>
-    
+</body>
     <!-- Publish Form Modals -->
     <!-- Modal 1: Select Store Page -->
     <div id="publishPageModal" class="Polaris-Modal-Dialog__Container" style="display: none; z-index: 10000;">
@@ -5364,6 +5419,146 @@ if ($form_id > 0) {
             color: #008060;
         }
         
+        /* Form Design Customizer Styles */
+        .form-design-customizer {
+            padding: 20px;
+        }
+        .design-customizer-header {
+            margin-bottom: 24px;
+        }
+        .design-customizer-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #202223;
+        }
+        .design-customizer-header p {
+            font-size: 14px;
+            color: #6d7175;
+            margin: 0;
+        }
+        .design-element-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .design-element-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .design-element-item:hover {
+            border-color: #008060;
+            background: #f6fbf9;
+        }
+        .design-element-item.active {
+            border-color: #008060;
+            background: #e6f7f2;
+        }
+        .design-element-item .element-icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        .design-element-item .element-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202223;
+        }
+        .design-customizer-panel {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .design-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .design-panel-header h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: #202223;
+        }
+        .design-panel-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6d7175;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .design-panel-close:hover {
+            color: #202223;
+        }
+        .design-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .design-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .design-control-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202223;
+        }
+        .design-control-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .design-control-input input[type="number"],
+        .design-control-input input[type="text"],
+        .design-control-input select {
+            flex: 1;
+        }
+        .design-control-unit {
+            font-size: 14px;
+            color: #6d7175;
+            min-width: 30px;
+        }
+        .design-color-picker {
+            width: 50px;
+            height: 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .design-color-text {
+            flex: 1;
+            max-width: 120px;
+        }
+        .design-control-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .design-control-actions .Polaris-Button {
+            flex: 1;
+        }
+        
         /* Fonts List */
         .fonts-list {
             display: flex;
@@ -5545,6 +5740,11 @@ if ($form_id > 0) {
     
     $(document).ready(function() {
         get_selected_elements(<?php echo $form_id; ?>);
+        
+        // Load saved design settings after form is loaded (with longer delay)
+        setTimeout(function() {
+            loadSavedDesignSettings();
+        }, 1500); // Longer delay to ensure form preview is loaded
         seeting_enable_disable(<?php echo $form_id; ?>);
         // getFormTitle(<?php echo $form_id; ?>);
         
@@ -6456,6 +6656,279 @@ if ($form_id > 0) {
             var caseType = $btn.data('case');
             // Here you would typically save the case setting via AJAX
             console.log('Case changed:', caseType);
+        });
+        
+        // ===== Form Design Customizer (Integrated into Element Panels) =====
+        // Sync color picker and text input (using event delegation for dynamically loaded elements)
+        $(document).on('change', '.element-design-color', function() {
+            var $picker = $(this);
+            var formdataid = $picker.data('formdataid');
+            var $textInput = $('.element-design-color-text[data-formdataid="' + formdataid + '"]');
+            $textInput.val($picker.val());
+            updateElementDesignPreview(formdataid);
+        });
+        
+        $(document).on('input', '.element-design-color-text', function() {
+            var $textInput = $(this);
+            var color = $textInput.val();
+            var formdataid = $textInput.data('formdataid');
+            if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                var $picker = $('.element-design-color[data-formdataid="' + formdataid + '"]');
+                $picker.val(color);
+                updateElementDesignPreview(formdataid);
+            }
+        });
+        
+        $(document).on('change', '.element-design-bg-color', function() {
+            var $picker = $(this);
+            var formdataid = $picker.data('formdataid');
+            var $textInput = $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]');
+            $textInput.val($picker.val());
+            updateElementDesignPreview(formdataid);
+        });
+        
+        $(document).on('input', '.element-design-bg-color-text', function() {
+            var $textInput = $(this);
+            var color = $textInput.val();
+            var formdataid = $textInput.data('formdataid');
+            if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                var $picker = $('.element-design-bg-color[data-formdataid="' + formdataid + '"]');
+                $picker.val(color);
+                updateElementDesignPreview(formdataid);
+            }
+        });
+        
+        // Update preview on design control changes (real-time preview)
+        $(document).on('input change', '.element-design-font-size, .element-design-font-weight, .element-design-border-radius', function() {
+            var $control = $(this);
+            var formdataid = $control.data('formdataid');
+            updateElementDesignPreview(formdataid);
+        });
+        
+        // Apply saved settings immediately when customization panel inputs are available
+        function applySavedSettingsToPreview() {
+            $('.element-design-font-size').each(function() {
+                var formdataid = $(this).data('formdataid');
+                if (formdataid) {
+                    updateElementDesignPreview(formdataid);
+                }
+            });
+        }
+        
+        // Apply settings when customization panel is loaded - use MutationObserver
+        if (typeof MutationObserver !== 'undefined') {
+            $(document).ready(function() {
+                var elementAppend = document.querySelector('.elementAppend');
+                if (elementAppend) {
+                    var observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.addedNodes.length) {
+                                for (var i = 0; i < mutation.addedNodes.length; i++) {
+                                    var node = mutation.addedNodes[i];
+                                    if (node.nodeType === 1) {
+                                        var $node = $(node);
+                                        // Check if this node or any child contains design inputs
+                                        if ($node.find('.element-design-font-size').length > 0 || $node.hasClass('element-design-font-size') || $node.closest('.element-design-font-size').length > 0) {
+                                            setTimeout(applySavedSettingsToPreview, 200);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    observer.observe(elementAppend, { childList: true, subtree: true });
+                }
+            });
+        }
+        
+        // Also trigger when design inputs are present on page load (in case panel was already open)
+        $(document).ready(function() {
+            setTimeout(function() {
+                if ($('.element-design-font-size').length > 0) {
+                    applySavedSettingsToPreview();
+                }
+                // Also update header preview if header design controls exist
+                if ($('.header-design-font-size').length > 0) {
+                    updateHeaderPreview();
+                }
+            }, 2000);
+        });
+        
+        // Function to update header preview in real-time (make it global)
+        window.updateHeaderPreview = function() {
+            var fontSize = parseInt($('.header-design-font-size').val()) || 24;
+            var textAlign = $('.header-design-text-align').val() || 'center';
+            
+            // Apply to header title
+            $('.globo-heading').css({
+                'font-size': fontSize + 'px',
+                'text-align': textAlign
+            });
+            
+            // Apply text-align to description
+            $('.globo-description').css({
+                'text-align': textAlign
+            });
+        };
+        
+        // Real-time preview updates for header design controls
+        $(document).on('input change', '.header-design-font-size, .header-design-text-align', function() {
+            updateHeaderPreview();
+        });
+        
+        // Ensure select displays selected value properly
+        $(document).ready(function() {
+            // Force select to show selected value
+            $('.header-design-text-align').each(function() {
+                var $select = $(this);
+                var selectedValue = $select.val();
+                var selectedText = $select.find('option:selected').text();
+                
+                // Ensure the select is visible and shows the value
+                $select.css({
+                    'opacity': '1',
+                    'visibility': 'visible',
+                    'display': 'block',
+                    'color': '#212b36'
+                });
+                
+                // If select is empty, set default
+                if (!selectedValue) {
+                    $select.val('center');
+                }
+            });
+        });
+        
+        
+        // Prevent preview input and labels from being focused when clicking on design controls
+        $(document).on('click focus mousedown', '.element-design-font-size, .element-design-font-weight, .element-design-border-radius, .element-design-color, .element-design-color-text, .element-design-bg-color, .element-design-bg-color-text', function(e) {
+            // Prevent any focus on preview inputs and labels
+            e.stopPropagation();
+            // Blur any focused preview inputs and labels to prevent blue highlight
+            $('.contact-form input, .contact-form textarea, .contact-form select, .contact-form label, .contact-form .label-content').blur();
+            // Remove any background color that might have been applied
+            $('.contact-form label, .contact-form .label-content').css({
+                'background-color': 'transparent',
+                'background': 'transparent'
+            });
+            // Remove focus immediately
+            setTimeout(function() {
+                $('.contact-form input, .contact-form textarea, .contact-form select, .contact-form label, .contact-form .label-content').blur();
+                $('.contact-form label, .contact-form .label-content').css({
+                    'background-color': 'transparent',
+                    'background': 'transparent'
+                });
+            }, 0);
+        });
+        
+        // Prevent preview inputs and labels from receiving focus at all
+        $(document).on('focus', '.contact-form input, .contact-form textarea, .contact-form select, .contact-form label, .contact-form .label-content', function(e) {
+            $(this).blur();
+            $(this).css({
+                'background-color': 'transparent',
+                'background': 'transparent'
+            });
+            return false;
+        });
+        
+        // Update preview for a specific element
+        function updateElementDesignPreview(formdataid) {
+            // Get all design values for this element
+            var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+            var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
+            var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
+            var borderRadius = parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4;
+            var bgColor = $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || '';
+            
+            // Apply styles to the label (not the input field) with this formdataid
+            var $previewLabel = $('.contact-form .label-content[data-formdataid="' + formdataid + '"]');
+            if ($previewLabel.length) {
+                $previewLabel.css({
+                    'font-size': fontSize + 'px',
+                    'font-weight': fontWeight,
+                    'color': color
+                });
+                if (bgColor) {
+                    $previewLabel.css('background-color', bgColor);
+                }
+            }
+            
+            // Apply border-radius to the input field (not font-size)
+            var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"]');
+            if ($previewInput.length) {
+                $previewInput.css({
+                    'border-radius': borderRadius + 'px'
+                });
+            }
+        }
+        
+        // Load and apply saved design settings on page load
+        function loadSavedDesignSettings() {
+            var formId = $('.formid').val();
+            if (!formId) {
+                return;
+            }
+            
+            // Apply settings for any design inputs that exist
+            setTimeout(function() {
+                applySavedSettingsToPreview();
+            }, 500);
+        }
+        
+        // Save element design settings
+        $(document).on('click', '.save-element-design', function() {
+            var $btn = $(this);
+            var formdataid = $btn.data('formdataid');
+            var elementid = $btn.data('elementid');
+            var formId = $('.formid').val();
+            
+            if (!formId) {
+                alert('Form ID is missing');
+                return;
+            }
+            
+            // Get current settings
+            var settings = {
+                fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
+                color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+                borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
+                bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
+            };
+            
+            // Save to database using formdataid as the key
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                data: {
+                    routine_name: 'save_element_design_settings',
+                    store: store,
+                    form_id: formId,
+                    formdata_id: formdataid,
+                    element_id: elementid,
+                    settings: JSON.stringify(settings)
+                },
+                success: function(response) {
+                    if (response.result === 'success') {
+                        console.log('Element design settings saved successfully');
+                        // Show success message
+                        var originalText = $btn.find('.Polaris-Button__Text').text();
+                        $btn.find('.Polaris-Button__Text').text('Saved!');
+                        setTimeout(function() {
+                            $btn.find('.Polaris-Button__Text').text(originalText);
+                        }, 2000);
+                    } else {
+                        alert('Error saving design settings: ' + (response.msg || 'Unknown error'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error saving design settings:', error);
+                    alert('Error saving design settings. Please try again.');
+                }
+            });
         });
         
         // Handle color scheme box clicks

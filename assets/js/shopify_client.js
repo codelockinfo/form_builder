@@ -471,6 +471,19 @@ var BACKTO = 0;
                             $(".headerData .headerTitle").val(response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : '');
                             $('.headerData .myeditor').html(response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '');
                             
+                            // Load saved font-size and text-align
+                            var headerFontSize = (response['form_header_data'] && response['form_header_data']['3']) ? parseInt(response['form_header_data']['3']) : 24;
+                            var headerTextAlign = (response['form_header_data'] && response['form_header_data']['4']) ? response['form_header_data']['4'] : 'center';
+                            $('.header-design-font-size').val(headerFontSize);
+                            $('.header-design-text-align').val(headerTextAlign);
+                            
+                            // Apply to preview (function defined in form_design.php)
+                            setTimeout(function() {
+                                if (typeof window.updateHeaderPreview === 'function') {
+                                    window.updateHeaderPreview();
+                                }
+                            }, 300);
+                            
                             // Set form name - prefer form_name from response, fallback to header title
                             var formName = response['form_name'] || (response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : 'Blank Form');
                             $(".form_name_form_design").val(formName);

@@ -1937,8 +1937,19 @@ class Client_functions extends common_function {
                     
                     // Check if query was successful (status == 1) and has data
                     $formData = '';
+                    $design_settings = array();
                     if (isset($comeback_form['status']) && $comeback_form['status'] == 1 && isset($comeback_form['data']) && !empty($comeback_form['data'])) {
                         $formData = $comeback_form['data'];
+                        
+                        // Retrieve design_settings from database
+                        if (isset($formData['design_settings']) && !empty($formData['design_settings'])) {
+                            $design_settings_raw = $formData['design_settings'];
+                            $design_settings = @unserialize($design_settings_raw);
+                            if ($design_settings === false || !is_array($design_settings)) {
+                                $design_settings = array();
+                            }
+                            error_log("Design settings loaded: " . count($design_settings) . " settings found");
+                        }
                     } else {
                         error_log("Form query failed or returned no data. Status: " . (isset($comeback_form['status']) ? $comeback_form['status'] : 'not set'));
                     }
@@ -1950,9 +1961,14 @@ class Client_functions extends common_function {
                         $publishdata_raw = isset($formData['publishdata']) ? $formData['publishdata'] : '';
                         
                         // Unserialize with error handling
-                        $form_header_data = !empty($form_header_data_raw) ? @unserialize($form_header_data_raw) : array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                        $form_header_data = !empty($form_header_data_raw) ? @unserialize($form_header_data_raw) : array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
                         if ($form_header_data === false) {
-                            $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                            $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
+                        }
+                        
+                        // Ensure array has all 5 elements (backward compatibility)
+                        if (count($form_header_data) < 5) {
+                            $form_header_data = array_merge($form_header_data, array(24, "center"));
                         }
                         
                         $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0","Reset", "0","align-left");
@@ -1968,9 +1984,14 @@ class Client_functions extends common_function {
                         $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
                         $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
                         $form_name = isset($formData['form_name']) && !empty($formData['form_name']) ? $formData['form_name'] : (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form');
+                        
+                        // Get font-size and text-align (indices 3 and 4)
+                        $header_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
+                        $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
+                        
                         $form_html = '<div class="formHeader header '.$header_hidden.'">
-                            <h3 class="title globo-heading">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
-                            <div class="description globo-description">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
+                            <h3 class="title globo-heading" style="font-size: '.$header_font_size.'px; text-align: '.$header_text_align.';">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
+                            <div class="description globo-description" style="text-align: '.$header_text_align.';">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
                         </div>';
                     } else {
                         // Default values if no form data found
@@ -2119,11 +2140,11 @@ class Client_functions extends common_function {
                                 }
 
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
+                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2147,10 +2168,10 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-email" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Email">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
+                                    <label for="false-email" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Email" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'">
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                     </div>
                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2174,9 +2195,9 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'"></textarea>
+                                $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
+                                                    <label for="false-textarea-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2200,10 +2221,10 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-phone-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
+                                    <label for="false-phone-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'">
+                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2227,11 +2248,11 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
+                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
-                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                                    <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2260,10 +2281,10 @@ class Client_functions extends common_function {
                                 $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Password';
                                 $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
                                 $description_text = isset($unserialize_elementdata[2]) ? $unserialize_elementdata[2] : '';
-                                $form_html .= ' <div class="code-form-control layout-'.$layout_col.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                    <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password">'.$label_text.'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                $form_html .= ' <div class="code-form-control layout-'.$layout_col.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
+                                    <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password" data-formdataid="'.$form_data_id.'">'.$label_text.'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'">
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$description_text.'</small>
                                 </div>';
@@ -2286,10 +2307,10 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[4] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
+                                        <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input datepicker">
-                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder">
+                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'" tabindex="-1" readonly>
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2319,7 +2340,7 @@ class Client_functions extends common_function {
                                     $is_allowmultiple = ' name="files[]" multiple';
                                 }
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                        <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                        <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input" data-formdataid="'.$form_data_id.'">
                                             <div class="upload-area" id="uploadArea">
                                                 <p class="upload-p '.$elementtitle.''.$form_data_id.'__placeholder"" id="uploadText">'.$unserialize_elementdata[2].'</p>
@@ -2694,6 +2715,22 @@ class Client_functions extends common_function {
                     
                     error_log("Final HTML length: " . strlen($html) . ", Elements: " . substr_count($html, 'data-formdataid='));
                     
+                    // Generate CSS from design_settings and apply to form HTML
+                    $design_css = $this->generate_design_css($design_settings, $form_id);
+                    if (!empty($design_css)) {
+                        // Wrap form HTML with style tag containing design CSS and form-specific wrapper
+                        $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
+                        $form_html = '<div class="' . $form_wrapper_class . '">' . 
+                                    '<style type="text/css">' . $design_css . '</style>' . 
+                                    $form_html . 
+                                    '</div>';
+                        error_log("Design CSS applied to form HTML with wrapper class: " . $form_wrapper_class);
+                    } else {
+                        // Still wrap with form-specific class even if no design settings
+                        $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
+                        $form_html = '<div class="' . $form_wrapper_class . '">' . $form_html . '</div>';
+                    }
+                    
                     $response_data = array(
                         'data' => 'success', 
                         'msg' => 'all selected element select successfully',
@@ -2705,6 +2742,7 @@ class Client_functions extends common_function {
                         'form_footer_data' => $form_footer_data,
                         'publishdata' => $publishdata,
                         'form_name' => isset($form_name) ? $form_name : 'Blank Form',
+                        'design_settings' => $design_settings,
                         'debug' => array(
                             'elements_found' => isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0,
                             'elements_in_html' => $elements_in_html,
@@ -2836,6 +2874,191 @@ class Client_functions extends common_function {
                 $response = array('data' => 'success', 'msg' => 'select successfully','outcome' => $comeback);
             }
             return $response;
+    }
+    
+    // Helper function to generate design customization controls HTML
+    function get_design_customizer_html($form_data_id, $elementid, $form_id = 0, $saved_settings = null) {
+        // Load saved settings from database if not provided
+        if ($saved_settings === null && $form_id > 0) {
+            $shopinfo = $this->current_store_obj;
+            $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+            
+            $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+            $resource_array = array('single' => true);
+            $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+            
+            if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                $design_settings = unserialize($form_result['data']['design_settings']);
+                if (is_array($design_settings)) {
+                    $key = 'element_' . $form_data_id;
+                    if (isset($design_settings[$key])) {
+                        $saved_settings = $design_settings[$key];
+                    }
+                }
+            }
+        }
+        
+        // Default values
+        $fontSize = isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16;
+        $fontWeight = isset($saved_settings['fontWeight']) ? $saved_settings['fontWeight'] : '400';
+        $color = isset($saved_settings['color']) ? $saved_settings['color'] : '#000000';
+        $borderRadius = isset($saved_settings['borderRadius']) ? intval($saved_settings['borderRadius']) : 4;
+        $bgColor = isset($saved_settings['bgColor']) ? $saved_settings['bgColor'] : '#007bff';
+        
+        // Build selected attribute for font weight
+        $fontWeightOptions = array('300', '400', '500', '600', '700');
+        $fontWeightSelect = '';
+        foreach ($fontWeightOptions as $weight) {
+            $selected = ($weight == $fontWeight) ? ' selected' : '';
+            $weightLabel = ($weight == '300' ? 'Light' : ($weight == '400' ? 'Normal' : ($weight == '500' ? 'Medium' : ($weight == '600' ? 'Semi Bold' : 'Bold'))));
+            $fontWeightSelect .= '<option value="' . $weight . '"' . $selected . '>' . $weightLabel . ' (' . $weight . ')</option>';
+        }
+        
+        $html = '
+                        <!-- Design Customization Section -->
+                        <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                            <div style="margin-bottom: 16px;">
+                                <div class="Polaris-Label">
+                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Font Size -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Font Size</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="number" name="element_design_font_size" class="Polaris-TextField__Input element-design-font-size" data-formdataid="'.$form_data_id.'" value="'.$fontSize.'" min="8" max="72" step="1" placeholder="16">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Font Weight -->
+                            <div class="form-control">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Font Weight</label></div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select name="element_design_font_weight" class="Polaris-Select__Input element-design-font-weight" data-formdataid="'.$form_data_id.'">
+                                            ' . $fontWeightSelect . '
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Color -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Text Color</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                <input type="color" name="element_design_color" class="element-design-color" data-formdataid="'.$form_data_id.'" value="'.$color.'" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                            </div>
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="text" name="element_design_color_text" class="Polaris-TextField__Input element-design-color-text" data-formdataid="'.$form_data_id.'" value="'.$color.'" placeholder="#000000">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Border Radius (for input/text elements - show for most elements except button which has its own) -->
+                            <div class="form-control element-design-border-radius-group">';
+        
+        // Hide border radius for button element (elementid 12 or 13 typically)
+        if ($elementid != 12 && $elementid != 13) {
+            $html .= '
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Border Radius</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="number" name="element_design_border_radius" class="Polaris-TextField__Input element-design-border-radius" data-formdataid="'.$form_data_id.'" value="'.$borderRadius.'" min="0" max="50" step="1" placeholder="4">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+        }
+        
+        $html .= '
+                            </div>
+                            
+                            <!-- Background Color (for buttons only) -->
+                            <div class="form-control element-design-bg-color-group"';
+        
+        // Show background color only for button elements
+        if ($elementid == 12 || $elementid == 13) {
+            $html .= '>';
+        } else {
+            $html .= ' style="display: none;">';
+        }
+        
+        $html .= '
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Background Color</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                <input type="color" name="element_design_bg_color" class="element-design-bg-color" data-formdataid="'.$form_data_id.'" value="'.$bgColor.'" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                            </div>
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="text" name="element_design_bg_color_text" class="Polaris-TextField__Input element-design-bg-color-text" data-formdataid="'.$form_data_id.'" value="'.$bgColor.'" placeholder="#007bff">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-control" style="margin-top: 16px;">
+                                <button type="button" class="Polaris-Button Polaris-Button--primary save-element-design" data-formdataid="'.$form_data_id.'" data-elementid="'.$elementid.'">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text" style="color: #fff;">Save Design</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>';
+        
+        return $html;
     }
     
     function form_element_data_html(){
@@ -3171,6 +3394,9 @@ class Client_functions extends common_function {
                                  </div>
                               </div>
                            </div>
+                           
+                           '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                           
                            <div class="form-control">
                               <button  class="Polaris-Button Polaris-Button--destructive   Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                               <span class="Polaris-Button__Content">
@@ -4501,6 +4727,138 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Design Customization Section -->
+                        <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                            <div style="margin-bottom: 16px;">
+                                <div class="Polaris-Label">
+                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Font Size -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Font Size</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="number" name="element_design_font_size" class="Polaris-TextField__Input element-design-font-size" data-formdataid="'.$form_data_id.'" value="16" min="8" max="72" step="1" placeholder="16">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Font Weight -->
+                            <div class="form-control">
+                                <div class="">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Font Weight</label></div>
+                                    </div>
+                                    <div class="Polaris-Select">
+                                        <select name="element_design_font_weight" class="Polaris-Select__Input element-design-font-weight" data-formdataid="'.$form_data_id.'">
+                                            <option value="300">Light (300)</option>
+                                            <option value="400" selected>Normal (400)</option>
+                                            <option value="500">Medium (500)</option>
+                                            <option value="600">Semi Bold (600)</option>
+                                            <option value="700">Bold (700)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Color -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Text Color</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                <input type="color" name="element_design_color" class="element-design-color" data-formdataid="'.$form_data_id.'" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                            </div>
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="text" name="element_design_color_text" class="Polaris-TextField__Input element-design-color-text" data-formdataid="'.$form_data_id.'" value="#000000" placeholder="#000000">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Border Radius (for input/text elements) -->
+                            <div class="form-control element-design-border-radius-group">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Border Radius</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="number" name="element_design_border_radius" class="Polaris-TextField__Input element-design-border-radius" data-formdataid="'.$form_data_id.'" value="4" min="0" max="50" step="1" placeholder="4">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Background Color (for buttons) -->
+                            <div class="form-control element-design-bg-color-group" style="display: none;">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Background Color</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                <input type="color" name="element_design_bg_color" class="element-design-bg-color" data-formdataid="'.$form_data_id.'" value="#007bff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                            </div>
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="text" name="element_design_bg_color_text" class="Polaris-TextField__Input element-design-bg-color-text" data-formdataid="'.$form_data_id.'" value="#007bff" placeholder="#007bff">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-control" style="margin-top: 16px;">
+                                <button type="button" class="Polaris-Button Polaris-Button--primary save-element-design" data-formdataid="'.$form_data_id.'" data-elementid="'.$elementid.'">
+                                    <span class="Polaris-Button__Content">
+                                        <span class="Polaris-Button__Text" style="color: #fff;">Save Design</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        
                             <div class="form-control">
                                 <button class="Polaris-Button Polaris-Button--destructive  Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                                 <span class="Polaris-Button__Content">
@@ -4715,6 +5073,9 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
+                            
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                            
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
@@ -4919,6 +5280,9 @@ class Client_functions extends common_function {
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                                    
                                     <div class="form-control hidden">
                                         <label class="Polaris-Choice" for="PolarisCheckbox54">
                                             <span class="Polaris-Choice__Control">
@@ -5019,6 +5383,9 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
+                            
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                            
                             <div class="form-control">
                                 <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
                                 <span class="Polaris-Button__Content">
@@ -5153,6 +5520,9 @@ class Client_functions extends common_function {
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                                        
                                         <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                                     </div>
                                 </div>';
@@ -5355,6 +5725,9 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             </div>
+                            
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                            
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
@@ -5949,6 +6322,9 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
+                            
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                            
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                             </div>
                         </div>
@@ -5987,6 +6363,99 @@ class Client_functions extends common_function {
         }
         $response = json_encode($response_data);
         return $response;
+    }
+
+    function save_element_design_settings() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            $formdata_id = isset($_POST['formdata_id']) ? intval($_POST['formdata_id']) : 0;
+            $element_id = isset($_POST['element_id']) ? intval($_POST['element_id']) : 0;
+            
+            // Handle settings - jQuery may send it as array or we need to reconstruct from POST
+            $settings = null;
+            if (isset($_POST['settings'])) {
+                if (is_array($_POST['settings'])) {
+                    $settings = $_POST['settings'];
+                } elseif (is_string($_POST['settings'])) {
+                    // Try to decode if it's JSON string
+                    $decoded = json_decode($_POST['settings'], true);
+                    if ($decoded !== null) {
+                        $settings = $decoded;
+                    } else {
+                        // If not JSON, try to reconstruct from POST array keys
+                        $settings = array(
+                            'fontSize' => isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16,
+                            'fontWeight' => isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400',
+                            'color' => isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000',
+                            'borderRadius' => isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4,
+                            'bgColor' => isset($_POST['settings']['bgColor']) ? $_POST['settings']['bgColor'] : ''
+                        );
+                    }
+                }
+            }
+            
+            // Alternative: reconstruct from individual POST parameters if settings is not directly available
+            if ($settings === null && (isset($_POST['settings[fontSize]']) || isset($_POST['settings']['fontSize']))) {
+                $settings = array(
+                    'fontSize' => isset($_POST['settings[fontSize]']) ? intval($_POST['settings[fontSize]']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
+                    'fontWeight' => isset($_POST['settings[fontWeight]']) ? $_POST['settings[fontWeight]'] : (isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400'),
+                    'color' => isset($_POST['settings[color]']) ? $_POST['settings[color]'] : (isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000'),
+                    'borderRadius' => isset($_POST['settings[borderRadius]']) ? intval($_POST['settings[borderRadius]']) : (isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4),
+                    'bgColor' => isset($_POST['settings[bgColor]']) ? $_POST['settings[bgColor]'] : (isset($_POST['settings']['bgColor']) ? $_POST['settings']['bgColor'] : '')
+                );
+            }
+            
+            if ($form_id <= 0 || $formdata_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID or formdata ID');
+            }
+            
+            try {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                // Get existing design settings
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                $design_settings = array();
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (!is_array($design_settings)) {
+                        $design_settings = array();
+                    }
+                }
+                
+                // Update or remove settings for this element (using formdata_id as key)
+                $key = 'element_' . $formdata_id;
+                if ($settings === null || empty($settings)) {
+                    unset($design_settings[$key]);
+                } else {
+                    $design_settings[$key] = $settings;
+                }
+                
+                // Save to database using put_data
+                $update_data = array('design_settings' => serialize($design_settings));
+                $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $update_result = $this->put_data(TABLE_FORMS, $update_data, $update_where);
+                
+                // put_data returns JSON string, decode it
+                $update_result_decoded = json_decode($update_result, true);
+                
+                if ($update_result_decoded && isset($update_result_decoded['status']) && $update_result_decoded['status'] == '1') {
+                    return array('result' => 'success', 'msg' => 'Element design settings saved successfully');
+                } else {
+                    $error_msg = isset($update_result_decoded['data']) ? $update_result_decoded['data'] : 'Failed to save design settings';
+                    error_log('Error saving element design settings: ' . print_r($update_result_decoded, true));
+                    return array('result' => 'fail', 'msg' => 'Failed to save design settings: ' . $error_msg);
+                }
+            } catch (Exception $e) {
+                error_log('Error saving element design settings: ' . $e->getMessage());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage());
+            }
+        }
+        return $response_data;
     }
 
     function remove_form_field(){
@@ -6126,6 +6595,8 @@ class Client_functions extends common_function {
             $showheader = isset($_POST['showheader']) ?  $_POST['showheader'] : '0' ;
             $title = isset($_POST['header__title']) ?  $_POST['header__title'] : '' ;
             $content = isset($_POST['contentheader']) ?  $_POST['contentheader'] : '' ;
+            $font_size = isset($_POST['header_font_size']) ? intval($_POST['header_font_size']) : 24;
+            $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
             
             // Validate form_id and title
             if (empty($form_id)) {
@@ -6134,7 +6605,8 @@ class Client_functions extends common_function {
                 return $response;
             }
             
-            $form_header_data = serialize(array($showheader, $title, $content));
+            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=font_size, [4]=text_align
+            $form_header_data = serialize(array($showheader, $title, $content, $font_size, $text_align));
             
             // Use title for form_name, or default to "Blank Form" if empty
             $form_name = !empty($title) ? $title : 'Blank Form';
@@ -6538,6 +7010,245 @@ class Client_functions extends common_function {
     }
     
     // Function to format pages data for API response
+    function save_form_design_settings() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            $element_type = isset($_POST['element_type']) ? $_POST['element_type'] : '';
+            $settings = isset($_POST['settings']) ? $_POST['settings'] : null;
+            
+            if ($form_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID');
+            }
+            
+            if (empty($element_type)) {
+                return array('result' => 'fail', 'msg' => 'Element type is required');
+            }
+            
+            try {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                // Get existing design settings
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                $design_settings = array();
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (!is_array($design_settings)) {
+                        $design_settings = array();
+                    }
+                }
+                
+                // Update or remove settings for this element
+                if ($settings === null) {
+                    // Remove settings for this element
+                    unset($design_settings[$element_type]);
+                } else {
+                    // Update settings for this element
+                    $design_settings[$element_type] = $settings;
+                }
+                
+                // Save to database
+                $update_data = array('design_settings' => serialize($design_settings));
+                $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $update_result = $this->update_table(TABLE_FORMS, $update_data, $update_where);
+                
+                if ($update_result) {
+                    return array('result' => 'success', 'msg' => 'Design settings saved successfully');
+                } else {
+                    return array('result' => 'fail', 'msg' => 'Failed to save design settings');
+                }
+            } catch (Exception $e) {
+                error_log('Error saving form design settings: ' . $e->getMessage());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage());
+            }
+        }
+        return $response_data;
+    }
+    
+    function get_form_design_settings() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'), 'settings' => array());
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            
+            if ($form_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID', 'settings' => array());
+            }
+            
+            try {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                // Get design settings
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                $design_settings = array();
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (!is_array($design_settings)) {
+                        $design_settings = array();
+                    }
+                }
+                
+                return array('result' => 'success', 'msg' => 'Design settings loaded successfully', 'settings' => $design_settings);
+            } catch (Exception $e) {
+                error_log('Error loading form design settings: ' . $e->getMessage());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage(), 'settings' => array());
+            }
+        }
+        return $response_data;
+    }
+    
+    /**
+     * Generate CSS from design_settings array
+     * @param array $design_settings Design settings array from database
+     * @param int $form_id Form ID for scoping CSS
+     * @return string CSS string to be applied to form
+     */
+    function generate_design_css($design_settings, $form_id = 0) {
+        if (empty($design_settings) || !is_array($design_settings)) {
+            return '';
+        }
+        
+        $css_rules = array();
+        $form_scope = $form_id > 0 ? '.form-id-' . $form_id : '';
+        
+        // Process each design setting
+        foreach ($design_settings as $element_type => $settings) {
+            if (empty($settings) || !is_array($settings)) {
+                continue;
+            }
+            
+            // Build CSS selector based on element type, scoped to this form
+            $selector = '';
+            switch ($element_type) {
+                case 'form_container':
+                case 'form':
+                    $selector = $form_scope . ' .contact-form, ' . $form_scope . ' .get_selected_elements, ' . $form_scope . ' .form-builder-wrapper';
+                    break;
+                case 'header':
+                    $selector = $form_scope . ' .formHeader, ' . $form_scope . ' .formHeader .title, ' . $form_scope . ' .formHeader .description';
+                    break;
+                case 'footer':
+                    $selector = $form_scope . ' .footer, ' . $form_scope . ' .footer .action';
+                    break;
+                case 'input':
+                case 'text':
+                case 'email':
+                case 'textarea':
+                case 'phone':
+                case 'number':
+                    $selector = $form_scope . ' .classic-input, ' . $form_scope . ' .globo-form-input input, ' . $form_scope . ' .globo-form-input textarea';
+                    break;
+                case 'label':
+                    $selector = $form_scope . ' .classic-label, ' . $form_scope . ' .label-content';
+                    break;
+                case 'button':
+                case 'submit':
+                    $selector = $form_scope . ' .action.submit, ' . $form_scope . ' .classic-button.submit';
+                    break;
+                case 'reset':
+                    $selector = $form_scope . ' .action.reset';
+                    break;
+                default:
+                    // Try to match element type to class name
+                    $selector = $form_scope . ' .' . strtolower(str_replace(' ', '-', $element_type));
+            }
+            
+            // Build CSS properties from settings
+            $css_properties = array();
+            
+            // Background color
+            if (isset($settings['background_color']) && !empty($settings['background_color'])) {
+                $css_properties[] = 'background-color: ' . $this->sanitize_css_value($settings['background_color']) . ';';
+            }
+            
+            // Text color
+            if (isset($settings['text_color']) && !empty($settings['text_color'])) {
+                $css_properties[] = 'color: ' . $this->sanitize_css_value($settings['text_color']) . ';';
+            }
+            
+            // Font size
+            if (isset($settings['font_size']) && !empty($settings['font_size'])) {
+                $font_size = is_numeric($settings['font_size']) ? $settings['font_size'] . 'px' : $settings['font_size'];
+                $css_properties[] = 'font-size: ' . $this->sanitize_css_value($font_size) . ';';
+            }
+            
+            // Font family
+            if (isset($settings['font_family']) && !empty($settings['font_family'])) {
+                $css_properties[] = 'font-family: ' . $this->sanitize_css_value($settings['font_family']) . ';';
+            }
+            
+            // Border color
+            if (isset($settings['border_color']) && !empty($settings['border_color'])) {
+                $css_properties[] = 'border-color: ' . $this->sanitize_css_value($settings['border_color']) . ';';
+            }
+            
+            // Border width
+            if (isset($settings['border_width']) && !empty($settings['border_width'])) {
+                $border_width = is_numeric($settings['border_width']) ? $settings['border_width'] . 'px' : $settings['border_width'];
+                $css_properties[] = 'border-width: ' . $this->sanitize_css_value($border_width) . ';';
+            }
+            
+            // Border radius
+            if (isset($settings['border_radius']) && !empty($settings['border_radius'])) {
+                $border_radius = is_numeric($settings['border_radius']) ? $settings['border_radius'] . 'px' : $settings['border_radius'];
+                $css_properties[] = 'border-radius: ' . $this->sanitize_css_value($border_radius) . ';';
+            }
+            
+            // Padding
+            if (isset($settings['padding']) && !empty($settings['padding'])) {
+                $padding = is_numeric($settings['padding']) ? $settings['padding'] . 'px' : $settings['padding'];
+                $css_properties[] = 'padding: ' . $this->sanitize_css_value($padding) . ';';
+            }
+            
+            // Margin
+            if (isset($settings['margin']) && !empty($settings['margin'])) {
+                $margin = is_numeric($settings['margin']) ? $settings['margin'] . 'px' : $settings['margin'];
+                $css_properties[] = 'margin: ' . $this->sanitize_css_value($margin) . ';';
+            }
+            
+            // Width
+            if (isset($settings['width']) && !empty($settings['width'])) {
+                $width = is_numeric($settings['width']) ? $settings['width'] . '%' : $settings['width'];
+                $css_properties[] = 'width: ' . $this->sanitize_css_value($width) . ';';
+            }
+            
+            // Custom CSS (if provided)
+            if (isset($settings['custom_css']) && !empty($settings['custom_css'])) {
+                $css_properties[] = $settings['custom_css'];
+            }
+            
+            // Add CSS rule if we have properties
+            if (!empty($css_properties)) {
+                $css_rules[] = $selector . ' { ' . implode(' ', $css_properties) . ' }';
+            }
+        }
+        
+        return implode("\n", $css_rules);
+    }
+    
+    /**
+     * Sanitize CSS value to prevent XSS
+     * @param string $value CSS value
+     * @return string Sanitized CSS value
+     */
+    function sanitize_css_value($value) {
+        // Remove potentially dangerous characters but allow valid CSS values
+        $value = trim($value);
+        // Allow alphanumeric, spaces, #, rgb, rgba, px, em, rem, %, and common CSS functions
+        if (preg_match('/^[a-zA-Z0-9\s#().,\-:;%]+$/', $value) || 
+            preg_match('/^(rgb|rgba|hsl|hsla|calc|var)\(/', $value)) {
+            return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        }
+        return '';
+    }
+    
     function make_api_data_pagesData($api_shopify_data_list) {
         $tr_html = array();
         if (isset($api_shopify_data_list->pages) && is_array($api_shopify_data_list->pages)) {

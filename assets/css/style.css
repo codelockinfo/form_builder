@@ -49,9 +49,11 @@ body {
   line-height: 20px;
   text-transform: initial;
   letter-spacing: initial;
-  cursor: pointer;
+  cursor: default;
   font-size:  14px;color: #000;
   text-align: left !important;
+  pointer-events: none;
+  user-select: none;
 }
 .content .code-form-control .text-smaller {
   font-size: 12px;
@@ -73,6 +75,66 @@ body {
   outline: none;
   background-image: none !important;
   border:none;
+}
+/* Prevent blue focus outline and background on preview form inputs */
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  pointer-events: none;
+  user-select: none;
+  cursor: default;
+}
+.contact-form input[readonly],
+.contact-form textarea[readonly],
+.contact-form select[readonly] {
+  background-color: #f1f1f1 !important;
+  cursor: default;
+}
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus,
+.contact-form input:active,
+.contact-form textarea:active,
+.contact-form select:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02) !important;
+  background-color: #f1f1f1 !important;
+  background-image: none !important;
+}
+/* Prevent browser autofill blue background */
+.contact-form input:-webkit-autofill,
+.contact-form input:-webkit-autofill:hover,
+.contact-form input:-webkit-autofill:focus,
+.contact-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f1f1f1 inset !important;
+  -webkit-text-fill-color: #000 !important;
+  background-color: #f1f1f1 !important;
+}
+/* Prevent blue background on labels and label-content */
+.contact-form label,
+.contact-form .label-content,
+.contact-form .classic-label {
+  pointer-events: none;
+  user-select: none;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+.contact-form label:focus,
+.contact-form .label-content:focus,
+.contact-form .classic-label:focus,
+.contact-form label:active,
+.contact-form .label-content:active,
+.contact-form .classic-label:active {
+  outline: none !important;
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* Prevent any selection/highlight on labels */
+.contact-form .label-content::selection,
+.contact-form .label-content::-moz-selection {
+  background: transparent !important;
 }
 .content .code-form-control .code-form-input {
   display: flex;
@@ -340,4 +402,70 @@ input:focus-visible {
 .Polaris-Spinner--sizeSmall {
   height: 20px;
   width: 20px;
+}
+
+/* Header Design Customization Section */
+.design-customizer-section {
+  display: block !important;
+  visibility: visible !important;
+  overflow: visible !important;
+}
+
+.design-customizer-section .form-control {
+  margin-bottom: 16px;
+}
+
+.design-customizer-section .Polaris-Select {
+  width: 100%;
+  position: relative;
+  min-height: 40px;
+}
+
+.design-customizer-section .Polaris-Select__Input {
+  width: 100% !important;
+  min-height: 40px !important;
+  padding: 8px 36px 8px 12px !important;
+  border: 1px solid #c4cdd5 !important;
+  border-radius: 3px !important;
+  background-color: #fff !important;
+  font-size: 14px !important;
+  color: #212b36 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236d7175' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 30 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  line-height: 24px !important;
+}
+
+.design-customizer-section .Polaris-Select__Input option {
+  color: #212b36 !important;
+  background-color: #fff !important;
+  padding: 8px 12px !important;
+}
+
+.design-customizer-section .Polaris-Select__Input:focus {
+  outline: none !important;
+  border-color: #5c6ac4 !important;
+  box-shadow: 0 0 0 1px #5c6ac4 !important;
+}
+
+.design-customizer-section .Polaris-Select__Backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  pointer-events: none;
+  border: 1px solid #c4cdd5;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fff, #f9fafb);
 }
