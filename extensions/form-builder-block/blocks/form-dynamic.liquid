@@ -100,6 +100,8 @@
         console.log('✅ Form HTML inserted');
         // Initialize form submission handler if needed
         initializeFormSubmission();
+        // Initialize button hover effects
+        initializeButtonHoverEffects();
       } else {
         throw new Error('Empty form HTML received');
       }
@@ -122,6 +124,63 @@
         console.log('Form submission detected for block {{ block.id }}');
       });
     }
+  }
+  
+  function initializeButtonHoverEffects() {
+    // Initialize hover effects for buttons with data-hover-bg attribute
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    if (!blockContainer) return;
+    
+    const buttons = blockContainer.querySelectorAll('.footer .action.submit.classic-button[data-hover-bg], .footer .action.reset.classic-button[data-hover-bg]');
+    
+    buttons.forEach(function(button) {
+      const hoverBg = button.getAttribute('data-hover-bg');
+      
+      if (hoverBg) {
+        // Get original colors from inline style attribute
+        const styleAttr = button.getAttribute('style') || '';
+        let originalBg = '';
+        let originalBorder = '';
+        
+        // Extract background-color and border-color from style attribute
+        const bgMatch = styleAttr.match(/background-color:\s*([^;]+)/i);
+        const borderMatch = styleAttr.match(/border-color:\s*([^;]+)/i);
+        
+        if (bgMatch) {
+          originalBg = bgMatch[1].trim();
+        } else {
+          // Fallback to computed style
+          originalBg = window.getComputedStyle(button).backgroundColor;
+        }
+        
+        if (borderMatch) {
+          originalBorder = borderMatch[1].trim();
+        } else {
+          // Fallback to computed style
+          originalBorder = window.getComputedStyle(button).borderColor;
+        }
+        
+        // Store original colors
+        button.setAttribute('data-original-bg', originalBg);
+        button.setAttribute('data-original-border', originalBorder);
+        
+        // Mouse enter - apply hover color to both background and border
+        button.addEventListener('mouseenter', function() {
+          this.style.backgroundColor = hoverBg;
+          this.style.borderColor = hoverBg;
+        });
+        
+        // Mouse leave - restore original colors
+        button.addEventListener('mouseleave', function() {
+          const origBg = this.getAttribute('data-original-bg') || originalBg;
+          const origBorder = this.getAttribute('data-original-border') || originalBorder;
+          this.style.backgroundColor = origBg;
+          this.style.borderColor = origBorder;
+        });
+      }
+    });
+    
+    console.log('Button hover effects initialized for', buttons.length, 'buttons');
   }
   
   // Initialize when DOM is ready

@@ -84,6 +84,21 @@ body {
   user-select: none;
   cursor: default;
 }
+
+/* Ensure CKEditor is always editable - override any blocking CSS */
+.cke_editable,
+.cke_editable *,
+.cke_contents,
+.cke_contents *,
+textarea[name="contentheader"],
+textarea[name="contentfooter"],
+textarea[name="contentparagraph"],
+.headerData textarea,
+.footerData textarea {
+  pointer-events: auto !important;
+  user-select: text !important;
+  cursor: text !important;
+}
 .contact-form input[readonly],
 .contact-form textarea[readonly],
 .contact-form select[readonly] {

@@ -805,8 +805,78 @@ $(document).ready(function(){
         $(document).on("click",".list-item[data-owl]",function(e){
             var slideTo = $(this).data("owl");
             if (navigateToSlide(slideTo)) {
+                // Initialize CKEditor when header drawer is opened
+                if (slideTo == 2) { // Header drawer
+                    setTimeout(function() {
+                        var $headerEditor = $('.headerData textarea[name="contentheader"]');
+                        console.log('Header drawer opened, checking for textarea:', $headerEditor.length);
+                        if ($headerEditor.length > 0) {
+                            if (CKEDITOR.instances['contentheader']) {
+                                console.log('CKEditor already exists, destroying and reinitializing');
+                                try {
+                                    CKEDITOR.instances['contentheader'].destroy();
+                                } catch(e) {
+                                    console.error('Error destroying CKEditor:', e);
+                                }
+                            }
+                            console.log('Initializing CKEditor for contentheader when header drawer opened');
+                            initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
+                        } else {
+                            console.warn('Header textarea not found when drawer opened');
+                        }
+                    }, 500);
+                }
+                // Initialize CKEditor when footer drawer is opened
+                if (slideTo == 4) { // Footer drawer (adjust if needed)
+                    setTimeout(function() {
+                        var $footerEditor = $('.footerData textarea[name="contentfooter"]');
+                        console.log('Footer drawer opened, checking for textarea:', $footerEditor.length);
+                        if ($footerEditor.length > 0) {
+                            if (CKEDITOR.instances['contentfooter']) {
+                                console.log('CKEditor already exists, destroying and reinitializing');
+                                try {
+                                    CKEDITOR.instances['contentfooter'].destroy();
+                                } catch(e) {
+                                    console.error('Error destroying CKEditor:', e);
+                                }
+                            }
+                            console.log('Initializing CKEditor for contentfooter when footer drawer opened');
+                            initializeCKEditor('contentfooter', '.footer .footer-data__footerdescription');
+                        } else {
+                            console.warn('Footer textarea not found when drawer opened');
+                        }
+                    }, 500);
+                }
                 // Don't prevent default to allow other handlers to work
             }
+        });
+        
+        // Also listen for carousel slide changes
+        $(document).on('changed.owl.carousel', '.owl-carousel', function(event) {
+            var currentSlide = event.relatedTarget.currentItem || event.item.index;
+            console.log('Carousel slide changed to:', currentSlide);
+            
+            // Check if we're on the header slide (usually index 2)
+            setTimeout(function() {
+                var $headerSlide = $('.headerData');
+                if ($headerSlide.length > 0 && $headerSlide.is(':visible')) {
+                    var $headerEditor = $('.headerData textarea[name="contentheader"]');
+                    if ($headerEditor.length > 0 && !CKEDITOR.instances['contentheader']) {
+                        console.log('Initializing CKEditor for contentheader on slide change');
+                        initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
+                    }
+                }
+                
+                // Check if we're on the footer slide
+                var $footerSlide = $('.footerData');
+                if ($footerSlide.length > 0 && $footerSlide.is(':visible')) {
+                    var $footerEditor = $('.footerData textarea[name="contentfooter"]');
+                    if ($footerEditor.length > 0 && !CKEDITOR.instances['contentfooter']) {
+                        console.log('Initializing CKEditor for contentfooter on slide change');
+                        initializeCKEditor('contentfooter', '.footer .footer-data__footerdescription');
+                    }
+                }
+            }, 300);
         });
         
         // Also handle clicks on builder-item-wrapper that contains list-item (for better event capture)
@@ -925,37 +995,170 @@ $(document).ready(function () {
         
         
         function initializeCKEditor(editorName, targetElement) {
-            var editorElement = $('textarea[name="' + editorName + '"]');
+            // Try to find by ID first, then by name
+            var editorElement = $('#' + editorName).length > 0 ? $('#' + editorName) : $('textarea[name="' + editorName + '"]');
+            console.log('initializeCKEditor called for:', editorName, 'Found textarea:', editorElement.length, 'CKEditor instance exists:', !!CKEDITOR.instances[editorName]);
+            
             if (editorElement.length > 0 && !CKEDITOR.instances[editorName]) {
-                CKEDITOR.replace(editorName, {
-                    on: {
-                        instanceReady: function(evt) {
-                            evt.editor.on('change', function() {
-                                var editorData = evt.editor.getData();
-                                console.log(editorData);
-                                $(targetElement).html(editorData);
-                            });
-                        }
+                try {
+                    // Use ID/name string if available (CKEditor's preferred method)
+                    var editorInstance;
+                    if (editorElement.attr('id')) {
+                        console.log('Initializing CKEditor using ID:', editorElement.attr('id'));
+                        // Remove readonly/disabled attributes before initializing
+                        editorElement.removeAttr('readonly').removeAttr('disabled');
+                        editorInstance = CKEDITOR.replace(editorElement.attr('id'), {
+                            readOnly: false, // Explicitly set to false
+                            on: {
+                                instanceReady: function(evt) {
+                                    console.log('CKEditor instance ready for:', editorName);
+                                    // Ensure editor is not read-only
+                                    if (evt.editor.readOnly) {
+                                        console.log('Editor was read-only, setting to editable');
+                                        evt.editor.setReadOnly(false);
+                                    }
+                                    console.log('Editor readOnly status:', evt.editor.readOnly);
+                                    evt.editor.on('change', function() {
+                                        var editorData = evt.editor.getData();
+                                        console.log('CKEditor content changed for:', editorName);
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                    
+                                    // Also update on blur
+                                    evt.editor.on('blur', function() {
+                                        var editorData = evt.editor.getData();
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                    
+                                    // Also update on keyup for real-time preview
+                                    evt.editor.on('keyup', function() {
+                                        var editorData = evt.editor.getData();
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        // Fallback to DOM element
+                        console.log('Initializing CKEditor using DOM element');
+                        // Remove readonly/disabled attributes before initializing
+                        editorElement.removeAttr('readonly').removeAttr('disabled');
+                        var domElement = editorElement[0];
+                        editorInstance = CKEDITOR.replace(domElement, {
+                            readOnly: false, // Explicitly set to false
+                            on: {
+                                instanceReady: function(evt) {
+                                    console.log('CKEditor instance ready for:', editorName);
+                                    // Ensure editor is not read-only
+                                    if (evt.editor.readOnly) {
+                                        console.log('Editor was read-only, setting to editable');
+                                        evt.editor.setReadOnly(false);
+                                    }
+                                    console.log('Editor readOnly status:', evt.editor.readOnly);
+                                    evt.editor.on('change', function() {
+                                        var editorData = evt.editor.getData();
+                                        console.log('CKEditor content changed for:', editorName);
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                    
+                                    // Also update on blur
+                                    evt.editor.on('blur', function() {
+                                        var editorData = evt.editor.getData();
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                    
+                                    // Also update on keyup for real-time preview
+                                    evt.editor.on('keyup', function() {
+                                        var editorData = evt.editor.getData();
+                                        if (targetElement) {
+                                            $(targetElement).html(editorData);
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
-                });
+                    console.log('CKEditor initialized successfully for:', editorName, 'Instance:', editorInstance);
+                } catch(e) {
+                    console.error('Error initializing CKEditor for', editorName, ':', e);
+                    console.error('Error stack:', e.stack);
+                }
+            } else if (CKEDITOR.instances[editorName]) {
+                console.log('CKEditor already initialized for:', editorName);
+            } else {
+                console.warn('Cannot initialize CKEditor for', editorName, '- textarea not found');
+                console.warn('Searched for: #' + editorName + ' and textarea[name="' + editorName + '"]');
+                console.warn('All textareas on page:', $('textarea').length);
+                console.warn('All textareas with name attribute:', $('textarea[name]').map(function() { return $(this).attr('name'); }).get());
+                console.warn('All textareas with id attribute:', $('textarea[id]').map(function() { return $(this).attr('id'); }).get());
             }
         }
     
-        initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
-        initializeCKEditor('contentfooter', '.footer  .footer-data__footerdescription');
-        initializeCKEditor('contentparagraph', '.paragraph-container .paragraph-content');
+        // Initialize CKEditor for header description (only if textarea exists and is visible)
+        // Wait for CKEditor to be available
+        function tryInitializeCKEditors() {
+            if (typeof CKEDITOR === 'undefined') {
+                console.warn('CKEditor not loaded yet, retrying in 500ms...');
+                setTimeout(tryInitializeCKEditors, 500);
+                return;
+            }
+            
+            setTimeout(function() {
+                var $headerEditor = $('.headerData textarea[name="contentheader"], textarea[name="contentheader"]');
+                if ($headerEditor.length > 0 && !CKEDITOR.instances['contentheader']) {
+                    console.log('Initializing CKEditor for contentheader on page load');
+                    initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
+                }
+            }, 500);
+            
+            setTimeout(function() {
+                var $footerEditor = $('.footerData textarea[name="contentfooter"], textarea[name="contentfooter"]');
+                if ($footerEditor.length > 0 && !CKEDITOR.instances['contentfooter']) {
+                    console.log('Initializing CKEditor for contentfooter on page load');
+                    initializeCKEditor('contentfooter', '.footer  .footer-data__footerdescription');
+                }
+            }, 500);
+            
+            // Initialize CKEditor for paragraph
+            initializeCKEditor('contentparagraph', '.paragraph-container .paragraph-content');
+        }
+        
+        // Start trying to initialize
+        tryInitializeCKEditors();
 
     });
 });
 // width change
 $(document).on("click",".chooseItems .chooseItem-align",function(){
-    $('.chooseItem-align').removeClass("active");
+    // Remove active from all alignment buttons in the same container
+    $(this).closest(".chooseItems").find('.chooseItem-align').removeClass("active");
     $(this).addClass("active");
     $dataValue = $(this).attr("data-value"); 
-    $(".forFooterAlign").removeClass("align-left align-center align-right").addClass($dataValue);
+    
+    // Check if this is footer alignment
     $inputFormate = $(this).closest(".form-control").find(".footer-button__alignment");
     if($inputFormate.length > 0){
         $inputFormate.val($dataValue);
+        $(".forFooterAlign").removeClass("align-left align-center align-right").addClass($dataValue);
+    }
+    
+    // Check if this is header alignment
+    $headerInput = $(this).closest(".form-control").find(".header-text-align-input");
+    if($headerInput.length > 0){
+        $headerInput.val($dataValue);
+        // Update preview header alignment
+        $(".formHeader").removeClass("align-left align-center align-right").addClass($dataValue);
+        $(".formHeader .title, .formHeader .description").css("text-align", $dataValue);
     }
 });
 $(document).on("click",".chooseItems .chooseItem-noperline",function(){

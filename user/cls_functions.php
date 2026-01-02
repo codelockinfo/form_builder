@@ -1979,9 +1979,21 @@ class Client_functions extends common_function {
                             $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
                         }
                         
-                        // Ensure array has all 5 elements (backward compatibility)
-                        if (count($form_header_data) < 5) {
-                            $form_header_data = array_merge($form_header_data, array(24, "center"));
+                        // Ensure array has all 6 elements (backward compatibility - add missing elements)
+                        if (count($form_header_data) < 6) {
+                            // Add missing elements: font_size, text_align, text_color
+                            while (count($form_header_data) < 3) {
+                                $form_header_data[] = '';
+                            }
+                            if (count($form_header_data) < 4) {
+                                $form_header_data[] = 24; // font_size
+                            }
+                            if (count($form_header_data) < 5) {
+                                $form_header_data[] = 'center'; // text_align
+                            }
+                            if (count($form_header_data) < 6) {
+                                $form_header_data[] = '#000000'; // text_color
+                            }
                         }
                         
                         $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0","Reset", "0","align-left");
@@ -1998,17 +2010,49 @@ class Client_functions extends common_function {
                         $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
                         $form_name = isset($formData['form_name']) && !empty($formData['form_name']) ? $formData['form_name'] : (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form');
                         
-                        // Get font-size and text-align (indices 3 and 4)
-                        $header_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
-                        $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
+                        // Get font-size, text-align, and text-color (indices 3, 4, and 5)
+                        // Check if new format (8 elements) or old format (6 elements)
+                        $header_data_length = count($form_header_data);
                         
-                        $form_html = '<div class="formHeader header '.$header_hidden.'">
-                            <h3 class="title globo-heading" style="font-size: '.$header_font_size.'px; text-align: '.$header_text_align.';">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
-                            <div class="description globo-description" style="text-align: '.$header_text_align.';">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
-                        </div>';
+                        if ($header_data_length >= 8) {
+                            // New format: separate heading and sub-heading settings
+                            $heading_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
+                            $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
+                            $heading_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#000000';
+                            $subheading_font_size = isset($form_header_data[6]) ? intval($form_header_data[6]) : 16;
+                            $subheading_text_color = isset($form_header_data[7]) ? $form_header_data[7] : '#000000';
+                            
+                            // Validate color formats
+                            if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $heading_text_color)) {
+                                $heading_text_color = '#000000';
+                            }
+                            if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $subheading_text_color)) {
+                                $subheading_text_color = '#000000';
+                            }
+                            
+                            $form_html = '<div class="formHeader header '.$header_hidden.'">
+                                <h3 class="title globo-heading" style="font-size: '.$heading_font_size.'px; text-align: '.$header_text_align.'; color: '.$heading_text_color.';">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
+                                <div class="description globo-description" style="font-size: '.$subheading_font_size.'px; text-align: '.$header_text_align.'; color: '.$subheading_text_color.';">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
+                            </div>';
+                        } else {
+                            // Old format: use same values for both
+                            $header_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
+                            $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
+                            $header_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#000000';
+                            
+                            // Validate color format
+                            if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $header_text_color)) {
+                                $header_text_color = '#000000';
+                            }
+                            
+                            $form_html = '<div class="formHeader header '.$header_hidden.'">
+                                <h3 class="title globo-heading" style="font-size: '.$header_font_size.'px; text-align: '.$header_text_align.'; color: '.$header_text_color.';">'.(isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form').'</h3>
+                                <div class="description globo-description" style="text-align: '.$header_text_align.'; color: '.$header_text_color.';">'.(isset($form_header_data[2]) ? $form_header_data[2] : '').'</div>
+                            </div>';
+                        }
                     } else {
                         // Default values if no form data found
-                        $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.");
+                        $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center", "#000000");
                         $form_footer_data = array("", "Submit", "0","Reset", "0","align-left");
                         $publishdata = array("",'Please <a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true)));
                         $form_type = '0';
@@ -2699,13 +2743,59 @@ class Client_functions extends common_function {
                         $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
                         $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
                         $footer_align = isset($form_footer_data[5]) ? $form_footer_data[5] : 'align-left';
+                        
+                        // Convert old numeric values to new format (backward compatibility)
+                        if ($footer_align === '1' || $footer_align === 1) {
+                            $footer_align = 'align-left';
+                        } else if ($footer_align === '2' || $footer_align === 2) {
+                            $footer_align = 'align-center';
+                        } else if ($footer_align === '3' || $footer_align === 3) {
+                            $footer_align = 'align-right';
+                        }
+                        
+                        // Ensure alignment is valid
+                        if (!in_array($footer_align, array('align-left', 'align-center', 'align-right'))) {
+                            $footer_align = 'align-left';
+                        }
+                        
+                        // Button design settings (new format with 11 elements, or fallback to defaults)
+                        $footer_data_length = count($form_footer_data);
+                        if ($footer_data_length >= 11) {
+                            $button_text_size = isset($form_footer_data[6]) ? intval($form_footer_data[6]) : 16;
+                            $button_text_color = isset($form_footer_data[7]) ? $form_footer_data[7] : '#ffffff';
+                            $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#EB1256';
+                            $button_hover_bg_color = isset($form_footer_data[9]) ? $form_footer_data[9] : '#C8104A';
+                            $border_radius = isset($form_footer_data[10]) ? intval($form_footer_data[10]) : 4;
+                        } else {
+                            // Old format: use defaults
+                            $button_text_size = 16;
+                            $button_text_color = '#ffffff';
+                            $button_bg_color = '#EB1256';
+                            $button_hover_bg_color = '#C8104A';
+                            $border_radius = 4;
+                        }
+                        
+                        // Validate colors
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $button_text_color)) {
+                            $button_text_color = '#ffffff';
+                        }
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $button_bg_color)) {
+                            $button_bg_color = '#EB1256';
+                        }
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $button_hover_bg_color)) {
+                            $button_hover_bg_color = '#C8104A';
+                        }
+                        
+                        $button_style = 'style="font-size: '.$button_text_size.'px; color: '.$button_text_color.'; background-color: '.$button_bg_color.'; border-radius: '.$border_radius.'px; border-color: '.$button_bg_color.';"';
+                        $button_hover_style = 'data-hover-bg="'.$button_hover_bg_color.'"';
+                        
                         $form_html .= '<div class="footer forFooterAlign '.$footer_align.'">
                                 <div class="messages footer-data__footerdescription">'.(isset($form_footer_data[0]) ? $form_footer_data[0] : '').'</div>
-                                <button class="action submit  classic-button footer-data__submittext '.$fullwidth_button.'">
+                                <button class="action submit classic-button footer-data__submittext '.$fullwidth_button.'" '.$button_style.' '.$button_hover_style.'>
                                     <span class="spinner"></span>
                                     '.(isset($form_footer_data[1]) ? $form_footer_data[1] : 'Submit').'
                                 </button>
-                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button">'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
+                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button" '.$button_style.' '.$button_hover_style.'>'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
                             </div>';
                     }
                     // Close the code-form-app wrapper
@@ -3678,6 +3768,9 @@ class Client_functions extends common_function {
                             </div>
                         </div>
                     </div>
+
+                    '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+
                     <div class="form-control">
                         <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                     </div>
@@ -4055,6 +4148,9 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                 </div>
+
+                                '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+
                                 <div class="form-control">
                                 <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                                 </div>
@@ -4559,6 +4655,9 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
+
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';    
@@ -5982,92 +6081,95 @@ class Client_functions extends common_function {
                                     </label>
                                 </div>
                                 <div class="form-control">
-                                    <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[8].'"  class="input_columnwidth"/>
-                                    <div class="chooseInput">
-                                        <div class="label">Column width</div>
-                                        <div class="chooseItems">
-                                            <div class="chooseItem '.$datavalue3.'" data-value="3">33%</div>
-                                            <div class="chooseItem '.$datavalue2.'" data-value="2">50%</div>
-                                            <div class="chooseItem '.$datavalue1.'" data-value="1">100%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden">
-                                    <label class="Polaris-Choice" for="PolarisCheckbox11">
-                                        <span class="Polaris-Choice__Control">
-                                        <span class="Polaris-Checkbox">
-                                            <input name="'.$elementtitle.''.$form_data_id.'__conditional-field" id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
-                                            <span class="Polaris-Checkbox__Icon">
-                                                <span class="Polaris-Icon">
-                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                    <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                    </svg>
-                                                </span>
-                                            </span>
-                                        </span>
-                                        </span>
-                                        <span class="Polaris-Choice__Label">Conditional field</span>
-                                    </label>
-                                </div>
-                                <div class="form-control hidden">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label id="PolarisSelect4Label" for="PolarisSelect4" class="Polaris-Label__Text">Only show element if</label></div>
-                                        </div>
-                                        <div class="Polaris-Select">
-                                        <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
-                                            <option value="false">Please select</option>
-                                            <option value="select">Dropdown</option>
-                                        </select>
-                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                            <span class="Polaris-Select__SelectedOption">Please select</span>
-                                            <span class="Polaris-Select__Icon">
-                                                <span class="Polaris-Icon">
-                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                    </svg>
-                                                </span>
-                                            </span>
-                                        </div>
-                                        <div class="Polaris-Select__Backdrop"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-control hidden">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label id="PolarisSelect5Label" for="PolarisSelect5" class="Polaris-Label__Text">is</label></div>
-                                        </div>
-                                        <div class="Polaris-Select">
-                                        <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
-                                            <option value="false">Please select</option>
-                                            <option value="Option 1">Option 1</option>
-                                            <option value="Option 2">Option 2</option>
-                                            <option value="option 3">option 3</option>
-                                            <option value=" option4"> option4</option>
-                                        </select>
-                                        <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
-                                            <span class="Polaris-Select__SelectedOption">Please select</span>
-                                            <span class="Polaris-Select__Icon">
-                                                <span class="Polaris-Icon">
-                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                    <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
-                                                    </svg>
-                                                </span>
-                                            </span>
-                                        </div>
-                                        <div class="Polaris-Select__Backdrop"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive    Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                        </div>
-                    </div>';
+                                                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[8].'"  class="input_columnwidth"/>
+                                                                        <div class="chooseInput">
+                                                                            <div class="label">Column width</div>
+                                                                            <div class="chooseItems">
+                                                                                <div class="chooseItem '.$datavalue3.'" data-value="3">33%</div>
+                                                                                <div class="chooseItem '.$datavalue2.'" data-value="2">50%</div>
+                                                                                <div class="chooseItem '.$datavalue1.'" data-value="1">100%</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-control hidden">
+                                                                        <label class="Polaris-Choice" for="PolarisCheckbox11">
+                                                                            <span class="Polaris-Choice__Control">
+                                                                            <span class="Polaris-Checkbox">
+                                                                                <input name="'.$elementtitle.''.$form_data_id.'__conditional-field" id="PolarisCheckbox11" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value=""><span class="Polaris-Checkbox__Backdrop"></span>
+                                                                                <span class="Polaris-Checkbox__Icon">
+                                                                                    <span class="Polaris-Icon">
+                                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </span>
+                                                                            </span>
+                                                                            <span class="Polaris-Choice__Label">Conditional field</span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-control hidden">
+                                                                        <div class="">
+                                                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                                            <div class="Polaris-Label"><label id="PolarisSelect4Label" for="PolarisSelect4" class="Polaris-Label__Text">Only show element if</label></div>
+                                                                            </div>
+                                                                            <div class="Polaris-Select">
+                                                                            <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect4" class="Polaris-Select__Input" aria-invalid="false">
+                                                                                <option value="false">Please select</option>
+                                                                                <option value="select">Dropdown</option>
+                                                                            </select>
+                                                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                                                <span class="Polaris-Select__SelectedOption">Please select</span>
+                                                                                <span class="Polaris-Select__Icon">
+                                                                                    <span class="Polaris-Icon">
+                                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="Polaris-Select__Backdrop"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-control hidden">
+                                                                        <div class="">
+                                                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                                            <div class="Polaris-Label"><label id="PolarisSelect5Label" for="PolarisSelect5" class="Polaris-Label__Text">is</label></div>
+                                                                            </div>
+                                                                            <div class="Polaris-Select">
+                                                                            <select name="'.$elementtitle.''.$form_data_id.'__select" id="PolarisSelect5" class="Polaris-Select__Input" aria-invalid="false">
+                                                                                <option value="false">Please select</option>
+                                                                                <option value="Option 1">Option 1</option>
+                                                                                <option value="Option 2">Option 2</option>
+                                                                                <option value="option 3">option 3</option>
+                                                                                <option value=" option4"> option4</option>
+                                                                            </select>
+                                                                            <div class="Polaris-Select__Content" aria-hidden="true" aria-disabled="false">
+                                                                                <span class="Polaris-Select__SelectedOption">Please select</span>
+                                                                                <span class="Polaris-Select__Icon">
+                                                                                    <span class="Polaris-Icon">
+                                                                                        <span class="Polaris-VisuallyHidden"></span>
+                                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                                        <path d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"></path>
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="Polaris-Select__Backdrop"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                
+                                                                '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                                
+                                                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                                                            </div>
+                                                        </div>';
                 }else if($elementid == 16){
                     if($formData[2] == "1"){
                         $datavalue1 = "active";
@@ -6123,22 +6225,25 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     <div class="form-control">
-                                        <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[2].'"  class="input_columnwidth"/>
-                                        <div class="chooseInput">
-                                            <div class="label">Column width</div>
-                                            <div class="chooseItems">
-                                                <div class="chooseItem '.$datavalue3.'" data-value="3">33%</div>
-                                                <div class="chooseItem '.$datavalue2.'" data-value="2">50%</div>
-                                                <div class="chooseItem '.$datavalue1.'" data-value="1">100%</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                                            <input name="'.$elementtitle.''.$form_data_id.'__columnwidth" type="hidden" value="'.$formData[2].'"  class="input_columnwidth"/>
+                                                                            <div class="chooseInput">
+                                                                                <div class="label">Column width</div>
+                                                                                <div class="chooseItems">
+                                                                                    <div class="chooseItem '.$datavalue3.'" data-value="3">33%</div>
+                                                                                    <div class="chooseItem '.$datavalue2.'" data-value="2">50%</div>
+                                                                                    <div class="chooseItem '.$datavalue1.'" data-value="1">100%</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
                                     
-                                </div>
-                            </div>
-                            <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
-                        </div>
-                    </div>';
+                                                                '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+                                    
+                                                                <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
+                                                            </div>
+                                                        </div>';
                 }else if($elementid == 17){
                     if($formData[1] == "1"){
                         $datavalue1 = "active";
@@ -6170,6 +6275,9 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                             </div>
+
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
@@ -6319,6 +6427,9 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>
+
+                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid).'
+
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button></div>
                         </div>
                     </div>';
@@ -6641,8 +6752,25 @@ class Client_functions extends common_function {
             $showheader = isset($_POST['showheader']) ?  $_POST['showheader'] : '0' ;
             $title = isset($_POST['header__title']) ?  $_POST['header__title'] : '' ;
             $content = isset($_POST['contentheader']) ?  $_POST['contentheader'] : '' ;
-            $font_size = isset($_POST['header_font_size']) ? intval($_POST['header_font_size']) : 24;
+            
+            // Heading (title) settings
+            $heading_font_size = isset($_POST['header_heading_font_size']) ? intval($_POST['header_heading_font_size']) : 24;
+            $heading_text_color = isset($_POST['header_heading_text_color_text']) ? $_POST['header_heading_text_color_text'] : (isset($_POST['header_heading_text_color']) ? $_POST['header_heading_text_color'] : '#000000');
+            
+            // Sub-heading (description) settings
+            $subheading_font_size = isset($_POST['header_subheading_font_size']) ? intval($_POST['header_subheading_font_size']) : 16;
+            $subheading_text_color = isset($_POST['header_subheading_text_color_text']) ? $_POST['header_subheading_text_color_text'] : (isset($_POST['header_subheading_text_color']) ? $_POST['header_subheading_text_color'] : '#000000');
+            
+            // Alignment (applies to both)
             $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
+            
+            // Validate color formats
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $heading_text_color)) {
+                $heading_text_color = '#000000'; // Default to black if invalid
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $subheading_text_color)) {
+                $subheading_text_color = '#000000'; // Default to black if invalid
+            }
             
             // Validate form_id and title
             if (empty($form_id)) {
@@ -6651,8 +6779,8 @@ class Client_functions extends common_function {
                 return $response;
             }
             
-            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=font_size, [4]=text_align
-            $form_header_data = serialize(array($showheader, $title, $content, $font_size, $text_align));
+            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color
+            $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color));
             
             // Use title for form_name, or default to "Blank Form" if empty
             $form_name = !empty($title) ? $title : 'Blank Form';
@@ -6688,9 +6816,33 @@ class Client_functions extends common_function {
             $resetbutton = isset($_POST['resetbutton']) ?  $_POST['resetbutton'] : '' ;
             $resetbuttontext = isset($_POST['footer-data__resetbuttontext']) ?  $_POST['footer-data__resetbuttontext'] : '' ;
             $fullwidth = isset($_POST['fullwidth']) ?  $_POST['fullwidth'] : '' ;
-            $alignment = isset($_POST['footer-button__alignment']) ?  $_POST['footer-button__alignment'] : '' ;
+            $alignment = isset($_POST['footer-button__alignment']) ?  $_POST['footer-button__alignment'] : 'align-left';
+            
+            // Ensure alignment is valid (fallback to align-left if invalid)
+            if (!in_array($alignment, array('align-left', 'align-center', 'align-right'))) {
+                $alignment = 'align-left';
+            }
+            
+            // Button design settings
+            $button_text_size = isset($_POST['footer_button_text_size']) ? intval($_POST['footer_button_text_size']) : 16;
+            $button_text_color = isset($_POST['footer_button_text_color_text']) ? $_POST['footer_button_text_color_text'] : (isset($_POST['footer_button_text_color']) ? $_POST['footer_button_text_color'] : '#ffffff');
+            $button_bg_color = isset($_POST['footer_button_bg_color_text']) ? $_POST['footer_button_bg_color_text'] : (isset($_POST['footer_button_bg_color']) ? $_POST['footer_button_bg_color'] : '#EB1256');
+            $button_hover_bg_color = isset($_POST['footer_button_hover_bg_color_text']) ? $_POST['footer_button_hover_bg_color_text'] : (isset($_POST['footer_button_hover_bg_color']) ? $_POST['footer_button_hover_bg_color'] : '#C8104A');
+            $border_radius = isset($_POST['footer_button_border_radius']) ? intval($_POST['footer_button_border_radius']) : 4;
+            
+            // Validate color formats
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $button_text_color)) {
+                $button_text_color = '#ffffff';
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $button_bg_color)) {
+                $button_bg_color = '#EB1256';
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $button_hover_bg_color)) {
+                $button_hover_bg_color = '#C8104A';
+            }
 
-            $form_footer_data = serialize(array($content, $submittext, $resetbutton, $resetbuttontext, $fullwidth, $alignment));
+            // form_footer_data array: [0]=content, [1]=submittext, [2]=resetbutton, [3]=resetbuttontext, [4]=fullwidth, [5]=alignment, [6]=button_text_size, [7]=button_text_color, [8]=button_bg_color, [9]=button_hover_bg_color, [10]=border_radius
+            $form_footer_data = serialize(array($content, $submittext, $resetbutton, $resetbuttontext, $fullwidth, $alignment, $button_text_size, $button_text_color, $button_bg_color, $button_hover_bg_color, $border_radius));
 
             $fields = array(
                 '`form_footer_data`' => $form_footer_data,
@@ -7418,6 +7570,18 @@ class Client_functions extends common_function {
 .code-form-app .footer {
     margin-top: 4%;
 }
+/* Footer button hover effect - use data attribute for dynamic hover color */
+.code-form-app .footer .action.submit.classic-button:hover,
+.code-form-app .footer .action.reset.classic-button:hover {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Storefront hover effect using data-hover-bg attribute */
+.form-builder-wrapper .footer .action.submit.classic-button[data-hover-bg]:hover,
+.form-builder-wrapper .footer .action.reset.classic-button[data-hover-bg]:hover {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
 .code-form-app .footer .action.submit.classic-button {
     background-color: #EB1256;
     color: #ffffff;

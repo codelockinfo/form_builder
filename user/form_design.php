@@ -162,8 +162,6 @@ if ($form_id > 0) {
                 <div class="preview-box iframe-wrapper desktop">
                     <div class="contact-form">
                         <div class="code-form-app boxed-layout" style="padding: 0;">
-                         
-                            
                         </div> 
                     </div>
                 </div>
@@ -1576,7 +1574,7 @@ if ($form_id > 0) {
                                         <label id=":R1n6:Label" for=":R1n6:" class="Polaris-Label__Text">Description</label>
                                     </div>
                                 </div>
-                                <textarea name="contentheader" class="myeditor"></textarea>
+                                <textarea name="contentheader" id="contentheader" class="myeditor"></textarea>
                             </div>
                             
                             <!-- Header Design Customization -->
@@ -1587,19 +1585,19 @@ if ($form_id > 0) {
                                     </div>
                                 </div>
                                 
-                                <!-- Font Size -->
+                                <!-- Heading Font Size -->
                                 <div class="form-control">
                                     <div class="textfield-wrapper">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label class="Polaris-Label__Text">Font Size</label>
+                                                    <label class="Polaris-Label__Text">Heading Font Size</label>
                                                 </div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                        <input type="number" name="header_font_size" id="headerFontSize" class="Polaris-TextField__Input header-design-font-size" value="24" min="10" max="72" step="1" placeholder="24">
+                                                        <input type="number" name="header_heading_font_size" id="headerHeadingFontSize" class="Polaris-TextField__Input header-design-heading-font-size" value="24" min="10" max="72" step="1" placeholder="24">
                                                         <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -1611,21 +1609,87 @@ if ($form_id > 0) {
                                     </div>
                                 </div>
                                 
-                                <!-- Text Align -->
+                                <!-- Heading Text Color -->
                                 <div class="form-control">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Text Align</label>
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Heading Text Color</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                    <input type="color" name="header_heading_text_color" class="header-design-heading-text-color" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                </div>
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="text" name="header_heading_text_color_text" class="Polaris-TextField__Input header-design-heading-text-color-text" value="#000000" placeholder="#000000">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="Polaris-Select" style="position: relative;">
-                                            <select name="header_text_align" id="headerTextAlign" class="Polaris-Select__Input header-design-text-align" aria-invalid="false">
-                                                <option value="left">Left</option>
-                                                <option value="center" selected>Center</option>
-                                                <option value="right">Right</option>
-                                            </select>
-                                            <div class="Polaris-Select__Backdrop"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sub-heading Font Size -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Sub-heading Font Size</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="number" name="header_subheading_font_size" id="headerSubheadingFontSize" class="Polaris-TextField__Input header-design-subheading-font-size" value="16" min="10" max="72" step="1" placeholder="16">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                    <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sub-heading Text Color -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Sub-heading Text Color</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                    <input type="color" name="header_subheading_text_color" class="header-design-subheading-text-color" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                </div>
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="text" name="header_subheading_text_color_text" class="Polaris-TextField__Input header-design-subheading-text-color-text" value="#000000" placeholder="#000000">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Text Align -->
+                                <div class="form-control">
+                                    <input name="header_text_align" type="hidden" value="center" class="header-text-align-input">
+                                    <div class="chooseInput">
+                                        <div class="label">Alignment</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem-align" data-value="left">Left</div>
+                                            <div class="chooseItem-align active" data-value="center">Center</div>
+                                            <div class="chooseItem-align" data-value="right">Right</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2233,14 +2297,14 @@ if ($form_id > 0) {
                     <div class="">
                         <form class="add_footerdata" method="POST">
                             <div class="container tabContent footerData">
-                                    <div class="container">
+                                    <div class="">
                                         <div class="footerData">
                                     
                                         <input type="hidden" class="form_id" name="form_id" value=''>
                                         <div class="form-control">
                                             <div class="textfield-wrapper">
                                                 <div class="">
-                                                    <textarea name="contentfooter" class="myeditor"></textarea>
+                                                    <textarea name="contentfooter" id="contentfooter" class="myeditor"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -2327,13 +2391,142 @@ if ($form_id > 0) {
                                                                 </svg></span></span></span></span><span
                                                     class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
                                         <div class="form-control alignment" >
-                                            <input name="footer-button__alignment" type="hidden" value="2" class="footer-button__alignment">
+                                            <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
                                             <div class="chooseInput">
                                                 <div class="label">Alignment</div>
                                                 <div class="chooseItems">
                                                     <div class="chooseItem-align active" data-value="align-left">Left</div>
                                                     <div class="chooseItem-align" data-value="align-center">Center</div>
                                                     <div class="chooseItem-align" data-value="align-right">Right</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Button Design Customization -->
+                                        <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                            <div style="margin-bottom: 16px;">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Button Design Customization</label>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Button Text Size -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Button Text Size</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="number" name="footer_button_text_size" id="footerButtonTextSize" class="Polaris-TextField__Input footer-design-button-text-size" value="16" min="10" max="72" step="1" placeholder="16">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Button Text Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Button Text Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_button_text_color" class="footer-design-button-text-color" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_button_text_color_text" class="Polaris-TextField__Input footer-design-button-text-color-text" value="#ffffff" placeholder="#ffffff">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Button Background Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Button Background Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_button_bg_color" class="footer-design-button-bg-color" value="#EB1256" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_button_bg_color_text" class="Polaris-TextField__Input footer-design-button-bg-color-text" value="#EB1256" placeholder="#EB1256">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Button Hover Background Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Button Hover Background Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_button_hover_bg_color" class="footer-design-button-hover-bg-color" value="#C8104A" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-button-hover-bg-color-text" value="#C8104A" placeholder="#C8104A">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Border Radius -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Border Radius</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="number" name="footer_button_border_radius" id="footerButtonBorderRadius" class="Polaris-TextField__Input footer-design-button-border-radius" value="4" min="0" max="50" step="1" placeholder="4">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -6705,6 +6898,114 @@ if ($form_id > 0) {
             updateElementDesignPreview(formdataid);
         });
         
+        // Function to update footer button preview in real-time (make it global)
+        window.updateFooterButtonPreview = function() {
+            // Read button design settings
+            var buttonTextSize = parseInt($('.footer-design-button-text-size').val()) || 16;
+            var buttonTextColor = $('.footer-design-button-text-color-text').val() || $('.footer-design-button-text-color').val() || '#ffffff';
+            var buttonBgColor = $('.footer-design-button-bg-color-text').val() || $('.footer-design-button-bg-color').val() || '#EB1256';
+            var buttonHoverBgColor = $('.footer-design-button-hover-bg-color-text').val() || $('.footer-design-button-hover-bg-color').val() || '#C8104A';
+            var borderRadius = parseInt($('.footer-design-button-border-radius').val()) || 4;
+            
+            // Validate color formats
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonTextColor)) {
+                buttonTextColor = '#ffffff';
+            }
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonBgColor)) {
+                buttonBgColor = '#EB1256';
+            }
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonHoverBgColor)) {
+                buttonHoverBgColor = '#C8104A';
+            }
+            
+            // Apply to submit button
+            $('.footer .action.submit.classic-button').css({
+                'font-size': buttonTextSize + 'px',
+                'color': buttonTextColor,
+                'background-color': buttonBgColor,
+                'border-color': buttonBgColor,
+                'border-radius': borderRadius + 'px'
+            }).attr('data-hover-bg', buttonHoverBgColor);
+            
+            // Apply to reset button
+            $('.footer .action.reset.classic-button').css({
+                'font-size': buttonTextSize + 'px',
+                'color': buttonTextColor,
+                'background-color': buttonBgColor,
+                'border-color': buttonBgColor,
+                'border-radius': borderRadius + 'px'
+            }).attr('data-hover-bg', buttonHoverBgColor);
+        };
+        
+        // Real-time preview updates for footer button design controls
+        $(document).on('input change', '.footer-design-button-text-size, .footer-design-button-text-color, .footer-design-button-text-color-text, .footer-design-button-bg-color, .footer-design-button-bg-color-text, .footer-design-button-hover-bg-color, .footer-design-button-hover-bg-color-text, .footer-design-button-border-radius', function() {
+            updateFooterButtonPreview();
+        });
+        
+        // Sync button text color picker with text input
+        $(document).on('change', '.footer-design-button-text-color', function() {
+            var colorValue = $(this).val();
+            $('.footer-design-button-text-color-text').val(colorValue);
+            updateFooterButtonPreview();
+        });
+        
+        $(document).on('input', '.footer-design-button-text-color-text', function() {
+            var colorValue = $(this).val();
+            if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
+                $('.footer-design-button-text-color').val(colorValue);
+                updateFooterButtonPreview();
+            }
+        });
+        
+        // Sync button bg color picker with text input
+        $(document).on('change', '.footer-design-button-bg-color', function() {
+            var colorValue = $(this).val();
+            $('.footer-design-button-bg-color-text').val(colorValue);
+            updateFooterButtonPreview();
+        });
+        
+        $(document).on('input', '.footer-design-button-bg-color-text', function() {
+            var colorValue = $(this).val();
+            if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
+                $('.footer-design-button-bg-color').val(colorValue);
+                updateFooterButtonPreview();
+            }
+        });
+        
+        // Sync button hover bg color picker with text input
+        $(document).on('change', '.footer-design-button-hover-bg-color', function() {
+            var colorValue = $(this).val();
+            $('.footer-design-button-hover-bg-color-text').val(colorValue);
+            updateFooterButtonPreview();
+        });
+        
+        $(document).on('input', '.footer-design-button-hover-bg-color-text', function() {
+            var colorValue = $(this).val();
+            if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
+                $('.footer-design-button-hover-bg-color').val(colorValue);
+                updateFooterButtonPreview();
+            }
+        });
+        
+        // Add hover effect using CSS data attribute
+        $(document).on('mouseenter', '.footer .action.submit.classic-button, .footer .action.reset.classic-button', function() {
+            var hoverBg = $(this).attr('data-hover-bg');
+            if (hoverBg) {
+                $(this).css({
+                    'background-color': hoverBg,
+                    'border-color': hoverBg
+                });
+            }
+        });
+        
+        $(document).on('mouseleave', '.footer .action.submit.classic-button, .footer .action.reset.classic-button', function() {
+            var bgColor = $('.footer-design-button-bg-color-text').val() || $('.footer-design-button-bg-color').val() || '#EB1256';
+            $(this).css({
+                'background-color': bgColor,
+                'border-color': bgColor
+            });
+        });
+        
         // Apply saved settings immediately when customization panel inputs are available
         function applySavedSettingsToPreview() {
             $('.element-design-font-size').each(function() {
@@ -6749,7 +7050,7 @@ if ($form_id > 0) {
                     applySavedSettingsToPreview();
                 }
                 // Also update header preview if header design controls exist
-                if ($('.header-design-font-size').length > 0) {
+                if ($('.header-design-heading-font-size').length > 0 || $('.header-design-subheading-font-size').length > 0) {
                     updateHeaderPreview();
                 }
             }, 2000);
@@ -6757,24 +7058,77 @@ if ($form_id > 0) {
         
         // Function to update header preview in real-time (make it global)
         window.updateHeaderPreview = function() {
-            var fontSize = parseInt($('.header-design-font-size').val()) || 24;
-            var textAlign = $('.header-design-text-align').val() || 'center';
+            // Read heading (title) settings
+            var headingFontSize = parseInt($('.header-design-heading-font-size').val()) || 24;
+            var headingTextColor = $('.header-design-heading-text-color-text').val() || $('.header-design-heading-text-color').val() || '#000000';
             
-            // Apply to header title
+            // Read sub-heading (description) settings
+            var subheadingFontSize = parseInt($('.header-design-subheading-font-size').val()) || 16;
+            var subheadingTextColor = $('.header-design-subheading-text-color-text').val() || $('.header-design-subheading-text-color').val() || '#000000';
+            
+            // Read alignment (applies to both)
+            var textAlign = $('.header-text-align-input').val() || $('.header-design-text-align').val() || 'center';
+            
+            // Validate color formats
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(headingTextColor)) {
+                headingTextColor = '#000000';
+            }
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(subheadingTextColor)) {
+                subheadingTextColor = '#000000';
+            }
+            
+            // Apply to header title (heading)
             $('.globo-heading').css({
-                'font-size': fontSize + 'px',
-                'text-align': textAlign
+                'font-size': headingFontSize + 'px',
+                'text-align': textAlign,
+                'color': headingTextColor
             });
             
-            // Apply text-align to description
+            // Apply to description (sub-heading)
             $('.globo-description').css({
-                'text-align': textAlign
+                'font-size': subheadingFontSize + 'px',
+                'text-align': textAlign,
+                'color': subheadingTextColor
             });
+            
+            // Also apply alignment classes to formHeader
+            $(".formHeader").removeClass("align-left align-center align-right").addClass(textAlign);
         };
         
         // Real-time preview updates for header design controls
-        $(document).on('input change', '.header-design-font-size, .header-design-text-align', function() {
+        // Real-time preview updates for header design controls
+        $(document).on('input change', '.header-design-heading-font-size, .header-design-subheading-font-size, .header-design-text-align, .header-text-align-input, .header-design-heading-text-color, .header-design-heading-text-color-text, .header-design-subheading-text-color, .header-design-subheading-text-color-text', function() {
             updateHeaderPreview();
+        });
+        
+        // Sync heading color picker with text input
+        $(document).on('change', '.header-design-heading-text-color', function() {
+            var colorValue = $(this).val();
+            $('.header-design-heading-text-color-text').val(colorValue);
+            updateHeaderPreview();
+        });
+        
+        $(document).on('input', '.header-design-heading-text-color-text', function() {
+            var colorValue = $(this).val();
+            if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
+                $('.header-design-heading-text-color').val(colorValue);
+                updateHeaderPreview();
+            }
+        });
+        
+        // Sync sub-heading color picker with text input
+        $(document).on('change', '.header-design-subheading-text-color', function() {
+            var colorValue = $(this).val();
+            $('.header-design-subheading-text-color-text').val(colorValue);
+            updateHeaderPreview();
+        });
+        
+        $(document).on('input', '.header-design-subheading-text-color-text', function() {
+            var colorValue = $(this).val();
+            if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
+                $('.header-design-subheading-text-color').val(colorValue);
+                updateHeaderPreview();
+            }
         });
         
         // Ensure select displays selected value properly
@@ -7048,4 +7402,5 @@ if ($form_id > 0) {
         });
     });
 
+</script>
 </script>

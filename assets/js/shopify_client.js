@@ -469,13 +469,59 @@ var BACKTO = 0;
                             }
                             $(".headerData .form_id").val(response['form_id']);
                             $(".headerData .headerTitle").val(response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : '');
-                            $('.headerData .myeditor').html(response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '');
                             
-                            // Load saved font-size and text-align
-                            var headerFontSize = (response['form_header_data'] && response['form_header_data']['3']) ? parseInt(response['form_header_data']['3']) : 24;
-                            var headerTextAlign = (response['form_header_data'] && response['form_header_data']['4']) ? response['form_header_data']['4'] : 'center';
-                            $('.header-design-font-size').val(headerFontSize);
+                            // Set header description content - use val() for textarea, and also set in CKEditor if it exists
+                            var headerDescription = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
+                            $('.headerData textarea[name="contentheader"]').val(headerDescription);
+                            // Also set in CKEditor if it's already initialized
+                            if (CKEDITOR.instances['contentheader']) {
+                                CKEDITOR.instances['contentheader'].setData(headerDescription);
+                            }
+                            
+                            // Load saved settings
+                            // Backward compatibility: if old format (only 6 elements), use single values for both
+                            var headerDataLength = response['form_header_data'] ? response['form_header_data'].length : 0;
+                            
+                            if (headerDataLength >= 8) {
+                                // New format: separate heading and sub-heading settings
+                                var headingFontSize = (response['form_header_data'] && response['form_header_data']['3']) ? parseInt(response['form_header_data']['3']) : 24;
+                                var headerTextAlign = (response['form_header_data'] && response['form_header_data']['4']) ? response['form_header_data']['4'] : 'center';
+                                var headingTextColor = (response['form_header_data'] && response['form_header_data']['5']) ? response['form_header_data']['5'] : '#000000';
+                                var subheadingFontSize = (response['form_header_data'] && response['form_header_data']['6']) ? parseInt(response['form_header_data']['6']) : 16;
+                                var subheadingTextColor = (response['form_header_data'] && response['form_header_data']['7']) ? response['form_header_data']['7'] : '#000000';
+                                
+                                $('.header-design-heading-font-size').val(headingFontSize);
+                                $('.header-design-heading-text-color').val(headingTextColor);
+                                $('.header-design-heading-text-color-text').val(headingTextColor);
+                                
+                                $('.header-design-subheading-font-size').val(subheadingFontSize);
+                                $('.header-design-subheading-text-color').val(subheadingTextColor);
+                                $('.header-design-subheading-text-color-text').val(subheadingTextColor);
+                            } else {
+                                // Old format: use same values for both heading and sub-heading
+                                var headerFontSize = (response['form_header_data'] && response['form_header_data']['3']) ? parseInt(response['form_header_data']['3']) : 24;
+                                var headerTextAlign = (response['form_header_data'] && response['form_header_data']['4']) ? response['form_header_data']['4'] : 'center';
+                                var headerTextColor = (response['form_header_data'] && response['form_header_data']['5']) ? response['form_header_data']['5'] : '#000000';
+                                
+                                $('.header-design-heading-font-size').val(headerFontSize);
+                                $('.header-design-heading-text-color').val(headerTextColor);
+                                $('.header-design-heading-text-color-text').val(headerTextColor);
+                                
+                                $('.header-design-subheading-font-size').val(16); // Default for sub-heading
+                                $('.header-design-subheading-text-color').val(headerTextColor);
+                                $('.header-design-subheading-text-color-text').val(headerTextColor);
+                            }
+                            
+                            // Update alignment buttons (new segmented control)
+                            $('.headerData .chooseItem-align').removeClass('active');
+                            $('.headerData .chooseItem-align[data-value="' + headerTextAlign + '"]').addClass('active');
+                            $('.header-text-align-input').val(headerTextAlign);
+                            
+                            // Also update old select dropdown if it exists (for backward compatibility)
                             $('.header-design-text-align').val(headerTextAlign);
+                            
+                            // Apply alignment to preview immediately
+                            $(".formHeader").removeClass("align-left align-center align-right").addClass(headerTextAlign);
                             
                             // Apply to preview (function defined in form_design.php)
                             setTimeout(function() {
@@ -508,12 +554,70 @@ var BACKTO = 0;
                                 }else{
                                     $(".footerData .fullFooterButton").prop("checked", false);
                                 }
-                                $( ".footerData .chooseItem-align" ).each(function() {
-                                        if(response['form_footer_data']['5'] == $(this).data('value')){
-                                            $(".footerData .chooseItem-align").removeClass("active");
-                                            $(this).addClass("active");
-                                        }
-                                });
+                                // Load footer alignment
+                                var footerAlignment = (response['form_footer_data'] && response['form_footer_data']['5']) ? response['form_footer_data']['5'] : 'align-left';
+                                
+                                // Convert old numeric values to new format (backward compatibility)
+                                if (footerAlignment === '1' || footerAlignment === 1) {
+                                    footerAlignment = 'align-left';
+                                } else if (footerAlignment === '2' || footerAlignment === 2) {
+                                    footerAlignment = 'align-center';
+                                } else if (footerAlignment === '3' || footerAlignment === 3) {
+                                    footerAlignment = 'align-right';
+                                }
+                                
+                                // Ensure alignment is valid
+                                if (!footerAlignment || !['align-left', 'align-center', 'align-right'].includes(footerAlignment)) {
+                                    footerAlignment = 'align-left';
+                                }
+                                
+                                // Update alignment buttons
+                                $(".footerData .chooseItem-align").removeClass("active");
+                                $(".footerData .chooseItem-align[data-value='" + footerAlignment + "']").addClass("active");
+                                
+                                // Update hidden input
+                                $(".footerData .footer-button__alignment").val(footerAlignment);
+                                
+                                // Apply alignment to preview immediately
+                                setTimeout(function() {
+                                    $(".forFooterAlign").removeClass("align-left align-center align-right").addClass(footerAlignment);
+                                }, 100);
+                                
+                                // Load button design settings (new format with 11 elements, or fallback to defaults)
+                                var footerDataLength = response['form_footer_data'] ? response['form_footer_data'].length : 0;
+                                if (footerDataLength >= 11) {
+                                    var buttonTextSize = (response['form_footer_data'] && response['form_footer_data']['6']) ? parseInt(response['form_footer_data']['6']) : 16;
+                                    var buttonTextColor = (response['form_footer_data'] && response['form_footer_data']['7']) ? response['form_footer_data']['7'] : '#ffffff';
+                                    var buttonBgColor = (response['form_footer_data'] && response['form_footer_data']['8']) ? response['form_footer_data']['8'] : '#EB1256';
+                                    var buttonHoverBgColor = (response['form_footer_data'] && response['form_footer_data']['9']) ? response['form_footer_data']['9'] : '#C8104A';
+                                    var borderRadius = (response['form_footer_data'] && response['form_footer_data']['10']) ? parseInt(response['form_footer_data']['10']) : 4;
+                                    
+                                    $('.footer-design-button-text-size').val(buttonTextSize);
+                                    $('.footer-design-button-text-color').val(buttonTextColor);
+                                    $('.footer-design-button-text-color-text').val(buttonTextColor);
+                                    $('.footer-design-button-bg-color').val(buttonBgColor);
+                                    $('.footer-design-button-bg-color-text').val(buttonBgColor);
+                                    $('.footer-design-button-hover-bg-color').val(buttonHoverBgColor);
+                                    $('.footer-design-button-hover-bg-color-text').val(buttonHoverBgColor);
+                                    $('.footer-design-button-border-radius').val(borderRadius);
+                                } else {
+                                    // Old format: use defaults
+                                    $('.footer-design-button-text-size').val(16);
+                                    $('.footer-design-button-text-color').val('#ffffff');
+                                    $('.footer-design-button-text-color-text').val('#ffffff');
+                                    $('.footer-design-button-bg-color').val('#EB1256');
+                                    $('.footer-design-button-bg-color-text').val('#EB1256');
+                                    $('.footer-design-button-hover-bg-color').val('#C8104A');
+                                    $('.footer-design-button-hover-bg-color-text').val('#C8104A');
+                                    $('.footer-design-button-border-radius').val(4);
+                                }
+                                
+                                // Apply to preview (function defined in form_design.php)
+                                setTimeout(function() {
+                                    if (typeof window.updateFooterButtonPreview === 'function') {
+                                        window.updateFooterButtonPreview();
+                                    }
+                                }, 300);
                             }
                             if (response['publishdata']) {
                                 if(response['publishdata']['0'] == 1){
@@ -573,13 +677,52 @@ var BACKTO = 0;
                             // Initialize CKEditor for header and footer
                             if (typeof CKEDITOR !== 'undefined') {
                                 setTimeout(function() {
-                                    if ($('.headerData .myeditor').length > 0 && !CKEDITOR.instances['contentheader']) {
-                                        initializeCKEditor('contentheader', '.headerData .myeditor');
+                                    // Initialize header description editor
+                                    var $headerEditor = $('.headerData textarea[name="contentheader"]');
+                                    var headerContent = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
+                                    
+                                    if ($headerEditor.length > 0 && !CKEDITOR.instances['contentheader']) {
+                                        console.log('Initializing CKEditor for contentheader');
+                                        // Set the textarea value first
+                                        $headerEditor.val(headerContent);
+                                        initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
+                                        
+                                        // Wait for CKEditor to be ready, then set the data
+                                        setTimeout(function() {
+                                            if (CKEDITOR.instances['contentheader']) {
+                                                CKEDITOR.instances['contentheader'].setData(headerContent);
+                                                console.log('Header description content set in CKEditor');
+                                            }
+                                        }, 500);
+                                    } else if (CKEDITOR.instances['contentheader']) {
+                                        // If already exists, set the data
+                                        CKEDITOR.instances['contentheader'].setData(headerContent);
+                                        console.log('Header description content updated in existing CKEditor');
                                     }
-                                    if ($('.footerData .myeditor').length > 0 && !CKEDITOR.instances['contentfooter']) {
-                                        initializeCKEditor('contentfooter', '.footerData .myeditor');
+                                    
+                                    // Initialize footer description editor
+                                    var $footerEditor = $('.footerData textarea[name="contentfooter"]');
+                                    var footerContent = response['form_footer_data'] && response['form_footer_data']['0'] ? response['form_footer_data']['0'] : '';
+                                    
+                                    if ($footerEditor.length > 0 && !CKEDITOR.instances['contentfooter']) {
+                                        console.log('Initializing CKEditor for contentfooter');
+                                        // Set the textarea value first
+                                        $footerEditor.val(footerContent);
+                                        initializeCKEditor('contentfooter', '.footer .footer-data__footerdescription');
+                                        
+                                        // Wait for CKEditor to be ready, then set the data
+                                        setTimeout(function() {
+                                            if (CKEDITOR.instances['contentfooter']) {
+                                                CKEDITOR.instances['contentfooter'].setData(footerContent);
+                                                console.log('Footer description content set in CKEditor');
+                                            }
+                                        }, 500);
+                                    } else if (CKEDITOR.instances['contentfooter']) {
+                                        // If already exists, set the data
+                                        CKEDITOR.instances['contentfooter'].setData(footerContent);
+                                        console.log('Footer description content updated in existing CKEditor');
                                     }
-                                }, 100);
+                                }, 300);
                             }
                         } else {
                             console.error('=== Failed to load form data ===');
@@ -695,38 +838,130 @@ var BACKTO = 0;
         });
 
         function initializeCKEditor(editorName, targetElement) {
-            console.log("initializeCKEditor")
-            var editorElement = $('textarea[name="' + editorName + '"]');
-            console.log(editorElement.length);
-            console.log(CKEDITOR.instances[editorName]);
+            console.log("initializeCKEditor called for:", editorName);
+            // Try to find by ID first, then by name
+            var editorElement = $('#' + editorName).length > 0 ? $('#' + editorName) : $('textarea[name="' + editorName + '"]');
+            console.log("Found textarea elements:", editorElement.length);
+            console.log("CKEditor instance exists:", !!CKEDITOR.instances[editorName]);
+            
             if (editorElement.length > 0 && CKEDITOR.instances[editorName]){
-                console.log("DESTROY");
-                console.log(CKEDITOR.instances);
-                console.log(CKEDITOR.instances["contentparagraph"]);
-                // if (CKEDITOR.instances['contentparagraph']) {
-                //     CKEDITOR.instances['contentparagraph'].destroy();
-                // } else {
-                //     console.error("CKEditor instance for contentparagraph is not found.");
-                // }
+                console.log("CKEditor instance already exists, destroying old instance");
+                try {
+                    CKEDITOR.instances[editorName].destroy();
+                    console.log("Old instance destroyed");
+                } catch(e) {
+                    console.error("Error destroying old instance:", e);
+                }
             }
+            
             if (editorElement.length > 0 && !CKEDITOR.instances[editorName]) {
-                CKEDITOR.replace(editorName, {
-                    on: {
-                        instanceReady: function(evt) {
-                            evt.editor.on('change', function() {
-                                var editorData = evt.editor.getData();
-                                if(editorName == "contentparagraph"){
-                                    var mainContainerClass = editorElement.closest(".container").attr("class");
-                                    var classArray = mainContainerClass.split(" ");
-                                    var containerClass = classArray.find(className => className.startsWith("container_"));
-                                    $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
-                                }else{
-                                    $(targetElement).html(editorData);
+                try {
+                    var editorInstance;
+                    // Use ID/name string if available (CKEditor's preferred method)
+                    if (editorElement.attr('id')) {
+                        console.log("Initializing CKEditor using ID:", editorElement.attr('id'));
+                        // Remove readonly/disabled attributes before initializing
+                        editorElement.removeAttr('readonly').removeAttr('disabled');
+                        editorInstance = CKEDITOR.replace(editorElement.attr('id'), {
+                            readOnly: false, // Explicitly set to false
+                            on: {
+                                instanceReady: function(evt) {
+                                    console.log('CKEditor instance ready for:', editorName);
+                                    // Ensure editor is not read-only
+                                    if (evt.editor.readOnly) {
+                                        console.log('Editor was read-only, setting to editable');
+                                        evt.editor.setReadOnly(false);
+                                    }
+                                    console.log('Editor readOnly status:', evt.editor.readOnly);
+                                    evt.editor.on('change', function() {
+                                        var editorData = evt.editor.getData();
+                                        console.log('CKEditor content changed for:', editorName);
+                                        if(editorName == "contentparagraph"){
+                                            var mainContainerClass = editorElement.closest(".container").attr("class");
+                                            var classArray = mainContainerClass.split(" ");
+                                            var containerClass = classArray.find(className => className.startsWith("container_"));
+                                            $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
+                                        }else{
+                                            if (targetElement) {
+                                                $(targetElement).html(editorData);
+                                            }
+                                        }
+                                    });
+                                    
+                                    // Also update on blur
+                                    evt.editor.on('blur', function() {
+                                        var editorData = evt.editor.getData();
+                                        if(editorName == "contentparagraph"){
+                                            var mainContainerClass = editorElement.closest(".container").attr("class");
+                                            var classArray = mainContainerClass.split(" ");
+                                            var containerClass = classArray.find(className => className.startsWith("container_"));
+                                            $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
+                                        }else{
+                                            if (targetElement) {
+                                                $(targetElement).html(editorData);
+                                            }
+                                        }
+                                    });
                                 }
-                            });
-                        }
+                            }
+                        });
+                    } else {
+                        // Fallback to DOM element
+                        console.log("Initializing CKEditor using DOM element");
+                        // Remove readonly/disabled attributes before initializing
+                        editorElement.removeAttr('readonly').removeAttr('disabled');
+                        var domElement = editorElement[0];
+                        editorInstance = CKEDITOR.replace(domElement, {
+                            readOnly: false, // Explicitly set to false
+                            on: {
+                                instanceReady: function(evt) {
+                                    console.log('CKEditor instance ready for:', editorName);
+                                    // Ensure editor is not read-only
+                                    if (evt.editor.readOnly) {
+                                        console.log('Editor was read-only, setting to editable');
+                                        evt.editor.setReadOnly(false);
+                                    }
+                                    console.log('Editor readOnly status:', evt.editor.readOnly);
+                                    evt.editor.on('change', function() {
+                                        var editorData = evt.editor.getData();
+                                        if(editorName == "contentparagraph"){
+                                            var mainContainerClass = editorElement.closest(".container").attr("class");
+                                            var classArray = mainContainerClass.split(" ");
+                                            var containerClass = classArray.find(className => className.startsWith("container_"));
+                                            $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
+                                        }else{
+                                            if (targetElement) {
+                                                $(targetElement).html(editorData);
+                                            }
+                                        }
+                                    });
+                                    
+                                    // Also update on blur
+                                    evt.editor.on('blur', function() {
+                                        var editorData = evt.editor.getData();
+                                        if(editorName == "contentparagraph"){
+                                            var mainContainerClass = editorElement.closest(".container").attr("class");
+                                            var classArray = mainContainerClass.split(" ");
+                                            var containerClass = classArray.find(className => className.startsWith("container_"));
+                                            $(".block-container ."+containerClass).find(".globo-paragraph").html(editorData);
+                                        }else{
+                                            if (targetElement) {
+                                                $(targetElement).html(editorData);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
-                });
+                    console.log("CKEditor initialized successfully for:", editorName, "Instance:", editorInstance);
+                } catch(e) {
+                    console.error("Error initializing CKEditor for", editorName, ":", e);
+                    console.error("Error stack:", e.stack);
+                }
+            } else if (!editorElement.length) {
+                console.warn("Cannot initialize CKEditor for", editorName, "- textarea not found");
+                console.warn("Searched for: #" + editorName + " and textarea[name='" + editorName + "']");
             }
         }
 
