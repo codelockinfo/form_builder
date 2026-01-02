@@ -22,9 +22,9 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
        
 
         <title><?php echo CLS_SITE_NAME; ?></title>
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/polaris_style1.css'); ?>" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/customstyle1.css'); ?>" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/style1.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/polaris_style.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/customstyle.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/style.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.theme.default.min.css'); ?>" rel="stylesheet">
@@ -42,6 +42,6 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style1.js'); ?>"></script>
-        <script src="<?php echo main_url('assets/js/shopify_client1.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
   
    
