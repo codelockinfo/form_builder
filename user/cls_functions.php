@@ -1862,6 +1862,11 @@ class Client_functions extends common_function {
                 $is_storefront = true;
             }
             
+            error_log("=== Storefront Detection - form_id: $form_id ===");
+            error_log("REQUEST_URI: " . $_SERVER['REQUEST_URI']);
+            error_log("is_storefront: " . ($is_storefront ? 'TRUE' : 'FALSE'));
+            error_log("=== End Storefront Detection ===");
+            
             if($form_id != ""){
 
                     // Query form_data - use direct database query as PRIMARY method to ensure we get ALL elements
@@ -2080,7 +2085,10 @@ class Client_functions extends common_function {
                     }
                     
                     // Wrap form in proper container with contact-form class for styling
-                    $form_html = '<div class="code-form-app boxed-layout contact-form">' . $form_html;
+                    // Only add wrapper if on storefront - admin preview already has this container
+                    if ($is_storefront) {
+                        $form_html = '<div class="code-form-app boxed-layout contact-form">' . $form_html;
+                    }
                     
                     if(!empty($element_data_array)) {
                         $form_html .='<form class="get_selected_elements" name="get_selected_elements" method="post">
@@ -2798,8 +2806,10 @@ class Client_functions extends common_function {
                                 <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button" '.$button_style.' '.$button_hover_style.'>'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
                             </div>';
                     }
-                    // Close the code-form-app wrapper
-                    $form_html .= '</div>';
+                    // Close the code-form-app wrapper only if we opened it (storefront mode)
+                    if ($is_storefront) {
+                        $form_html .= '</div>';
+                    }
                     // Debug: Log final response
                     error_log("Final response - HTML length: " . strlen($html) . " chars");
                     error_log("Final response - Form HTML length: " . strlen($form_html) . " chars");

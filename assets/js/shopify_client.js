@@ -535,7 +535,38 @@ var BACKTO = 0;
                             $(".form_name_form_design").val(formName);
                             
                             $(".selected_element_set").html(response['outcome'] || '');
-                            $(".code-form-app").html(response['form_html'] || '');
+                            
+                            // For floating forms, insert directly and strip outer wrapper
+                            if(response['form_type'] == "4"){
+                                console.log('=== Floating Form Special Handling ===');
+                                
+                                // Create a temporary div to parse the HTML
+                                var $temp = $('<div>').html(response['form_html'] || '');
+                                
+                                // Find the actual form content (inside form-builder-wrapper)
+                                var $formContent = $temp.find('.code-form-app');
+                                
+                                console.log('Temp div created, form-builder-wrapper found:', $temp.find('.form-builder-wrapper').length);
+                                console.log('code-form-app found:', $formContent.length);
+                                
+                                // If we found the inner content, use it; otherwise use original
+                                var contentToInsert = $formContent.length > 0 ? $formContent.html() : (response['form_html'] || '');
+                                
+                                console.log('Content to insert length:', contentToInsert.length);
+                                console.log('Content first 500 chars:', contentToInsert.substring(0, 500));
+                                
+                                // Insert into .contact-form, replacing its content entirely
+                                $(".preview-box .contact-form").html(contentToInsert);
+                                
+                                // Add the floating class
+                                $(".preview-box").addClass("floting_form_main");
+                                
+                                console.log('Content inserted into .preview-box .contact-form');
+                                console.log('=== End Floating Form Handling ===');
+                            } else {
+                                // Regular form handling
+                                $(".code-form-app").html(response['form_html'] || '');
+                            }
                             
                             $(".footerData .form_id").val(response['form_id']);
                             if (response['form_footer_data']) {

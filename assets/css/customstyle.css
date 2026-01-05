@@ -733,11 +733,100 @@ ul {
     text-align: end;
 }
 .floting_form_main{
-    display: flex;
+    display: flex !important;
     height: 100vh;
     justify-content: center;
     align-items: center;
     background-color: rgba(0,0,0,.74);
+}
+.floting_form_main .contact-form {
+    background: #ffffff !important;
+    border-radius: 8px;
+    max-width: 600px !important;
+    width: 90% !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: block !important;
+}
+.floting_form_main .contact-form > * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+.floting_form_main .form-builder-wrapper {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.floting_form_main .code-form-app {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    background: transparent !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+}
+.floting_form_main .formHeader {
+    display: block !important;
+    margin-bottom: 20px !important;
+}
+.floting_form_main .formHeader.hidden,
+.floting_form_main .hidden,
+.floting_form_main button.hidden,
+.floting_form_main .classic-button.hidden {
+    display: none !important;
+    visibility: hidden !important;
+}
+.floting_form_main .content {
+    display: block !important;
+    width: 100% !important;
+}
+.floting_form_main form {
+    display: block !important;
+    width: 100% !important;
+}
+.floting_form_main .footer {
+    display: block !important;
+    margin-top: 20px !important;
+}
+.floting_form_main .code-form-control {
+    display: block !important;
+    margin-bottom: 15px !important;
+    width: 100% !important;
+}
+.floting_form_main input.classic-input,
+.floting_form_main textarea.classic-input,
+.floting_form_main select {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+}
+.floting_form_main label.classic-label {
+    display: block !important;
+    margin-bottom: 5px !important;
+    font-weight: 500 !important;
+}
+.floting_form_main button.classic-button {
+    display: inline-block !important;
+    padding: 10px 20px !important;
+}
+.floting_form_main h3.title {
+    display: block !important;
+    margin: 0 0 10px 0 !important;
+}
+.floting_form_main .description {
+    display: block !important;
+    margin-bottom: 20px !important;
 }
 .upload-area {
     width: 100%;
