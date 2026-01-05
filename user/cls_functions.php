@@ -2856,6 +2856,115 @@ class Client_functions extends common_function {
                     if (!empty($design_css)) {
                         $all_css .= "\n" . $design_css;
                     }
+                    
+                    // Add floating form CSS if this is a floating form (form_type == 4)
+                    if ($form_type == '4' && $is_storefront) {
+                        $floating_form_css = '
+/* Floating Form Styles */
+.floating-form-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #EB1256;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9998;
+    transition: all 0.3s ease;
+}
+.floating-form-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+.floating-form-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: #ffffff;
+}
+.floating-form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.floating-form-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.floating-form-popup {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+.floating-form-overlay.active .floating-form-popup {
+    transform: scale(1);
+}
+.floating-form-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background-color 0.2s ease;
+}
+.floating-form-close:hover {
+    background-color: #e0e0e0;
+}
+.floating-form-close svg {
+    width: 16px;
+    height: 16px;
+    fill: #333;
+}
+.floating-form-popup .code-form-app {
+    padding: 20px;
+}
+@media screen and (max-width: 640px) {
+    .floating-form-popup {
+        max-width: 95%;
+        width: 95%;
+    }
+    .floating-form-icon {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+    }
+    .floating-form-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+}';
+                        $all_css .= "\n" . $floating_form_css;
+                    }
+                    
                     $all_css .= '</style>';
                     
                     // Wrap form HTML with CSS and form-specific wrapper
