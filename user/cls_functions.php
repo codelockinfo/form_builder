@@ -2860,12 +2860,41 @@ class Client_functions extends common_function {
                     
                     // Wrap form HTML with CSS and form-specific wrapper
                     $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
-                    $form_html = '<div class="' . $form_wrapper_class . '">' . 
-                                $css_links . 
-                                $all_css . 
-                                $form_html . 
-                                '</div>';
-                    error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
+                    
+                    // Check if this is a floating form (form_type == 4) AND we're on storefront
+                    if ($form_type == '4' && $is_storefront) {
+                        // Floating form: wrap in popup overlay structure
+                        $form_html = '<div class="' . $form_wrapper_class . '">' . 
+                                    $css_links . 
+                                    $all_css . 
+                                    '<!-- Floating Form Icon -->
+                                    <div class="floating-form-icon" id="floating-form-icon-' . $form_id . '">
+                                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="envelope" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                            <path fill="currentColor" d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"></path>
+                                        </svg>
+                                    </div>
+                                    <!-- Floating Form Popup Overlay -->
+                                    <div class="floating-form-overlay" id="floating-form-overlay-' . $form_id . '">
+                                        <div class="floating-form-popup">
+                                            <button class="floating-form-close" id="floating-form-close-' . $form_id . '">
+                                                <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M11.414 10l6.293-6.293a1 1 0 1 0-1.414-1.414L10 8.586 3.707 2.293a1 1 0 0 0-1.414 1.414L8.586 10l-6.293 6.293a1 1 0 1 0 1.414 1.414L10 11.414l6.293 6.293a.998.998 0 0 0 1.707-.707.999.999 0 0 0-.293-.707L11.414 10z"></path>
+                                                </svg>
+                                            </button>
+                                            ' . $form_html . '
+                                        </div>
+                                    </div>
+                                    </div>';
+                        error_log("Floating form HTML wrapped with popup structure. Form ID: " . $form_id);
+                    } else {
+                        // Regular form: normal wrapper
+                        $form_html = '<div class="' . $form_wrapper_class . '">' . 
+                                    $css_links . 
+                                    $all_css . 
+                                    $form_html . 
+                                    '</div>';
+                        error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
+                    }
                     
                     $response_data = array(
                         'data' => 'success', 

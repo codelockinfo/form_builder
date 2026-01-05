@@ -102,6 +102,8 @@
         initializeFormSubmission();
         // Initialize button hover effects
         initializeButtonHoverEffects();
+        // Initialize floating form functionality
+        initializeFloatingForm();
       } else {
         throw new Error('Empty form HTML received');
       }
@@ -181,6 +183,67 @@
     });
     
     console.log('Button hover effects initialized for', buttons.length, 'buttons');
+  }
+  
+  function initializeFloatingForm() {
+    // Initialize floating form popup functionality
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    if (!blockContainer) return;
+    
+    // Check if this is a floating form (has the floating-form-icon element)
+    const floatingIcon = blockContainer.querySelector('.floating-form-icon');
+    if (!floatingIcon) {
+      console.log('Not a floating form, skipping floating form initialization');
+      return;
+    }
+    
+    const overlay = blockContainer.querySelector('.floating-form-overlay');
+    const closeBtn = blockContainer.querySelector('.floating-form-close');
+    
+    if (!overlay || !closeBtn) {
+      console.warn('Floating form elements not found');
+      return;
+    }
+    
+    console.log('Initializing floating form functionality');
+    
+    // Open popup when icon is clicked
+    floatingIcon.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      console.log('Floating form popup opened');
+    });
+    
+    // Close popup when close button is clicked
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      overlay.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+      console.log('Floating form popup closed');
+    });
+    
+    // Close popup when clicking outside the form
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+        console.log('Floating form popup closed (clicked outside)');
+      }
+    });
+    
+    // Close popup on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+        console.log('Floating form popup closed (Escape key)');
+      }
+    });
+    
+    console.log('Floating form initialized successfully');
   }
   
   // Initialize when DOM is ready
