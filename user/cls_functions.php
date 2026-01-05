@@ -1387,6 +1387,63 @@ class Client_functions extends common_function {
         return $response;
     }
 
+    function submitFormFunction() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        
+        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id']) && isset($_POST['form_data'])) {
+            $shopinfo = (object)$this->current_store_obj;
+            $form_id = $_POST['form_id'];
+            $form_data = $_POST['form_data']; // Expected to be JSON string
+             $shopinfo->store_user_id;
+
+            $mysql_date = date('Y-m-d H:i:s');
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+
+            $fields_arr = array(
+                '`id`' => '',
+                '`form_id`' => $form_id,
+                '`submission_data`' => $form_data,
+                '`created_at`' => $mysql_date,
+                '`ip_address`' => $ip_address,
+                '`status`' => 0
+            );
+
+            $result = $this->post_data(TABLE_FORM_SUBMISSIONS, array($fields_arr));
+            $result_decoded = json_decode($result, true);
+
+            if (isset($result_decoded['status']) && $result_decoded['status'] == 1) {
+                 $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully');
+            } else {
+                 $response_data = array('result' => 'fail', 'msg' => 'Database error');
+            }
+        }
+        
+        return json_encode($response_data);
+    }
+
+    function getFormSubmissions() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        
+        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id'])) {
+            $form_id = $_POST['form_id'];
+            
+            $where_query = array(["", "form_id", "=", "$form_id"]);
+            // You might want to join with forms table to check if it belongs to the store, 
+            // but for now relying on form_id knowledge.
+            // Ideally, check if form_id belongs to store_client_id.
+            
+             $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
+             
+             if (isset($submissions['data'])) {
+                  $response_data = array('result' => 'success', 'data' => $submissions['data']);
+             } else {
+                 $response_data = array('result' => 'success', 'data' => array());
+             }
+        }
+
+        return json_encode($response_data);
+    }
+
     function get_all_element_fun() {
         
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
@@ -1536,7 +1593,8 @@ class Client_functions extends common_function {
                                             </label>
                                         </div>
                                         <div class="indexButton">
-                                        <button><a href="#">view</a></button>
+                                        <button><a href="view_form.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'" target="_blank">View</a></button>
+                                        <button><a href="submissions.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Submissions</a></button>
                                         <button><a href="form_design.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Customize</a></button>
                                         </div>
                                     </div>

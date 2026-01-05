@@ -1415,4 +1415,57 @@ var BACKTO = 0;
             }
         }
 
-        // File  
+        // File
+        
+        // Handle frontend form submission
+        $(document).on('submit', 'form.get_selected_elements', function(e){
+            e.preventDefault();
+            var form = $(this);
+            var formData = {};
+            // Extract data from inputs
+            form.find(':input').each(function(){
+                var input = $(this);
+                // Handle different input types
+                var name = input.attr('name');
+                if(name) {
+                    if(input.attr('type') == 'checkbox') {
+                         if(!formData[name]){
+                             formData[name] = [];
+                         }
+                         if(input.is(':checked')) {
+                             formData[name].push(input.val());
+                         }
+                    } else if(input.attr('type') == 'radio') {
+                        if(input.is(':checked')) {
+                            formData[name] = input.val();
+                        }
+                    } else {
+                        formData[name] = input.val();
+                    }
+                }
+            });
+            
+            // Clean up checkboxes (join array if needed or keep as array)
+            // For now, simple JSON stringify is fine.
+
+            var jsonFormData = JSON.stringify(formData);
+            var form_id = form.find('.form_id').val();
+            
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                data: {'routine_name': 'submitFormFunction', 'store': store, 'form_id': form_id, 'form_data': jsonFormData},
+                success: function(response){
+                    if(response.result == 'success') {
+                        alert('Form submitted successfully!');
+                        form[0].reset();
+                    } else {
+                        alert('Submission failed: ' + response.msg);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred during submission.');
+                }
+            });
+        });  
