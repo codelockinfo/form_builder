@@ -144,7 +144,7 @@ if (isset($_GET['code'])) {
     }
 
     // Script tag registration
-    $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front.js"]];
+    $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front1.js"]];
     shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/script_tags.json", $asset, 'POST', ['Content-Type: application/json']);
 
     // Register store in DB

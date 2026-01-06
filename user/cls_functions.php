@@ -1388,24 +1388,24 @@ class Client_functions extends common_function {
     }
 
     function submitFormFunction() {
-        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
         
         if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id']) && isset($_POST['form_data'])) {
             $shopinfo = (object)$this->current_store_obj;
             $form_id = $_POST['form_id'];
             $form_data = $_POST['form_data']; // Expected to be JSON string
-             $shopinfo->store_user_id;
+            $store_user_id = $shopinfo->store_user_id;
 
             $mysql_date = date('Y-m-d H:i:s');
             $ip_address = $_SERVER['REMOTE_ADDR'];
 
             $fields_arr = array(
-                '`id`' => '',
-                '`form_id`' => $form_id,
-                '`submission_data`' => $form_data,
-                '`created_at`' => $mysql_date,
-                '`ip_address`' => $ip_address,
-                '`status`' => 0
+                'id' => '',
+                'form_id' => $form_id,
+                'submission_data' => $form_data,
+                'created_at' => $mysql_date,
+                'ip_address' => $ip_address,
+                'status' => 0
             );
 
             $result = $this->post_data(TABLE_FORM_SUBMISSIONS, array($fields_arr));
@@ -1418,11 +1418,11 @@ class Client_functions extends common_function {
             }
         }
         
-        return json_encode($response_data);
+        return $response_data; // Return array, not JSON string
     }
 
     function getFormSubmissions() {
-        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
         
         if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id'])) {
             $form_id = $_POST['form_id'];
@@ -7239,23 +7239,52 @@ class Client_functions extends common_function {
 
     // For FRONTEND
     function addformdata(){
-        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
         if (isset($_POST['store']) && $_POST['store'] != '') {
-            echo "<pre>";
-            print_r($_POST);
-            if (isset($_POST['title']) && $_POST['title'] == '') {
-                $error_array['title'] = "Please Enter title";
+            // Get form ID from POST
+            $form_id = 0;
+            if(isset($_POST['form_id'])) {
+                $form_id = $_POST['form_id'];
+            } else if(isset($_POST['id'])) {
+                $form_id = $_POST['id'];
             }
-            if (empty($error_array)) {
-                $response_data = $this->post_data(TABLE_BLOGPOST_MASTER, array($fields_arr));  
-            }else {
-                $response_data = array('data' => 'fail', 'msg' => $error_array);
+
+            // Collect all submission data excluding management fields
+            $submission_data = $_POST;
+            unset($submission_data['routine_name']);
+            unset($submission_data['store']);
+            
+            $mysql_date = date('Y-m-d H:i:s');
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+
+            $fields_arr = array(
+                'form_id' => $form_id,
+                'submission_data' => json_encode($submission_data),
+                'created_at' => $mysql_date,
+                'ip_address' => $ip_address,
+                'status' => 0
+            );
+
+            $result = $this->post_data(TABLE_FORM_SUBMISSIONS, array($fields_arr));
+            $result_decoded = json_decode($result, true);
+
+            if (isset($result_decoded['status']) && $result_decoded['status'] == 1) {
+                 $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully');
+            } else {
+                 $response_data = array('result' => 'fail', 'msg' => 'Database error');
             }
         }
-        $response = json_encode($response_data);
-        return $response;
+        return $response_data;
     }
     
+    function check_app_status() {
+        $shopinfo = (object)$this->current_store_obj;
+        if (!empty($shopinfo) && !empty($shopinfo->store_user_id)) {
+            return array('outcome' => 'true', 'data' => '0'); // 0 for enabled
+        }
+        return array('outcome' => 'false', 'data' => '1');
+    }
+
     /**
      * Auto-sync form blocks after form creation/update
      * This automatically generates block files for all active forms
