@@ -42,6 +42,6 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style1.js'); ?>"></script>
-        <script src="<?php echo main_url('assets/js/shopify_client.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client1.js'); ?>"></script>
   
    

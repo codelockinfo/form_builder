@@ -617,5 +617,138 @@ include_once('cls_header.php');
         //  });
         $(document).ready(function() {
             getAllForm();
+            
+            // More actions button handler - handles both Polarispopover1 and Polarispopover21
+            $(document).on('click', '[aria-controls^="Polarispopover"]', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var popover = $('#moreActionsPopover');
+                if (popover.length === 0) {
+                    // Create popover if it doesn't exist
+                    var popoverHtml = '<div id="moreActionsPopover" style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 150px; z-index: 1000; display: none;">' +
+                        '<div style="padding: 8px 0;">' +
+                        '<button type="button" class="delete-selected-forms" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; color: #bf0711;">' +
+                        '<span>Delete forms</span>' +
+                        '</button>' +
+                        '</div>' +
+                        '</div>';
+                    $('body').append(popoverHtml);
+                    popover = $('#moreActionsPopover');
+                }
+                
+                // Position and toggle popover
+                var buttonOffset = $(this).offset();
+                popover.css({
+                    top: buttonOffset.top + $(this).outerHeight() + 5,
+                    left: buttonOffset.left
+                });
+                popover.toggle();
+                $(this).attr('aria-expanded', popover.is(':visible'));
+            });
+            
+            // Close popover when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#moreActionsPopover, [aria-controls^="Polarispopover"]').length) {
+                    $('#moreActionsPopover').hide();
+                    $('[aria-controls^="Polarispopover"]').attr('aria-expanded', 'false');
+                }
+            });
+            
+            // Delete selected forms handler
+            $(document).on('click', '.delete-selected-forms', function() {
+                var selectedIds = [];
+                $('.selectedCheck:checked').each(function() {
+                    var formId = $(this).closest('.Polaris-ResourceList__HeaderWrapper').find('.form_id_main').val();
+                    if (formId) {
+                        selectedIds.push(formId);
+                    }
+                });
+                
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one form to delete');
+                    return;
+                }
+                
+                if (confirm('Are you sure you want to delete ' + selectedIds.length + ' form(s)? This action cannot be undone.')) {
+                    $('#moreActionsPopover').hide();
+                    
+                    // Show loading state
+                    var deleteCount = 0;
+                    var totalCount = selectedIds.length;
+                    
+                    // Delete each form
+                    selectedIds.forEach(function(formId, index) {
+                        $.ajax({
+                            url: "ajax_call.php",
+                            type: "post",
+                            dataType: "json",
+                            data: { 
+                                'routine_name': 'deleteFormFunction', 
+                                'form_id': formId,
+                                store: store 
+                            },
+                            success: function (response) {
+                                console.log('Delete response:', response);
+                                
+                                // Parse response if it's a string
+                                if (typeof response === 'string') {
+                                    try {
+                                        response = JSON.parse(response);
+                                    } catch(e) {
+                                        console.error('Failed to parse response:', e);
+                                    }
+                                }
+                                
+                                deleteCount++;
+                                
+                                // Check if deletion was successful
+                                if (response && response.result === 'success') {
+                                    console.log('Form ' + formId + ' deleted successfully');
+                                } else {
+                                    console.error('Failed to delete form ' + formId + ':', response);
+                                }
+                                
+                                // When all deletions are complete, reload the form list
+                                if (deleteCount === totalCount) {
+                                    // Reload the form list
+                                    getAllForm();
+                                    
+                                    // Uncheck all checkboxes
+                                    $('.selectedCheck').prop('checked', false);
+                                    
+                                    // Show success message using Polaris-style banner
+                                    var successBanner = '<div class="Polaris-Banner Polaris-Banner--statusSuccess" style="margin: 20px 0;">' +
+                                        '<div class="Polaris-Banner__Ribbon"><span class="Polaris-Icon Polaris-Icon--colorSuccess">' +
+                                        '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">' +
+                                        '<path d="M0 10c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10-10-4.486-10-10zm15.696-2.804l-6.5 6.5c-.196.196-.512.196-.707 0l-3.5-3.5c-.196-.196-.196-.512 0-.707l.707-.707c.195-.195.511-.195.707 0l2.439 2.44 5.439-5.44c.195-.195.511-.195.707 0l.707.707c.196.196.196.512.001.707z"></path>' +
+                                        '</svg></span></div>' +
+                                        '<div class="Polaris-Banner__ContentWrapper">' +
+                                        '<div class="Polaris-Banner__Content"><p>' + totalCount + ' form(s) deleted successfully</p></div>' +
+                                        '</div></div>';
+                                    
+                                    $('.set_all_form').prepend(successBanner);
+                                    
+                                    // Remove banner after 3 seconds
+                                    setTimeout(function() {
+                                        $('.Polaris-Banner--statusSuccess').fadeOut(400, function() {
+                                            $(this).remove();
+                                        });
+                                    }, 3000);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('AJAX error:', status, error);
+                                console.error('Response:', xhr.responseText);
+                                deleteCount++;
+                                if (deleteCount === totalCount) {
+                                    flashNotice('Some forms could not be deleted. Check console for details.', 'inline-flash--error');
+                                    getAllForm();
+                                }
+                            }
+                        });
+                    });
+                }
+            });
         });
     </script>

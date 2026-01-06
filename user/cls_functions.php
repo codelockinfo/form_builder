@@ -1554,7 +1554,9 @@ class Client_functions extends common_function {
                                 <div class="Polaris-ResourceList__HeaderContentWrapper">
                                     <div class="Polaris-ResourceList__CheckableButtonWrapper">
                                         <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain">
-                                            <label class="Polaris-Choice">
+                                            ';
+                                            if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {
+                                            $html .= '<label class="Polaris-Choice">
                                                 <span class="Polaris-Choice__Control">
                                                 <span class="Polaris-Checkbox">
                                                     <input name="chekbox3" type="checkbox" class="Polaris-Checkbox__Input selectedCheck" aria-invalid="false" role="checkbox" aria-checked="false" value="">
@@ -1572,7 +1574,9 @@ class Client_functions extends common_function {
                                                     </span>
                                                 </span>
                                                 </span>
-                                            </label>
+                                            </label>';
+                                            }
+                                            $html .= '
                                             <div class="main_left_ clsmain_form">
                                             <input type="hidden" class="form_id_main" name="form_id_main" value='.$templates['id'].'>
                                                 <div class="sp-font-size">'.$templates['form_name'].'</div>
@@ -1586,17 +1590,26 @@ class Client_functions extends common_function {
                                     </div>
                     
                                     <div class="Polaris-ResourceList__AlternateToolWrapper main_right_">
-                                        <div class="svgicon">
+                                        ';
+                                        if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {
+                                        $html .= '<div class="svgicon">
                                             <label class="switch">
                                                 <input type="checkbox" name="checkbox" '.$form_status_check.'>
                                                 <span class="slider"></span>
                                             </label>
-                                        </div>
-                                        <div class="indexButton">
+                                        </div>';
+                                        }
+                                        $html .= '<div class="indexButton">
                                         <button><a href="view_form.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'" target="_blank">View</a></button>
-                                        <button><a href="submissions.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Submissions</a></button>
-                                        <button><a href="form_design.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Customize</a></button>
-                                        </div>
+                                        ';
+                                        if (isset($_POST['view_type']) && $_POST['view_type'] == 'submissions_dashboard') {
+                                        $html .= '<button><a href="submissions.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Submissions</a></button>';
+                                        }
+                                        
+                                        if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {
+                                        $html .= '<button><a href="form_design.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Customize</a></button>';
+                                        }
+                                        $html .= '</div>
                                     </div>
                                 </div>
                             </div>';
@@ -1605,6 +1618,53 @@ class Client_functions extends common_function {
         $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $html);
         $response = json_encode($response_data);
         return $response;
+    }
+
+    function deleteFormFunction() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        $shopinfo = (object)$this->current_store_obj;
+        
+        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id']) && $_POST['form_id'] != '') {
+            $form_id = intval($_POST['form_id']); // Sanitize input
+            $store_user_id = $shopinfo->store_user_id;
+            
+            try {
+                $conn = $GLOBALS['conn'];
+                
+                // Delete form data entries
+                $sql1 = "DELETE FROM " . TABLE_FORM_DATA . " WHERE form_id = ?";
+                $stmt1 = mysqli_prepare($conn, $sql1);
+                mysqli_stmt_bind_param($stmt1, "i", $form_id);
+                mysqli_stmt_execute($stmt1);
+                mysqli_stmt_close($stmt1);
+                
+                // Delete form submissions
+                $sql2 = "DELETE FROM " . TABLE_FORM_SUBMISSIONS . " WHERE form_id = ?";
+                $stmt2 = mysqli_prepare($conn, $sql2);
+                mysqli_stmt_bind_param($stmt2, "i", $form_id);
+                mysqli_stmt_execute($stmt2);
+                mysqli_stmt_close($stmt2);
+                
+                // Delete the form itself (with store ownership check)
+                $sql3 = "DELETE FROM " . TABLE_FORMS . " WHERE id = ? AND store_client_id = ?";
+                $stmt3 = mysqli_prepare($conn, $sql3);
+                mysqli_stmt_bind_param($stmt3, "ii", $form_id, $store_user_id);
+                $delete_result = mysqli_stmt_execute($stmt3);
+                $affected_rows = mysqli_stmt_affected_rows($stmt3);
+                mysqli_stmt_close($stmt3);
+                
+                if ($delete_result && $affected_rows > 0) {
+                    $response_data = array('result' => 'success', 'msg' => 'Form deleted successfully');
+                } else {
+                    $response_data = array('result' => 'fail', 'msg' => 'Form not found or you do not have permission to delete it');
+                }
+            } catch (Exception $e) {
+                $response_data = array('result' => 'fail', 'msg' => 'Database error: ' . $e->getMessage());
+            }
+        }
+        
+        // Return array, not JSON - ajax_call.php will encode it
+        return $response_data;
     }
 
     function set_element() {
