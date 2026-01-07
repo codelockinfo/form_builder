@@ -489,17 +489,16 @@ if ($is_list_request) {
             exit;
         }
         
-        // Look up form by public_id (6-digit ID) instead of database ID
+        // Look up form by public_id (6-digit ID) - check if form exists first (regardless of status)
         // This provides better security as IDs are not sequential
         $form_check_query = array(
             ["", "public_id", "=", "$form_public_id"], 
-            ["AND", "store_client_id", "=", "$store_user_id"], 
-            ["AND", "status", "=", "1"]
+            ["AND", "store_client_id", "=", "$store_user_id"]
         );
         
         error_log("App Proxy - Looking up form by public_id: $form_public_id for shop: $shop, store_user_id: $store_user_id");
         
-        $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id', $form_check_query, ['single' => true]);
+        $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id, status', $form_check_query, ['single' => true]);
         
         error_log("App Proxy - Form lookup result status: " . (isset($form_check['status']) ? $form_check['status'] : 'NOT SET'));
         error_log("App Proxy - Form lookup data: " . (isset($form_check['data']) ? json_encode($form_check['data']) : 'EMPTY'));
@@ -512,18 +511,28 @@ if ($is_list_request) {
             if ($form_id_fallback > 0) {
                 $form_check_query_fallback = array(
                     ["", "id", "=", "$form_id_fallback"], 
-                    ["AND", "store_client_id", "=", "$store_user_id"], 
-                    ["AND", "status", "=", "1"]
+                    ["AND", "store_client_id", "=", "$store_user_id"]
                 );
-                $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id', $form_check_query_fallback, ['single' => true]);
+                $form_check = $cls_functions->select_result(TABLE_FORMS, 'id, public_id, status', $form_check_query_fallback, ['single' => true]);
                 error_log("App Proxy - Fallback lookup result: " . (isset($form_check['status']) ? $form_check['status'] : 'NOT SET'));
             }
         }
         
+        // Check if form exists
         if ($form_check['status'] != 1 || empty($form_check['data'])) {
+            // Form doesn't exist - return 404 error
             http_response_code(404);
             echo '<div style="padding: 20px; color: #d32f2f;">Error: Form not found or access denied. This form does not belong to your store.</div>';
             error_log("App Proxy - Form lookup failed for public_id: $form_public_id, shop: $shop");
+            exit;
+        }
+        
+        // Check if form is disabled (status = 0)
+        $form_status = isset($form_check['data']['status']) ? (int)$form_check['data']['status'] : 1;
+        if ($form_status == 0) {
+            // Form exists but is disabled - return empty HTML (form will be hidden)
+            error_log("App Proxy - Form found but is disabled (status=0) for public_id: $form_public_id, shop: $shop");
+            echo ''; // Return empty string - form will not display
             exit;
         }
         

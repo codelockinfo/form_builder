@@ -87,13 +87,28 @@
       console.log('Form response status:', formResponse.status);
       
       if (!formResponse.ok) {
-        const errorText = await formResponse.text();
-        console.error('Form response error:', errorText);
-        throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
+        // If 404, form doesn't exist - show error
+        if (formResponse.status === 404) {
+          const errorText = await formResponse.text();
+          console.error('Form response error:', errorText);
+          throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
+        } else {
+          // For other errors, also show error
+          const errorText = await formResponse.text();
+          console.error('Form response error:', errorText);
+          throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
+        }
       }
       
       const formHtml = await formResponse.text();
       console.log('Form HTML received, length:', formHtml.length);
+      
+      // If form HTML is empty (form is disabled), hide the container
+      if (!formHtml || formHtml.trim().length === 0) {
+        console.log('Form is disabled or empty - hiding form container');
+        blockContainer.style.display = 'none';
+        return false;
+      }
       
       if (formHtml && formHtml.trim().length > 0) {
         // Extract and execute scripts separately (innerHTML doesn't execute script tags)
@@ -229,15 +244,32 @@
         // Initialize floating form functionality
         initializeFloatingForm();
       } else {
-        throw new Error('Empty form HTML received');
+        // Empty form HTML - form is disabled, hide the container
+        console.log('Form HTML is empty - form is disabled, hiding container');
+        blockContainer.style.display = 'none';
+        return false;
       }
     } catch (error) {
+      // Only show error if it's a real error (not just empty form)
+      // Check if error message indicates form is disabled
+      if (error.message && error.message.includes('Empty form HTML')) {
+        console.log('Form is disabled - hiding container');
+        blockContainer.style.display = 'none';
+        return false;
+      }
+      
       console.error('❌ Error loading form:', error);
-      blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
-        '<strong>Error loading form</strong><br>' +
-        error.message + '<br>' +
-        '<small>Please check that the Form ID is correct and the form exists in your app.</small>' +
-        '</div>';
+      // Only show error for actual errors (404, 500, etc.), not for disabled forms
+      if (error.message && !error.message.includes('Empty form HTML')) {
+        blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
+          '<strong>Error loading form</strong><br>' +
+          error.message + '<br>' +
+          '<small>Please check that the Form ID is correct and the form exists in your app.</small>' +
+          '</div>';
+      } else {
+        // Form is disabled - just hide it
+        blockContainer.style.display = 'none';
+      }
     }
   }
   

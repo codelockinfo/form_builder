@@ -393,9 +393,38 @@ $(document).on("click", ".element_coppy_to", function (event) {
                 redirect403();
             } else if (response['data'] === 'success') {
                 console.log('Element added successfully! ID:', formdata_id);
+                
+                // Navigate back to form builder view
                 $('.owl-carousel').trigger('to.owl.carousel', [BACKTO, 40, true]);
-                get_selected_elements(formid);
-                // get_selected_element_preview(formid,elementid,formdata_id);
+                
+                // Wait a moment for navigation to complete, then refresh elements
+                // This ensures the new element is included in the response
+                setTimeout(function() {
+                    console.log('Refreshing form elements after adding new element...');
+                    get_selected_elements(formid);
+                    
+                    // After elements are loaded, scroll to the newly added element if possible
+                    setTimeout(function() {
+                        if (formdata_id) {
+                            var $newElement = $('.selected_element_set [data-formdataid="' + formdata_id + '"]');
+                            if ($newElement.length > 0) {
+                                // Scroll the element into view
+                                $('html, body').animate({
+                                    scrollTop: $newElement.offset().top - 100
+                                }, 300);
+                                
+                                // Highlight the new element briefly
+                                $newElement.css({
+                                    'background-color': '#e3f2fd',
+                                    'transition': 'background-color 0.5s'
+                                });
+                                setTimeout(function() {
+                                    $newElement.css('background-color', '');
+                                }, 2000);
+                            }
+                        }
+                    }, 500);
+                }, 300);
             } else {
                 var errorMsg = response['msg'] || response['message'] || 'Failed to add element. Please try again.';
                 console.error('Error adding element:', response);

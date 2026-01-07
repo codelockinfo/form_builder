@@ -7030,7 +7030,21 @@ if ($form_id > 0) {
                                         var $node = $(node);
                                         // Check if this node or any child contains design inputs
                                         if ($node.find('.element-design-font-size').length > 0 || $node.hasClass('element-design-font-size') || $node.closest('.element-design-font-size').length > 0) {
-                                            setTimeout(applySavedSettingsToPreview, 200);
+                                            // Sync color pickers and text inputs when panel is loaded
+                                            setTimeout(function() {
+                                                $('.element-design-color').each(function() {
+                                                    var $picker = $(this);
+                                                    var formdataid = $picker.data('formdataid');
+                                                    var colorValue = $picker.val();
+                                                    var $textInput = $('.element-design-color-text[data-formdataid="' + formdataid + '"]');
+                                                    
+                                                    // Sync text input with color picker value (HTML already has correct value)
+                                                    if ($textInput.length && colorValue) {
+                                                        $textInput.val(colorValue);
+                                                    }
+                                                });
+                                                applySavedSettingsToPreview();
+                                            }, 200);
                                             break;
                                         }
                                     }
@@ -7223,6 +7237,19 @@ if ($form_id > 0) {
             if (!formId) {
                 return;
             }
+            
+            // Ensure color picker and text input are synced for all elements
+            $('.element-design-color').each(function() {
+                var $picker = $(this);
+                var formdataid = $picker.data('formdataid');
+                var colorValue = $picker.val();
+                var $textInput = $('.element-design-color-text[data-formdataid="' + formdataid + '"]');
+                
+                // Sync text input with color picker value
+                if ($textInput.length && colorValue) {
+                    $textInput.val(colorValue);
+                }
+            });
             
             // Apply settings for any design inputs that exist
             setTimeout(function() {
