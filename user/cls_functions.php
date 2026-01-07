@@ -1471,13 +1471,26 @@ class Client_functions extends common_function {
             }
 
             if ($form_id <= 0) {
-                return array('result' => 'success', 'data' => array());
+                return array('result' => 'success', 'data' => array(), 'display_field_configs' => array());
+            }
+            
+            // Get submissions FIRST so we can extract field names from them
+            $where_query = array(["", "form_id", "=", "$form_id"]);
+            $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
+            
+            // Order by created_at ascending (oldest first)
+            if (isset($submissions['data']) && is_array($submissions['data'])) {
+                usort($submissions['data'], function($a, $b) {
+                    $date_a = isset($a['created_at']) ? strtotime($a['created_at']) : 0;
+                    $date_b = isset($b['created_at']) ? strtotime($b['created_at']) : 0;
+                    return $date_a - $date_b; // Ascending order (oldest first)
+                });
             }
             
             // Get form field configuration to know what columns to display
             $form_fields_config = array();
             $where_query_form_data = array(["", "form_id", "=", "$form_id"]);
-            $form_data_result = $this->select_result(TABLE_FORM_DATA, 'element_id, element_data, id', $where_query_form_data);
+            $form_data_result = $this->select_result(TABLE_FORM_DATA, 'element_id, element_data, id, position', $where_query_form_data, ['order_by' => 'position ASC, id ASC']);
             
             // Also get all unique field names from submissions to match them
             $all_field_names = array();
@@ -1657,9 +1670,14 @@ class Client_functions extends common_function {
                             }
                             
                             // Try to match by expected field name first (for new dynamic names)
-                            $actual_field_name = $matched_field_name;
-                            if (!$actual_field_name && isset($all_field_names[$expected_field_name])) {
+                            // This is the most reliable match since it uses the same logic as form generation
+                            $actual_field_name = null;
+                            if (isset($all_field_names[$expected_field_name])) {
                                 $actual_field_name = $expected_field_name;
+                            }
+                            // If expected name doesn't match, try the matched_field_name from legacy matching
+                            elseif ($matched_field_name) {
+                                $actual_field_name = $matched_field_name;
                             }
                             
                             // For text fields, try to match by checking all possible field names in submissions
@@ -1705,10 +1723,26 @@ class Client_functions extends common_function {
                 }
             }
             
-            // Also add any fields from submissions that weren't matched (fallback)
+            // Convert form_fields_config to display_field_configs array format
+            // Preserve order by iterating through form_data_result first, then add unmatched fields
+            $display_field_configs = array();
+            $added_keys = array();
+            $added_field_names = array(); // Track which field names we've added
+            
+            // Also track unmatched fields from submissions
+            $unmatched_fields = array();
             foreach ($all_field_names as $field_name => $dummy) {
-                if (!isset($form_fields_config[$field_name])) {
-                    $form_fields_config[$field_name] = array(
+                // Check if this field is already in form_fields_config (by checking all unique keys)
+                $found = false;
+                foreach ($form_fields_config as $key => $config) {
+                    if (isset($config['field_name']) && $config['field_name'] === $field_name) {
+                        $found = true;
+                        break;
+                    }
+                }
+                
+                if (!$found) {
+                    $unmatched_fields[$field_name] = array(
                         'label' => ucfirst(str_replace('-', ' ', $field_name)),
                         'element_id' => '',
                         'form_data_id' => '',
@@ -1719,28 +1753,88 @@ class Client_functions extends common_function {
                 }
             }
             
-            // Convert form_fields_config to display_field_configs array format
-            $display_field_configs = array();
+            // First, add fields in the order they appear in form configuration
+            if (isset($form_data_result['data']) && is_array($form_data_result['data'])) {
+                foreach ($form_data_result['data'] as $element) {
+                    $element_id = isset($element['element_id']) ? $element['element_id'] : '';
+                    $form_data_id = isset($element['id']) ? $element['id'] : '';
+                    
+                    // Map element_id to field name base
+                    $field_name_base = '';
+                    switch($element_id) {
+                        case '1': $field_name_base = 'text'; break;
+                        case '2': $field_name_base = 'email'; break;
+                        case '3': $field_name_base = 'textarea'; break;
+                        case '4': $field_name_base = 'phone'; break;
+                        case '8': $field_name_base = 'password'; break;
+                        case '9': $field_name_base = 'date'; break;
+                        case '10': $field_name_base = 'file'; break;
+                        case '6': $field_name_base = 'checkbox'; break;
+                        case '7': $field_name_base = 'select'; break;
+                        case '11': $field_name_base = 'radio'; break;
+                        case '12': $field_name_base = 'address'; break;
+                    }
+                    
+                    if (!empty($field_name_base)) {
+                        $unique_key = $field_name_base . '_' . $form_data_id;
+                        if (isset($form_fields_config[$unique_key]) && !isset($added_keys[$unique_key])) {
+                            $config = $form_fields_config[$unique_key];
+                            $field_name_to_add = isset($config['field_name']) ? $config['field_name'] : $unique_key;
+                            $display_field_configs[] = array(
+                                'fieldName' => $field_name_to_add,
+                                'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
+                                'config' => $config
+                            );
+                            $added_keys[$unique_key] = true;
+                            $added_field_names[$field_name_to_add] = true;
+                        }
+                    }
+                }
+            }
+            
+            // Then add any unmatched fields from submissions (fallback) in submission order
+            if (!empty($submission_field_order)) {
+                foreach ($submission_field_order as $field_name) {
+                    if (isset($unmatched_fields[$field_name]) && !isset($added_field_names[$field_name])) {
+                        $config = $unmatched_fields[$field_name];
+                        $display_field_configs[] = array(
+                            'fieldName' => $field_name,
+                            'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
+                            'config' => $config
+                        );
+                        $added_field_names[$field_name] = true;
+                    }
+                }
+            } else {
+                // If no submission order available, add all unmatched fields
+                foreach ($unmatched_fields as $field_name => $config) {
+                    if (!isset($added_field_names[$field_name])) {
+                        $display_field_configs[] = array(
+                            'fieldName' => $field_name,
+                            'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
+                            'config' => $config
+                        );
+                        $added_field_names[$field_name] = true;
+                    }
+                }
+            }
+            
+            // Finally, add any remaining fields from form_fields_config that weren't added
             foreach ($form_fields_config as $unique_key => $config) {
-                $display_field_configs[] = array(
-                    'fieldName' => isset($config['field_name']) ? $config['field_name'] : $unique_key,
-                    'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
-                    'config' => $config
-                );
+                if (!isset($added_keys[$unique_key])) {
+                    $display_field_configs[] = array(
+                        'fieldName' => isset($config['field_name']) ? $config['field_name'] : $unique_key,
+                        'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
+                        'config' => $config
+                    );
+                    $added_keys[$unique_key] = true;
+                }
             }
             
-            // Get submissions for this form, ensuring it belongs to the store
-            $where_query = array(["", "form_id", "=", "$form_id"]);
-             $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
-            
-            // Order by created_at ascending (oldest first)
-            if (isset($submissions['data']) && is_array($submissions['data'])) {
-                usort($submissions['data'], function($a, $b) {
-                    $date_a = isset($a['created_at']) ? strtotime($a['created_at']) : 0;
-                    $date_b = isset($b['created_at']) ? strtotime($b['created_at']) : 0;
-                    return $date_a - $date_b; // Ascending order (oldest first)
-                });
-            }
+             // Debug logging
+             error_log("getFormSubmissions - Total display_field_configs: " . count($display_field_configs));
+             error_log("getFormSubmissions - display_field_configs: " . print_r($display_field_configs, true));
+             error_log("getFormSubmissions - Total form_fields_config: " . count($form_fields_config));
              
              if (isset($submissions['data'])) {
                   $response_data = array(
