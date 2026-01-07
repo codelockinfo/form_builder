@@ -3470,6 +3470,159 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
         document.head.appendChild(script);
     }
 })();
+</script>
+<script>
+// Immediate execution script - runs as soon as HTML is inserted
+(function() {
+    console.log("=== Form Builder Inline Script Executing ===");
+    console.log("Current URL:", window.location.href);
+    
+        // Function to initialize handlers
+        function initFormHandlers() {
+            console.log("=== Initializing Form Submission Handlers ===");
+            
+            // Find forms in the current scope (within the form wrapper)
+            var formWrappers = document.querySelectorAll(".form-builder-wrapper");
+            console.log("Found form wrappers:", formWrappers.length);
+            
+            // Use for loop instead of forEach for compatibility
+            for (var w = 0; w < formWrappers.length; w++) {
+                var wrapper = formWrappers[w];
+                var forms = wrapper.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+                console.log("Found forms in wrapper:", forms.length);
+                
+                for (var i = 0; i < forms.length; i++) {
+                var form = forms[i];
+                console.log("Processing form", i, form);
+                
+                // Get form ID
+                var formIdInput = form.querySelector("input[name=\'form_id\'], input.form_id");
+                var formId = formIdInput ? formIdInput.value : form.getAttribute("data-id") || "";
+                console.log("Form ID:", formId);
+                
+                // Attach submit handler
+                form.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("=== FORM SUBMIT EVENT ===");
+                    
+                    // Get shop domain
+                    var shop = "";
+                    if (typeof Shopify !== "undefined" && Shopify.shop) {
+                        shop = Shopify.shop;
+                    } else {
+                        var hostname = window.location.hostname;
+                        if (hostname && hostname.indexOf(".myshopify.com") > -1) {
+                            shop = hostname;
+                        }
+                    }
+                    console.log("Shop domain:", shop);
+                    
+                    if (!shop) {
+                        alert("Store information not found. Please refresh the page.");
+                        return false;
+                    }
+                    
+                    // Get form ID again
+                    var currentFormId = formIdInput ? formIdInput.value : form.getAttribute("data-id") || "";
+                    if (!currentFormId) {
+                        alert("Form ID not found. Please refresh the page.");
+                        return false;
+                    }
+                    
+                    // Create FormData
+                    var formData = new FormData(form);
+                    formData.append("store", shop);
+                    formData.append("routine_name", "addformdata");
+                    formData.append("form_id", currentFormId);
+                    
+                    console.log("Submitting form data...");
+                    for (var pair of formData.entries()) {
+                        console.log(pair[0] + ": " + pair[1]);
+                    }
+                    
+                    // Disable submit button
+                    var submitBtn = form.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\']");
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.style.opacity = "0.6";
+                    }
+                    
+                    // Get base URL
+                    var baseUrl = "' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '";
+                    var ajaxUrl = baseUrl + "/user/ajax_call.php";
+                    console.log("Submitting to:", ajaxUrl);
+                    
+                    // Submit via fetch
+                    fetch(ajaxUrl, {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(function(response) {
+                        console.log("Response status:", response.status);
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        console.log("Response data:", data);
+                        
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.style.opacity = "1";
+                        }
+                        
+                        if (data.result === "success") {
+                            alert(data.msg || "Form submitted successfully!");
+                            form.reset();
+                            console.log("Form reset");
+                        } else {
+                            alert(data.msg || "Something went wrong. Please try again.");
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error("Submission error:", error);
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.style.opacity = "1";
+                        }
+                        alert("An error occurred. Please check the console.");
+                    });
+                    
+                    return false;
+                });
+                
+                // Also attach to submit buttons
+                var submitButtons = form.querySelectorAll("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\']");
+                for (var j = 0; j < submitButtons.length; j++) {
+                    submitButtons[j].addEventListener("click", function(e) {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event("submit"));
+                    });
+                }
+                
+                console.log("Handlers attached to form", i);
+                }
+            }
+        }
+        
+        // Run immediately and also on delays to catch dynamically loaded forms
+        initFormHandlers();
+        setTimeout(initFormHandlers, 100);
+        setTimeout(initFormHandlers, 500);
+        setTimeout(initFormHandlers, 1000);
+        setTimeout(initFormHandlers, 2000);
+        
+        // Use MutationObserver to detect when form is added
+        if (typeof MutationObserver !== "undefined") {
+            var observer = new MutationObserver(function() {
+                var forms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+                if (forms.length > 0) {
+                    console.log("Form detected via MutationObserver");
+                    initFormHandlers();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    })();
 </script>';
                     }
                     
