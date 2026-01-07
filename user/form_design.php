@@ -39,9 +39,14 @@ if ($form_id > 0) {
                                         <span style="font-size: 13px; color: #6b7280; font-weight: 500;">Form ID:</span>
                                         <div style="display: flex; align-items: center; gap: 6px;">
                                             <span id="form-id-display" class="form-id-value" style="font-family: monospace; font-size: 13px; background: #f3f4f6; padding: 4px 10px; border-radius: 4px; color: #1f2937; font-weight: 600;"><?php echo htmlspecialchars($public_id); ?></span>
-                                            <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;" title="Copy Form ID">
+                                            <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain copy-form-id-header-btn" style="padding: 4px; font-size: 12px; min-height: auto; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;" title="Copy Form ID">
                                                 <span class="Polaris-Button__Content">
-                                                    <span class="Polaris-Button__Text">Copy ID</span>
+                                                    <span class="Polaris-Button__Icon">
+                                                        <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M8 2C7.44772 2 7 2.44772 7 3V4H5C3.89543 4 3 4.89543 3 6V16C3 17.1046 3.89543 18 5 18H13C14.1046 18 15 17.1046 15 16V14H16C16.5523 14 17 13.5523 17 13V5C17 4.44772 16.5523 4 16 4H9C8.44772 4 8 3.55228 8 3V2Z" fill="currentColor" opacity="0.6"/>
+                                                            <path d="M5 6H13V16H5V6Z" fill="currentColor"/>
+                                                        </svg>
+                                                    </span>
                                                 </span>
                                             </button>
                                             <span id="copy-success-msg" style="font-size: 11px; color: #10b981; display: none;">✓ Copied!</span>
@@ -5353,9 +5358,14 @@ if ($form_id > 0) {
                                                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
                                                         <p style="margin: 0;"><strong>Form ID:</strong></p>
                                                         <span id="publishFormId" style="font-family: monospace; background: #f3f4f6; padding: 8px 12px; border-radius: 4px; font-weight: 600; font-size: 14px;"><?php echo htmlspecialchars($public_id); ?></span>
-                                                        <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain" style="padding: 4px 8px; font-size: 12px; min-height: auto;">
+                                                        <button type="button" onclick="copyFormIdToClipboard('<?php echo htmlspecialchars($public_id); ?>')" class="Polaris-Button Polaris-Button--plain copy-form-id-header-btn" style="padding: 4px; font-size: 12px; min-height: auto; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;" title="Copy Form ID">
                                                             <span class="Polaris-Button__Content">
-                                                                <span class="Polaris-Button__Text">Copy ID</span>
+                                                                <span class="Polaris-Button__Icon">
+                                                                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M8 2C7.44772 2 7 2.44772 7 3V4H5C3.89543 4 3 4.89543 3 6V16C3 17.1046 3.89543 18 5 18H13C14.1046 18 15 17.1046 15 16V14H16C16.5523 14 17 13.5523 17 13V5C17 4.44772 16.5523 4 16 4H9C8.44772 4 8 3.55228 8 3V2Z" fill="currentColor" opacity="0.6"/>
+                                                                        <path d="M5 6H13V16H5V6Z" fill="currentColor"/>
+                                                                    </svg>
+                                                                </span>
                                                             </span>
                                                         </button>
                                                     </div>
@@ -5420,6 +5430,44 @@ if ($form_id > 0) {
     </div>
     
     <style>
+        /* Copy Form ID Header Button Styling */
+        .copy-form-id-header-btn {
+            background: transparent !important;
+            border: none !important;
+            padding: 4px !important;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #6d7175;
+            min-width: 28px;
+            min-height: 28px;
+        }
+        
+        .copy-form-id-header-btn:hover {
+            background: #f6f6f7 !important;
+            color: #202223;
+        }
+        
+        .copy-form-id-header-btn:active {
+            background: #e1e3e5 !important;
+            transform: scale(0.95);
+        }
+        
+        .copy-form-id-header-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: black;
+        }
+        
+        .copy-form-id-header-btn .Polaris-Button__Content {
+            /* padding-left: 10px!important; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .Polaris-Modal-Dialog__Container {
             position: fixed;
             top: 0;

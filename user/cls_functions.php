@@ -1476,7 +1476,7 @@ class Client_functions extends common_function {
             
             // Get submissions FIRST so we can extract field names from them
             $where_query = array(["", "form_id", "=", "$form_id"]);
-            $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
+             $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
             
             // Order by created_at ascending (oldest first)
             if (isset($submissions['data']) && is_array($submissions['data'])) {
@@ -1853,7 +1853,7 @@ class Client_functions extends common_function {
              }
         } else {
             $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
-        }
+             }
 
         // Return array, not JSON - ajax_call.php will encode it
         return $response_data;
@@ -4625,19 +4625,19 @@ class Client_functions extends common_function {
                 }
             } else if ($form_id > 0) {
                 // Fallback: load from database if array not provided
-                $shopinfo = $this->current_store_obj;
-                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
-                
-                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
-                $resource_array = array('single' => true);
-                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
-                
-                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
-                    $design_settings = unserialize($form_result['data']['design_settings']);
-                    if (is_array($design_settings)) {
-                        $key = 'element_' . $form_data_id;
-                        if (isset($design_settings[$key])) {
-                            $saved_settings = $design_settings[$key];
+            $shopinfo = $this->current_store_obj;
+            $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+            
+            $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+            $resource_array = array('single' => true);
+            $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+            
+            if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                $design_settings = unserialize($form_result['data']['design_settings']);
+                if (is_array($design_settings)) {
+                    $key = 'element_' . $form_data_id;
+                    if (isset($design_settings[$key])) {
+                        $saved_settings = $design_settings[$key];
                         }
                     }
                 }
@@ -8956,7 +8956,7 @@ class Client_functions extends common_function {
         } else {
             error_log("ERROR: Store parameter missing or empty in POST data");
             $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
-        }
+            }
         
         error_log("=== addformdata() returning: " . json_encode($response_data) . " ===");
         return $response_data;
