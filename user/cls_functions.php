@@ -3151,12 +3151,292 @@ class Client_functions extends common_function {
                     // Wrap form HTML with CSS and form-specific wrapper
                     $form_wrapper_class = 'form-builder-wrapper form-id-' . $form_id;
                     
+                    // Add JavaScript for storefront forms - include jQuery if not present and form submission handler
+                    $form_js = '';
+                    if ($is_storefront) {
+                        $base_js_url = defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder';
+                        $jquery_url = $base_js_url . '/assets/js/jquery3.6.4.min.js';
+                        $frontend_js_url = $base_js_url . '/assets/js/shopify_front5.js';
+                        
+                        // Get shop domain for form submission
+                        $shop_domain = isset($_POST['store']) ? $_POST['store'] : (isset($shopinfo->shop_name) ? $shopinfo->shop_name : '');
+                        
+                        $form_js = '
+<script>
+console.log("=== Form Builder Script Initialization ===");
+
+// Inline form submission handler - works immediately without waiting for external scripts
+(function() {
+    "use strict";
+    
+    function getShopDomain() {
+        // Try multiple methods to get shop domain
+        if (typeof Shopify !== "undefined" && Shopify.shop) {
+            return Shopify.shop;
+        }
+        var hostname = window.location.hostname;
+        if (hostname && hostname.indexOf(".myshopify.com") > -1) {
+            return hostname;
+        }
+        var params = new URLSearchParams(window.location.search);
+        return params.get("shop") || "' . htmlspecialchars($shop_domain) . '" || "";
+    }
+    
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log("=== FORM SUBMIT HANDLER TRIGGERED ===");
+        
+        var form = e.target.closest("form");
+        if (!form) {
+            form = document.querySelector("form.get_selected_elements");
+        }
+        
+        if (!form) {
+            console.error("Form not found!");
+            alert("Form not found. Please refresh the page.");
+            return false;
+        }
+        
+        console.log("Form found:", form);
+        
+        // Get form ID
+        var formIdInput = form.querySelector("input[name=\'form_id\'], input.form_id");
+        var formId = formIdInput ? formIdInput.value : form.getAttribute("data-id");
+        if (!formId) {
+            var container = form.closest(".form-builder-container");
+            if (container) {
+                formId = container.getAttribute("data-form-id");
+            }
+        }
+        
+        if (!formId) {
+            console.error("Form ID not found!");
+            alert("Form ID is missing. Please refresh the page.");
+            return false;
+        }
+        
+        console.log("Form ID:", formId);
+        
+        var shop = getShopDomain();
+        console.log("Shop domain:", shop);
+        
+        if (!shop) {
+            console.error("Shop domain not found!");
+            alert("Store information is missing. Please refresh the page.");
+            return false;
+        }
+        
+        // Create FormData
+        var formData = new FormData(form);
+        formData.append("store", shop);
+        formData.append("routine_name", "addformdata");
+        formData.append("form_id", formId);
+        
+        console.log("Submitting form data...");
+        console.log("Form fields:", Array.from(formData.entries()).map(function(pair) { return pair[0] + "=" + pair[1]; }).join(", "));
+        
+        // Disable submit button
+        var submitBtn = form.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit");
+        if (!submitBtn) {
+            // Try to find button by class containing submit
+            var allButtons = form.querySelectorAll("button");
+            for (var i = 0; i < allButtons.length; i++) {
+                if (allButtons[i].className && allButtons[i].className.indexOf("submit") > -1) {
+                    submitBtn = allButtons[i];
+                    break;
+                }
+            }
+        }
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.6";
+            var originalText = submitBtn.innerHTML;
+            submitBtn.setAttribute("data-original-text", originalText);
+            submitBtn.innerHTML = "Submitting...";
+        }
+        
+        // Get base URL - use MAIN_URL from PHP or detect from current page
+        var baseUrl = "' . (defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder') . '";
+        
+        // Try to detect from script tags if baseUrl is not set
+        if (!baseUrl || baseUrl === "") {
+            baseUrl = "https://codelocksolutions.com/form_builder";
+            var scripts = document.querySelectorAll("script[src]");
+            for (var i = 0; i < scripts.length; i++) {
+                var src = scripts[i].src;
+                if (src.indexOf("/form_builder/") > -1) {
+                    baseUrl = src.substring(0, src.indexOf("/form_builder/") + "/form_builder".length);
+                    break;
+                }
+            }
+        }
+        
+        // Ensure baseUrl doesn't end with slash
+        baseUrl = baseUrl.replace(/\/$/, "");
+        
+        var ajaxUrl = baseUrl + "/user/ajax_call.php";
+        console.log("Submitting to:", ajaxUrl);
+        console.log("Base URL:", baseUrl);
+        
+        // Submit via fetch (works without jQuery)
+        fetch(ajaxUrl, {
+            method: "POST",
+            body: formData
+        })
+        .then(function(response) {
+            console.log("Response received:", response.status);
+            return response.json();
+        })
+        .then(function(data) {
+            console.log("Response data:", data);
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+                var originalText = submitBtn.getAttribute("data-original-text");
+                if (originalText) {
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+            
+            if (data.result === "success") {
+                // Show success message
+                var msg = data.msg || "Form submitted successfully!";
+                console.log("SUCCESS:", msg);
+                alert(msg);
+                
+                // Reset form
+                form.reset();
+                console.log("Form reset successfully");
+            } else {
+                var errorMsg = data.msg || "Something went wrong. Please try again.";
+                console.error("ERROR:", errorMsg);
+                alert(errorMsg);
+            }
+        })
+        .catch(function(error) {
+            console.error("Submission error:", error);
+            console.error("Error details:", error.message, error.stack);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+                var originalText = submitBtn.getAttribute("data-original-text");
+                if (originalText) {
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+            alert("An error occurred: " + error.message + "\\nPlease check the console for details.");
+        });
+        
+        return false;
+    }
+    
+    // Attach event listeners when DOM is ready
+    function attachHandlers() {
+        console.log("Attaching form submission handlers...");
+        
+        // Find all submit buttons - use multiple selectors
+        var submitButtons = document.querySelectorAll(
+            "button.submit, .submit.action, .footer-data__submittext, .classic-button.submit, " +
+            "button[class*=\'submit\'], .action.submit, button.action.submit, " +
+            ".classic-button.action.submit, button.classic-button.submit"
+        );
+        console.log("Found submit buttons:", submitButtons.length);
+        
+        for (var i = 0; i < submitButtons.length; i++) {
+            var btn = submitButtons[i];
+            console.log("Attaching handler to button " + i + ":", btn, "Classes:", btn.className);
+            // Remove existing listeners by cloning
+            var newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener("click", handleFormSubmit);
+            console.log("Handler attached to button " + i);
+        }
+        
+        // Also handle form submit events
+        var forms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+        console.log("Found forms:", forms.length);
+        
+        forms.forEach(function(form, index) {
+            console.log("Attaching submit handler to form " + index + ":", form);
+            form.addEventListener("submit", handleFormSubmit);
+        });
+        
+        console.log("Handlers attached successfully");
+    }
+    
+    // Wait for DOM to be ready
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", attachHandlers);
+    } else {
+        attachHandlers();
+    }
+    
+    // Also try after a short delay to catch dynamically loaded forms
+    setTimeout(attachHandlers, 500);
+    setTimeout(attachHandlers, 1000);
+    setTimeout(attachHandlers, 2000);
+})();
+
+// Load jQuery and external script (for advanced features)
+(function() {
+    // Check if jQuery is already loaded
+    if (typeof jQuery === "undefined" || typeof $ === "undefined") {
+        console.log("jQuery not found, loading jQuery...");
+        var jqueryScript = document.createElement("script");
+        jqueryScript.src = "' . htmlspecialchars($jquery_url) . '";
+        jqueryScript.onload = function() {
+            console.log("jQuery loaded successfully");
+            loadFormSubmissionScript();
+        };
+        jqueryScript.onerror = function() {
+            console.error("Failed to load jQuery, trying CDN...");
+            var cdnScript = document.createElement("script");
+            cdnScript.src = "https://code.jquery.com/jquery-3.6.0.min.js";
+            cdnScript.onload = function() {
+                console.log("jQuery loaded from CDN");
+                loadFormSubmissionScript();
+            };
+            document.head.appendChild(cdnScript);
+        };
+        document.head.appendChild(jqueryScript);
+    } else {
+        console.log("jQuery already loaded");
+        loadFormSubmissionScript();
+    }
+    
+    function loadFormSubmissionScript() {
+        // Load form submission script
+        if (document.querySelector("script[src*=\'shopify_front5.js\']")) {
+            console.log("Form submission script already loaded");
+            return;
+        }
+        
+        console.log("Loading form submission script...");
+        var script = document.createElement("script");
+        script.src = "' . htmlspecialchars($frontend_js_url) . '";
+        script.onload = function() {
+            console.log("Form submission script loaded successfully");
+        };
+        script.onerror = function() {
+            console.error("Failed to load form submission script");
+        };
+        document.head.appendChild(script);
+    }
+})();
+</script>';
+                    }
+                    
                     // Check if this is a floating form (form_type == 4) AND we're on storefront
                     if ($form_type == '4' && $is_storefront) {
                         // Floating form: wrap in popup overlay structure
                         $form_html = '<div class="' . $form_wrapper_class . '">' . 
                                     $css_links . 
                                     $all_css . 
+                                    $form_js .
                                     '<!-- Floating Form Icon -->
                                     <div class="floating-form-icon" id="floating-form-icon-' . $form_id . '">
                                         <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="envelope" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -3181,6 +3461,7 @@ class Client_functions extends common_function {
                         $form_html = '<div class="' . $form_wrapper_class . '">' . 
                                     $css_links . 
                                     $all_css . 
+                                    $form_js .
                                     $form_html . 
                                     '</div>';
                         error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
@@ -7364,41 +7645,210 @@ class Client_functions extends common_function {
             }
 
             // Collect all submission data excluding management fields
+            error_log("=== addformdata: Raw POST data ===");
+            error_log("Full POST: " . print_r($_POST, true));
+            error_log("POST keys: " . implode(", ", array_keys($_POST)));
+            error_log("POST count: " . count($_POST));
+            
+            // Check if this is test data being sent
+            $has_test_data = false;
+            if (isset($_POST['name']) && $_POST['name'] === 'Test User') {
+                $has_test_data = true;
+                error_log("WARNING: Test data detected in POST! This should not happen from form submission.");
+            }
+            if (isset($_POST['email']) && $_POST['email'] === 'test@example.com') {
+                $has_test_data = true;
+                error_log("WARNING: Test email detected in POST! This should not happen from form submission.");
+            }
+            
             $submission_data = $_POST;
+            
+            // Log before removing fields
+            error_log("Before cleanup - submission_data keys: " . implode(", ", array_keys($submission_data)));
+            error_log("Before cleanup - submission_data values: " . print_r($submission_data, true));
+            
             unset($submission_data['routine_name']);
             unset($submission_data['store']);
             unset($submission_data['form_id']); // Remove form_id from submission data
             unset($submission_data['id']); // Remove id from submission data
             
+            // Log after cleanup
+            error_log("After cleanup - submission_data keys: " . implode(", ", array_keys($submission_data)));
+            error_log("After cleanup - submission_data content: " . print_r($submission_data, true));
+            
+            // Verify we have actual form data, not empty
+            if (empty($submission_data)) {
+                error_log("ERROR: submission_data is empty after cleanup!");
+                return array('result' => 'fail', 'msg' => 'No form data received');
+            }
+            
+            // Check if we only have system fields (which means no actual form data)
+            $system_fields = array('routine_name', 'store', 'form_id', 'id');
+            $has_form_data = false;
+            foreach ($submission_data as $key => $value) {
+                if (!in_array($key, $system_fields) && !empty($value)) {
+                    $has_form_data = true;
+                    break;
+                }
+            }
+            
+            if (!$has_form_data) {
+                error_log("ERROR: No actual form data found in submission!");
+                error_log("Available keys: " . implode(", ", array_keys($submission_data)));
+                return array('result' => 'fail', 'msg' => 'No form data found in submission');
+            }
+            
             $mysql_date = date('Y-m-d H:i:s');
             $ip_address = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
+            // Remove 'id' field if present (let auto-increment handle it)
+            $submission_data_json = json_encode($submission_data);
+            error_log("JSON encoded submission_data: " . $submission_data_json);
+            error_log("JSON length: " . strlen($submission_data_json));
+            
             $fields_arr = array(
                 'form_id' => $form_id,
-                'submission_data' => json_encode($submission_data),
+                'submission_data' => $submission_data_json,
                 'created_at' => $mysql_date,
                 'ip_address' => $ip_address,
                 'status' => 0
             );
-
-            error_log("Inserting submission data:");
-            error_log("Form ID: " . $form_id);
-            error_log("Submission data: " . json_encode($submission_data));
-            error_log("Fields array: " . print_r($fields_arr, true));
-
-            $result = $this->post_data(TABLE_FORM_SUBMISSIONS, array($fields_arr));
-            error_log("Database insert result: " . $result);
             
-            $result_decoded = json_decode($result, true);
-            error_log("Decoded result: " . print_r($result_decoded, true));
+            // Remove 'id' key if it exists and is empty
+            if (isset($fields_arr['id']) && ($fields_arr['id'] === '' || $fields_arr['id'] === null)) {
+                unset($fields_arr['id']);
+            }
 
-            if (isset($result_decoded['status']) && $result_decoded['status'] == 1) {
-                 error_log("SUCCESS: Form submission saved to database");
-                 $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully');
+            error_log("=== Inserting submission data ===");
+            error_log("Form ID: " . $form_id);
+            error_log("Submission data (array): " . print_r($submission_data, true));
+            error_log("Submission data (JSON): " . $submission_data_json);
+            error_log("Fields array: " . print_r($fields_arr, true));
+            error_log("Fields count: " . count($fields_arr));
+            error_log("Database connection: " . (isset($this->db_connection) ? 'SET' : 'NOT SET'));
+
+            // Use DIRECT INSERT instead of post_data to ensure it works
+            // This bypasses any issues with the generic post_data function
+            $result = '';
+            $insert_success = false;
+            $insert_id = 0;
+            
+            try {
+                $conn = $this->db_connection;
+                
+                if (!$conn) {
+                    error_log("ERROR: Database connection is null!");
+                    throw new Exception("Database connection is not available");
+                }
+                
+                error_log("Using direct database insert...");
+                $sql = "INSERT INTO `" . TABLE_FORM_SUBMISSIONS . "` (`form_id`, `submission_data`, `created_at`, `ip_address`, `status`) VALUES (?, ?, ?, ?, ?)";
+                error_log("SQL: " . $sql);
+                error_log("Parameters: form_id=" . $fields_arr['form_id'] . ", submission_data length=" . strlen($fields_arr['submission_data']) . ", created_at=" . $fields_arr['created_at'] . ", ip_address=" . $fields_arr['ip_address'] . ", status=" . $fields_arr['status']);
+                
+                $stmt = $conn->prepare($sql);
+                
+                if (!$stmt) {
+                    error_log("ERROR: Prepare failed - " . $conn->error);
+                    throw new Exception("Prepare failed: " . $conn->error);
+                }
+                
+                $stmt->bind_param("isssi", 
+                    $fields_arr['form_id'],
+                    $fields_arr['submission_data'],
+                    $fields_arr['created_at'],
+                    $fields_arr['ip_address'],
+                    $fields_arr['status']
+                );
+                
+                if (!$stmt->execute()) {
+                    error_log("ERROR: Execute failed - " . $stmt->error);
+                    throw new Exception("Execute failed: " . $stmt->error);
+                }
+                
+                $insert_id = $conn->insert_id;
+                $affected_rows = $conn->affected_rows;
+                
+                error_log("Direct insert executed - Insert ID: $insert_id, Affected Rows: $affected_rows");
+                
+                if ($insert_id <= 0) {
+                    error_log("ERROR: Insert ID is 0 or negative!");
+                    throw new Exception("Insert ID is 0 - insert may have failed");
+                }
+                
+                if ($affected_rows == 0) {
+                    error_log("ERROR: No rows affected!");
+                    throw new Exception("No rows affected - insert failed");
+                }
+                
+                // Verify the data was actually saved correctly
+                $verify_sql = "SELECT id, submission_data FROM `" . TABLE_FORM_SUBMISSIONS . "` WHERE id = ? LIMIT 1";
+                $verify_stmt = $conn->prepare($verify_sql);
+                if ($verify_stmt) {
+                    $verify_stmt->bind_param("i", $insert_id);
+                    if ($verify_stmt->execute()) {
+                        $verify_result = $verify_stmt->get_result();
+                        if ($verify_row = $verify_result->fetch_assoc()) {
+                            error_log("VERIFICATION: Record found with ID: " . $verify_row['id']);
+                            error_log("VERIFICATION: Saved submission_data (first 200 chars): " . substr($verify_row['submission_data'], 0, 200));
+                            error_log("VERIFICATION: Expected submission_data (first 200 chars): " . substr($submission_data_json, 0, 200));
+                            
+                            if ($verify_row['submission_data'] === $submission_data_json) {
+                                error_log("VERIFICATION SUCCESS: Data matches exactly!");
+                                $insert_success = true;
+                            } else {
+                                error_log("VERIFICATION WARNING: Data doesn't match exactly, but record exists");
+                                // Still consider it success if record exists
+                                $insert_success = true;
+                            }
+                        } else {
+                            error_log("VERIFICATION ERROR: Record not found after insert!");
+                            throw new Exception("Record not found after insert - ID: " . $insert_id);
+                        }
+                    } else {
+                        error_log("VERIFICATION ERROR: Query failed - " . $verify_stmt->error);
+                        // Don't throw here, just log - insert might still be OK
+                    }
+                    $verify_stmt->close();
+                }
+                
+                $stmt->close();
+                
+                if ($insert_success) {
+                    $result = json_encode(array('status' => '1', 'data' => $insert_id));
+                    error_log("SUCCESS: Form submission saved with ID: " . $insert_id);
+                } else {
+                    throw new Exception("Verification failed");
+                }
+                
+            } catch (Exception $e) {
+                error_log("EXCEPTION in direct insert: " . $e->getMessage());
+                error_log("Exception trace: " . $e->getTraceAsString());
+                $result = json_encode(array('status' => '0', 'data' => $e->getMessage()));
+                $insert_success = false;
+            } catch (Error $e) {
+                error_log("FATAL ERROR in direct insert: " . $e->getMessage());
+                $result = json_encode(array('status' => '0', 'data' => $e->getMessage()));
+                $insert_success = false;
+            }
+            
+            // Parse result from direct insert (already done above)
+            $result_decoded = json_decode($result, true);
+            error_log("Final decoded result: " . print_r($result_decoded, true));
+            
+            // Use the insert_success and insert_id from direct insert above
+            // (already set in the try-catch block)
+            if ($insert_success && $insert_id > 0) {
+                 $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully', 'insert_id' => $insert_id);
+                 error_log("=== FINAL SUCCESS: Form submission saved with ID: " . $insert_id . " ===");
             } else {
-                 $error_msg = isset($result_decoded['msg']) ? $result_decoded['msg'] : 'Database error';
-                 error_log("ERROR: Failed to save submission - " . $error_msg);
-                 error_log("Full result: " . print_r($result_decoded, true));
+                 $error_msg = isset($result_decoded['data']) && is_string($result_decoded['data']) 
+                     ? $result_decoded['data'] 
+                     : 'Database insert failed - insert_id: ' . $insert_id . ' - check server logs';
+                 error_log("=== FINAL ERROR: Failed to save submission ===");
+                 error_log("Error message: " . $error_msg);
+                 error_log("Insert success flag: " . ($insert_success ? 'true' : 'false'));
+                 error_log("Insert ID: " . $insert_id);
                  $response_data = array('result' => 'fail', 'msg' => $error_msg);
             }
         } else {

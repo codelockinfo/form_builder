@@ -135,35 +135,158 @@ if (!function_exists('generate_log')) {
     public function post_data($tbl_name, $fields_arr, $options_arr = array()) {
         $on_duplicate_update = isset($options_arr['on_duplicate_update']) ? $options_arr['on_duplicate_update'] : false;
         $status = '1';
-        $return_data = $values = '';
+        $return_data = '';
         $update_columns = array();
-           foreach ($fields_arr as $field_value) {
-            $columns = $val = array();
-            foreach ($field_value as $key => $value) {
-                $columns[$key] = $key;
-                $val[] = $value;
-            }
-            $values .= "( '" . implode("','", $val) . "' ),";
-            if ($on_duplicate_update) {
-                $update_columns[] = "$key = VALUES($key)";
-            }
-        }
-        $values = rtrim($values, ",");
+        
         try {
-             
-            $sql = "INSERT INTO $tbl_name ( " . implode(",", $columns) . ") VALUES " . $values . "";
-            $sql = str_replace(array("'NULL'", "'null'"), 'NULL', $sql);
-            if ($on_duplicate_update) {
-                $update_query = "UPDATE " . implode(",", $update_columns);
-                $sql .= " ON DUPLICATE KEY " . $update_query . ";";
-            }  
-            $query = $this->db_connection->prepare($sql);
-            $return_data = $query->execute();
-            $return_data = $this->db_connection->insert_id;
+            foreach ($fields_arr as $field_value) {
+                $columns = array();
+                $placeholders = array();
+                $values = array();
+                $types = '';
+                
+                foreach ($field_value as $key => $value) {
+                    // Remove backticks from column name if present
+                    $clean_key = trim(str_replace('`', '', $key));
+                    
+                    // Skip empty 'id' field (for auto-increment)
+                    if ($clean_key === 'id' && ($value === '' || $value === null || $value === 0)) {
+                        continue; // Skip id field if empty - let auto-increment handle it
+                    }
+                    
+                    $columns[] = "`" . $clean_key . "`";
+                    
+                    if ($value === null || $value === 'NULL' || $value === 'null') {
+                        $placeholders[] = 'NULL';
+                    } else {
+                        $placeholders[] = '?';
+                        $values[] = $value;
+                        // Determine type for binding
+                        if (is_int($value)) {
+                            $types .= 'i';
+                        } else if (is_float($value)) {
+                            $types .= 'd';
+                        } else {
+                            $types .= 's';
+                        }
+                    }
+                    
+                    if ($on_duplicate_update && $value !== '' && $value !== null) {
+                        $clean_key = str_replace('`', '', $key);
+                        $update_columns[] = "`" . $clean_key . "` = VALUES(`" . $clean_key . "`)";
+                    }
+                }
+                
+                // Build SQL with placeholders
+                $sql = "INSERT INTO `" . $tbl_name . "` ( " . implode(", ", $columns) . " ) VALUES ( " . implode(", ", $placeholders) . " )";
+                
+                if ($on_duplicate_update && !empty($update_columns)) {
+                    $sql .= " ON DUPLICATE KEY UPDATE " . implode(", ", $update_columns);
+                }
+                
+                // Log SQL for debugging (without values)
+                error_log("post_data SQL: " . $sql);
+                error_log("post_data Values count: " . count($values));
+                error_log("post_data Types: " . $types);
+                
+                // Use prepared statement with proper binding
+                $stmt = $this->db_connection->prepare($sql);
+                
+                if (!$stmt) {
+                    throw new Exception("Prepare failed: " . $this->db_connection->error);
+                }
+                
+                // Bind parameters if we have values
+                if (!empty($values)) {
+                    // Use call_user_func_array for dynamic binding
+                    $bind_params = array($types);
+                    foreach ($values as $key => $val) {
+                        $bind_params[] = &$values[$key];
+                    }
+                    
+                    if (!call_user_func_array(array($stmt, 'bind_param'), $bind_params)) {
+                        throw new Exception("Bind param failed: " . $stmt->error);
+                    }
+                }
+                
+                // Execute query
+                if (!$stmt->execute()) {
+                    throw new Exception("Execute failed: " . $stmt->error . " | SQL: " . $sql);
+                }
+                
+                // Get insert ID
+                $return_data = $this->db_connection->insert_id;
+                
+                // Close statement
+                $stmt->close();
+                
+                // Verify insert was successful by checking affected rows
+                $affected_rows = $this->db_connection->affected_rows;
+                error_log("post_data Affected rows: " . $affected_rows);
+                error_log("post_data Insert ID: " . $return_data);
+                
+                // For form_submissions table, verify the insert actually worked
+                $is_form_submissions = ($tbl_name == 'form_submissions' || strpos($tbl_name, 'form_submissions') !== false);
+                
+                // If no rows were affected, the insert failed
+                if ($affected_rows == 0) {
+                    error_log("post_data ERROR: No rows affected - insert failed!");
+                    if ($is_form_submissions) {
+                        throw new Exception("Insert failed: No rows affected");
+                    }
+                }
+                
+                // If insert_id is 0, this is a problem for auto-increment tables
+                if ($return_data == 0 && !empty($values)) {
+                    error_log("post_data ERROR: insert_id is 0!");
+                    if ($is_form_submissions) {
+                        // For form_submissions, insert_id MUST be > 0
+                        error_log("post_data ERROR: form_submissions should have auto-increment ID, but got 0!");
+                        if ($affected_rows == 0) {
+                            throw new Exception("Insert failed: No rows affected and insert_id is 0");
+                        } else {
+                            // Rows affected but no insert_id - this is strange, but might be OK
+                            error_log("post_data WARNING: Rows affected but insert_id is 0 - checking if record exists...");
+                            // Try to verify by checking the last inserted record
+                            $check_sql = "SELECT id FROM `" . $tbl_name . "` WHERE form_id = ? ORDER BY id DESC LIMIT 1";
+                            $check_stmt = $this->db_connection->prepare($check_sql);
+                            if ($check_stmt && isset($fields_arr['form_id'])) {
+                                $check_form_id = $fields_arr['form_id'];
+                                $check_stmt->bind_param("i", $check_form_id);
+                                if ($check_stmt->execute()) {
+                                    $check_result = $check_stmt->get_result();
+                                    if ($check_row = $check_result->fetch_assoc()) {
+                                        $return_data = $check_row['id'];
+                                        error_log("post_data: Found insert_id from verification query: " . $return_data);
+                                    }
+                                }
+                                $check_stmt->close();
+                            }
+                        }
+                    }
+                }
+                
+                // Final verification - if still 0 and we have values, something is wrong
+                if ($return_data == 0 && !empty($values) && $is_form_submissions) {
+                    error_log("post_data CRITICAL ERROR: Insert appears to have failed!");
+                    throw new Exception("Insert failed: insert_id is 0 and this table requires auto-increment ID");
+                }
+                
+                error_log("post_data SUCCESS - Insert ID: " . $return_data . ", Affected Rows: " . $affected_rows);
+                
+            } // End foreach loop
+            
         } catch (Exception $error) {
             $status = '0';
             $return_data = $error->getMessage();
+            error_log("post_data ERROR: " . $error->getMessage());
+            error_log("post_data ERROR SQL: " . (isset($sql) ? $sql : 'N/A'));
+        } catch (Error $error) {
+            $status = '0';
+            $return_data = $error->getMessage();
+            error_log("post_data FATAL ERROR: " . $error->getMessage());
         }
+        
         return json_encode(array('status' => $status, 'data' => $return_data));
     }
     public function put_data($tbl_name, $fields_arr, $where_query_arr, $multi = true) {
