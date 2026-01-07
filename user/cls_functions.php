@@ -8128,7 +8128,11 @@ console.log("FB_IIFE_START");
             if (!$has_form_data) {
                 error_log("ERROR: No actual form data found in submission!");
                 error_log("Available keys: " . implode(", ", array_keys($submission_data)));
-                return array('result' => 'fail', 'msg' => 'No form data found in submission');
+                error_log("Full POST data received: " . print_r($_POST, true));
+                // Return more detailed error message
+                $available_keys = array_keys($submission_data);
+                $keys_str = !empty($available_keys) ? implode(", ", $available_keys) : "NONE";
+                return array('result' => 'fail', 'msg' => 'No form data found in submission. Received keys: ' . $keys_str);
             }
             
             $mysql_date = date('Y-m-d H:i:s');

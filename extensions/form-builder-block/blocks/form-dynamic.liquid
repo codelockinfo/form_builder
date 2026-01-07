@@ -96,9 +96,27 @@
       console.log('Form HTML received, length:', formHtml.length);
       
       if (formHtml && formHtml.trim().length > 0) {
-        blockContainer.innerHTML = formHtml;
+        // Extract and execute scripts separately (innerHTML doesn't execute script tags)
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = formHtml;
+        
+        // Extract all script tags
+        const scripts = tempDiv.querySelectorAll('script');
+        scripts.forEach(function(oldScript) {
+          const newScript = document.createElement('script');
+          Array.from(oldScript.attributes).forEach(function(attr) {
+            newScript.setAttribute(attr.name, attr.value);
+          });
+          newScript.textContent = oldScript.textContent;
+          document.head.appendChild(newScript);
+          oldScript.remove();
+        });
+        
+        // Insert HTML without script tags
+        blockContainer.innerHTML = tempDiv.innerHTML;
         console.log('✅ Form HTML inserted');
-        // Initialize form submission handler if needed
+        
+        // Initialize form submission handler
         initializeFormSubmission();
         // Initialize button hover effects
         initializeButtonHoverEffects();
@@ -118,14 +136,187 @@
   }
   
   function initializeFormSubmission() {
-    // Initialize form submission handlers if needed
-    const form = document.querySelector('#easy-form-{{ block.id }} form');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        // Form submission will be handled by the loaded form's own JavaScript
-        console.log('Form submission detected for block {{ block.id }}');
+    console.log('=== Initializing Form Submission Handlers ===');
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    if (!blockContainer) return;
+    
+    const forms = blockContainer.querySelectorAll('form.get_selected_elements');
+    console.log('Found forms:', forms.length);
+    
+    forms.forEach(function(form, index) {
+      console.log('Processing form', index);
+      
+      // Get form ID
+      const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
+      const formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || '';
+      console.log('Form ID:', formId);
+      
+      if (!formId) {
+        console.error('Form ID not found for form', index);
+        return;
+      }
+      
+      // Get shop domain
+      let shop = "{{ shop.permanent_domain }}";
+      if (!shop || shop === "") {
+        shop = "{{ shop.myshopify_domain }}";
+      }
+      if (!shop || shop === "") {
+        shop = "{{ shop.domain }}";
+      }
+      if (!shop || shop === "") {
+        const hostname = window.location.hostname;
+        if (hostname && hostname.includes('.myshopify.com')) {
+          shop = hostname;
+        }
+      }
+      console.log('Shop domain:', shop);
+      
+      // Form submit handler
+      function handleFormSubmit(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('=== FORM SUBMIT EVENT ===');
+        console.log('Form:', form);
+        console.log('Form ID:', formId);
+        console.log('Shop:', shop);
+        
+        // Create FormData - collect ALL form fields
+        const formData = new FormData(form);
+        
+        // Log all form inputs before creating FormData
+        console.log('=== Form Inputs Debug ===');
+        const allInputs = form.querySelectorAll('input, textarea, select');
+        console.log('Total inputs found:', allInputs.length);
+        allInputs.forEach(function(input, idx) {
+          const name = input.name || input.getAttribute('name') || 'NO_NAME';
+          const value = input.value || input.getAttribute('value') || '';
+          const type = input.type || input.tagName.toLowerCase();
+          console.log(`Input ${idx}: name="${name}", type="${type}", value="${value.substring(0, 50)}"`);
+        });
+        
+        // Add system fields
+        formData.append('store', shop);
+        formData.append('routine_name', 'addformdata');
+        formData.append('form_id', formId);
+        
+        // Log FormData entries
+        console.log('=== FormData Entries ===');
+        const formDataEntries = Array.from(formData.entries());
+        console.log('Total FormData entries:', formDataEntries.length);
+        formDataEntries.forEach(function(entry, idx) {
+          console.log(`Entry ${idx}: ${entry[0]} = ${entry[1].toString().substring(0, 100)}`);
+        });
+        
+        // Verify we have actual form data (not just system fields)
+        const formFieldNames = [];
+        formDataEntries.forEach(function(entry) {
+          const key = entry[0];
+          if (key !== 'store' && key !== 'routine_name' && key !== 'form_id' && key !== 'id') {
+            formFieldNames.push(key);
+          }
+        });
+        console.log('Form field names (excluding system fields):', formFieldNames);
+        
+        if (formFieldNames.length === 0) {
+          console.error('ERROR: No form fields found! Form might be empty or fields have no name attributes.');
+          console.error('Form HTML:', form.outerHTML.substring(0, 500));
+          alert('Error: Form fields not found. Please check form configuration. Check console for details.');
+          return false;
+        }
+        
+        // Disable submit button
+        const submitBtn = form.querySelector('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.6';
+          const originalText = submitBtn.innerHTML;
+          submitBtn.setAttribute('data-original-text', originalText);
+          submitBtn.innerHTML = 'Submitting...';
+        }
+        
+        // Get AJAX URL
+        const ajaxUrl = 'https://codelocksolutions.com/form_builder/user/ajax_call.php';
+        console.log('Submitting to:', ajaxUrl);
+        
+        // Submit via fetch
+        console.log('=== Sending AJAX Request ===');
+        console.log('URL:', ajaxUrl);
+        console.log('Method: POST');
+        console.log('FormData entries count:', formDataEntries.length);
+        
+        fetch(ajaxUrl, {
+          method: 'POST',
+          body: formData
+        })
+        .then(function(response) {
+          console.log('Response status:', response.status);
+          console.log('Response headers:', response.headers);
+          return response.text();
+        })
+        .then(function(responseText) {
+          console.log('Response text:', responseText);
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch(e) {
+            console.error('Failed to parse JSON:', e);
+            console.error('Response was:', responseText);
+            throw new Error('Invalid JSON response: ' + responseText.substring(0, 200));
+          }
+          console.log('Parsed response data:', data);
+          
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            const originalText = submitBtn.getAttribute('data-original-text');
+            if (originalText) {
+              submitBtn.innerHTML = originalText;
+            }
+          }
+          
+          if (data.result === 'success') {
+            alert(data.msg || 'Form submitted successfully!');
+            form.reset();
+            console.log('Form reset');
+          } else {
+            alert(data.msg || 'Something went wrong. Please try again.');
+          }
+        })
+        .catch(function(error) {
+          console.error('Submission error:', error);
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            const originalText = submitBtn.getAttribute('data-original-text');
+            if (originalText) {
+              submitBtn.innerHTML = originalText;
+            }
+          }
+          alert('An error occurred. Please check the console.');
+        });
+        
+        return false;
+      }
+      
+      // Attach submit handler to form
+      form.addEventListener('submit', handleFormSubmit);
+      console.log('Submit handler attached to form', index);
+      
+      // Also attach to submit buttons
+      const submitButtons = form.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button');
+      console.log('Found submit buttons:', submitButtons.length);
+      
+      submitButtons.forEach(function(btn, btnIndex) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('=== SUBMIT BUTTON CLICKED ===', btnIndex);
+          handleFormSubmit(e);
+        });
+        console.log('Click handler attached to button', btnIndex);
       });
-    }
+    });
   }
   
   function initializeButtonHoverEffects() {
