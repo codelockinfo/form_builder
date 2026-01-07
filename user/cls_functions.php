@@ -2723,12 +2723,16 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-email" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Email" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="email" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                        <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2752,11 +2756,15 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-textarea-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="textarea-1" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'></textarea>
+                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2780,12 +2788,16 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-phone-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Phone" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="phone-1" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                        <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2809,13 +2821,17 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="number" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                                        <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2840,16 +2856,19 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Password';
+                                $field_name = $generate_field_name($label_text, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $layout_col = isset($unserialize_elementdata[16]) ? $unserialize_elementdata[16] : '2';
-                                $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Password';
                                 $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
                                 $description_text = isset($unserialize_elementdata[2]) ? $unserialize_elementdata[2] : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$layout_col.'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                     <label for="false-password-1" class="classic-label globo-label  '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Password" data-formdataid="'.$form_data_id.'">'.$label_text.'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="password-1" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                        <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                     </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$description_text.'</small>
                                 </div>';
@@ -2872,12 +2891,16 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[4] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[12].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Date time" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input datepicker">
-                                            <input type="date" id="dateInput" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                            <input type="date" id="dateInput" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                 </div>';
@@ -2903,9 +2926,17 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[1] == ""){
                                     $is_buttonhidden = "hidden";
                                 }
+                                
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 if($unserialize_elementdata[3] == "1"){
-                                    $is_allowmultiple = ' name="files[]" multiple';
+                                    $is_allowmultiple = ' name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'[]" multiple';
+                                } else {
+                                    $is_allowmultiple = ' name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'"';
                                 }
+                                
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input" data-formdataid="'.$form_data_id.'">
@@ -2937,6 +2968,11 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[5] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $checkbox_options = explode(",", $unserialize_elementdata[1]);
                                 $checkbox_deafult_options = array_map('trim', explode(',', $unserialize_elementdata[2]));
 
@@ -2952,7 +2988,7 @@ class Client_functions extends common_function {
                                     }
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="checkbox-wrapper">
-                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="checkbox-' . ($index + 1) . '[]" value="' . $option . '" '. $checkbox_option_checked.'>
+                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
                                                         <label class="checkbox-label globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
                                                     </div>
                                                     </li>';
@@ -2963,10 +2999,14 @@ class Client_functions extends common_function {
                                         </div>';
                             }
                             if($elements['id'] == 12){
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $defaultselect_checked = (isset($unserialize_elementdata[1]) && $unserialize_elementdata[1] == '1') ? "checked" : '';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[4].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <div class="checkbox-wrapper">
-                                                <input id="terms_condition" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="acceptTerms-1[]" value="1" '.$defaultselect_checked.'>
+                                                <input id="terms_condition" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'[]" value="1" '.$defaultselect_checked.'>
                                                 <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label" for="terms_condition">'.$unserialize_elementdata[0].'</label>
                                             </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
@@ -2990,6 +3030,11 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[5] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $radio_options = explode(",", $unserialize_elementdata[1]);
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="radio">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
@@ -3004,7 +3049,7 @@ class Client_functions extends common_function {
                                     }
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="radio-wrapper">
-                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . $option . '" type="radio" data-type="radio" name="radio-1'.$form_data_id.'" value="' . $option . '" '.$radio_option_checked.'>
+                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.'>
                                                         <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
                                                     </div>
                                                 </li>';
@@ -3031,10 +3076,15 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[6] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                                 <label for="false-select-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Dropdown">'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span> </label>
                                                 <div class="globo-form-input">
-                                                    <select name="select-1" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
+                                                    <select name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder">
                                                     <option value=""  disabled="disabled" selected="selected">'.$unserialize_elementdata[1].'</option>';
                                                     $dropdown_options = explode(",", $unserialize_elementdata[2]);
                                                     foreach ($dropdown_options as $index => $option) {
