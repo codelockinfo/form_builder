@@ -3171,6 +3171,9 @@ class Client_functions extends common_function {
                         $form_js = '
 <script>
 console.log("=== Form Builder Script Initialization ===");
+console.log("Form ID: ' . $form_id . '");
+console.log("Shop Domain: ' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '");
+console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php");
 
 // Inline form submission handler - works immediately without waiting for external scripts
 (function() {
@@ -3364,25 +3367,61 @@ console.log("=== Form Builder Script Initialization ===");
         var forms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
         console.log("Found forms:", forms.length);
         
-        forms.forEach(function(form, index) {
-            console.log("Attaching submit handler to form " + index + ":", form);
+        // Use for loop instead of forEach for better compatibility
+        for (var j = 0; j < forms.length; j++) {
+            var form = forms[j];
+            console.log("Attaching submit handler to form " + j + ":", form);
             form.addEventListener("submit", handleFormSubmit);
-        });
+        }
         
         console.log("Handlers attached successfully");
     }
     
-    // Wait for DOM to be ready
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", attachHandlers);
-    } else {
-        attachHandlers();
+    // Function to initialize handlers - runs immediately and also on delays
+    function initializeHandlers() {
+        // Check if form exists in DOM
+        var formExists = document.querySelector("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+        if (formExists) {
+            console.log("Form found in DOM, attaching handlers...");
+            attachHandlers();
+        } else {
+            console.log("Form not yet in DOM, will retry...");
+        }
     }
     
-    // Also try after a short delay to catch dynamically loaded forms
-    setTimeout(attachHandlers, 500);
-    setTimeout(attachHandlers, 1000);
-    setTimeout(attachHandlers, 2000);
+    // Run immediately if DOM is ready
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeHandlers);
+    } else {
+        initializeHandlers();
+    }
+    
+    // Also try multiple times to catch dynamically loaded forms (Shopify loads forms via AJAX)
+    setTimeout(initializeHandlers, 100);
+    setTimeout(initializeHandlers, 500);
+    setTimeout(initializeHandlers, 1000);
+    setTimeout(initializeHandlers, 2000);
+    setTimeout(initializeHandlers, 3000);
+    
+    // Use MutationObserver to detect when form is added to DOM
+    if (typeof MutationObserver !== "undefined") {
+        var observer = new MutationObserver(function(mutations) {
+            var formExists = document.querySelector("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+            if (formExists) {
+                console.log("Form detected via MutationObserver, attaching handlers...");
+                attachHandlers();
+                observer.disconnect(); // Stop observing once form is found
+            }
+        });
+        
+        // Start observing
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log("MutationObserver started to detect form insertion");
+    }
 })();
 
 // Load jQuery and external script (for advanced features)
