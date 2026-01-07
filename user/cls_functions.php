@@ -1425,20 +1425,73 @@ class Client_functions extends common_function {
         $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
         
         if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id'])) {
-            $form_id = $_POST['form_id'];
+            $shopinfo = (object)$this->current_store_obj;
+            $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
             
+            if ($store_user_id <= 0) {
+                return json_encode(array('result' => 'fail', 'msg' => 'Store not authenticated'));
+            }
+            
+            $form_id_input = trim($_POST['form_id']);
+            
+            if (empty($form_id_input) || $form_id_input == 0) {
+                return json_encode(array('result' => 'fail', 'msg' => 'Form ID is required'));
+            }
+
+            // Check if form_id_input is a public_id (6-digit number) or database ID
+            $form_id = 0;
+            $is_public_id = (strlen($form_id_input) == 6 && ctype_digit($form_id_input));
+            
+            if ($is_public_id) {
+                // Convert public_id to database form_id
+                $where_query = array(
+                    ["", "public_id", "=", "$form_id_input"],
+                    ["AND", "store_client_id", "=", "$store_user_id"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] == 1 && !empty($form_check['data'])) {
+                    $form_id = (int)$form_check['data']['id'];
+                } else {
+                    return json_encode(array('result' => 'success', 'data' => array()));
+                }
+            } else {
+                // Assume it's a database ID, but verify it belongs to this store
+                $form_id = (int)$form_id_input;
+                $where_query = array(
+                    ["", "id", "=", "$form_id"],
+                    ["AND", "store_client_id", "=", "$store_user_id"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] != 1 || empty($form_check['data'])) {
+                    // Form doesn't belong to this store or doesn't exist
+                    return json_encode(array('result' => 'success', 'data' => array()));
+                }
+            }
+
+            if ($form_id <= 0) {
+                return json_encode(array('result' => 'success', 'data' => array()));
+            }
+            
+            // Get submissions for this form, ensuring it belongs to the store
             $where_query = array(["", "form_id", "=", "$form_id"]);
-            // You might want to join with forms table to check if it belongs to the store, 
-            // but for now relying on form_id knowledge.
-            // Ideally, check if form_id belongs to store_client_id.
+            $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
             
-             $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
+            // Order by created_at descending (newest first)
+            if (isset($submissions['data']) && is_array($submissions['data'])) {
+                usort($submissions['data'], function($a, $b) {
+                    $date_a = isset($a['created_at']) ? strtotime($a['created_at']) : 0;
+                    $date_b = isset($b['created_at']) ? strtotime($b['created_at']) : 0;
+                    return $date_b - $date_a; // Descending order
+                });
+            }
              
-             if (isset($submissions['data'])) {
-                  $response_data = array('result' => 'success', 'data' => $submissions['data']);
-             } else {
-                 $response_data = array('result' => 'success', 'data' => array());
-             }
+            if (isset($submissions['data'])) {
+                $response_data = array('result' => 'success', 'data' => $submissions['data']);
+            } else {
+                $response_data = array('result' => 'success', 'data' => array());
+            }
         }
 
         return json_encode($response_data);
@@ -7241,21 +7294,71 @@ class Client_functions extends common_function {
     function addformdata(){
         $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
         if (isset($_POST['store']) && $_POST['store'] != '') {
+            $shopinfo = (object)$this->current_store_obj;
+            $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
+            
+            if ($store_user_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Store not authenticated');
+            }
+            
             // Get form ID from POST
-            $form_id = 0;
+            $form_id_input = 0;
             if(isset($_POST['form_id'])) {
-                $form_id = $_POST['form_id'];
+                $form_id_input = trim($_POST['form_id']);
             } else if(isset($_POST['id'])) {
-                $form_id = $_POST['id'];
+                $form_id_input = trim($_POST['id']);
+            }
+
+            if (empty($form_id_input) || $form_id_input == 0) {
+                return array('result' => 'fail', 'msg' => 'Form ID is required');
+            }
+
+            // Check if form_id_input is a public_id (6-digit number) or database ID
+            $form_id = 0;
+            $is_public_id = (strlen($form_id_input) == 6 && ctype_digit($form_id_input));
+            
+            if ($is_public_id) {
+                // Convert public_id to database form_id
+                $where_query = array(
+                    ["", "public_id", "=", "$form_id_input"],
+                    ["AND", "store_client_id", "=", "$store_user_id"],
+                    ["AND", "status", "=", "1"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] == 1 && !empty($form_check['data'])) {
+                    $form_id = (int)$form_check['data']['id'];
+                } else {
+                    return array('result' => 'fail', 'msg' => 'Form not found or inactive');
+                }
+            } else {
+                // Assume it's a database ID, but verify it belongs to this store
+                $form_id = (int)$form_id_input;
+                $where_query = array(
+                    ["", "id", "=", "$form_id"],
+                    ["AND", "store_client_id", "=", "$store_user_id"],
+                    ["AND", "status", "=", "1"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] != 1 || empty($form_check['data'])) {
+                    return array('result' => 'fail', 'msg' => 'Form not found or access denied');
+                }
+            }
+
+            if ($form_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID');
             }
 
             // Collect all submission data excluding management fields
             $submission_data = $_POST;
             unset($submission_data['routine_name']);
             unset($submission_data['store']);
+            unset($submission_data['form_id']); // Remove form_id from submission data
+            unset($submission_data['id']); // Remove id from submission data
             
             $mysql_date = date('Y-m-d H:i:s');
-            $ip_address = $_SERVER['REMOTE_ADDR'];
+            $ip_address = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
             $fields_arr = array(
                 'form_id' => $form_id,
@@ -7271,7 +7374,8 @@ class Client_functions extends common_function {
             if (isset($result_decoded['status']) && $result_decoded['status'] == 1) {
                  $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully');
             } else {
-                 $response_data = array('result' => 'fail', 'msg' => 'Database error');
+                 $error_msg = isset($result_decoded['msg']) ? $result_decoded['msg'] : 'Database error';
+                 $response_data = array('result' => 'fail', 'msg' => $error_msg);
             }
         }
         return $response_data;

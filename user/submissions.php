@@ -38,30 +38,46 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
             success: function (response) {
                 if(response.result == 'success') {
                     var html = '';
-                    if(response.data.length > 0) {
+                    if(response.data && response.data.length > 0) {
                         $.each(response.data, function(i, item){
                             var dataStr = '';
                             try {
                                 var formData = JSON.parse(item.submission_data);
-                                // Format JSON nicely or just list values
-                                $.each(formData, function(j, field){
-                                    // simple field name display
-                                    dataStr += '<b>' + field.name + ':</b> ' + field.value + '<br>';
+                                // Format JSON - submission_data is a flat object with field names as keys
+                                $.each(formData, function(fieldName, fieldValue){
+                                    // Skip system fields
+                                    if(fieldName !== 'routine_name' && fieldName !== 'store' && fieldName !== 'form_id' && fieldName !== 'id') {
+                                        // Handle array values (like checkboxes)
+                                        if(Array.isArray(fieldValue)) {
+                                            fieldValue = fieldValue.join(', ');
+                                        }
+                                        // Escape HTML to prevent XSS
+                                        var safeFieldName = $('<div>').text(fieldName).html();
+                                        var safeFieldValue = $('<div>').text(fieldValue).html();
+                                        dataStr += '<b>' + safeFieldName + ':</b> ' + safeFieldValue + '<br>';
+                                    }
                                 });
                             } catch(e) {
-                                dataStr = item.submission_data;
+                                console.error('Error parsing submission data:', e);
+                                dataStr = '<span style="color: #999;">Unable to parse submission data</span>';
+                            }
+                            
+                            if(!dataStr) {
+                                dataStr = '<span style="color: #999;">No data available</span>';
                             }
                             
                             html += '<tr style="border-bottom: 1px solid #dfe3e8;">';
                             html += '<td style="padding: 10px; vertical-align: top;">' + item.id + '</td>';
-                            html += '<td style="padding: 10px; vertical-align: top;">' + item.created_at + '</td>';
+                            html += '<td style="padding: 10px; vertical-align: top;">' + (item.created_at || 'N/A') + '</td>';
                             html += '<td style="padding: 10px; vertical-align: top;">' + dataStr + '</td>';
                             html += '</tr>';
                         });
                     } else {
-                        html = '<tr><td colspan="3" style="padding: 10px; text-align: center;">No submissions found</td></tr>';
+                        html = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #999;">No submissions found</td></tr>';
                     }
                     $('#submissions_list').html(html);
+                } else {
+                    $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: ' + (response.msg || 'Failed to load submissions') + '</td></tr>');
                 }
             }
         });
