@@ -116,6 +116,85 @@
         blockContainer.innerHTML = tempDiv.innerHTML;
         console.log('✅ Form HTML inserted');
         
+        // Remove readonly/disabled attributes from form fields so users can type
+        const formInputs = blockContainer.querySelectorAll('input, textarea, select');
+        console.log('=== Making Form Fields Editable ===');
+        console.log('Found form inputs:', formInputs.length);
+        formInputs.forEach(function(input, idx) {
+          const name = input.name || input.getAttribute('name') || 'NO_NAME';
+          const hadReadonly = input.hasAttribute('readonly');
+          const wasDisabled = input.disabled;
+          const hasTabindex = input.hasAttribute('tabindex');
+          const tabindexValue = hasTabindex ? input.getAttribute('tabindex') : null;
+          
+          console.log(`Input ${idx} (${name}): BEFORE - readonly=${hadReadonly}, disabled=${wasDisabled}, tabindex=${tabindexValue}`);
+          
+          // Remove readonly
+          if (hadReadonly) {
+            input.removeAttribute('readonly');
+            console.log(`Input ${idx} (${name}): Removed readonly attribute`);
+          }
+          
+          // Enable disabled inputs
+          if (wasDisabled) {
+            input.disabled = false;
+            console.log(`Input ${idx} (${name}): Enabled disabled input`);
+          }
+          
+          // Remove negative tabindex (which prevents keyboard focus)
+          if (hasTabindex && tabindexValue === '-1') {
+            input.removeAttribute('tabindex');
+            console.log(`Input ${idx} (${name}): Removed tabindex="-1"`);
+          }
+          
+          // Ensure input is focusable and editable
+          input.style.pointerEvents = 'auto';
+          input.style.userSelect = 'auto';
+          
+          // Verify the input is now editable
+          const isReadonly = input.readOnly;
+          const isDisabled = input.disabled;
+          const currentTabindex = input.hasAttribute('tabindex') ? input.getAttribute('tabindex') : 'none';
+          console.log(`Input ${idx} (${name}): AFTER - readonly=${isReadonly}, disabled=${isDisabled}, tabindex=${currentTabindex}, canEdit=${!isReadonly && !isDisabled}`);
+          
+          // Test if we can set a value (to verify it's editable)
+          const testValue = input.value;
+          input.value = testValue + ''; // Try to set value
+          const canSetValue = input.value !== undefined;
+          console.log(`Input ${idx} (${name}): canSetValue=${canSetValue}, currentValue="${input.value.substring(0, 20)}"`);
+        });
+        console.log('✅ Form fields made editable');
+        
+        // Also use MutationObserver to catch any dynamically added readonly attributes
+        if (typeof MutationObserver !== 'undefined') {
+          const attrObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'attributes' && (mutation.attributeName === 'readonly' || mutation.attributeName === 'disabled')) {
+                const target = mutation.target;
+                if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+                  if (target.hasAttribute('readonly')) {
+                    target.removeAttribute('readonly');
+                    console.log('MutationObserver: Removed readonly from', target.name || 'unnamed input');
+                  }
+                  if (target.disabled) {
+                    target.disabled = false;
+                    console.log('MutationObserver: Enabled', target.name || 'unnamed input');
+                  }
+                }
+              }
+            });
+          });
+          
+          formInputs.forEach(function(input) {
+            attrObserver.observe(input, {
+              attributes: true,
+              attributeFilter: ['readonly', 'disabled']
+            });
+          });
+          
+          console.log('✅ MutationObserver set up to prevent readonly/disabled from being re-added');
+        }
+        
         // Initialize form submission handler
         initializeFormSubmission();
         // Initialize button hover effects
@@ -220,12 +299,41 @@
         
         // Log inputs AFTER removing readonly/disabled
         console.log('=== Form Inputs Debug (AFTER removing readonly/disabled) ===');
+        let hasAnyValue = false;
         allInputs.forEach(function(input, idx) {
           const name = input.name || input.getAttribute('name') || 'NO_NAME';
           const value = input.value || input.getAttribute('value') || '';
           const hasValue = value.trim().length > 0;
-          console.log(`Input ${idx}: name="${name}", value="${value.substring(0, 50)}", hasValue=${hasValue}`);
+          const isReadonly = input.readOnly;
+          const isDisabled = input.disabled;
+          console.log(`Input ${idx}: name="${name}", value="${value.substring(0, 50)}", hasValue=${hasValue}, readonly=${isReadonly}, disabled=${isDisabled}`);
+          if (hasValue) {
+            hasAnyValue = true;
+          }
         });
+        
+        // Warn if no values found
+        if (!hasAnyValue) {
+          console.error('❌ ERROR: No form fields have values!');
+          console.error('This means the user cannot type in the fields or fields are being cleared.');
+          console.error('Checking field editability...');
+          
+          // Test if we can set values programmatically
+          allInputs.forEach(function(input, idx) {
+            const name = input.name || 'NO_NAME';
+            const testValue = 'TEST_VALUE_' + idx;
+            const oldValue = input.value;
+            input.value = testValue;
+            const canSet = input.value === testValue;
+            console.error(`Field ${idx} (${name}): canSetValue=${canSet}, oldValue="${oldValue}", newValue="${input.value}"`);
+            // Restore old value
+            input.value = oldValue;
+          });
+          
+          // Show alert to user
+          alert('Error: Form fields appear to be empty. Please ensure you can type in the form fields. If you cannot type, the form may have an issue. Check the browser console for details.');
+          return false; // Stop submission
+        }
         
         // Create FormData AFTER removing readonly/disabled
         const formData = new FormData(form);

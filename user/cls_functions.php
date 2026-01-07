@@ -3190,17 +3190,25 @@ class Client_functions extends common_function {
                         
                         $form_js = '
 <script>
-alert("FB_SCRIPT_LOADED");
-console.log("FB_SCRIPT_START");
-var FB_FORM_ID=' . intval($form_id) . ';
-var FB_SHOP="' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '";
-var FB_AJAX="' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php";
-console.log("FB_FORM_ID",FB_FORM_ID);
-console.log("FB_SHOP",FB_SHOP);
-console.log("FB_AJAX",FB_AJAX);
+// Prevent multiple executions - use form-specific key
+(function() {
+    var scriptKey = "FB_FORM_BUILDER_" + ' . intval($form_id) . ';
+    if (window[scriptKey]) {
+        console.log("FB_SCRIPT: Form ' . intval($form_id) . ' already initialized, skipping");
+        return;
+    }
+    window[scriptKey] = true;
+    
+    console.log("FB_SCRIPT_START - Form ID: ' . intval($form_id) . '");
+    var FB_FORM_ID=' . intval($form_id) . ';
+    var FB_SHOP="' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '";
+    var FB_AJAX="' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php";
+    console.log("FB_FORM_ID",FB_FORM_ID);
+    console.log("FB_SHOP",FB_SHOP);
+    console.log("FB_AJAX",FB_AJAX);
 
-(function(){
-console.log("FB_IIFE_START");
+    (function(){
+    console.log("FB_IIFE_START");
     
     function getShopDomain() {
         // Try multiple methods to get shop domain
@@ -3860,6 +3868,7 @@ console.log("FB_IIFE_START");
         setTimeout(attachToAllButtons, 5000);
 })();
 }catch(e){console.error("FB_ERROR",e.message,e.stack);}
+})(); // Close the outer IIFE that prevents multiple executions
 </script>';
                     }
                     
