@@ -2010,7 +2010,7 @@ class Client_functions extends common_function {
                                         $html .= '<div class="svgicon">
                                             <label class="switch">
                                                 <input type="checkbox" name="checkbox" '.$form_status_check.'>
-                                                <span class="slider"></span>
+                                                <span class="slider round"></span>
                                             </label>
                                         </div>';
                                         }

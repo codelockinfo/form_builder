@@ -28,7 +28,7 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.theme.default.min.css'); ?>" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/style_create-new-form.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/style_create-new-for1.css'); ?>" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
         <script> var store = "<?php echo $store; ?>"; </script>
@@ -42,6 +42,6 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style1.js'); ?>"></script>
-        <script src="<?php echo main_url('assets/js/shopify_client1.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client2.js'); ?>"></script>
   
    

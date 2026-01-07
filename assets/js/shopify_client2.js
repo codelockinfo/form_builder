@@ -169,11 +169,17 @@ $.urlParam = function (name) {
         return results[1] || 0;
     }
 }
+// Function to update form count
+function updateFormCount() {
+    var count = $(".set_all_form .Polaris-ResourceList__HeaderWrapper").length;
+    $('.dataAdded').html('Showing ' + count + (count === 1 ? ' form' : ' forms'));
+}
+
 $(document).ready(function () {
+    // Update count after a short delay to ensure DOM is ready
     setTimeout(function () {
-        var count = $(".set_all_form .Polaris-ResourceList__HeaderWrapper").length;
-        $('.dataAdded').append('Showing ' + count + '  form');
-    }, 100);
+        updateFormCount();
+    }, 200);
 
     // $('.myeditor').each(function(index,item){
     //     CKEDITOR.replace(item);
@@ -883,7 +889,11 @@ function getAllForm() {
             if (comeback['code'] != undefined && comeback['code'] == '403') {
                 redirect403();
             } else {
-                $(".set_all_form").html(comeback['outcome'])
+                $(".set_all_form").html(comeback['outcome']);
+                // Update form count after forms are loaded
+                setTimeout(function() {
+                    updateFormCount();
+                }, 100);
             }
         }
     });
