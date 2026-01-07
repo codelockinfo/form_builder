@@ -1474,6 +1474,248 @@ class Client_functions extends common_function {
                 return array('result' => 'success', 'data' => array());
             }
             
+            // Get form field configuration to know what columns to display
+            $form_fields_config = array();
+            $where_query_form_data = array(["", "form_id", "=", "$form_id"]);
+            $form_data_result = $this->select_result(TABLE_FORM_DATA, 'element_id, element_data, id', $where_query_form_data);
+            
+            // Also get all unique field names from submissions to match them
+            $all_field_names = array();
+            if (isset($submissions['data']) && is_array($submissions['data']) && !empty($submissions['data'])) {
+                foreach ($submissions['data'] as $submission) {
+                    $submission_data_json = isset($submission['submission_data']) ? $submission['submission_data'] : '';
+                    if (!empty($submission_data_json)) {
+                        $submission_data = @json_decode($submission_data_json, true);
+                        if (is_array($submission_data)) {
+                            foreach ($submission_data as $field_name => $field_value) {
+                                // Skip system fields
+                                if (!in_array($field_name, array('routine_name', 'store', 'form_id', 'id'))) {
+                                    if (!isset($all_field_names[$field_name])) {
+                                        $all_field_names[$field_name] = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Also treat "name" as a text field (some forms use "name" instead of "text")
+            if (isset($all_field_names['name'])) {
+                $all_field_names['text'] = true; // Allow matching text fields to "name" field
+            }
+            
+            // Build field configuration map - match by order/position
+            if (isset($form_data_result['data']) && is_array($form_data_result['data'])) {
+                // Sort form fields by position to maintain order
+                usort($form_data_result['data'], function($a, $b) {
+                    $pos_a = isset($a['position']) ? intval($a['position']) : 9999;
+                    $pos_b = isset($b['position']) ? intval($b['position']) : 9999;
+                    if ($pos_a == $pos_b) {
+                        $id_a = isset($a['id']) ? intval($a['id']) : 9999;
+                        $id_b = isset($b['id']) ? intval($b['id']) : 9999;
+                        return $id_a - $id_b;
+                    }
+                    return $pos_a - $pos_b;
+                });
+                
+                // Get field names from submissions in order they appear
+                $submission_field_order = array();
+                if (!empty($submissions['data'])) {
+                    $first_submission = $submissions['data'][0];
+                    $submission_data_json = isset($first_submission['submission_data']) ? $first_submission['submission_data'] : '';
+                    if (!empty($submission_data_json)) {
+                        $submission_data = @json_decode($submission_data_json, true);
+                        if (is_array($submission_data)) {
+                            foreach ($submission_data as $field_name => $field_value) {
+                                if (!in_array($field_name, array('routine_name', 'store', 'form_id', 'id'))) {
+                                    $submission_field_order[] = $field_name;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Track counters for fields that can have multiple instances
+                $field_type_counters = array('text' => 0, 'email' => 0, 'textarea' => 0, 'phone' => 0, 
+                                            'password' => 0, 'date' => 0, 'file' => 0, 'checkbox' => 0,
+                                            'select' => 0, 'radio' => 0, 'address' => 0);
+                
+                // Track which submission fields we've already matched
+                $matched_submission_fields = array();
+                
+                foreach ($form_data_result['data'] as $element) {
+                    $element_id = isset($element['element_id']) ? $element['element_id'] : '';
+                    $element_data = isset($element['element_data']) ? $element['element_data'] : '';
+                    $form_data_id = isset($element['id']) ? $element['id'] : '';
+                    
+                    // Unserialize element_data to get field label
+                    $unserialized_data = @unserialize($element_data);
+                    if ($unserialized_data !== false && is_array($unserialized_data) && !empty($unserialized_data)) {
+                        $field_label = isset($unserialized_data[0]) ? $unserialized_data[0] : '';
+                        
+                        // Map element_id to field name pattern (how it's stored in submission_data)
+                        $field_name_base = '';
+                        switch($element_id) {
+                            case '1': // Text
+                                $field_name_base = 'text';
+                                break;
+                            case '2': // Email
+                                $field_name_base = 'email';
+                                break;
+                            case '3': // Textarea
+                                $field_name_base = 'textarea';
+                                break;
+                            case '4': // Phone
+                                $field_name_base = 'phone';
+                                break;
+                            case '8': // Password
+                                $field_name_base = 'password';
+                                break;
+                            case '9': // Date
+                                $field_name_base = 'date';
+                                break;
+                            case '10': // File Upload
+                                $field_name_base = 'file';
+                                break;
+                            case '6': // Checkbox
+                                $field_name_base = 'checkbox';
+                                break;
+                            case '7': // Select/Dropdown
+                                $field_name_base = 'select';
+                                break;
+                            case '11': // Radio
+                                $field_name_base = 'radio';
+                                break;
+                            case '12': // Address
+                                $field_name_base = 'address';
+                                break;
+                        }
+                        
+                        if (!empty($field_name_base)) {
+                            $matched_field_name = null;
+                            
+                            // For fields that can have multiple instances (text, email, etc.)
+                            // Match them sequentially by finding the next unmatched field of this type
+                            if (in_array($element_id, array('1', '2'))) {
+                                // For text fields, also check for "name" field (some forms use "name" instead of "text")
+                                if ($element_id == '1' && stripos($field_label, 'name') !== false) {
+                                    // If label contains "name", try to match "name" field first
+                                    if (isset($all_field_names['name']) && !isset($matched_submission_fields['name'])) {
+                                        $matched_field_name = 'name';
+                                        $matched_submission_fields['name'] = true;
+                                    }
+                                }
+                                
+                                // For text and email fields, find the next unmatched occurrence
+                                if (!$matched_field_name) {
+                                    foreach ($submission_field_order as $sub_field_name) {
+                                        if ($sub_field_name === $field_name_base && !isset($matched_submission_fields[$sub_field_name])) {
+                                            // This is the first unmatched field of this type
+                                            $matched_field_name = $sub_field_name;
+                                            $matched_submission_fields[$sub_field_name] = true;
+                                            break;
+                                        } elseif ($sub_field_name === $field_name_base) {
+                                            // We've already matched one, skip to find the next
+                                            continue;
+                                        }
+                                    }
+                                }
+                                
+                                // If still no match, use the field name directly (will be matched by order)
+                                if (!$matched_field_name && isset($all_field_names[$field_name_base])) {
+                                    $matched_field_name = $field_name_base;
+                                }
+                            } else {
+                                // For fields with suffixes, try pattern matching
+                                // Try with form_data_id suffix first
+                                $try_name = $field_name_base . '-' . $form_data_id;
+                                if (isset($all_field_names[$try_name])) {
+                                    $matched_field_name = $try_name;
+                                } else {
+                                    // Try with sequential suffix
+                                    $field_type_counters[$field_name_base]++;
+                                    $try_name = $field_name_base . '-' . $field_type_counters[$field_name_base];
+                                    if (isset($all_field_names[$try_name])) {
+                                        $matched_field_name = $try_name;
+                                    } elseif (isset($all_field_names[$field_name_base])) {
+                                        // Fallback to base name
+                                        $matched_field_name = $field_name_base;
+                                    }
+                                }
+                            }
+                            
+                            // Create unique key using form_data_id to handle multiple fields of same type
+                            $unique_key = $field_name_base . '_' . $form_data_id;
+                            
+                            // Generate expected field name from label (same logic as form generation)
+                            $expected_field_name = strtolower(trim($field_label));
+                            $expected_field_name = preg_replace('/[^a-z0-9]+/', '-', $expected_field_name);
+                            $expected_field_name = trim($expected_field_name, '-');
+                            if (empty($expected_field_name)) {
+                                $expected_field_name = $field_name_base . '-' . $form_data_id;
+                            }
+                            
+                            // Try to match by expected field name first (for new dynamic names)
+                            $actual_field_name = $matched_field_name;
+                            if (!$actual_field_name && isset($all_field_names[$expected_field_name])) {
+                                $actual_field_name = $expected_field_name;
+                            }
+                            
+                            // For text fields, try to match by checking all possible field names in submissions
+                            if (!$actual_field_name && $element_id == '1') {
+                                // For text fields, check all field names that might match
+                                foreach ($all_field_names as $sub_field_name => $dummy) {
+                                    // Check if this field name matches the label pattern
+                                    $label_slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($field_label)));
+                                    $label_slug = trim($label_slug, '-');
+                                    
+                                    // Check if field name matches label slug or contains similar pattern
+                                    if ($sub_field_name === $label_slug || 
+                                        $sub_field_name === str_replace(' ', '-', strtolower($field_label)) ||
+                                        (stripos($field_label, 'name') !== false && $sub_field_name === 'name')) {
+                                        $actual_field_name = $sub_field_name;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            // For text fields labeled "Name", also check if submissions use "name" field
+                            if ($element_id == '1' && stripos($field_label, 'name') !== false && isset($all_field_names['name'])) {
+                                // Prefer "name" if available and label contains "name"
+                                if (!$actual_field_name || $actual_field_name === 'text') {
+                                    $actual_field_name = 'name';
+                                }
+                            }
+                            
+                            if ($actual_field_name || !empty($field_name_base)) {
+                                // Store with both the matched name and unique key
+                                $form_fields_config[$unique_key] = array(
+                                    'label' => $field_label,
+                                    'element_id' => $element_id,
+                                    'form_data_id' => $form_data_id,
+                                    'field_name' => $actual_field_name ? $actual_field_name : ($expected_field_name ? $expected_field_name : $field_name_base), // Actual field name in submissions
+                                    'field_name_base' => $field_name_base,
+                                    'expected_field_name' => $expected_field_name, // Field name generated from label
+                                    'can_use_name' => ($element_id == '1' && isset($all_field_names['name'])) // Flag to check "name" field
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Also add any fields from submissions that weren't matched (fallback)
+            foreach ($all_field_names as $field_name => $dummy) {
+                if (!isset($form_fields_config[$field_name])) {
+                    $form_fields_config[$field_name] = array(
+                        'label' => ucfirst(str_replace('-', ' ', $field_name)),
+                        'element_id' => '',
+                        'form_data_id' => ''
+                    );
+                }
+            }
+            
             // Get submissions for this form, ensuring it belongs to the store
             $where_query = array(["", "form_id", "=", "$form_id"]);
              $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
@@ -1488,9 +1730,17 @@ class Client_functions extends common_function {
             }
              
              if (isset($submissions['data'])) {
-                  $response_data = array('result' => 'success', 'data' => $submissions['data']);
+                  $response_data = array(
+                      'result' => 'success', 
+                      'data' => $submissions['data'],
+                      'form_fields' => $form_fields_config // Include field configuration
+                  );
              } else {
-                 $response_data = array('result' => 'success', 'data' => array());
+                 $response_data = array(
+                     'result' => 'success', 
+                     'data' => array(),
+                     'form_fields' => $form_fields_config
+                 );
              }
         } else {
             $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
@@ -2287,6 +2537,46 @@ class Client_functions extends common_function {
                     }
                     $form_html .= '<div class="content flex-wrap block-container" data-id="false">';
                     
+                    // Function to generate field name from label
+                    $field_name_map = array(); // Track field names to ensure uniqueness
+                    $generate_field_name = function($label, $element_id, $form_data_id) use (&$field_name_map) {
+                        if (empty($label)) {
+                            // Fallback to element type + form_data_id
+                            $base_name = ($element_id == '1') ? 'text' : (($element_id == '2') ? 'email' : 'field');
+                            return $base_name . '-' . $form_data_id;
+                        }
+                        
+                        // Convert label to URL-safe field name
+                        $field_name = strtolower(trim($label));
+                        // Replace spaces and special chars with hyphens
+                        $field_name = preg_replace('/[^a-z0-9]+/', '-', $field_name);
+                        // Remove leading/trailing hyphens
+                        $field_name = trim($field_name, '-');
+                        // Limit length
+                        if (strlen($field_name) > 50) {
+                            $field_name = substr($field_name, 0, 50);
+                        }
+                        // Ensure it's not empty
+                        if (empty($field_name)) {
+                            $base_name = ($element_id == '1') ? 'text' : (($element_id == '2') ? 'email' : 'field');
+                            $field_name = $base_name . '-' . $form_data_id;
+                        }
+                        
+                        // Ensure uniqueness - if name already exists, append form_data_id
+                        $original_name = $field_name;
+                        $counter = 1;
+                        while (isset($field_name_map[$field_name])) {
+                            $field_name = $original_name . '-' . $form_data_id;
+                            if (isset($field_name_map[$field_name])) {
+                                $field_name = $original_name . '-' . $counter . '-' . $form_data_id;
+                                $counter++;
+                            }
+                        }
+                        
+                        $field_name_map[$field_name] = true;
+                        return $field_name;
+                    };
+                    
                     // Only loop if we have data
                     if(!empty($element_data_array)) {
                         error_log("Starting to process " . count($element_data_array) . " elements for HTML generation");
@@ -2399,13 +2689,17 @@ class Client_functions extends common_function {
                                 }
 
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column  container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                                     <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                                     <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Name" data-formdataid="'.$form_data_id.'">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
+                                                        <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$readonly_attr.'>
                                                     </div>
                                                     <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -2887,11 +3181,15 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                         <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="First Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
+                                            <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                     </div>';
@@ -2915,11 +3213,15 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+                                // Generate field name from label
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                             <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
                                             <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Last Name">'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                             <div class="globo-form-input">
-                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="text" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
+                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                             </div>
                                             <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                         </div>';
