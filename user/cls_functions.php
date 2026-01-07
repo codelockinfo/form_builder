@@ -3498,17 +3498,16 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
         function initFormHandlers() {
             console.log("=== Initializing Form Submission Handlers ===");
             
+            // Find forms directly - don't rely on wrapper
+            var allForms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+            console.log("Found forms (direct):", allForms.length);
+            
             // Find forms in the current scope (within the form wrapper)
             var formWrappers = document.querySelectorAll(".form-builder-wrapper");
             console.log("Found form wrappers:", formWrappers.length);
             
-            // Use for loop instead of forEach for compatibility
-            for (var w = 0; w < formWrappers.length; w++) {
-                var wrapper = formWrappers[w];
-                var forms = wrapper.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
-                console.log("Found forms in wrapper:", forms.length);
-                
-                for (var i = 0; i < forms.length; i++) {
+            // Process forms directly first
+            for (var i = 0; i < allForms.length; i++) {
                     var form = forms[i];
                     console.log("Processing form", i, form);
                     
@@ -3749,11 +3748,10 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
                     
                     // Check if this is a floating form (form_type == 4) AND we're on storefront
                     if ($form_type == '4' && $is_storefront) {
-                        // Floating form: wrap in popup overlay structure
+                        // Floating form: wrap in popup overlay structure - PUT SCRIPT AFTER FORM HTML
                         $form_html = '<div class="' . $form_wrapper_class . '">' . 
                                     $css_links . 
                                     $all_css . 
-                                    $form_js .
                                     '<!-- Floating Form Icon -->
                                     <div class="floating-form-icon" id="floating-form-icon-' . $form_id . '">
                                         <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="envelope" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -3771,15 +3769,16 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
                                             ' . $form_html . '
                                         </div>
                                     </div>
+                                    ' . $form_js . '
                                     </div>';
                         error_log("Floating form HTML wrapped with popup structure. Form ID: " . $form_id);
                     } else {
-                        // Regular form: normal wrapper
+                        // Regular form: normal wrapper - PUT SCRIPT AFTER FORM HTML so it can find the form
                         $form_html = '<div class="' . $form_wrapper_class . '">' . 
                                     $css_links . 
                                     $all_css . 
-                                    $form_js .
                                     $form_html . 
+                                    $form_js .
                                     '</div>';
                         error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
                     }
