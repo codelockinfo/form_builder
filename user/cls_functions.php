@@ -3493,13 +3493,15 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
 (function() {
     console.log("=== Form Builder Inline Script Executing ===");
     console.log("Current URL:", window.location.href);
+    console.log("Script loaded at:", new Date().toISOString());
+    console.log("Document ready state:", document.readyState);
     
         // Function to initialize handlers
         function initFormHandlers() {
             console.log("=== Initializing Form Submission Handlers ===");
             
             // Find forms directly - dont rely on wrapper
-            var allForms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+            var allForms = document.querySelectorAll("form.get_selected_elements");
             console.log("Found forms (direct):", allForms.length);
             
             // Find forms in the current scope (within the form wrapper)
@@ -3701,22 +3703,78 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
                         currentForm.addEventListener("submit", handleFormSubmit);
                         console.log("Submit handler attached to form", i);
                         
-                        // Also attach click handlers to submit buttons
-                        var submitButtons = currentForm.querySelectorAll("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit, button.action.submit");
+                        // Also attach click handlers to submit buttons - use comprehensive selectors
+                        var submitButtons = currentForm.querySelectorAll(
+                            "button.submit, " +
+                            ".submit.action, " +
+                            ".action.submit, " +
+                            ".footer-data__submittext, " +
+                            "button[type=\'submit\'], " +
+                            "button.action.submit, " +
+                            ".classic-button.submit, " +
+                            ".classic-button.action.submit, " +
+                            "button.classic-button.submit, " +
+                            "button.action.submit.classic-button, " +
+                            "button.footer-data__submittext, " +
+                            ".action.submit.classic-button.footer-data__submittext"
+                        );
                         console.log("Found", submitButtons.length, "submit buttons in form", i);
                         
+                        // If no buttons found with those selectors, try finding ANY button in the form
+                        if (submitButtons.length === 0) {
+                            console.log("No buttons found with standard selectors, trying all buttons...");
+                            var allButtons = currentForm.querySelectorAll("button");
+                            console.log("Found", allButtons.length, "total buttons in form");
+                            for (var b = 0; b < allButtons.length; b++) {
+                                var btn = allButtons[b];
+                                var btnText = btn.textContent || btn.innerText || "";
+                                var btnClasses = btn.className || "";
+                                console.log("Button", b, "- Text:", btnText.trim(), "- Classes:", btnClasses);
+                                // Check if button looks like a submit button
+                                if (btnText.toLowerCase().indexOf("submit") > -1 || 
+                                    btnClasses.indexOf("submit") > -1 ||
+                                    btnClasses.indexOf("action") > -1) {
+                                    submitButtons = [btn];
+                                    console.log("Found submit button by text/class:", btn);
+                                    break;
+                                }
+                            }
+                        }
+                        
                         for (var j = 0; j < submitButtons.length; j++) {
-                            (function(btn) {
-                                btn.addEventListener("click", function(e) {
+                            (function(btn, btnIndex) {
+                                // Remove any existing listeners by cloning
+                                var newBtn = btn.cloneNode(true);
+                                if (btn.parentNode) {
+                                    btn.parentNode.replaceChild(newBtn, btn);
+                                }
+                                
+                                // Attach click handler
+                                newBtn.addEventListener("click", function(e) {
                                     e.preventDefault();
                                     e.stopPropagation();
+                                    e.stopImmediatePropagation();
                                     console.log("=== SUBMIT BUTTON CLICKED ===");
-                                    console.log("Button:", btn);
+                                    console.log("Button index:", btnIndex);
+                                    console.log("Button element:", newBtn);
+                                    console.log("Button classes:", newBtn.className);
+                                    console.log("Button text:", (newBtn.textContent || newBtn.innerText || "").trim());
                                     handleFormSubmit(e);
+                                    return false;
                                 });
-                                console.log("Click handler attached to button", j);
-                            })(submitButtons[j]);
+                                
+                                console.log("Click handler attached to button", btnIndex, "- Classes:", newBtn.className);
+                            })(submitButtons[j], j);
                         }
+                        
+                        // Also attach to form submit event as backup
+                        currentForm.addEventListener("submit", function(e) {
+                            console.log("=== FORM SUBMIT EVENT (backup handler) ===");
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleFormSubmit(e);
+                            return false;
+                        });
                         
                         console.log("All handlers attached to form", i);
                     })(form);
@@ -3725,23 +3783,75 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
         }
         
         // Run immediately and also on delays to catch dynamically loaded forms
+        console.log("=== Starting form handler initialization ===");
         initFormHandlers();
-        setTimeout(initFormHandlers, 100);
-        setTimeout(initFormHandlers, 500);
-        setTimeout(initFormHandlers, 1000);
-        setTimeout(initFormHandlers, 2000);
+        setTimeout(function() { console.log("Retry 1 (100ms)"); initFormHandlers(); }, 100);
+        setTimeout(function() { console.log("Retry 2 (500ms)"); initFormHandlers(); }, 500);
+        setTimeout(function() { console.log("Retry 3 (1000ms)"); initFormHandlers(); }, 1000);
+        setTimeout(function() { console.log("Retry 4 (2000ms)"); initFormHandlers(); }, 2000);
+        setTimeout(function() { console.log("Retry 5 (3000ms)"); initFormHandlers(); }, 3000);
+        setTimeout(function() { console.log("Retry 6 (5000ms)"); initFormHandlers(); }, 5000);
+        
+        // Also run when DOM is ready
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function() {
+                console.log("DOMContentLoaded event fired");
+                initFormHandlers();
+            });
+        }
+        
+        // Run when window loads
+        window.addEventListener("load", function() {
+            console.log("Window load event fired");
+            initFormHandlers();
+        });
         
         // Use MutationObserver to detect when form is added
         if (typeof MutationObserver !== "undefined") {
-            var observer = new MutationObserver(function() {
-                var forms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+            var observer = new MutationObserver(function(mutations) {
+                var forms = document.querySelectorAll("form.get_selected_elements");
                 if (forms.length > 0) {
-                    console.log("Form detected via MutationObserver");
+                    console.log("Form detected via MutationObserver - forms found:", forms.length);
                     initFormHandlers();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true });
+            console.log("MutationObserver started");
+        } else {
+            console.log("MutationObserver not supported");
         }
+        
+        // Also try to find buttons directly and attach handlers
+        function attachToAllButtons() {
+            var allButtons = document.querySelectorAll("button.action.submit.classic-button.footer-data__submittext, button.footer-data__submittext, .footer-data__submittext");
+            console.log("=== Direct button search ===");
+            console.log("Found buttons with footer-data__submittext:", allButtons.length);
+            for (var i = 0; i < allButtons.length; i++) {
+                var btn = allButtons[i];
+                console.log("Button", i, "- Classes:", btn.className, "- Text:", (btn.textContent || btn.innerText || "").trim());
+                // Find the form this button belongs to
+                var form = btn.closest("form");
+                if (form) {
+                    console.log("Found form for button", i);
+                    // Attach handler
+                    (function(currentBtn, currentForm) {
+                        currentBtn.addEventListener("click", function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log("=== DIRECT BUTTON CLICK HANDLER ===");
+                            console.log("Form:", currentForm);
+                            if (currentForm) {
+                                currentForm.dispatchEvent(new Event("submit"));
+                            }
+                        });
+                    })(btn, form);
+                }
+            }
+        }
+        
+        setTimeout(attachToAllButtons, 500);
+        setTimeout(attachToAllButtons, 2000);
+        setTimeout(attachToAllButtons, 5000);
     })();
 </script>';
                     }
