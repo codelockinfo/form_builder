@@ -3186,15 +3186,16 @@ class Client_functions extends common_function {
                         $ajax_base_url = rtrim($ajax_base_url, '/'); // Remove trailing slash
                         
                         $form_js = '
-<script>
-console.log("=== Form Builder Script Initialization ===");
-console.log("Form ID: ' . $form_id . '");
-console.log("Shop Domain: ' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '");
-console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php");
-
-// Inline form submission handler - works immediately without waiting for external scripts
+<script type="text/javascript">
+console.log("SCRIPT TAG STARTED");
 (function() {
     "use strict";
+    console.log("=== Form Builder Inline Script Executing ===");
+    console.log("Form ID: ' . intval($form_id) . '");
+    console.log("Shop Domain: ' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '");
+    console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php");
+    console.log("Script loaded at:", new Date().toISOString());
+    console.log("Document ready state:", document.readyState);
     
     function getShopDomain() {
         // Try multiple methods to get shop domain
@@ -3381,7 +3382,7 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
         }
         
         // Also handle form submit events
-        var forms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+        var forms = document.querySelectorAll("form.get_selected_elements");
         console.log("Found forms:", forms.length);
         
         // Use for loop instead of forEach for better compatibility
@@ -3397,7 +3398,7 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
     // Function to initialize handlers - runs immediately and also on delays
     function initializeHandlers() {
         // Check if form exists in DOM
-        var formExists = document.querySelector("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+        var formExists = document.querySelector("form.get_selected_elements");
         if (formExists) {
             console.log("Form found in DOM, attaching handlers...");
             attachHandlers();
@@ -3423,7 +3424,7 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
     // Use MutationObserver to detect when form is added to DOM
     if (typeof MutationObserver !== "undefined") {
         var observer = new MutationObserver(function(mutations) {
-            var formExists = document.querySelector("form.get_selected_elements, form[class*=\'get_selected_elements\']");
+            var formExists = document.querySelector("form.get_selected_elements");
             if (formExists) {
                 console.log("Form detected via MutationObserver, attaching handlers...");
                 attachHandlers();
