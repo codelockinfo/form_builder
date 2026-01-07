@@ -1476,22 +1476,22 @@ class Client_functions extends common_function {
             
             // Get submissions for this form, ensuring it belongs to the store
             $where_query = array(["", "form_id", "=", "$form_id"]);
-            $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
+             $submissions = $this->select_result(TABLE_FORM_SUBMISSIONS, '*', $where_query);
             
-            // Order by created_at descending (newest first)
+            // Order by created_at ascending (oldest first)
             if (isset($submissions['data']) && is_array($submissions['data'])) {
                 usort($submissions['data'], function($a, $b) {
                     $date_a = isset($a['created_at']) ? strtotime($a['created_at']) : 0;
                     $date_b = isset($b['created_at']) ? strtotime($b['created_at']) : 0;
-                    return $date_b - $date_a; // Descending order
+                    return $date_a - $date_b; // Ascending order (oldest first)
                 });
             }
              
-            if (isset($submissions['data'])) {
-                $response_data = array('result' => 'success', 'data' => $submissions['data']);
-            } else {
-                $response_data = array('result' => 'success', 'data' => array());
-            }
+             if (isset($submissions['data'])) {
+                  $response_data = array('result' => 'success', 'data' => $submissions['data']);
+             } else {
+                 $response_data = array('result' => 'success', 'data' => array());
+             }
         } else {
             $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
         }
@@ -8164,7 +8164,7 @@ class Client_functions extends common_function {
             $submission_data_json = json_encode($submission_data);
             error_log("JSON encoded submission_data: " . $submission_data_json);
             error_log("JSON length: " . strlen($submission_data_json));
-            
+
             $fields_arr = array(
                 'form_id' => $form_id,
                 'submission_data' => $submission_data_json,
@@ -8172,7 +8172,7 @@ class Client_functions extends common_function {
                 'ip_address' => $ip_address,
                 'status' => 0
             );
-            
+
             // Remove 'id' key if it exists and is empty
             if (isset($fields_arr['id']) && ($fields_arr['id'] === '' || $fields_arr['id'] === null)) {
                 unset($fields_arr['id']);

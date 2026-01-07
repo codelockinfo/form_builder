@@ -100,16 +100,43 @@
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = formHtml;
         
-        // Extract all script tags
+        // Extract all script tags - with error handling
         const scripts = tempDiv.querySelectorAll('script');
-        scripts.forEach(function(oldScript) {
-          const newScript = document.createElement('script');
-          Array.from(oldScript.attributes).forEach(function(attr) {
-            newScript.setAttribute(attr.name, attr.value);
-          });
-          newScript.textContent = oldScript.textContent;
-          document.head.appendChild(newScript);
-          oldScript.remove();
+        console.log('Found scripts in form HTML:', scripts.length);
+        scripts.forEach(function(oldScript, scriptIdx) {
+          try {
+            const scriptContent = oldScript.textContent || oldScript.innerHTML || '';
+            // Skip empty scripts
+            if (!scriptContent.trim()) {
+              console.log(`Skipping empty script ${scriptIdx}`);
+              return;
+            }
+            
+            const newScript = document.createElement('script');
+            Array.from(oldScript.attributes).forEach(function(attr) {
+              newScript.setAttribute(attr.name, attr.value);
+            });
+            newScript.textContent = scriptContent;
+            
+            // Use try-catch for appending
+            try {
+              document.head.appendChild(newScript);
+              console.log(`Script ${scriptIdx} appended successfully`);
+            } catch(appendError) {
+              console.error(`Error appending script ${scriptIdx}:`, appendError);
+              // Try using eval as fallback (less ideal but works)
+              try {
+                eval(scriptContent);
+                console.log(`Script ${scriptIdx} executed via eval`);
+              } catch(evalError) {
+                console.error(`Error executing script ${scriptIdx} via eval:`, evalError);
+              }
+            }
+            oldScript.remove();
+          } catch(scriptError) {
+            console.error(`Error processing script ${scriptIdx}:`, scriptError);
+            console.error('Script content preview:', (oldScript.textContent || oldScript.innerHTML || '').substring(0, 200));
+          }
         });
         
         // Insert HTML without script tags
@@ -212,6 +239,103 @@
         '<small>Please check that the Form ID is correct and the form exists in your app.</small>' +
         '</div>';
     }
+  }
+  
+  // Function to show inline notification messages (replaces alerts)
+  function showNotification(message, type) {
+    type = type || 'success'; // 'success' or 'error'
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    if (!blockContainer) {
+      // Fallback to alert if container not found
+      alert(message);
+      return;
+    }
+    
+    // Remove any existing notifications
+    const existingNotification = blockContainer.querySelector('.form-notification');
+    if (existingNotification) {
+      existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'form-notification form-notification-' + type;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#4caf50' : '#f44336'};
+      color: white;
+      padding: 16px 24px;
+      border-radius: 4px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10000;
+      font-size: 16px;
+      font-weight: 500;
+      max-width: 400px;
+      animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+    
+    // Add animation styles if not already added
+    if (!document.getElementById('form-notification-styles')) {
+      const style = document.createElement('style');
+      style.id = 'form-notification-styles';
+      style.textContent = `
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slideOut {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        .form-notification {
+          animation: slideIn 0.3s ease-out;
+        }
+        .form-notification.hiding {
+          animation: slideOut 0.3s ease-out;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // Insert notification
+    document.body.appendChild(notification);
+    
+    // Auto-dismiss after 3 seconds for success, 5 seconds for error
+    const dismissTime = type === 'success' ? 3000 : 5000;
+    setTimeout(function() {
+      notification.classList.add('hiding');
+      setTimeout(function() {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, dismissTime);
+    
+    // Also allow manual dismiss on click
+    notification.style.cursor = 'pointer';
+    notification.addEventListener('click', function() {
+      notification.classList.add('hiding');
+      setTimeout(function() {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    });
   }
   
   function initializeFormSubmission() {
@@ -330,8 +454,8 @@
             input.value = oldValue;
           });
           
-          // Show alert to user
-          alert('Error: Form fields appear to be empty. Please ensure you can type in the form fields. If you cannot type, the form may have an issue. Check the browser console for details.');
+          // Show error notification
+          showNotification('Error: Form fields appear to be empty. Please fill out the form before submitting.', 'error');
           return false; // Stop submission
         }
         
@@ -372,7 +496,7 @@
         if (formFieldNames.length === 0) {
           console.error('ERROR: No form fields found! Form might be empty or fields have no name attributes.');
           console.error('Form HTML:', form.outerHTML.substring(0, 500));
-          alert('Error: Form fields not found. Please check form configuration. Check console for details.');
+          showNotification('Error: Form fields not found. Please check form configuration.', 'error');
           return false;
         }
         
@@ -427,11 +551,11 @@
           }
           
           if (data.result === 'success') {
-            alert(data.msg || 'Form submitted successfully!');
+            showNotification(data.msg || 'Form submitted successfully!', 'success');
             form.reset();
             console.log('Form reset');
           } else {
-            alert(data.msg || 'Something went wrong. Please try again.');
+            showNotification(data.msg || 'Something went wrong. Please try again.', 'error');
           }
         })
         .catch(function(error) {
@@ -444,7 +568,7 @@
               submitBtn.innerHTML = originalText;
             }
           }
-          alert('An error occurred. Please check the console.');
+          showNotification('An error occurred. Please try again.', 'error');
         });
         
         return false;
@@ -454,18 +578,45 @@
       form.addEventListener('submit', handleFormSubmit);
       console.log('Submit handler attached to form', index);
       
-      // Also attach to submit buttons
-      const submitButtons = form.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button');
-      console.log('Found submit buttons:', submitButtons.length);
+      // Also attach to submit buttons - search more broadly
+      // First try within form
+      let submitButtons = form.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button, button.action.submit, .action.submit.classic-button.footer-data__submittext');
+      console.log('Found submit buttons in form:', submitButtons.length);
+      
+      // If none found, search in the block container (button might be outside form)
+      if (submitButtons.length === 0) {
+        submitButtons = blockContainer.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button, button.action.submit, .action.submit.classic-button.footer-data__submittext, button[class*="submit"], button[class*="action"]');
+        console.log('Found submit buttons in block container:', submitButtons.length);
+      }
+      
+      // Log all buttons found for debugging
+      if (submitButtons.length === 0) {
+        const allButtons = blockContainer.querySelectorAll('button');
+        console.warn('No submit buttons found with selectors. All buttons in container:', allButtons.length);
+        allButtons.forEach(function(btn, idx) {
+          const classes = btn.className || '';
+          const text = btn.textContent || btn.innerText || '';
+          console.log(`Button ${idx}: classes="${classes}", text="${text.trim().substring(0, 30)}", type="${btn.type}"`);
+        });
+      }
       
       submitButtons.forEach(function(btn, btnIndex) {
-        btn.addEventListener('click', function(e) {
+        // Remove any existing listeners by cloning
+        const newBtn = btn.cloneNode(true);
+        if (btn.parentNode) {
+          btn.parentNode.replaceChild(newBtn, btn);
+        }
+        
+        newBtn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
+          e.stopImmediatePropagation();
           console.log('=== SUBMIT BUTTON CLICKED ===', btnIndex);
+          console.log('Button element:', newBtn);
+          console.log('Button classes:', newBtn.className);
           handleFormSubmit(e);
         });
-        console.log('Click handler attached to button', btnIndex);
+        console.log('Click handler attached to button', btnIndex, 'with classes:', newBtn.className);
       });
     });
   }
