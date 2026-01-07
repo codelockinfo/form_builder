@@ -5,7 +5,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
 <body style="padding: 20px;">
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="margin-bottom: 20px;">
-            <a href="index.php?shop=<?php echo $store; ?>" class="Polaris-Button">Back to Dashboard</a>
+            <a href="dashboard_submissions.php?shop=<?php echo $store; ?>" class="Polaris-Button">Back to Dashboard</a>
             <h2>Form Submissions</h2>
         </div>
         
@@ -30,15 +30,32 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
     <script>
     $(document).ready(function(){
         var form_id = "<?php echo $form_id; ?>";
+        console.log('Loading submissions for form_id:', form_id);
+        console.log('Store:', store);
+        
         $.ajax({
             url: "ajax_call.php",
             type: "post",
             dataType: "json",
             data: {'routine_name': 'getFormSubmissions', 'store': store, 'form_id': form_id},
             success: function (response) {
+                console.log('Submissions response:', response);
+                
+                // Handle case where response might be a string (double-encoded JSON)
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch(e) {
+                        console.error('Error parsing response:', e);
+                        $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: Invalid response from server</td></tr>');
+                        return;
+                    }
+                }
+                
                 if(response.result == 'success') {
                     var html = '';
                     if(response.data && response.data.length > 0) {
+                        console.log('Found', response.data.length, 'submissions');
                         $.each(response.data, function(i, item){
                             var dataStr = '';
                             try {
@@ -58,7 +75,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     }
                                 });
                             } catch(e) {
-                                console.error('Error parsing submission data:', e);
+                                console.error('Error parsing submission data:', e, item);
                                 dataStr = '<span style="color: #999;">Unable to parse submission data</span>';
                             }
                             
@@ -73,12 +90,18 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             html += '</tr>';
                         });
                     } else {
-                        html = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #999;">No submissions found</td></tr>';
+                        html = '<tr><td colspan="3" style="padding: 10px; text-align: center; color: #999;">No submissions found for this form</td></tr>';
                     }
                     $('#submissions_list').html(html);
                 } else {
+                    console.error('Error loading submissions:', response.msg || 'Unknown error');
                     $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: ' + (response.msg || 'Failed to load submissions') + '</td></tr>');
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                console.error('Response:', xhr.responseText);
+                $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: Failed to load submissions. Check console for details.</td></tr>');
             }
         });
     });

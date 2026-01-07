@@ -1429,13 +1429,13 @@ class Client_functions extends common_function {
             $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
             
             if ($store_user_id <= 0) {
-                return json_encode(array('result' => 'fail', 'msg' => 'Store not authenticated'));
+                return array('result' => 'fail', 'msg' => 'Store not authenticated');
             }
             
             $form_id_input = trim($_POST['form_id']);
             
             if (empty($form_id_input) || $form_id_input == 0) {
-                return json_encode(array('result' => 'fail', 'msg' => 'Form ID is required'));
+                return array('result' => 'fail', 'msg' => 'Form ID is required');
             }
 
             // Check if form_id_input is a public_id (6-digit number) or database ID
@@ -1453,7 +1453,7 @@ class Client_functions extends common_function {
                 if ($form_check['status'] == 1 && !empty($form_check['data'])) {
                     $form_id = (int)$form_check['data']['id'];
                 } else {
-                    return json_encode(array('result' => 'success', 'data' => array()));
+                    return array('result' => 'success', 'data' => array());
                 }
             } else {
                 // Assume it's a database ID, but verify it belongs to this store
@@ -1466,12 +1466,12 @@ class Client_functions extends common_function {
                 
                 if ($form_check['status'] != 1 || empty($form_check['data'])) {
                     // Form doesn't belong to this store or doesn't exist
-                    return json_encode(array('result' => 'success', 'data' => array()));
+                    return array('result' => 'success', 'data' => array());
                 }
             }
 
             if ($form_id <= 0) {
-                return json_encode(array('result' => 'success', 'data' => array()));
+                return array('result' => 'success', 'data' => array());
             }
             
             // Get submissions for this form, ensuring it belongs to the store
@@ -1492,9 +1492,12 @@ class Client_functions extends common_function {
             } else {
                 $response_data = array('result' => 'success', 'data' => array());
             }
+        } else {
+            $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
         }
 
-        return json_encode($response_data);
+        // Return array, not JSON - ajax_call.php will encode it
+        return $response_data;
     }
 
     function get_all_element_fun() {
@@ -3161,6 +3164,10 @@ class Client_functions extends common_function {
                         // Get shop domain for form submission
                         $shop_domain = isset($_POST['store']) ? $_POST['store'] : (isset($shopinfo->shop_name) ? $shopinfo->shop_name : '');
                         
+                        // Get base URL for AJAX calls
+                        $ajax_base_url = defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder';
+                        $ajax_base_url = rtrim($ajax_base_url, '/'); // Remove trailing slash
+                        
                         $form_js = '
 <script>
 console.log("=== Form Builder Script Initialization ===");
@@ -3258,11 +3265,11 @@ console.log("=== Form Builder Script Initialization ===");
             submitBtn.innerHTML = "Submitting...";
         }
         
-        // Get base URL - use MAIN_URL from PHP or detect from current page
-        var baseUrl = "' . (defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder') . '";
+        // Get base URL - use MAIN_URL from PHP (already trimmed in PHP)
+        var baseUrl = "' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '";
         
-        // Try to detect from script tags if baseUrl is not set
-        if (!baseUrl || baseUrl === "") {
+        // Try to detect from script tags if baseUrl is not set or empty
+        if (!baseUrl || baseUrl === "" || baseUrl === "undefined") {
             baseUrl = "https://codelocksolutions.com/form_builder";
             var scripts = document.querySelectorAll("script[src]");
             for (var i = 0; i < scripts.length; i++) {
@@ -3273,9 +3280,6 @@ console.log("=== Form Builder Script Initialization ===");
                 }
             }
         }
-        
-        // Ensure baseUrl doesn't end with slash
-        baseUrl = baseUrl.replace(/\/$/, "");
         
         var ajaxUrl = baseUrl + "/user/ajax_call.php";
         console.log("Submitting to:", ajaxUrl);
