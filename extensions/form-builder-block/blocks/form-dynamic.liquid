@@ -181,18 +181,61 @@
         console.log('Form ID:', formId);
         console.log('Shop:', shop);
         
-        // Create FormData - collect ALL form fields
-        const formData = new FormData(form);
-        
-        // Log all form inputs before creating FormData
-        console.log('=== Form Inputs Debug ===');
+        // Log all form inputs BEFORE modifying
+        console.log('=== Form Inputs Debug (BEFORE) ===');
         const allInputs = form.querySelectorAll('input, textarea, select');
         console.log('Total inputs found:', allInputs.length);
         allInputs.forEach(function(input, idx) {
           const name = input.name || input.getAttribute('name') || 'NO_NAME';
           const value = input.value || input.getAttribute('value') || '';
           const type = input.type || input.tagName.toLowerCase();
-          console.log(`Input ${idx}: name="${name}", type="${type}", value="${value.substring(0, 50)}"`);
+          const disabled = input.disabled;
+          const readonly = input.readOnly;
+          const hasValue = value.trim().length > 0;
+          console.log(`Input ${idx}: name="${name}", type="${type}", value="${value.substring(0, 50)}", disabled=${disabled}, readonly=${readonly}, hasValue=${hasValue}`);
+        });
+        
+        // Remove readonly/disabled attributes temporarily to ensure values are collected
+        const readonlyInputs = form.querySelectorAll('input[readonly], textarea[readonly]');
+        const disabledInputs = form.querySelectorAll('input[disabled], textarea[disabled]');
+        const readonlyStates = [];
+        const disabledStates = [];
+        
+        console.log('Readonly inputs found:', readonlyInputs.length);
+        console.log('Disabled inputs found:', disabledInputs.length);
+        
+        // Store and remove readonly
+        readonlyInputs.forEach(function(input) {
+          readonlyStates.push({element: input, name: input.name});
+          input.removeAttribute('readonly');
+          console.log('Removed readonly from:', input.name || 'unnamed input');
+        });
+        
+        // Store and enable disabled inputs
+        disabledInputs.forEach(function(input) {
+          disabledStates.push({element: input, name: input.name});
+          input.disabled = false;
+          console.log('Enabled input:', input.name || 'unnamed input');
+        });
+        
+        // Log inputs AFTER removing readonly/disabled
+        console.log('=== Form Inputs Debug (AFTER removing readonly/disabled) ===');
+        allInputs.forEach(function(input, idx) {
+          const name = input.name || input.getAttribute('name') || 'NO_NAME';
+          const value = input.value || input.getAttribute('value') || '';
+          const hasValue = value.trim().length > 0;
+          console.log(`Input ${idx}: name="${name}", value="${value.substring(0, 50)}", hasValue=${hasValue}`);
+        });
+        
+        // Create FormData AFTER removing readonly/disabled
+        const formData = new FormData(form);
+        
+        // Restore readonly/disabled states immediately
+        readonlyStates.forEach(function(state) {
+          state.element.setAttribute('readonly', 'readonly');
+        });
+        disabledStates.forEach(function(state) {
+          state.element.disabled = true;
         });
         
         // Add system fields

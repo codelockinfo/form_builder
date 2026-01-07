@@ -8118,12 +8118,24 @@ console.log("FB_IIFE_START");
             // Check if we only have system fields (which means no actual form data)
             $system_fields = array('routine_name', 'store', 'form_id', 'id');
             $has_form_data = false;
+            $form_data_details = array();
+            
             foreach ($submission_data as $key => $value) {
-                if (!in_array($key, $system_fields) && !empty($value)) {
-                    $has_form_data = true;
-                    break;
+                if (!in_array($key, $system_fields)) {
+                    $value_str = is_array($value) ? json_encode($value) : (string)$value;
+                    $value_length = strlen($value_str);
+                    $is_empty = empty($value) || trim($value_str) === '';
+                    $form_data_details[] = "Key: $key, Value: " . substr($value_str, 0, 100) . ", Length: $value_length, Empty: " . ($is_empty ? 'YES' : 'NO');
+                    
+                    if (!$is_empty) {
+                        $has_form_data = true;
+                    }
                 }
             }
+            
+            error_log("=== Form Data Validation ===");
+            error_log("Form data details: " . implode(" | ", $form_data_details));
+            error_log("Has form data: " . ($has_form_data ? 'YES' : 'NO'));
             
             if (!$has_form_data) {
                 error_log("ERROR: No actual form data found in submission!");
@@ -8132,7 +8144,8 @@ console.log("FB_IIFE_START");
                 // Return more detailed error message
                 $available_keys = array_keys($submission_data);
                 $keys_str = !empty($available_keys) ? implode(", ", $available_keys) : "NONE";
-                return array('result' => 'fail', 'msg' => 'No form data found in submission. Received keys: ' . $keys_str);
+                $details_str = implode("; ", $form_data_details);
+                return array('result' => 'fail', 'msg' => 'No form data found in submission. Received keys: ' . $keys_str . '. Details: ' . $details_str);
             }
             
             $mysql_date = date('Y-m-d H:i:s');
