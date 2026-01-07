@@ -49,20 +49,24 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                 }
                 
                 if(response.result == 'success') {
-                    var formFields = response.form_fields || {};
-                    var fieldOrder = Object.keys(formFields);
+                    // Use display_field_configs from backend (new format)
+                    var displayFieldConfigs = response.display_field_configs || [];
                     
-                    // Build a map for displaying fields - store configs in order
-                    var displayFieldConfigs = [];
-                    $.each(fieldOrder, function(idx, uniqueKey) {
-                        var fieldConfig = formFields[uniqueKey] || {};
-                        displayFieldConfigs.push({
-                            uniqueKey: uniqueKey,
-                            fieldName: fieldConfig.field_name || uniqueKey,
-                            fieldNameBase: fieldConfig.field_name_base || fieldConfig.field_name || uniqueKey,
-                            config: fieldConfig
+                    // If old format (form_fields), convert it
+                    if (displayFieldConfigs.length === 0 && response.form_fields) {
+                        var formFields = response.form_fields || {};
+                        var fieldOrder = Object.keys(formFields);
+                        
+                        $.each(fieldOrder, function(idx, uniqueKey) {
+                            var fieldConfig = formFields[uniqueKey] || {};
+                            displayFieldConfigs.push({
+                                uniqueKey: uniqueKey,
+                                fieldName: fieldConfig.field_name || uniqueKey,
+                                fieldNameBase: fieldConfig.field_name_base || fieldConfig.field_name || uniqueKey,
+                                config: fieldConfig
+                            });
                         });
-                    });
+                    }
                     
                     // Build table header with dynamic columns
                     var headerHtml = '<tr>';
@@ -130,53 +134,71 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 // Display each field in its own column (in order)
                                 $.each(displayFieldConfigs, function(idx, fieldInfo) {
                                     var fieldValue = '';
-                                    var fieldName = fieldInfo.fieldName;
-                                    var fieldNameBase = fieldInfo.fieldNameBase;
-                                    var fieldLabel = fieldInfo.config.label || '';
+                                    // Handle both old format (with fieldName property) and new format (with fieldName in config)
+                                    var fieldName = fieldInfo.fieldName || (fieldInfo.config && fieldInfo.config.field_name) || '';
+                                    var fieldNameBase = fieldInfo.fieldNameBase || (fieldInfo.config && fieldInfo.config.field_name_base) || '';
+                                    var fieldLabel = (fieldInfo.config && fieldInfo.config.label) || '';
                                     
-                                    // Check multiple possible field names
-                                    // Some forms might use "name" instead of "text" for the first text field
-                                    if (fieldNameBase === 'text') {
-                                        // Try "name" first if label contains "name" (common for first text field labeled "Name")
-                                        if ((fieldLabel.toLowerCase().indexOf('name') !== -1 || fieldInfo.config.can_use_name) && formData['name'] !== undefined) {
+                                    // First, try the exact field name from config (this handles dynamic names like "first-name", "last-name", etc.)
+                                    if (fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                        fieldValue = formData[fieldInfo.config.field_name];
+                                    }
+                                    // Try expected field name (generated from label)
+                                    else if (fieldInfo.config && fieldInfo.config.expected_field_name && formData[fieldInfo.config.expected_field_name] !== undefined) {
+                                        fieldValue = formData[fieldInfo.config.expected_field_name];
+                                    }
+                                    // Try fieldName directly
+                                    else if (fieldName && formData[fieldName] !== undefined) {
+                                        fieldValue = formData[fieldName];
+                                    }
+                                    // For text fields, try legacy names
+                                    else if (fieldNameBase === 'text') {
+                                        // Try "name" first if label contains "name"
+                                        if ((fieldLabel.toLowerCase().indexOf('name') !== -1 || (fieldInfo.config && fieldInfo.config.can_use_name)) && formData['name'] !== undefined) {
                                             fieldValue = formData['name'];
                                         } 
                                         // Then try "text" field
                                         else if (formData['text'] !== undefined) {
-                                            // If multiple text fields, get them in order
-                                            var textFields = [];
-                                            for (var key in formData) {
-                                                if (key === 'text' && formData.hasOwnProperty(key)) {
-                                                    textFields.push(formData[key]);
-                                                }
-                                            }
-                                            
-                                            // Count how many text fields come before this one
-                                            var textFieldIndex = 0;
-                                            for (var i = 0; i < idx; i++) {
-                                                if (displayFieldConfigs[i].fieldNameBase === 'text') {
-                                                    textFieldIndex++;
-                                                }
-                                            }
-                                            
-                                            if (textFields.length > textFieldIndex) {
-                                                fieldValue = textFields[textFieldIndex];
-                                            }
+                                            fieldValue = formData['text'];
                                         }
-                                        // Fallback: also try "name" if "text" not found
-                                        else if (formData['name'] !== undefined) {
-                                            fieldValue = formData['name'];
+                                        // Try matching by label slug (for dynamic names like "first-name")
+                                        else {
+                                            var labelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (labelSlug && formData[labelSlug] !== undefined) {
+                                                fieldValue = formData[labelSlug];
+                                            }
                                         }
                                     } 
-                                    // For email fields
+                                    // For email fields, try both "email" and label-based names
                                     else if (fieldNameBase === 'email') {
                                         if (formData['email'] !== undefined) {
                                             fieldValue = formData['email'];
+                                        } else {
+                                            var emailLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (emailLabelSlug && formData[emailLabelSlug] !== undefined) {
+                                                fieldValue = formData[emailLabelSlug];
+                                            }
                                         }
                                     }
-                                    // For other fields, try the field name directly
+                                    // For phone fields, try both "phone-1" and label-based names
+                                    else if (fieldNameBase === 'phone') {
+                                        if (formData['phone-1'] !== undefined) {
+                                            fieldValue = formData['phone-1'];
+                                        } else if (formData['phone'] !== undefined) {
+                                            fieldValue = formData['phone'];
+                                        } else {
+                                            var phoneLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (phoneLabelSlug && formData[phoneLabelSlug] !== undefined) {
+                                                fieldValue = formData[phoneLabelSlug];
+                                            }
+                                        }
+                                    }
+                                    // For other fields, try label-based name
                                     else {
-                                        if (formData[fieldName] !== undefined) {
+                                        var otherLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                        if (otherLabelSlug && formData[otherLabelSlug] !== undefined) {
+                                            fieldValue = formData[otherLabelSlug];
+                                        } else if (fieldName && formData[fieldName] !== undefined) {
                                             fieldValue = formData[fieldName];
                                         }
                                     }
@@ -201,7 +223,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             html += '</tr>';
                         });
                     } else {
-                        html = '<tr><td colspan="' + (2 + fieldOrder.length) + '" style="padding: 10px; text-align: center; color: #999;">No submissions found for this form</td></tr>';
+                        html = '<tr><td colspan="' + (2 + displayFieldConfigs.length) + '" style="padding: 10px; text-align: center; color: #999;">No submissions found for this form</td></tr>';
                     }
                     $('#submissions_list').html(html);
                 } else {

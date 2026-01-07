@@ -1711,9 +1711,22 @@ class Client_functions extends common_function {
                     $form_fields_config[$field_name] = array(
                         'label' => ucfirst(str_replace('-', ' ', $field_name)),
                         'element_id' => '',
-                        'form_data_id' => ''
+                        'form_data_id' => '',
+                        'field_name' => $field_name,
+                        'field_name_base' => '',
+                        'expected_field_name' => $field_name
                     );
                 }
+            }
+            
+            // Convert form_fields_config to display_field_configs array format
+            $display_field_configs = array();
+            foreach ($form_fields_config as $unique_key => $config) {
+                $display_field_configs[] = array(
+                    'fieldName' => isset($config['field_name']) ? $config['field_name'] : $unique_key,
+                    'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
+                    'config' => $config
+                );
             }
             
             // Get submissions for this form, ensuring it belongs to the store
@@ -1733,12 +1746,14 @@ class Client_functions extends common_function {
                   $response_data = array(
                       'result' => 'success', 
                       'data' => $submissions['data'],
-                      'form_fields' => $form_fields_config // Include field configuration
+                      'display_field_configs' => $display_field_configs, // New format for frontend
+                      'form_fields' => $form_fields_config // Keep for backward compatibility
                   );
              } else {
                  $response_data = array(
                      'result' => 'success', 
                      'data' => array(),
+                     'display_field_configs' => $display_field_configs,
                      'form_fields' => $form_fields_config
                  );
              }
