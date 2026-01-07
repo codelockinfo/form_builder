@@ -2041,6 +2041,20 @@ class Client_functions extends common_function {
             error_log("is_storefront: " . ($is_storefront ? 'TRUE' : 'FALSE'));
             error_log("=== End Storefront Detection ===");
             
+            // Get public_id for storefront forms
+            $form_id_for_submission = $form_id; // Default to database ID
+            if ($is_storefront && $form_id != "") {
+                // Look up public_id for this form
+                $where_query = array(["", "id", "=", "$form_id"]);
+                $form_check = $this->select_result(TABLE_FORMS, 'public_id', $where_query, ['single' => true]);
+                if ($form_check['status'] == 1 && !empty($form_check['data']) && isset($form_check['data']['public_id']) && !empty($form_check['data']['public_id'])) {
+                    $form_id_for_submission = $form_check['data']['public_id'];
+                    error_log("Using public_id for storefront form: " . $form_id_for_submission . " (database ID: " . $form_id . ")");
+                } else {
+                    error_log("Public_id not found, using database ID: " . $form_id);
+                }
+            }
+            
             if($form_id != ""){
 
                     // Query form_data - use direct database query as PRIMARY method to ensure we get ALL elements
@@ -2265,8 +2279,11 @@ class Client_functions extends common_function {
                     }
                     
                     if(!empty($element_data_array)) {
+                        // Use public_id for storefront forms, database ID for preview/admin
+                        $form_id_value = $is_storefront ? $form_id_for_submission : $_POST['form_id'];
                         $form_html .='<form class="get_selected_elements" name="get_selected_elements" method="post">
-                        <input type="hidden" class="form_id" name="form_id"  value='.$_POST['form_id'].'>';
+                        <input type="hidden" class="form_id" name="form_id" value="' . htmlspecialchars($form_id_value, ENT_QUOTES, 'UTF-8') . '">';
+                        error_log("Form HTML - form_id input value: " . $form_id_value . " (is_storefront: " . ($is_storefront ? 'YES' : 'NO') . ")");
                     }
                     $form_html .= '<div class="content flex-wrap block-container" data-id="false">';
                     
@@ -3492,114 +3509,218 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
                 console.log("Found forms in wrapper:", forms.length);
                 
                 for (var i = 0; i < forms.length; i++) {
-                var form = forms[i];
-                console.log("Processing form", i, form);
-                
-                // Get form ID
-                var formIdInput = form.querySelector("input[name=\'form_id\'], input.form_id");
-                var formId = formIdInput ? formIdInput.value : form.getAttribute("data-id") || "";
-                console.log("Form ID:", formId);
-                
-                // Attach submit handler
-                form.addEventListener("submit", function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("=== FORM SUBMIT EVENT ===");
+                    var form = forms[i];
+                    console.log("Processing form", i, form);
                     
-                    // Get shop domain
-                    var shop = "";
-                    if (typeof Shopify !== "undefined" && Shopify.shop) {
-                        shop = Shopify.shop;
-                    } else {
-                        var hostname = window.location.hostname;
-                        if (hostname && hostname.indexOf(".myshopify.com") > -1) {
-                            shop = hostname;
-                        }
-                    }
-                    console.log("Shop domain:", shop);
-                    
-                    if (!shop) {
-                        alert("Store information not found. Please refresh the page.");
-                        return false;
-                    }
-                    
-                    // Get form ID again
-                    var currentFormId = formIdInput ? formIdInput.value : form.getAttribute("data-id") || "";
-                    if (!currentFormId) {
-                        alert("Form ID not found. Please refresh the page.");
-                        return false;
-                    }
-                    
-                    // Create FormData
-                    var formData = new FormData(form);
-                    formData.append("store", shop);
-                    formData.append("routine_name", "addformdata");
-                    formData.append("form_id", currentFormId);
-                    
-                    console.log("Submitting form data...");
-                    for (var pair of formData.entries()) {
-                        console.log(pair[0] + ": " + pair[1]);
-                    }
-                    
-                    // Disable submit button
-                    var submitBtn = form.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\']");
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        submitBtn.style.opacity = "0.6";
-                    }
-                    
-                    // Get base URL
-                    var baseUrl = "' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '";
-                    var ajaxUrl = baseUrl + "/user/ajax_call.php";
-                    console.log("Submitting to:", ajaxUrl);
-                    
-                    // Submit via fetch
-                    fetch(ajaxUrl, {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(function(response) {
-                        console.log("Response status:", response.status);
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        console.log("Response data:", data);
-                        
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.style.opacity = "1";
+                    // Create a closure-safe handler function
+                    (function(currentForm) {
+                        // Get form ID from the form element
+                        function getFormId() {
+                            var formIdInput = currentForm.querySelector("input[name=\'form_id\'], input.form_id");
+                            if (formIdInput && formIdInput.value) {
+                                return formIdInput.value;
+                            }
+                            var formId = currentForm.getAttribute("data-id");
+                            if (formId) return formId;
+                            var container = currentForm.closest(".form-builder-container");
+                            if (container) {
+                                return container.getAttribute("data-form-id") || "";
+                            }
+                            return "";
                         }
                         
-                        if (data.result === "success") {
-                            alert(data.msg || "Form submitted successfully!");
-                            form.reset();
-                            console.log("Form reset");
-                        } else {
-                            alert(data.msg || "Something went wrong. Please try again.");
+                        // Get shop domain
+                        function getShopDomain() {
+                            if (typeof Shopify !== "undefined" && Shopify.shop) {
+                                return Shopify.shop;
+                            }
+                            var hostname = window.location.hostname;
+                            if (hostname && hostname.indexOf(".myshopify.com") > -1) {
+                                return hostname;
+                            }
+                            return "' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '" || "";
                         }
-                    })
-                    .catch(function(error) {
-                        console.error("Submission error:", error);
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.style.opacity = "1";
+                        
+                        // Form submit handler
+                        function handleFormSubmit(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            console.log("=== FORM SUBMIT EVENT TRIGGERED ===");
+                            console.log("Form element:", currentForm);
+                            
+                            // Get shop domain
+                            var shop = getShopDomain();
+                            console.log("Shop domain:", shop);
+                            
+                            if (!shop) {
+                                console.error("Shop domain not found!");
+                                alert("Store information not found. Please refresh the page.");
+                                return false;
+                            }
+                            
+                            // Get form ID
+                            var formId = getFormId();
+                            console.log("Form ID:", formId);
+                            
+                            if (!formId) {
+                                console.error("Form ID not found!");
+                                alert("Form ID not found. Please refresh the page.");
+                                return false;
+                            }
+                            
+                            // Create FormData
+                            var formData = new FormData(currentForm);
+                            formData.append("store", shop);
+                            formData.append("routine_name", "addformdata");
+                            formData.append("form_id", formId);
+                            
+                            console.log("=== Form Data Being Submitted ===");
+                            var formDataArray = [];
+                            for (var pair of formData.entries()) {
+                                console.log(pair[0] + ": " + pair[1]);
+                                formDataArray.push(pair[0] + "=" + pair[1]);
+                            }
+                            console.log("Total fields:", formDataArray.length);
+                            
+                            // Disable submit button
+                            var submitBtn = currentForm.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit");
+                            if (submitBtn) {
+                                submitBtn.disabled = true;
+                                submitBtn.style.opacity = "0.6";
+                                var originalText = submitBtn.innerHTML;
+                                submitBtn.setAttribute("data-original-text", originalText);
+                                submitBtn.innerHTML = "Submitting...";
+                            }
+                            
+                            // Get base URL
+                            var baseUrl = "' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '";
+                            var ajaxUrl = baseUrl + "/user/ajax_call.php";
+                            console.log("=== Submitting to AJAX URL ===");
+                            console.log("URL:", ajaxUrl);
+                            
+                            // Submit via fetch
+                            fetch(ajaxUrl, {
+                                method: "POST",
+                                body: formData
+                            })
+                            .then(function(response) {
+                                console.log("=== AJAX Response Received ===");
+                                console.log("Status:", response.status);
+                                console.log("Status Text:", response.statusText);
+                                
+                                if (!response.ok) {
+                                    throw new Error("HTTP error! status: " + response.status);
+                                }
+                                
+                                return response.text();
+                            })
+                            .then(function(text) {
+                                console.log("Response text:", text);
+                                
+                                var data;
+                                try {
+                                    data = JSON.parse(text);
+                                } catch(e) {
+                                    console.error("Error parsing JSON:", e);
+                                    console.error("Response was:", text);
+                                    throw new Error("Invalid JSON response");
+                                }
+                                
+                                console.log("=== Parsed Response Data ===");
+                                console.log("Result:", data.result);
+                                console.log("Message:", data.msg);
+                                
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.style.opacity = "1";
+                                    var originalText = submitBtn.getAttribute("data-original-text");
+                                    if (originalText) {
+                                        submitBtn.innerHTML = originalText;
+                                    }
+                                }
+                                
+                                if (data.result === "success") {
+                                    var msg = data.msg || "Form submitted successfully!";
+                                    console.log("=== SUCCESS ===");
+                                    console.log("Message:", msg);
+                                    
+                                    // Show success message
+                                    alert(msg);
+                                    
+                                    // Reset form
+                                    currentForm.reset();
+                                    console.log("Form reset successfully");
+                                    
+                                    // Clear all input fields manually for better compatibility
+                                    var inputs = currentForm.querySelectorAll("input[type=\'text\'], input[type=\'email\'], input[type=\'tel\'], input[type=\'number\'], input[type=\'url\'], input[type=\'date\'], input[type=\'time\'], input[type=\'password\']");
+                                    for (var k = 0; k < inputs.length; k++) {
+                                        inputs[k].value = "";
+                                    }
+                                    var textareas = currentForm.querySelectorAll("textarea");
+                                    for (var k = 0; k < textareas.length; k++) {
+                                        textareas[k].value = "";
+                                    }
+                                    var checkboxes = currentForm.querySelectorAll("input[type=\'checkbox\'], input[type=\'radio\']");
+                                    for (var k = 0; k < checkboxes.length; k++) {
+                                        checkboxes[k].checked = false;
+                                    }
+                                    var selects = currentForm.querySelectorAll("select");
+                                    for (var k = 0; k < selects.length; k++) {
+                                        selects[k].selectedIndex = 0;
+                                    }
+                                    
+                                } else {
+                                    var errorMsg = data.msg || "Something went wrong. Please try again.";
+                                    console.error("=== ERROR ===");
+                                    console.error("Error message:", errorMsg);
+                                    alert(errorMsg);
+                                }
+                            })
+                            .catch(function(error) {
+                                console.error("=== SUBMISSION ERROR ===");
+                                console.error("Error:", error);
+                                console.error("Error message:", error.message);
+                                console.error("Error stack:", error.stack);
+                                
+                                if (submitBtn) {
+                                    submitBtn.disabled = false;
+                                    submitBtn.style.opacity = "1";
+                                    var originalText = submitBtn.getAttribute("data-original-text");
+                                    if (originalText) {
+                                        submitBtn.innerHTML = originalText;
+                                    }
+                                }
+                                
+                                alert("An error occurred: " + error.message + "\\nPlease check the console for details.");
+                            });
+                            
+                            return false;
                         }
-                        alert("An error occurred. Please check the console.");
-                    });
-                    
-                    return false;
-                });
-                
-                // Also attach to submit buttons
-                var submitButtons = form.querySelectorAll("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\']");
-                for (var j = 0; j < submitButtons.length; j++) {
-                    submitButtons[j].addEventListener("click", function(e) {
-                        e.preventDefault();
-                        form.dispatchEvent(new Event("submit"));
-                    });
-                }
-                
-                console.log("Handlers attached to form", i);
+                        
+                        // Attach submit handler to form
+                        currentForm.addEventListener("submit", handleFormSubmit);
+                        console.log("Submit handler attached to form", i);
+                        
+                        // Also attach click handlers to submit buttons
+                        var submitButtons = currentForm.querySelectorAll("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit, button.action.submit");
+                        console.log("Found", submitButtons.length, "submit buttons in form", i);
+                        
+                        for (var j = 0; j < submitButtons.length; j++) {
+                            (function(btn) {
+                                btn.addEventListener("click", function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    console.log("=== SUBMIT BUTTON CLICKED ===");
+                                    console.log("Button:", btn);
+                                    handleFormSubmit(e);
+                                });
+                                console.log("Click handler attached to button", j);
+                            })(submitButtons[j]);
+                        }
+                        
+                        console.log("All handlers attached to form", i);
+                    })(form);
                 }
             }
         }
@@ -8727,6 +8848,7 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
     }
     
     function make_api_data_pagesData($api_shopify_data_list) {
+        
         $tr_html = array();
         if (isset($api_shopify_data_list->pages) && is_array($api_shopify_data_list->pages)) {
             foreach ($api_shopify_data_list->pages as $page) {
