@@ -88,29 +88,64 @@ $(document).ready(function () {
 
     check_app_status();
 
-    $(document).on("click", ".submit.action", function (e) {
+    // Function to handle form submission
+    function handleFormSubmission(e, $btn) {
         e.preventDefault();
-        var $btn = $(this);
-        var $form = $btn.closest("form");
-
+        e.stopPropagation();
+        
+        console.log("Form submission triggered");
+        
+        // Find the form
+        var $form = null;
+        if ($btn && $btn.length > 0) {
+            $form = $btn.closest("form");
+        }
+        
         if ($form.length === 0) {
             $form = $(".get_selected_elements");
         }
-
+        
+        if ($form.length === 0) {
+            // Try to find form by looking for the button's parent form
+            if ($btn && $btn.length > 0) {
+                $form = $btn.parents("form");
+            }
+        }
+        
         if ($form.length === 0) {
             console.error("Form not found");
-            return;
+            alert("Form not found. Please refresh the page.");
+            return false;
         }
 
-        var formData = new FormData($form[0]);
-        formData.append('store', shop);
-        formData.append('routine_name', 'addformdata');
+        console.log("Form found:", $form.length, "forms");
 
-        // Find form ID if not already in form
-        if (!formData.has('form_id')) {
-            var formId = $form.attr('data-id') || $form.closest('.globo-formbuilder').attr('data-id');
-            if (formId) {
-                formData.append('form_id', formId);
+        // Get form ID
+        var formId = $form.find('input[name="form_id"], input.form_id').val();
+        if (!formId) {
+            formId = $form.attr('data-id') || $form.closest('.globo-formbuilder').attr('data-id') || $form.closest('.form-builder-container').attr('data-form-id');
+        }
+
+        if (!formId) {
+            console.error("Form ID not found");
+            alert("Form ID is missing. Please refresh the page.");
+            return false;
+        }
+
+        console.log("Form ID:", formId);
+
+        // Create FormData
+        var formData = new FormData($form[0]);
+        formData.append('store', shop || store);
+        formData.append('routine_name', 'addformdata');
+        formData.append('form_id', formId);
+
+        // Show loading state
+        if ($btn && $btn.length > 0) {
+            $btn.prop('disabled', true);
+            $btn.addClass('Button--loading');
+            if ($btn.find('.spinner').length > 0) {
+                $btn.find('.spinner').show();
             }
         }
 
@@ -121,12 +156,17 @@ $(document).ready(function () {
             data: formData,
             processData: false,
             contentType: false,
-            beforeSend: function () {
-                loading_show($btn);
-            },
             success: function (comeback) {
                 console.log("Submission response:", comeback);
-                loading_hide($btn);
+                
+                // Hide loading state
+                if ($btn && $btn.length > 0) {
+                    $btn.prop('disabled', false);
+                    $btn.removeClass('Button--loading');
+                    if ($btn.find('.spinner').length > 0) {
+                        $btn.find('.spinner').hide();
+                    }
+                }
                 
                 // Handle response - check if it's already parsed or needs parsing
                 var response = comeback;
@@ -145,8 +185,8 @@ $(document).ready(function () {
                     if (typeof flashNotice === 'function') {
                         flashNotice(successMsg);
                     } else {
-                        // Try to show a nice notification instead of alert
-                        var $notification = $('<div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 20px; border-radius: 4px; z-index: 10000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">' + successMsg + '</div>');
+                        // Show a nice notification instead of alert
+                        var $notification = $('<div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 20px; border-radius: 4px; z-index: 10000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">' + successMsg + '</div>');
                         $('body').append($notification);
                         setTimeout(function() {
                             $notification.fadeOut(300, function() { $(this).remove(); });
@@ -158,7 +198,7 @@ $(document).ready(function () {
                         $form[0].reset();
                         
                         // Also manually clear any remaining values (for better compatibility)
-                        $form.find('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="url"], input[type="date"], input[type="time"]').val('');
+                        $form.find('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="url"], input[type="date"], input[type="time"], input[type="password"]').val('');
                         $form.find('textarea').val('');
                         $form.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
                         $form.find('select').prop('selectedIndex', 0);
@@ -180,10 +220,49 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr, status, error) {
-                console.error("Submission error:", error);
-                loading_hide($btn);
-                alert("An error occurred. Please check the console.");
+                console.error("Submission error:", error, xhr);
+                
+                // Hide loading state
+                if ($btn && $btn.length > 0) {
+                    $btn.prop('disabled', false);
+                    $btn.removeClass('Button--loading');
+                    if ($btn.find('.spinner').length > 0) {
+                        $btn.find('.spinner').hide();
+                    }
+                }
+                
+                var errorMsg = "An error occurred. Please check the console.";
+                if (xhr.responseText) {
+                    try {
+                        var errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse.msg) {
+                            errorMsg = errorResponse.msg;
+                        }
+                    } catch(e) {
+                        // Ignore parse errors
+                    }
+                }
+                alert(errorMsg);
             }
         });
+        
+        return false;
+    }
+
+    // Handle button clicks with multiple selectors
+    $(document).on("click", ".submit.action, .footer-data__submittext, button.submit, .classic-button.submit", function (e) {
+        console.log("Submit button clicked");
+        handleFormSubmission(e, $(this));
+    });
+
+    // Also handle form submit events as fallback
+    $(document).on("submit", "form.get_selected_elements, form[class*='get_selected_elements']", function (e) {
+        console.log("Form submit event triggered");
+        var $form = $(this);
+        var $btn = $form.find(".submit.action, .footer-data__submittext, button.submit");
+        if ($btn.length === 0) {
+            $btn = $form.find("button[type='submit'], input[type='submit']");
+        }
+        handleFormSubmission(e, $btn);
     });
 });
