@@ -3186,16 +3186,18 @@ class Client_functions extends common_function {
                         $ajax_base_url = rtrim($ajax_base_url, '/'); // Remove trailing slash
                         
                         $form_js = '
-<script type="text/javascript">
-console.log("SCRIPT TAG STARTED");
-(function() {
-    "use strict";
-    console.log("=== Form Builder Inline Script Executing ===");
-    console.log("Form ID: ' . intval($form_id) . '");
-    console.log("Shop Domain: ' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '");
-    console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php");
-    console.log("Script loaded at:", new Date().toISOString());
-    console.log("Document ready state:", document.readyState);
+<script>
+try{
+console.log("FB_SCRIPT_START");
+var FB_FORM_ID=' . intval($form_id) . ';
+var FB_SHOP="' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '";
+var FB_AJAX="' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php";
+console.log("FB_FORM_ID",FB_FORM_ID);
+console.log("FB_SHOP",FB_SHOP);
+console.log("FB_AJAX",FB_AJAX);
+
+(function(){
+console.log("FB_IIFE_START");
     
     function getShopDomain() {
         // Try multiple methods to get shop domain
@@ -3853,7 +3855,8 @@ console.log("SCRIPT TAG STARTED");
         setTimeout(attachToAllButtons, 500);
         setTimeout(attachToAllButtons, 2000);
         setTimeout(attachToAllButtons, 5000);
-    })();
+})();
+}catch(e){console.error("FB_ERROR",e.message,e.stack);}
 </script>';
                     }
                     
