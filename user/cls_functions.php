@@ -3498,7 +3498,7 @@ console.log("AJAX URL: ' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8')
         function initFormHandlers() {
             console.log("=== Initializing Form Submission Handlers ===");
             
-            // Find forms directly - don't rely on wrapper
+            // Find forms directly - dont rely on wrapper
             var allForms = document.querySelectorAll("form.get_selected_elements, form[class*=\'get_selected_elements\']");
             console.log("Found forms (direct):", allForms.length);
             
