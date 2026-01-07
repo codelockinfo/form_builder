@@ -7293,11 +7293,21 @@ class Client_functions extends common_function {
     // For FRONTEND
     function addformdata(){
         $response_data = array('result' => 'fail', 'msg' => 'Something went wrong');
+        
+        // Log incoming POST data for debugging
+        error_log("=== addformdata() called ===");
+        error_log("POST data: " . print_r($_POST, true));
+        error_log("Store in POST: " . (isset($_POST['store']) ? $_POST['store'] : 'NOT SET'));
+        error_log("Form ID in POST: " . (isset($_POST['form_id']) ? $_POST['form_id'] : 'NOT SET'));
+        
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $shopinfo = (object)$this->current_store_obj;
             $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
             
+            error_log("Store user ID: " . $store_user_id);
+            
             if ($store_user_id <= 0) {
+                error_log("ERROR: Store not authenticated - store_user_id is 0 or empty");
                 return array('result' => 'fail', 'msg' => 'Store not authenticated');
             }
             
@@ -7309,7 +7319,10 @@ class Client_functions extends common_function {
                 $form_id_input = trim($_POST['id']);
             }
 
+            error_log("Form ID input: " . $form_id_input);
+
             if (empty($form_id_input) || $form_id_input == 0) {
+                error_log("ERROR: Form ID is required but not provided");
                 return array('result' => 'fail', 'msg' => 'Form ID is required');
             }
 
@@ -7368,16 +7381,32 @@ class Client_functions extends common_function {
                 'status' => 0
             );
 
+            error_log("Inserting submission data:");
+            error_log("Form ID: " . $form_id);
+            error_log("Submission data: " . json_encode($submission_data));
+            error_log("Fields array: " . print_r($fields_arr, true));
+
             $result = $this->post_data(TABLE_FORM_SUBMISSIONS, array($fields_arr));
+            error_log("Database insert result: " . $result);
+            
             $result_decoded = json_decode($result, true);
+            error_log("Decoded result: " . print_r($result_decoded, true));
 
             if (isset($result_decoded['status']) && $result_decoded['status'] == 1) {
+                 error_log("SUCCESS: Form submission saved to database");
                  $response_data = array('result' => 'success', 'msg' => 'Form submitted successfully');
             } else {
                  $error_msg = isset($result_decoded['msg']) ? $result_decoded['msg'] : 'Database error';
+                 error_log("ERROR: Failed to save submission - " . $error_msg);
+                 error_log("Full result: " . print_r($result_decoded, true));
                  $response_data = array('result' => 'fail', 'msg' => $error_msg);
             }
+        } else {
+            error_log("ERROR: Store parameter missing or empty in POST data");
+            $response_data = array('result' => 'fail', 'msg' => 'Store parameter is required');
         }
+        
+        error_log("=== addformdata() returning: " . json_encode($response_data) . " ===");
         return $response_data;
     }
     

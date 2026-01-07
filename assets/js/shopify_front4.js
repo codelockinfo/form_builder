@@ -1,3 +1,11 @@
+// Immediately define store variable to prevent "store is not defined" errors
+// This must be at the very top before any other code runs
+if (typeof window.store === 'undefined') {
+    window.store = '';
+}
+if (typeof window.shop === 'undefined') {
+    window.shop = '';
+}
 
 console.log("shopify front file loaded");
 
@@ -44,9 +52,12 @@ if (!shop) {
 // Set store variable for backward compatibility
 store = shop;
 
-// Make shop and store available globally
+// Make shop and store available globally IMMEDIATELY
 window.shop = shop;
 window.store = store;
+
+// Ensure they're accessible as global variables
+// Use window properties directly to avoid scope issues
 
 $(document).ready(function () {
     // Update global variables if shop was found
@@ -73,15 +84,23 @@ $(document).ready(function () {
     }
 
     function check_app_status() {
+        var storeValue = shop || store || window.shop || window.store || '';
+        if (!storeValue) {
+            console.warn("Store value not available for check_app_status");
+            return;
+        }
         $.ajax({
             url: "https://codelocksolutions.com/form_builder/user/ajax_call.php",
             type: "POST",
             dataType: 'json',
-            data: { 'routine_name': 'check_app_status', 'store': shop },
+            data: { 'routine_name': 'check_app_status', 'store': storeValue },
             success: function (comeback) {
                 if (comeback && comeback.outcome == 'true') {
                     console.log("Formbuilder app status: " + (comeback.data == '0' ? 'Enabled' : 'Disabled'));
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error checking app status:", error);
             }
         });
     }
@@ -134,11 +153,27 @@ $(document).ready(function () {
 
         console.log("Form ID:", formId);
 
+        // Ensure store variable is set
+        var storeValue = shop || store || window.shop || window.store || '';
+        if (!storeValue) {
+            console.error("Store value is empty!");
+            alert("Store information is missing. Please refresh the page.");
+            return false;
+        }
+
+        console.log("Submitting form with store:", storeValue, "form_id:", formId);
+
         // Create FormData
         var formData = new FormData($form[0]);
-        formData.append('store', shop || store);
+        formData.append('store', storeValue);
         formData.append('routine_name', 'addformdata');
         formData.append('form_id', formId);
+
+        // Log form data for debugging
+        console.log("Form data being submitted:");
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
 
         // Show loading state
         if ($btn && $btn.length > 0) {
@@ -158,6 +193,7 @@ $(document).ready(function () {
             contentType: false,
             success: function (comeback) {
                 console.log("Submission response:", comeback);
+                console.log("Response type:", typeof comeback);
                 
                 // Hide loading state
                 if ($btn && $btn.length > 0) {
