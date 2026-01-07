@@ -3173,6 +3173,7 @@ class Client_functions extends common_function {
                     
                     // Add JavaScript for storefront forms - include jQuery if not present and form submission handler
                     $form_js = '';
+                    error_log("=== Form JS Generation - is_storefront: " . ($is_storefront ? 'TRUE' : 'FALSE') . " ===");
                     if ($is_storefront) {
                         $base_js_url = defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder';
                         $jquery_url = $base_js_url . '/assets/js/jquery3.6.4.min.js';
@@ -3185,9 +3186,11 @@ class Client_functions extends common_function {
                         $ajax_base_url = defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder';
                         $ajax_base_url = rtrim($ajax_base_url, '/'); // Remove trailing slash
                         
+                        error_log("=== Generating form_js for form_id: $form_id, shop: $shop_domain ===");
+                        
                         $form_js = '
 <script>
-try{
+alert("FB_SCRIPT_LOADED");
 console.log("FB_SCRIPT_START");
 var FB_FORM_ID=' . intval($form_id) . ';
 var FB_SHOP="' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '";
