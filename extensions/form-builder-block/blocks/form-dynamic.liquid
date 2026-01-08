@@ -376,17 +376,66 @@
   function initializeFormFillTracking() {
     console.log('=== Initializing Form Fill Tracking ===');
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
-    if (!blockContainer) return;
+    if (!blockContainer) {
+      console.warn('Block container not found for fill tracking');
+      return;
+    }
     
-    const forms = blockContainer.querySelectorAll('form.get_selected_elements');
+    // Try multiple selectors to find the form
+    let forms = blockContainer.querySelectorAll('form.get_selected_elements');
+    if (forms.length === 0) {
+      forms = blockContainer.querySelectorAll('form');
+    }
+    if (forms.length === 0) {
+      // Try to find form by looking for form_id input
+      const formIdInputs = blockContainer.querySelectorAll('input[name="form_id"], input.form_id');
+      if (formIdInputs.length > 0) {
+        forms = Array.from(formIdInputs).map(function(input) {
+          return input.closest('form');
+        }).filter(function(form) {
+          return form !== null;
+        });
+      }
+    }
+    
     console.log('Found forms for fill tracking:', forms.length);
     
+    if (forms.length === 0) {
+      console.warn('No forms found for fill tracking, retrying in 500ms...');
+      setTimeout(function() {
+        initializeFormFillTracking();
+      }, 500);
+      return;
+    }
+    
     forms.forEach(function(form, index) {
-      // Get form ID
-      const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
-      const formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || '';
+      // Get form ID - try multiple methods
+      let formId = '';
       
+      // Method 1: Look for hidden input with form_id
+      const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
+      if (formIdInput) {
+        formId = formIdInput.value || '';
+      }
+      
+      // Method 2: Check data attribute
       if (!formId) {
+        formId = form.getAttribute('data-id') || form.getAttribute('data-form-id') || '';
+      }
+      
+      // Method 3: Check block container
+      if (!formId && blockContainer) {
+        formId = blockContainer.getAttribute('data-form-id') || '';
+      }
+      
+      // Method 4: Get from block settings (fallback)
+      if (!formId) {
+        formId = "{{ block.settings.form_id }}" || '';
+      }
+      
+      console.log('Form ID for fill tracking:', formId);
+      
+      if (!formId || formId.trim() === '' || formId.trim() === '0') {
         console.error('Form ID not found for fill tracking');
         return;
       }
@@ -422,7 +471,8 @@
       console.log('Found form inputs for fill tracking:', formInputs.length);
       
       // Track fill when user focuses or clicks on any input
-      const trackFill = function() {
+      const trackFill = function(event) {
+        // Check if already tracked
         if (form.getAttribute('data-fill-tracked') === 'true') {
           return; // Already tracked
         }
@@ -430,7 +480,10 @@
         // Mark as tracked immediately to prevent duplicate tracking
         form.setAttribute('data-fill-tracked', 'true');
         
-        console.log('Tracking form fill event for form ID:', formId);
+        console.log('=== Tracking Form Fill Event ===');
+        console.log('Form ID:', formId);
+        console.log('Shop:', shop);
+        console.log('Event type:', event ? event.type : 'unknown');
         
         // Send AJAX request to track fill
         const formData = new FormData();
@@ -438,8 +491,10 @@
         formData.append('routine_name', 'trackFormFill');
         formData.append('form_id', formId);
         
-        // Get base URL
+        // Get base URL - try multiple methods
         let baseUrl = '';
+        
+        // Method 1: Try to get from script tags
         const scripts = document.querySelectorAll('script[src]');
         for (let i = 0; i < scripts.length; i++) {
           const src = scripts[i].src;
@@ -449,38 +504,78 @@
           }
         }
         
+        // Method 2: Try to get from current page URL
+        if (!baseUrl) {
+          const currentUrl = window.location.href;
+          if (currentUrl.indexOf('/form_builder/') > -1) {
+            baseUrl = currentUrl.substring(0, currentUrl.indexOf('/form_builder/') + '/form_builder'.length);
+          }
+        }
+        
+        // Method 3: Default to production URL
         if (!baseUrl) {
           baseUrl = 'https://codelocksolutions.com/form_builder';
         }
         
         const ajaxUrl = baseUrl + '/user/ajax_call.php';
+        console.log('AJAX URL:', ajaxUrl);
+        console.log('Form Data:', {
+          store: shop,
+          routine_name: 'trackFormFill',
+          form_id: formId
+        });
         
         fetch(ajaxUrl, {
           method: 'POST',
           body: formData
         })
         .then(function(response) {
+          console.log('Fill tracking response status:', response.status);
+          if (!response.ok) {
+            throw new Error('HTTP error! status: ' + response.status);
+          }
           return response.json();
         })
         .then(function(data) {
+          console.log('Fill tracking response data:', data);
           if (data.result === 'success') {
-            console.log('Form fill event tracked successfully');
+            console.log('✅ Form fill event tracked successfully');
           } else {
-            console.warn('Failed to track fill event:', data.msg);
+            console.warn('❌ Failed to track fill event:', data.msg || 'Unknown error');
           }
         })
         .catch(function(error) {
-          console.error('Error tracking fill event:', error);
+          console.error('❌ Error tracking fill event:', error);
         });
       };
       
       // Attach event listeners to all inputs
       formInputs.forEach(function(input) {
+        // Skip hidden inputs and submit buttons
+        if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button') {
+          return;
+        }
+        
         // Track on focus (when user clicks into the field)
-        input.addEventListener('focus', trackFill, { once: true });
+        input.addEventListener('focus', function(e) {
+          console.log('Input focused:', input.name || input.type, input.value);
+          trackFill(e);
+        }, { once: true });
+        
         // Also track on click (in case focus doesn't fire)
-        input.addEventListener('click', trackFill, { once: true });
+        input.addEventListener('click', function(e) {
+          console.log('Input clicked:', input.name || input.type);
+          trackFill(e);
+        }, { once: true });
+        
+        // Also track on input (when user starts typing)
+        input.addEventListener('input', function(e) {
+          console.log('Input changed:', input.name || input.type);
+          trackFill(e);
+        }, { once: true });
       });
+      
+      console.log('✅ Fill tracking event listeners attached to', formInputs.length, 'inputs');
       
       console.log('Fill tracking initialized for form', index);
     });

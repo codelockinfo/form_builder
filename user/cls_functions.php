@@ -9919,13 +9919,22 @@ class Client_functions extends common_function {
             }
             
             if ($form_id > 0) {
+                error_log("=== trackFormFill() called ===");
+                error_log("Form ID input: " . $form_id_input);
+                error_log("Form ID (database): " . $form_id);
+                error_log("Store user ID: " . $store_user_id);
+                
                 $tracked = $this->trackFormAnalytics($form_id, 'fill', $store_user_id);
+                
+                error_log("Track result: " . ($tracked ? 'SUCCESS' : 'FAILED'));
+                
                 if ($tracked) {
                     $response_data = array('result' => 'success', 'msg' => 'Fill event tracked', 'status' => 1);
                 } else {
                     $response_data = array('result' => 'fail', 'msg' => 'Failed to track fill event', 'status' => 0);
                 }
             } else {
+                error_log("trackFormFill() ERROR: Invalid form ID - form_id_input: " . $form_id_input . ", form_id: " . $form_id);
                 $response_data = array('result' => 'fail', 'msg' => 'Invalid form ID', 'status' => 0);
             }
         }
