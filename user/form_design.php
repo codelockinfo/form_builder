@@ -6587,10 +6587,20 @@ if ($form_id > 0) {
                         
                         // Show user-friendly error message if scope is missing
                         if (response.scope_error) {
-                            alert('Theme Settings Access Required\n\n' + 
+                            var message = 'Theme Settings Access Required\n\n' + 
                                   'To access your Shopify theme settings, the app needs the "read_themes" permission.\n\n' +
-                                  'Please reinstall the app from your Shopify admin to grant this permission.\n\n' +
-                                  'After reinstalling, refresh this page to see your theme color schemes.');
+                                  'To fix this:\n' +
+                                  '1. Go to your Shopify Admin\n' +
+                                  '2. Navigate to Apps > Your Apps\n' +
+                                  '3. Find "Easy Form Builder" and click "Uninstall"\n' +
+                                  '4. Then click "Add app" or "Install" again\n' +
+                                  '5. Authorize all permissions when prompted\n' +
+                                  '6. Return to this page and refresh\n\n' +
+                                  'This will grant the app the required permissions to access theme settings.';
+                            alert(message);
+                        } else if (response.report) {
+                            // Show other errors too
+                            console.error('Theme settings error:', response.report);
                         }
                     }
                 },

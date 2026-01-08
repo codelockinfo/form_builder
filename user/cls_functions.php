@@ -578,24 +578,72 @@ class Client_functions extends common_function {
             $themes_url = "/admin/api/2023-10/themes.json";
             $themes_response = shopify_call($access_token, $store_name, $themes_url, array(), 'GET');
             
-            if (!isset($themes_response['response'])) {
-                error_log('Theme settings error: No response from themes API');
+            // Check HTTP status code first
+            $http_status = null;
+            if (isset($themes_response['headers']['status'])) {
+                $status_parts = explode(' ', $themes_response['headers']['status']);
+                $http_status = isset($status_parts[1]) ? intval($status_parts[1]) : null;
+            }
+            
+            // Check for 403 (Forbidden) or 401 (Unauthorized) - likely scope/permission issue
+            if ($http_status == 403 || $http_status == 401) {
+                error_log('Theme settings error: HTTP ' . $http_status . ' - Permission denied');
                 return array(
                     'outcome' => 'false',
-                    'report' => 'Failed to fetch themes',
+                    'report' => 'Theme access requires read_themes scope. Please reinstall the app to grant this permission.',
                     'colors' => array(),
-                    'typography' => array()
+                    'typography' => array(),
+                    'color_schemes' => array(),
+                    'text_presets' => array(),
+                    'scope_error' => true
+                );
+            }
+            
+            if (!isset($themes_response['response'])) {
+                error_log('Theme settings error: No response from themes API. HTTP status: ' . ($http_status ?: 'unknown'));
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Failed to fetch themes. HTTP status: ' . ($http_status ?: 'unknown'),
+                    'colors' => array(),
+                    'typography' => array(),
+                    'scope_error' => ($http_status == 403 || $http_status == 401)
                 );
             }
             
             $themes_data = json_decode($themes_response['response'], true);
             
+            // Check if response is null (invalid JSON) or has errors
+            if ($themes_data === null) {
+                error_log('Theme settings error: Invalid JSON response. HTTP status: ' . ($http_status ?: 'unknown'));
+                return array(
+                    'outcome' => 'false',
+                    'report' => 'Invalid response from Shopify API',
+                    'colors' => array(),
+                    'typography' => array(),
+                    'color_schemes' => array(),
+                    'text_presets' => array(),
+                    'scope_error' => ($http_status == 403 || $http_status == 401)
+                );
+            }
+            
             if (isset($themes_data['errors'])) {
                 $error_message = is_array($themes_data['errors']) ? implode(', ', $themes_data['errors']) : $themes_data['errors'];
-                error_log('Theme settings error: ' . json_encode($themes_data['errors']));
+                error_log('Theme settings error: ' . json_encode($themes_data['errors']) . ' | HTTP status: ' . ($http_status ?: 'unknown'));
                 
-                // Check if it's a scope issue
-                if (strpos($error_message, 'read_themes') !== false || strpos($error_message, 'merchant approval') !== false) {
+                // Check if it's a scope issue - look for common permission error messages
+                $is_scope_error = false;
+                if (strpos(strtolower($error_message), 'read_themes') !== false || 
+                    strpos(strtolower($error_message), 'merchant approval') !== false ||
+                    strpos(strtolower($error_message), 'permission') !== false ||
+                    strpos(strtolower($error_message), 'scope') !== false ||
+                    strpos(strtolower($error_message), 'unauthorized') !== false ||
+                    strpos(strtolower($error_message), 'forbidden') !== false ||
+                    $http_status == 403 || 
+                    $http_status == 401) {
+                    $is_scope_error = true;
+                }
+                
+                if ($is_scope_error) {
                     return array(
                         'outcome' => 'false',
                         'report' => 'Theme access requires read_themes scope. Please reinstall the app to grant this permission.',
