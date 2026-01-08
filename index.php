@@ -4,6 +4,17 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 
+// Immediate logging to verify file is being called
+$log_file = __DIR__ . '/oauth-debug.log';
+$initial_log = "\n" . str_repeat("=", 80) . "\n";
+$initial_log .= "[" . date('Y-m-d H:i:s') . "] ========== INDEX.PHP LOADED ==========\n";
+$initial_log .= "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'NOT SET') . "\n";
+$initial_log .= "GET params: " . json_encode($_GET) . "\n";
+$initial_log .= "Has code param: " . (isset($_GET['code']) ? 'YES' : 'NO') . "\n";
+$initial_log .= "Shop param: " . (isset($_GET['shop']) ? $_GET['shop'] : 'NOT SET') . "\n";
+file_put_contents($log_file, $initial_log, FILE_APPEND);
+error_log("INDEX.PHP: File loaded - URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A'));
+
 require_once './core/logger.php';
 ini_set('error_log', __DIR__ . '/oauth-debug.log');
 
@@ -228,11 +239,22 @@ if (isset($_GET['code'])) {
     $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front5.js"]];
     shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/script_tags.json", $asset, 'POST', ['Content-Type: application/json']);
 
+    $log_file = __DIR__ . '/oauth-debug.log';
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Checking if store exists...\n", FILE_APPEND);
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] comeback_client status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET') . "\n", FILE_APPEND);
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] comeback_client has_data: " . (!empty($comeback_client['data']) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+    error_log("OAUTH_CALLBACK: Checking store existence - status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET'));
+    
     if ($comeback_client['status'] == 1 && !empty($comeback_client['data'])) {
         // Store exists - UPDATE (reinstallation scenario)
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ✅ STORE EXISTS - Going to UPDATE path\n", FILE_APPEND);
+        error_log("OAUTH_CALLBACK: Store exists - going to UPDATE path");
+        
         $store_user_id = isset($comeback_client['data']['store_user_id']) ? intval($comeback_client['data']['store_user_id']) : 0;
         $existing_shop_name = isset($comeback_client['data']['shop_name']) ? $comeback_client['data']['shop_name'] : '';
         $existing_store_name = isset($comeback_client['data']['store_name']) ? $comeback_client['data']['store_name'] : '';
+        
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Store details - store_user_id: " . $store_user_id . ", shop_name: " . $existing_shop_name . "\n", FILE_APPEND);
         
         generate_log('OAUTH_CALLBACK', 'Store exists - updating access token and reactivating', [
             'shop' => $shop,
@@ -248,10 +270,20 @@ if (isset($_GET['code'])) {
         // Use direct SQL with mysqli connection to ensure password is updated correctly
         try {
             $conn = $GLOBALS['conn'];
+            $log_file = __DIR__ . '/oauth-debug.log';
             
             if (!$conn) {
+                file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERROR: Database connection not available\n", FILE_APPEND);
                 throw new Exception("Database connection not available");
             }
+            
+            // Verify connection is working
+            if (!mysqli_ping($conn)) {
+                file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERROR: Database connection ping failed\n", FILE_APPEND);
+                throw new Exception("Database connection ping failed");
+            }
+            
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Database connection verified - proceeding with update\n", FILE_APPEND);
             
             // Prepare update data
             $email = $shopuinfo->shop->email ?? '';
@@ -263,7 +295,6 @@ if (isset($_GET['code'])) {
             $price_pattern = isset($shopuinfo->shop->price_pattern) ? htmlspecialchars(strip_tags($shopuinfo->shop->price_pattern), ENT_QUOTES, "ISO-8859-1") : '';
             $zip = $shopuinfo->shop->zip ?? '';
             $timezone = $shopuinfo->shop->timezone ?? '';
-            $updated_on = DATE;
             $updated_at = DATE;
             
             // Escape password for SQL (though we'll use prepared statement)
@@ -280,7 +311,6 @@ if (isset($_GET['code'])) {
             if ($store_user_id > 0) {
                 $update_sql = "UPDATE " . TABLE_USER_SHOP . " SET 
                     `password` = '" . mysqli_real_escape_string($conn, $password) . "', 
-                    `updated_on` = '" . mysqli_real_escape_string($conn, $updated_on) . "', 
                     `updated_at` = '" . mysqli_real_escape_string($conn, $updated_at) . "',
                     `status` = '1',
                     `is_demand_accept` = '1',
@@ -304,7 +334,6 @@ if (isset($_GET['code'])) {
                 $shop_escaped = mysqli_real_escape_string($conn, $shop);
                 $update_sql = "UPDATE " . TABLE_USER_SHOP . " SET 
                     `password` = '" . mysqli_real_escape_string($conn, $password) . "', 
-                    `updated_on` = '" . mysqli_real_escape_string($conn, $updated_on) . "', 
                     `updated_at` = '" . mysqli_real_escape_string($conn, $updated_at) . "',
                     `status` = '1',
                     `is_demand_accept` = '1',
@@ -331,15 +360,74 @@ if (isset($_GET['code'])) {
             file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] SQL: " . $update_sql . "\n", FILE_APPEND);
             error_log("OAUTH_CALLBACK: Executing UPDATE query");
             
-            $execute_result = mysqli_query($conn, $update_sql);
-            $affected_rows = mysqli_affected_rows($conn);
-            $error = mysqli_error($conn);
+            // Test connection before query
+            if (!mysqli_ping($conn)) {
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] ERROR: Database connection lost before query\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                error_log("OAUTH_CALLBACK ERROR: Database connection lost");
+                throw new Exception("Database connection lost");
+            }
             
-            $log_msg = "[" . date('Y-m-d H:i:s') . "] Update result - execute: " . ($execute_result ? 'SUCCESS' : 'FAILED') . 
-                      ", affected_rows: " . $affected_rows . 
-                      ", error: " . ($error ?: 'NONE') . "\n";
+            // Execute query with error handling
+            $execute_result = false;
+            $affected_rows = 0;
+            $error = '';
+            
+            try {
+                $execute_result = @mysqli_query($conn, $update_sql);
+                $error = mysqli_error($conn);
+                $affected_rows = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] EXCEPTION during query: " . $error . "\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                error_log("OAUTH_CALLBACK EXCEPTION: " . $error);
+            }
+            
+            // Log result immediately - use multiple methods to ensure it's written
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] ========== UPDATE QUERY RESULT ==========\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] execute_result: " . ($execute_result ? 'TRUE (SUCCESS)' : 'FALSE (FAILED)') . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] affected_rows: " . $affected_rows . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] mysqli_error: " . ($error ?: 'NONE') . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] Connection status: " . (mysqli_ping($conn) ? 'CONNECTED' : 'DISCONNECTED') . "\n";
+            
+            // Write to log file multiple times to ensure it's saved
             file_put_contents($log_file, $log_msg, FILE_APPEND);
-            error_log("OAUTH_CALLBACK: Update result - affected_rows: " . $affected_rows);
+            file_put_contents($log_file, $log_msg, FILE_APPEND); // Write twice to ensure
+            error_log("OAUTH_CALLBACK: Update result - execute: " . ($execute_result ? 'SUCCESS' : 'FAILED') . ", affected_rows: " . $affected_rows . ", error: " . ($error ?: 'NONE'));
+            
+            // Force flush
+            if (function_exists('ob_flush')) {
+                @ob_flush();
+            }
+            if (function_exists('flush')) {
+                @flush();
+            }
+            
+            // Verify the update by querying the database immediately
+            if ($execute_result) {
+                $verify_sql = "SELECT store_user_id, password, status FROM " . TABLE_USER_SHOP . " WHERE store_user_id = " . intval($store_user_id) . " LIMIT 1";
+                $verify_result = @mysqli_query($conn, $verify_sql);
+                if ($verify_result && mysqli_num_rows($verify_result) > 0) {
+                    $verify_row = mysqli_fetch_assoc($verify_result);
+                    $log_msg = "[" . date('Y-m-d H:i:s') . "] ========== VERIFICATION QUERY ==========\n";
+                    $log_msg .= "[" . date('Y-m-d H:i:s') . "] Stored password: " . substr($verify_row['password'], 0, 20) . "...\n";
+                    $log_msg .= "[" . date('Y-m-d H:i:s') . "] Expected password: " . substr($password, 0, 20) . "...\n";
+                    $log_msg .= "[" . date('Y-m-d H:i:s') . "] Password match: " . ($verify_row['password'] === $password ? 'YES ✅' : 'NO ❌') . "\n";
+                    $log_msg .= "[" . date('Y-m-d H:i:s') . "] Status: " . $verify_row['status'] . "\n";
+                    file_put_contents($log_file, $log_msg, FILE_APPEND);
+                    file_put_contents($log_file, $log_msg, FILE_APPEND); // Write twice
+                    error_log("OAUTH_CALLBACK: Verification - Password match: " . ($verify_row['password'] === $password ? 'YES' : 'NO'));
+                } else {
+                    $log_msg = "[" . date('Y-m-d H:i:s') . "] VERIFICATION FAILED - Could not fetch row after update\n";
+                    file_put_contents($log_file, $log_msg, FILE_APPEND);
+                    error_log("OAUTH_CALLBACK: Verification failed - could not fetch row");
+                }
+            } else {
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] UPDATE QUERY FAILED - Not running verification\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                error_log("OAUTH_CALLBACK: Update query failed, skipping verification");
+            }
             
             generate_log('OAUTH_CALLBACK', 'Direct SQL update result', [
                 'shop' => $shop,
@@ -376,16 +464,35 @@ if (isset($_GET['code'])) {
                     ]);
                 }
             } else {
+                $log_file = __DIR__ . '/oauth-debug.log';
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] ✅ UPDATE SUCCESSFUL - affected_rows: " . $affected_rows . "\n";
+                $log_msg .= "[" . date('Y-m-d H:i:s') . "] Redirecting to: " . SITE_CLIENT_URL . "?shop=" . $shop . "\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                file_put_contents($log_file, $log_msg, FILE_APPEND); // Write twice
+                error_log("OAUTH_CALLBACK: Update successful - redirecting");
                 generate_log('OAUTH_CALLBACK', '✅ Update successful - redirecting immediately', [
                     'shop' => $shop,
                     'affected_rows' => $affected_rows
                 ]);
+                
+                // Small delay to ensure logs are written
+                usleep(100000); // 0.1 second
+                
                 // Redirect immediately after successful update to prevent new store registration
                 header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
                 exit;
             }
             
         } catch (Exception $e) {
+            $log_file = __DIR__ . '/oauth-debug.log';
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] ========== EXCEPTION IN UPDATE BLOCK ==========\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] Error: " . $e->getMessage() . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] File: " . $e->getFile() . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] Line: " . $e->getLine() . "\n";
+            $log_msg .= "[" . date('Y-m-d H:i:s') . "] Trace: " . substr($e->getTraceAsString(), 0, 500) . "\n";
+            file_put_contents($log_file, $log_msg, FILE_APPEND);
+            file_put_contents($log_file, $log_msg, FILE_APPEND); // Write twice
+            error_log("OAUTH_CALLBACK EXCEPTION: " . $e->getMessage());
             generate_log('OAUTH_CALLBACK', 'ERROR in direct SQL update', [
                 'shop' => $shop,
                 'error' => $e->getMessage(),
@@ -469,6 +576,11 @@ if (isset($_GET['code'])) {
     }
 
     // Store doesn't exist - REGISTER NEW STORE
+    $log_file = __DIR__ . '/oauth-debug.log';
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ❌ STORE NOT FOUND - Going to NEW STORE registration path\n", FILE_APPEND);
+    error_log("OAUTH_CALLBACK: Store NOT found - going to NEW STORE registration path");
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] comeback_client status: " . (isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET') . "\n", FILE_APPEND);
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] comeback_client data empty: " . (empty($comeback_client['data']) ? 'YES' : 'NO') . "\n", FILE_APPEND);
     generate_log('OAUTH_CALLBACK', 'Store does not exist - registering new store', ['shop' => $shop]);
 
     // Register store in DB
@@ -515,10 +627,30 @@ $temp_cls_functions = new common_function('');
 $where_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
 $comeback = $temp_cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
 
-if ($comeback['status'] == 1) {
-    generate_log('INSTALL', 'Store exists, redirecting to client', ['shop' => $shop]);
+// Log the check result
+$log_file = __DIR__ . '/oauth-debug.log';
+file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Checking if store exists for initial visit...\n", FILE_APPEND);
+file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Store lookup status: " . (isset($comeback['status']) ? $comeback['status'] : 'NOT SET') . "\n", FILE_APPEND);
+file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Has code param: " . (isset($_GET['code']) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+error_log("INSTALL: Store lookup - status: " . (isset($comeback['status']) ? $comeback['status'] : 'NOT SET') . ", has_code: " . (isset($_GET['code']) ? 'YES' : 'NO'));
+
+// IMPORTANT: Even if store exists, we should still go through OAuth if there's no code
+// This ensures password gets updated on reinstallation
+// Only skip OAuth if we already have a valid code (OAuth callback)
+if ($comeback['status'] == 1 && isset($_GET['code'])) {
+    // Store exists AND we have OAuth code - this means OAuth callback already processed
+    // Just redirect to client
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Store exists and has code - redirecting to client\n", FILE_APPEND);
+    generate_log('INSTALL', 'Store exists and OAuth complete, redirecting to client', ['shop' => $shop]);
     header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
     exit;
+}
+
+// If store exists but no code, still go through OAuth to update password
+if ($comeback['status'] == 1 && !isset($_GET['code'])) {
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Store exists but no code - forcing OAuth flow to update password\n", FILE_APPEND);
+    error_log("INSTALL: Store exists but no code - forcing OAuth");
+    // Continue to OAuth redirect below
 }
 
 // Redirect to Shopify OAuth
