@@ -91,20 +91,41 @@ if ($shop) {
 // Handle OAuth callback
 // --------------------
 if (isset($_GET['code'])) {
+    // Direct logging to oauth-debug.log
+    $log_file = __DIR__ . '/oauth-debug.log';
+    $log_entry = "\n" . str_repeat("=", 80) . "\n";
+    $log_entry .= "[" . date('Y-m-d H:i:s') . "] OAUTH_CALLBACK STARTED\n";
+    $log_entry .= "Shop: " . ($shop ?: 'NOT SET') . "\n";
+    $log_entry .= "Code: " . (isset($_GET['code']) ? substr($_GET['code'], 0, 20) . '...' : 'NOT SET') . "\n";
+    $log_entry .= "GET params: " . json_encode($_GET) . "\n";
+    file_put_contents($log_file, $log_entry, FILE_APPEND);
+    error_log("OAUTH_CALLBACK: Started for shop: " . $shop);
+    
     if (empty($shop)) {
+        $error_msg = 'OAuth Callback Error: Shop parameter missing. Check redirect URI in Shopify Partner Dashboard.';
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERROR: " . $error_msg . "\n", FILE_APPEND);
+        error_log("OAUTH_CALLBACK ERROR: " . $error_msg);
         generate_log('OAUTH_CALLBACK', 'Shop parameter is missing in callback', $_GET);
-        die('OAuth Callback Error: Shop parameter missing. Check redirect URI in Shopify Partner Dashboard.');
+        die($error_msg);
     }
 
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Creating common_function and ShopifyClient\n", FILE_APPEND);
     $cls_functions = new common_function($shop);
     $shopifyClient = new ShopifyClient($shop, "", $CLS_API_KEY, $SHOPIFY_SECRET);
+    
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Requesting access token...\n", FILE_APPEND);
     $password = $shopifyClient->getEntrypassword($_GET['code']);
 
     if (empty($password)) {
+        $error_msg = 'Failed to get access token';
+        file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERROR: " . $error_msg . "\n", FILE_APPEND);
+        error_log("OAUTH_CALLBACK ERROR: " . $error_msg);
         generate_log('OAUTH_CALLBACK', 'Failed to get access token', ['shop' => $shop]);
         die('Error: Failed to authenticate with Shopify. Please try installing again.');
     }
 
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Access token obtained (length: " . strlen($password) . ")\n", FILE_APPEND);
+    error_log("OAUTH_CALLBACK: Access token obtained for shop: " . $shop);
     generate_log('OAUTH_CALLBACK', 'Access token obtained', ['shop' => $shop, 'password_length' => strlen($password)]);
 
     // Get shop information first (needed for both new and existing stores)
@@ -118,19 +139,33 @@ if (isset($_GET['code'])) {
 
     // Check if store exists (regardless of status - for reinstallations)
     // Use direct SQL query as primary method to ensure we find the store
+    $log_file = __DIR__ . '/oauth-debug.log';
+    file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Starting store lookup for: " . $shop . "\n", FILE_APPEND);
+    error_log("OAUTH_CALLBACK: Starting store lookup for: " . $shop);
+    
     $comeback_client = array('status' => 0, 'data' => array());
     
     try {
         $conn = $GLOBALS['conn'];
-        if ($conn) {
+        if (!$conn) {
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] ERROR: Database connection not available\n", FILE_APPEND);
+            error_log("OAUTH_CALLBACK ERROR: Database connection not available");
+        } else {
             $shop_escaped = mysqli_real_escape_string($conn, $shop);
             $direct_query = "SELECT * FROM " . TABLE_USER_SHOP . " WHERE (`shop_name` = '" . $shop_escaped . "' OR `store_name` = '" . $shop_escaped . "') LIMIT 1";
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Executing query: " . $direct_query . "\n", FILE_APPEND);
+            error_log("OAUTH_CALLBACK: Executing lookup query");
             generate_log('OAUTH_CALLBACK', 'Direct SQL lookup query', ['query' => $direct_query]);
             
             $result = mysqli_query($conn, $direct_query);
             if ($result && mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_assoc($result);
                 $comeback_client = array('status' => 1, 'data' => $row);
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] ✅ Store FOUND - store_user_id: " . (isset($row['store_user_id']) ? $row['store_user_id'] : 'N/A') . 
+                          ", shop_name: " . (isset($row['shop_name']) ? $row['shop_name'] : 'N/A') . 
+                          ", current_password: " . (isset($row['password']) ? substr($row['password'], 0, 20) . '...' : 'N/A') . "\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                error_log("OAUTH_CALLBACK: Store found - store_user_id: " . (isset($row['store_user_id']) ? $row['store_user_id'] : 'N/A'));
                 generate_log('OAUTH_CALLBACK', 'Direct SQL lookup SUCCESS', [
                     'store_user_id' => isset($row['store_user_id']) ? $row['store_user_id'] : 'N/A',
                     'shop_name' => isset($row['shop_name']) ? $row['shop_name'] : 'N/A',
@@ -138,6 +173,10 @@ if (isset($_GET['code'])) {
                     'status' => isset($row['status']) ? $row['status'] : 'N/A'
                 ]);
             } else {
+                $log_msg = "[" . date('Y-m-d H:i:s') . "] ❌ Store NOT FOUND - num_rows: " . ($result ? mysqli_num_rows($result) : 0) . 
+                          ", error: " . mysqli_error($conn) . "\n";
+                file_put_contents($log_file, $log_msg, FILE_APPEND);
+                error_log("OAUTH_CALLBACK: Store NOT FOUND for shop: " . $shop);
                 generate_log('OAUTH_CALLBACK', 'Direct SQL lookup - Store NOT FOUND', [
                     'shop' => $shop,
                     'num_rows' => $result ? mysqli_num_rows($result) : 0,
@@ -146,6 +185,9 @@ if (isset($_GET['code'])) {
             }
         }
     } catch (Exception $e) {
+        $log_msg = "[" . date('Y-m-d H:i:s') . "] EXCEPTION in store lookup: " . $e->getMessage() . "\n";
+        file_put_contents($log_file, $log_msg, FILE_APPEND);
+        error_log("OAUTH_CALLBACK EXCEPTION: " . $e->getMessage());
         generate_log('OAUTH_CALLBACK', 'Direct SQL lookup exception', ['error' => $e->getMessage()]);
     }
     
@@ -284,9 +326,20 @@ if (isset($_GET['code'])) {
             }
             
             // Execute the update query
+            $log_file = __DIR__ . '/oauth-debug.log';
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Executing UPDATE query...\n", FILE_APPEND);
+            file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] SQL: " . $update_sql . "\n", FILE_APPEND);
+            error_log("OAUTH_CALLBACK: Executing UPDATE query");
+            
             $execute_result = mysqli_query($conn, $update_sql);
             $affected_rows = mysqli_affected_rows($conn);
             $error = mysqli_error($conn);
+            
+            $log_msg = "[" . date('Y-m-d H:i:s') . "] Update result - execute: " . ($execute_result ? 'SUCCESS' : 'FAILED') . 
+                      ", affected_rows: " . $affected_rows . 
+                      ", error: " . ($error ?: 'NONE') . "\n";
+            file_put_contents($log_file, $log_msg, FILE_APPEND);
+            error_log("OAUTH_CALLBACK: Update result - affected_rows: " . $affected_rows);
             
             generate_log('OAUTH_CALLBACK', 'Direct SQL update result', [
                 'shop' => $shop,
