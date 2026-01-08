@@ -9721,7 +9721,9 @@ class Client_functions extends common_function {
             $where_conditions[] = array("AND", "created_at", "<=", $date_to . " 23:59:59");
         }
         
-        $analytics = $this->select_result(TABLE_FORM_ANALYTICS, '*', $where_conditions);
+        // Set a very high limit to get all analytics records (default is 25)
+        $options_arr = array('limit' => 999999, 'skip' => 0);
+        $analytics = $this->select_result(TABLE_FORM_ANALYTICS, '*', $where_conditions, $options_arr);
         
         $result = array(
             'total_views' => 0,
