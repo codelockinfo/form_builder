@@ -674,6 +674,8 @@ s0.parentNode.insertBefore(s1,s0);
                         }
                     } else {
                         $(".set_all_form_submissions").html(comeback['outcome'] || '<div class="form-list-loading">No forms found</div>');
+                        // Initialize view button handlers after forms are loaded
+                        initViewFormButtons();
                     }
                 },
                 error: function(xhr, status, error) {
@@ -682,6 +684,7 @@ s0.parentNode.insertBefore(s1,s0);
                 }
             });
         }
+        
     });
     
     function loadFormsForFilter() {
@@ -936,3 +939,4 @@ s0.parentNode.insertBefore(s1,s0);
         return num.toString();
     }
 </script>
+

@@ -877,6 +877,7 @@ $(document).on("click", ".btnFormSubmit", function (event) {
     });
 });
 
+
 function getAllForm() {
     $.ajax({
         url: "ajax_call.php",

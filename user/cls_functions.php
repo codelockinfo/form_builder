@@ -2014,8 +2014,10 @@ class Client_functions extends common_function {
                                             </label>
                                         </div>';
                                         }
+                                        $form_public_id = (isset($templates['public_id']) && !empty($templates['public_id'])) ? $templates['public_id'] : $templates['id'];
+                                        $storefront_url = 'https://' . $shopinfo->shop_name . '/';
                                         $html .= '<div class="indexButton">
-                                        <button><a href="view_form.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'" target="_blank">View</a></button>
+                                        <button class="view-form-btn" onclick="window.open(\''.$storefront_url.'\', \'_blank\');" data-form-id="'.$templates['id'].'" data-form-public-id="'.$form_public_id.'" data-shop="'.$shopinfo->shop_name.'">View</button>
                                         ';
                                         if (isset($_POST['view_type']) && $_POST['view_type'] == 'submissions_dashboard') {
                                         $html .= '<button><a href="submissions.php?form_id='.$templates['id'].'&shop='.$shopinfo->shop_name.'">Submissions</a></button>';
@@ -9863,6 +9865,88 @@ class Client_functions extends common_function {
                 $response_data = array('result' => 'fail', 'msg' => $analytics['error'], 'status' => 0);
             } else {
                 $response_data = array('result' => 'success', 'data' => $analytics, 'status' => 1);
+            }
+        }
+        
+        return $response_data;
+    }
+    
+    /**
+     * Get all store pages for form view (AJAX handler)
+     */
+    function getFormPages() {
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong', 'status' => 0);
+        
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            try {
+                // Get all pages using GraphQL
+                $pages_result = $this->get_pages_via_graphql(250, null);
+                
+                if (isset($pages_result['outcome']) && $pages_result['outcome'] == 'true' && isset($pages_result['html']) && is_array($pages_result['html'])) {
+                    $pages = array();
+                    
+                    // Extract page data from HTML rows
+                    foreach ($pages_result['html'] as $html_row) {
+                        // Parse the HTML to extract page info
+                        if (preg_match('/data-page-id="([^"]+)"[^>]*data-page-title="([^"]+)"[^>]*data-page-handle="([^"]+)"/', $html_row, $matches)) {
+                            $pages[] = array(
+                                'id' => $matches[1],
+                                'title' => html_entity_decode($matches[2], ENT_QUOTES, 'UTF-8'),
+                                'handle' => html_entity_decode($matches[3], ENT_QUOTES, 'UTF-8')
+                            );
+                        }
+                    }
+                    
+                    // Also get home, products, collections pages
+                    $shopinfo = (object)$this->current_store_obj;
+                    $shop_domain = isset($shopinfo->shop_name) ? $shopinfo->shop_name : '';
+                    
+                    // Add special pages
+                    $special_pages = array(
+                        array(
+                            'id' => 'home',
+                            'title' => 'Home Page',
+                            'handle' => '',
+                            'type' => 'home'
+                        ),
+                        array(
+                            'id' => 'products',
+                            'title' => 'Products Page',
+                            'handle' => 'products',
+                            'type' => 'products'
+                        ),
+                        array(
+                            'id' => 'collections',
+                            'title' => 'Collections Page',
+                            'handle' => 'collections',
+                            'type' => 'collections'
+                        )
+                    );
+                    
+                    $response_data = array(
+                        'result' => 'success',
+                        'pages' => array_merge($special_pages, $pages),
+                        'shop_domain' => $shop_domain,
+                        'status' => 1
+                    );
+                } else {
+                    // Fallback: return at least special pages
+                    $shopinfo = (object)$this->current_store_obj;
+                    $shop_domain = isset($shopinfo->shop_name) ? $shopinfo->shop_name : '';
+                    
+                    $response_data = array(
+                        'result' => 'success',
+                        'pages' => array(
+                            array('id' => 'home', 'title' => 'Home Page', 'handle' => '', 'type' => 'home'),
+                            array('id' => 'products', 'title' => 'Products Page', 'handle' => 'products', 'type' => 'products'),
+                            array('id' => 'collections', 'title' => 'Collections Page', 'handle' => 'collections', 'type' => 'collections')
+                        ),
+                        'shop_domain' => $shop_domain,
+                        'status' => 1
+                    );
+                }
+            } catch (Exception $e) {
+                $response_data = array('result' => 'fail', 'msg' => $e->getMessage(), 'status' => 0);
             }
         }
         
