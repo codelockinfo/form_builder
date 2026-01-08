@@ -19,7 +19,9 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       
+        <link rel="icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
+        <link rel="shortcut icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
+        <link rel="apple-touch-icon" href="<?php echo main_url('assets/images/logo.webp'); ?>">
 
         <title><?php echo CLS_SITE_NAME; ?></title>
         <link rel="stylesheet" href="<?php echo main_url('assets/css/polaris_style.css'); ?>" rel="stylesheet">

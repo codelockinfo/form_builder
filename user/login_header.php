@@ -12,6 +12,9 @@ include_once ('cls_functions.php');
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
+        <link rel="shortcut icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
+        <link rel="apple-touch-icon" href="<?php echo main_url('assets/images/logo.webp'); ?>">
         <title><?php echo CLS_SITE_NAME; ?></title>
         <link rel="stylesheet" href="<?php echo main_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/shopify_client.css'); ?>" />
