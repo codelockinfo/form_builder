@@ -117,17 +117,54 @@ if (isset($_GET['code'])) {
     }
 
     // Check if store exists (regardless of status - for reinstallations)
-    $where_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
-    $comeback_client = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
+    // Use direct SQL query as primary method to ensure we find the store
+    $comeback_client = array('status' => 0, 'data' => array());
     
-    generate_log('OAUTH_CALLBACK', 'Store lookup result', [
+    try {
+        $conn = $GLOBALS['conn'];
+        if ($conn) {
+            $shop_escaped = mysqli_real_escape_string($conn, $shop);
+            $direct_query = "SELECT * FROM " . TABLE_USER_SHOP . " WHERE (`shop_name` = '" . $shop_escaped . "' OR `store_name` = '" . $shop_escaped . "') LIMIT 1";
+            generate_log('OAUTH_CALLBACK', 'Direct SQL lookup query', ['query' => $direct_query]);
+            
+            $result = mysqli_query($conn, $direct_query);
+            if ($result && mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                $comeback_client = array('status' => 1, 'data' => $row);
+                generate_log('OAUTH_CALLBACK', 'Direct SQL lookup SUCCESS', [
+                    'store_user_id' => isset($row['store_user_id']) ? $row['store_user_id'] : 'N/A',
+                    'shop_name' => isset($row['shop_name']) ? $row['shop_name'] : 'N/A',
+                    'store_name' => isset($row['store_name']) ? $row['store_name'] : 'N/A',
+                    'status' => isset($row['status']) ? $row['status'] : 'N/A'
+                ]);
+            } else {
+                generate_log('OAUTH_CALLBACK', 'Direct SQL lookup - Store NOT FOUND', [
+                    'shop' => $shop,
+                    'num_rows' => $result ? mysqli_num_rows($result) : 0,
+                    'error' => mysqli_error($conn)
+                ]);
+            }
+        }
+    } catch (Exception $e) {
+        generate_log('OAUTH_CALLBACK', 'Direct SQL lookup exception', ['error' => $e->getMessage()]);
+    }
+    
+    // Fallback to select_result if direct query didn't find it
+    if ($comeback_client['status'] != 1 || empty($comeback_client['data'])) {
+        generate_log('OAUTH_CALLBACK', 'Falling back to select_result for store lookup');
+        $where_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
+        $comeback_client = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
+    }
+    
+    generate_log('OAUTH_CALLBACK', 'Final store lookup result', [
         'shop' => $shop,
         'lookup_status' => isset($comeback_client['status']) ? $comeback_client['status'] : 'NOT SET',
         'has_data' => !empty($comeback_client['data']) ? 'YES' : 'NO',
         'store_user_id' => isset($comeback_client['data']['store_user_id']) ? $comeback_client['data']['store_user_id'] : 'N/A',
         'current_status' => isset($comeback_client['data']['status']) ? $comeback_client['data']['status'] : 'N/A',
         'current_shop_name' => isset($comeback_client['data']['shop_name']) ? $comeback_client['data']['shop_name'] : 'N/A',
-        'current_store_name' => isset($comeback_client['data']['store_name']) ? $comeback_client['data']['store_name'] : 'N/A'
+        'current_store_name' => isset($comeback_client['data']['store_name']) ? $comeback_client['data']['store_name'] : 'N/A',
+        'current_password' => isset($comeback_client['data']['password']) ? substr($comeback_client['data']['password'], 0, 15) . '...' : 'N/A'
     ]);
 
     // Webhooks registration (needed for both new and existing stores)
@@ -286,10 +323,13 @@ if (isset($_GET['code'])) {
                     ]);
                 }
             } else {
-                generate_log('OAUTH_CALLBACK', '✅ Update successful', [
+                generate_log('OAUTH_CALLBACK', '✅ Update successful - redirecting immediately', [
                     'shop' => $shop,
                     'affected_rows' => $affected_rows
                 ]);
+                // Redirect immediately after successful update to prevent new store registration
+                header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
+                exit;
             }
             
         } catch (Exception $e) {
@@ -350,6 +390,9 @@ if (isset($_GET['code'])) {
             
             if ($password_match && $updated_status == '1') {
                 generate_log('OAUTH_CALLBACK', '✅ Store successfully updated with new access token', ['shop' => $shop]);
+                // Redirect to prevent new store registration
+                header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
+                exit;
             } else {
                 generate_log('OAUTH_CALLBACK', '⚠️ WARNING: Update verification failed - password or status mismatch', [
                     'shop' => $shop,
@@ -359,6 +402,13 @@ if (isset($_GET['code'])) {
             }
         } else {
             generate_log('OAUTH_CALLBACK', '⚠️ WARNING: Could not verify update - store not found after update', ['shop' => $shop]);
+        }
+        
+        // If we reach here and update was successful (affected_rows > 0), redirect anyway
+        if (isset($affected_rows) && $affected_rows > 0) {
+            generate_log('OAUTH_CALLBACK', '✅ Update had affected rows, redirecting to prevent duplicate registration', ['shop' => $shop, 'affected_rows' => $affected_rows]);
+            header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
+            exit;
         }
         
         header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
