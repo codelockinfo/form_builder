@@ -8803,6 +8803,9 @@ class Client_functions extends common_function {
             $mysql_date = date('Y-m-d H:i:s');
             $ip_address = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
+            // Track form submission analytics
+            $this->trackFormAnalytics($form_id, 'submit', $store_user_id);
+
             // Remove 'id' field if present (let auto-increment handle it)
             $submission_data_json = json_encode($submission_data);
             error_log("JSON encoded submission_data: " . $submission_data_json);
@@ -9653,5 +9656,281 @@ class Client_functions extends common_function {
     }
     
     // For FRONTEND
+    
+    /**
+     * Track form analytics event (view, fill, submit)
+     */
+    function trackFormAnalytics($form_id, $event_type = 'view', $store_client_id = 0) {
+        if ($form_id <= 0) {
+            return false;
+        }
+        
+        if ($store_client_id <= 0) {
+            $shopinfo = (object)$this->current_store_obj;
+            $store_client_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
+        }
+        
+        if ($store_client_id <= 0) {
+            return false;
+        }
+        
+        $mysql_date = date('Y-m-d H:i:s');
+        $ip_address = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+        $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        
+        $fields_arr = array(
+            'form_id' => $form_id,
+            'store_client_id' => $store_client_id,
+            'event_type' => $event_type,
+            'ip_address' => $ip_address,
+            'user_agent' => $user_agent,
+            'created_at' => $mysql_date
+        );
+        
+        $result = $this->post_data(TABLE_FORM_ANALYTICS, array($fields_arr));
+        $result_decoded = json_decode($result, true);
+        
+        return isset($result_decoded['status']) && $result_decoded['status'] == 1;
+    }
+    
+    /**
+     * Get form analytics data
+     */
+    function getFormAnalytics($form_id = 0, $store_client_id = 0, $date_from = '', $date_to = '') {
+        if ($store_client_id <= 0) {
+            $shopinfo = (object)$this->current_store_obj;
+            $store_client_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
+        }
+        
+        if ($store_client_id <= 0) {
+            return array('error' => 'Store not authenticated');
+        }
+        
+        $where_conditions = array();
+        $where_conditions[] = array("", "store_client_id", "=", $store_client_id);
+        
+        if ($form_id > 0) {
+            $where_conditions[] = array("AND", "form_id", "=", $form_id);
+        }
+        
+        if (!empty($date_from)) {
+            $where_conditions[] = array("AND", "created_at", ">=", $date_from . " 00:00:00");
+        }
+        
+        if (!empty($date_to)) {
+            $where_conditions[] = array("AND", "created_at", "<=", $date_to . " 23:59:59");
+        }
+        
+        $analytics = $this->select_result(TABLE_FORM_ANALYTICS, '*', $where_conditions);
+        
+        $result = array(
+            'total_views' => 0,
+            'total_fills' => 0,
+            'total_submits' => 0,
+            'today_views' => 0,
+            'today_fills' => 0,
+            'today_submits' => 0,
+            'overall_views' => 0,
+            'overall_fills' => 0,
+            'overall_submits' => 0,
+            'daily_data' => array(),
+            'form_data' => array(),
+            'form_names' => array()
+        );
+        
+        // Get form names for all forms that have analytics
+        $form_ids_in_analytics = array();
+        
+        if ($analytics['status'] == 1 && !empty($analytics['data'])) {
+            $today = date('Y-m-d');
+            $data = is_array($analytics['data']) ? $analytics['data'] : array($analytics['data']);
+            
+            foreach ($data as $event) {
+                $event_form_id = isset($event['form_id']) ? intval($event['form_id']) : 0;
+                if ($event_form_id > 0 && !in_array($event_form_id, $form_ids_in_analytics)) {
+                    $form_ids_in_analytics[] = $event_form_id;
+                }
+            }
+        }
+        
+        // Fetch form names for all forms in analytics using direct SQL query
+        if (!empty($form_ids_in_analytics)) {
+            $form_ids_str = implode(',', array_map('intval', $form_ids_in_analytics));
+            $form_ids_str = mysqli_real_escape_string($this->db_connection, $form_ids_str);
+            
+            $query = "SELECT id, form_name FROM " . TABLE_FORMS . " WHERE id IN ($form_ids_str) AND store_client_id = " . intval($store_client_id);
+            $forms_result = $this->db_connection->query($query);
+            
+            if ($forms_result) {
+                while ($form = $forms_result->fetch_assoc()) {
+                    $form_id = isset($form['id']) ? intval($form['id']) : 0;
+                    $form_name = isset($form['form_name']) ? trim($form['form_name']) : 'Untitled Form';
+                    if ($form_id > 0) {
+                        $result['form_names'][$form_id] = $form_name;
+                    }
+                }
+            }
+        }
+        
+        if ($analytics['status'] == 1 && !empty($analytics['data'])) {
+            $today = date('Y-m-d');
+            $data = is_array($analytics['data']) ? $analytics['data'] : array($analytics['data']);
+            
+            foreach ($data as $event) {
+                $event_type = isset($event['event_type']) ? $event['event_type'] : '';
+                $created_at = isset($event['created_at']) ? $event['created_at'] : '';
+                $event_form_id = isset($event['form_id']) ? intval($event['form_id']) : 0;
+                $event_date = substr($created_at, 0, 10);
+                
+                // Count by type
+                if ($event_type == 'view') {
+                    $result['total_views']++;
+                    $result['overall_views']++;
+                    if ($event_date == $today) {
+                        $result['today_views']++;
+                    }
+                } elseif ($event_type == 'fill') {
+                    $result['total_fills']++;
+                    $result['overall_fills']++;
+                    if ($event_date == $today) {
+                        $result['today_fills']++;
+                    }
+                } elseif ($event_type == 'submit') {
+                    $result['total_submits']++;
+                    $result['overall_submits']++;
+                    if ($event_date == $today) {
+                        $result['today_submits']++;
+                    }
+                }
+                
+                // Group by date for daily data
+                if (!isset($result['daily_data'][$event_date])) {
+                    $result['daily_data'][$event_date] = array(
+                        'views' => 0,
+                        'fills' => 0,
+                        'submits' => 0
+                    );
+                }
+                
+                if ($event_type == 'view') {
+                    $result['daily_data'][$event_date]['views']++;
+                } elseif ($event_type == 'fill') {
+                    $result['daily_data'][$event_date]['fills']++;
+                } elseif ($event_type == 'submit') {
+                    $result['daily_data'][$event_date]['submits']++;
+                }
+                
+                // Group by form
+                if ($event_form_id > 0) {
+                    if (!isset($result['form_data'][$event_form_id])) {
+                        $result['form_data'][$event_form_id] = array(
+                            'views' => 0,
+                            'fills' => 0,
+                            'submits' => 0
+                        );
+                    }
+                    
+                    if ($event_type == 'view') {
+                        $result['form_data'][$event_form_id]['views']++;
+                    } elseif ($event_type == 'fill') {
+                        $result['form_data'][$event_form_id]['fills']++;
+                    } elseif ($event_type == 'submit') {
+                        $result['form_data'][$event_form_id]['submits']++;
+                    }
+                }
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Get form analytics data (AJAX handler)
+     */
+    function getFormAnalyticsData() {
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong', 'status' => 0);
+        
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            $date_from = isset($_POST['date_from']) ? trim($_POST['date_from']) : '';
+            $date_to = isset($_POST['date_to']) ? trim($_POST['date_to']) : '';
+            
+            $analytics = $this->getFormAnalytics($form_id, 0, $date_from, $date_to);
+            
+            if (isset($analytics['error'])) {
+                $response_data = array('result' => 'fail', 'msg' => $analytics['error'], 'status' => 0);
+            } else {
+                $response_data = array('result' => 'success', 'data' => $analytics, 'status' => 1);
+            }
+        }
+        
+        return $response_data;
+    }
+    
+    /**
+     * Track form fill event (AJAX handler for frontend)
+     */
+    function trackFormFill() {
+        $response_data = array('result' => 'fail', 'msg' => 'Something went wrong', 'status' => 0);
+        
+        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id'])) {
+            $form_id_input = isset($_POST['form_id']) ? trim($_POST['form_id']) : '';
+            
+            if (empty($form_id_input)) {
+                return array('result' => 'fail', 'msg' => 'Form ID is required', 'status' => 0);
+            }
+            
+            $shopinfo = (object)$this->current_store_obj;
+            $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : 0;
+            
+            if ($store_user_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Store not authenticated', 'status' => 0);
+            }
+            
+            // Check if form_id is public_id (6-digit) or database ID
+            $form_id = 0;
+            $is_public_id = (strlen($form_id_input) == 6 && ctype_digit($form_id_input));
+            
+            if ($is_public_id) {
+                // Convert public_id to database form_id
+                $where_query = array(
+                    ["", "public_id", "=", "$form_id_input"],
+                    ["AND", "store_client_id", "=", "$store_user_id"],
+                    ["AND", "status", "=", "1"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] == 1 && !empty($form_check['data'])) {
+                    $form_id = (int)$form_check['data']['id'];
+                }
+            } else {
+                // Assume it's a database ID, but verify it belongs to this store
+                $form_id = (int)$form_id_input;
+                $where_query = array(
+                    ["", "id", "=", "$form_id"],
+                    ["AND", "store_client_id", "=", "$store_user_id"],
+                    ["AND", "status", "=", "1"]
+                );
+                $form_check = $this->select_result(TABLE_FORMS, 'id', $where_query, ['single' => true]);
+                
+                if ($form_check['status'] != 1 || empty($form_check['data'])) {
+                    return array('result' => 'fail', 'msg' => 'Form not found or access denied', 'status' => 0);
+                }
+            }
+            
+            if ($form_id > 0) {
+                $tracked = $this->trackFormAnalytics($form_id, 'fill', $store_user_id);
+                if ($tracked) {
+                    $response_data = array('result' => 'success', 'msg' => 'Fill event tracked', 'status' => 1);
+                } else {
+                    $response_data = array('result' => 'fail', 'msg' => 'Failed to track fill event', 'status' => 0);
+                }
+            } else {
+                $response_data = array('result' => 'fail', 'msg' => 'Invalid form ID', 'status' => 0);
+            }
+        }
+        
+        return $response_data;
+    }
    
 }

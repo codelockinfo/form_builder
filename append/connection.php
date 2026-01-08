@@ -131,7 +131,7 @@ define('TABLE_SETTINGS', 'settings');
 define('CLS_TABLE_THIRDPARTY_APIKEY','thirdparty_apikey');
 define('TABLE_CUSTOMER_MASTER','customer_master');
 define('TABLE_FORM_SUBMISSIONS', 'form_submissions');
-
+define('TABLE_FORM_ANALYTICS', 'form_analytics');
 define("CLS_API_VERSIION",'api/2022-10');
 define('CLS_TABLE_FONT_FAMILYS', 'font_family');
 define('CLS_TABLE_SHIPMENT_METHOD', 'shipping_type');

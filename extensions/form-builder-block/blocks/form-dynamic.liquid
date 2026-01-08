@@ -237,6 +237,9 @@
           console.log('✅ MutationObserver set up to prevent readonly/disabled from being re-added');
         }
         
+        // Initialize form fill tracking (track when user clicks/focuses on any input)
+        initializeFormFillTracking();
+        
         // Initialize form submission handler
         initializeFormSubmission();
         // Initialize button hover effects
@@ -367,6 +370,119 @@
           notification.parentNode.removeChild(notification);
         }
       }, 300);
+    });
+  }
+  
+  function initializeFormFillTracking() {
+    console.log('=== Initializing Form Fill Tracking ===');
+    const blockContainer = document.getElementById("easy-form-{{ block.id }}");
+    if (!blockContainer) return;
+    
+    const forms = blockContainer.querySelectorAll('form.get_selected_elements');
+    console.log('Found forms for fill tracking:', forms.length);
+    
+    forms.forEach(function(form, index) {
+      // Get form ID
+      const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
+      const formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || '';
+      
+      if (!formId) {
+        console.error('Form ID not found for fill tracking');
+        return;
+      }
+      
+      // Get shop domain
+      let shop = "{{ shop.permanent_domain }}";
+      if (!shop || shop === "") {
+        shop = "{{ shop.myshopify_domain }}";
+      }
+      if (!shop || shop === "") {
+        shop = "{{ shop.domain }}";
+      }
+      if (!shop || shop === "") {
+        const hostname = window.location.hostname;
+        if (hostname && hostname.includes('.myshopify.com')) {
+          shop = hostname;
+        }
+      }
+      
+      if (!shop) {
+        console.error('Shop domain not found for fill tracking');
+        return;
+      }
+      
+      // Track fill only once per form view (use data attribute to prevent multiple tracks)
+      let fillTracked = form.getAttribute('data-fill-tracked');
+      if (fillTracked === 'true') {
+        return; // Already tracked
+      }
+      
+      // Get all form inputs (input, textarea, select)
+      const formInputs = form.querySelectorAll('input, textarea, select');
+      console.log('Found form inputs for fill tracking:', formInputs.length);
+      
+      // Track fill when user focuses or clicks on any input
+      const trackFill = function() {
+        if (form.getAttribute('data-fill-tracked') === 'true') {
+          return; // Already tracked
+        }
+        
+        // Mark as tracked immediately to prevent duplicate tracking
+        form.setAttribute('data-fill-tracked', 'true');
+        
+        console.log('Tracking form fill event for form ID:', formId);
+        
+        // Send AJAX request to track fill
+        const formData = new FormData();
+        formData.append('store', shop);
+        formData.append('routine_name', 'trackFormFill');
+        formData.append('form_id', formId);
+        
+        // Get base URL
+        let baseUrl = '';
+        const scripts = document.querySelectorAll('script[src]');
+        for (let i = 0; i < scripts.length; i++) {
+          const src = scripts[i].src;
+          if (src.indexOf('/form_builder/') > -1) {
+            baseUrl = src.substring(0, src.indexOf('/form_builder/') + '/form_builder'.length);
+            break;
+          }
+        }
+        
+        if (!baseUrl) {
+          baseUrl = 'https://codelocksolutions.com/form_builder';
+        }
+        
+        const ajaxUrl = baseUrl + '/user/ajax_call.php';
+        
+        fetch(ajaxUrl, {
+          method: 'POST',
+          body: formData
+        })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (data.result === 'success') {
+            console.log('Form fill event tracked successfully');
+          } else {
+            console.warn('Failed to track fill event:', data.msg);
+          }
+        })
+        .catch(function(error) {
+          console.error('Error tracking fill event:', error);
+        });
+      };
+      
+      // Attach event listeners to all inputs
+      formInputs.forEach(function(input) {
+        // Track on focus (when user clicks into the field)
+        input.addEventListener('focus', trackFill, { once: true });
+        // Also track on click (in case focus doesn't fire)
+        input.addEventListener('click', trackFill, { once: true });
+      });
+      
+      console.log('Fill tracking initialized for form', index);
     });
   }
   

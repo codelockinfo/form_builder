@@ -539,6 +539,9 @@ if ($is_list_request) {
         // Get the actual database form ID from the lookup
         $form_id = (int)$form_check['data']['id'];
         
+        // Track form view analytics
+        $cls_functions->trackFormAnalytics($form_id, 'view', $store_user_id);
+        
         // Set POST data to simulate the get_selected_elements_fun call
         $_POST['store'] = $shop;
         $_POST['form_id'] = $form_id;
