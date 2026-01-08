@@ -105,21 +105,9 @@ if (isset($_GET['code'])) {
         die('Error: Failed to authenticate with Shopify. Please try installing again.');
     }
 
-    generate_log('OAUTH_CALLBACK', 'Access token obtained', ['shop' => $shop]);
+    generate_log('OAUTH_CALLBACK', 'Access token obtained', ['shop' => $shop, 'password_length' => strlen($password)]);
 
-    // Check if store exists
-    $where_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
-    $comeback_client = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
-
-    if ($comeback_client['status'] == 1) {
-        $update_data = ['password' => $password, 'updated_on' => DATE, 'status' => '1'];
-        $update_where = [["", "shop_name", "=", $shop]];
-        $cls_functions->put_data(TABLE_USER_SHOP, $update_data, $update_where);
-        header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
-        exit;
-    }
-
-    // Register new store
+    // Get shop information first (needed for both new and existing stores)
     $shopuinfo = shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/shop.json", [], 'GET');
     $shopuinfo = json_decode($shopuinfo['response']);
 
@@ -128,7 +116,11 @@ if (isset($_GET['code'])) {
         die('Error: Failed to retrieve shop information. Please try installing again.');
     }
 
-    // Webhooks registration
+    // Check if store exists (regardless of status - for reinstallations)
+    $where_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
+    $comeback_client = $cls_functions->select_result(TABLE_USER_SHOP, '*', $where_query, ['single' => true]);
+
+    // Webhooks registration (needed for both new and existing stores)
     $baseurl = "https://" . $CLS_API_KEY . ":" . $password . "@" . $shop . "/";
     foreach ($__webhook_arr as $topic) {
         $file_name = str_replace('/', '-', $topic) . '.php';
@@ -143,9 +135,52 @@ if (isset($_GET['code'])) {
         $cls_functions->register_webhook($shopify_url, $params, $password);
     }
 
-    // Script tag registration
+    // Script tag registration (needed for both new and existing stores)
     $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front5.js"]];
     shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/script_tags.json", $asset, 'POST', ['Content-Type: application/json']);
+
+    if ($comeback_client['status'] == 1 && !empty($comeback_client['data'])) {
+        // Store exists - UPDATE (reinstallation scenario)
+        generate_log('OAUTH_CALLBACK', 'Store exists - updating access token and reactivating', [
+            'shop' => $shop,
+            'store_user_id' => isset($comeback_client['data']['store_user_id']) ? $comeback_client['data']['store_user_id'] : 'N/A',
+            'current_status' => isset($comeback_client['data']['status']) ? $comeback_client['data']['status'] : 'N/A'
+        ]);
+        
+        // Update store with new access token and reactivate
+        $update_data = [
+            'password' => $password, 
+            'updated_on' => DATE, 
+            'updated_at' => DATE,
+            'status' => '1',
+            'is_demand_accept' => '1',
+            // Update shop info in case it changed
+            'email' => $shopuinfo->shop->email ?? '',
+            'store_idea' => $shopuinfo->shop->plan_name ?? '',
+            'address11' => $shopuinfo->shop->address1 ?? '',
+            'address22' => $shopuinfo->shop->address2 ?? '',
+            'city' => $shopuinfo->shop->city ?? '',
+            'country_name' => $shopuinfo->shop->country_name ?? '',
+            'price_pattern' => isset($shopuinfo->shop->price_pattern) ? htmlspecialchars(strip_tags($shopuinfo->shop->price_pattern), ENT_QUOTES, "ISO-8859-1") : '',
+            'zip' => $shopuinfo->shop->zip ?? '',
+            'timezone' => $shopuinfo->shop->timezone ?? '',
+        ];
+        $update_where = [["", "shop_name", "=", $shop]];
+        $update_result = $cls_functions->put_data(TABLE_USER_SHOP, $update_data, $update_where);
+        
+        $update_result_decoded = json_decode($update_result, true);
+        if (isset($update_result_decoded['status']) && $update_result_decoded['status'] == '1') {
+            generate_log('OAUTH_CALLBACK', 'Store successfully updated with new access token', ['shop' => $shop]);
+        } else {
+            generate_log('OAUTH_CALLBACK', 'WARNING: Store update may have failed', ['shop' => $shop, 'result' => $update_result]);
+        }
+        
+        header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
+        exit;
+    }
+
+    // Store doesn't exist - REGISTER NEW STORE
+    generate_log('OAUTH_CALLBACK', 'Store does not exist - registering new store', ['shop' => $shop]);
 
     // Register store in DB
     $store_information = [
@@ -169,6 +204,7 @@ if (isset($_GET['code'])) {
         die('Error: Failed to register store. Please check error logs.');
     }
 
+    generate_log('OAUTH_CALLBACK', 'New store successfully registered', ['shop' => $shop]);
     header('Location: ' . SITE_CLIENT_URL . '?shop=' . $shop);
     exit;
 }

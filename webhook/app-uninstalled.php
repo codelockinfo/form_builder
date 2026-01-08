@@ -42,110 +42,13 @@ if($verified == true){
             generate_log('app-uninstall', "Store user ID: $store_user_id");
             
             if ($store_user_id > 0) {
-                try {
-                    $conn = $GLOBALS['conn'];
-                    
-                    if (!$conn) {
-                        throw new Exception("Database connection not available");
-                    }
-                    
-                    // Start transaction for data integrity
-                    mysqli_begin_transaction($conn);
-                    
-                    $total_deleted = 0;
-                    
-                    // 1. Delete form analytics
-                    $analytics_where = array(["", "store_client_id", "=", $store_user_id]);
-                    $analytics_delete = $cls_functions->delete_data(TABLE_FORM_ANALYTICS, $analytics_where);
-                    $analytics_result = json_decode($analytics_delete, true);
-                    $analytics_deleted = isset($analytics_result['data']['affected_rows']) ? $analytics_result['data']['affected_rows'] : 0;
-                    generate_log('app-uninstall', "Deleted $analytics_deleted analytics records");
-                    $total_deleted += $analytics_deleted;
-                    
-                    // 2. Get all form IDs for this store
-                    $forms_where = array(["", "store_client_id", "=", $store_user_id]);
-                    $forms_result = $cls_functions->select_result(TABLE_FORMS, 'id', $forms_where);
-                    $form_ids = array();
-                    
-                    if ($forms_result['status'] == 1 && !empty($forms_result['data'])) {
-                        $forms_data = is_array($forms_result['data']) ? $forms_result['data'] : array($forms_result['data']);
-                        foreach ($forms_data as $form) {
-                            if (isset($form['id'])) {
-                                $form_ids[] = intval($form['id']);
-                            }
-                        }
-                    }
-                    
-                    generate_log('app-uninstall', "Found " . count($form_ids) . " forms to delete");
-                    
-                    if (!empty($form_ids)) {
-                        // 3. Delete form submissions for each form
-                        $submissions_deleted = 0;
-                        foreach ($form_ids as $form_id) {
-                            $submissions_where = array(["", "form_id", "=", $form_id]);
-                            $submissions_delete = $cls_functions->delete_data(TABLE_FORM_SUBMISSIONS, $submissions_where);
-                            $submissions_result = json_decode($submissions_delete, true);
-                            $submissions_deleted += isset($submissions_result['data']['affected_rows']) ? $submissions_result['data']['affected_rows'] : 0;
-                        }
-                        generate_log('app-uninstall', "Deleted $submissions_deleted submission records");
-                        $total_deleted += $submissions_deleted;
-                        
-                        // 4. Delete form data (elements) for each form
-                        $form_data_deleted = 0;
-                        foreach ($form_ids as $form_id) {
-                            $form_data_where = array(["", "form_id", "=", $form_id]);
-                            $form_data_delete = $cls_functions->delete_data(TABLE_FORM_DATA, $form_data_where);
-                            $form_data_result = json_decode($form_data_delete, true);
-                            $form_data_deleted += isset($form_data_result['data']['affected_rows']) ? $form_data_result['data']['affected_rows'] : 0;
-                        }
-                        generate_log('app-uninstall', "Deleted $form_data_deleted form data records");
-                        $total_deleted += $form_data_deleted;
-                    }
-                    
-                    // 5. Delete all forms
-                    $forms_delete = $cls_functions->delete_data(TABLE_FORMS, $forms_where);
-                    $forms_result = json_decode($forms_delete, true);
-                    $forms_deleted = isset($forms_result['data']['affected_rows']) ? $forms_result['data']['affected_rows'] : 0;
-                    generate_log('app-uninstall', "Deleted $forms_deleted form records");
-                    $total_deleted += $forms_deleted;
-                    
-                    // Commit transaction
-                    mysqli_commit($conn);
-                    
-                    // 6. Update store status to inactive
-                    $fields = array(
-                        'status' => '0',
-                        'is_demand_accept' => '0'
-                    );
-                    $where_query = array(["", "shop_name", "=", $shop]);
-                    $update_result = $cls_functions->put_data(TABLE_USER_SHOP, $fields, $where_query);
-                    
-                    generate_log('app-uninstall', "Successfully deleted $total_deleted total records for store: $shop (store_user_id: $store_user_id)");
-                    generate_log('app-uninstall', "Store status updated to inactive");
-                    echo "Success: Deleted $total_deleted records for store: $shop";
-                    
-                } catch (Exception $e) {
-                    // Rollback transaction on error
-                    if (isset($conn)) {
-                        mysqli_rollback($conn);
-                    }
-                    generate_log('app-uninstall', "ERROR deleting data: " . $e->getMessage());
-                    generate_log('app-uninstall', "Stack trace: " . $e->getTraceAsString());
-                    
-                    // Still update store status even if deletion fails
-                    try {
-                        $fields = array(
-                            'status' => '0',
-                            'is_demand_accept' => '0'
-                        );
-                        $where_query = array(["", "shop_name", "=", $shop]);
-                        $cls_functions->put_data(TABLE_USER_SHOP, $fields, $where_query);
-                    } catch (Exception $e2) {
-                        generate_log('app-uninstall', "ERROR updating store status: " . $e2->getMessage());
-                    }
-                    
-                    echo "Error: " . $e->getMessage();
-                }
+                $fields = array(
+                    'status' => '0',
+                    'is_demand_accept' => '0'
+                );
+                $where_query = array(["", "shop_name", "=",$shop]);
+                $data =  $cls_functions->put_data(TABLE_USER_SHOP, $fields, $where_query);
+                
             } else {
                 generate_log('app-uninstall', "Store user ID is 0 or invalid for shop: $shop");
                 // Still update store status
