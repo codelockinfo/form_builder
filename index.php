@@ -166,50 +166,179 @@ if (isset($_GET['code'])) {
         ]);
         
         // Update store with new access token and reactivate
-        $update_data = [
-            '`password`' => $password, 
-            '`updated_on`' => DATE, 
-            '`updated_at`' => DATE,
-            '`status`' => '1',
-            '`is_demand_accept`' => '1',
-            // Update shop info in case it changed
-            '`email`' => $shopuinfo->shop->email ?? '',
-            '`store_idea`' => $shopuinfo->shop->plan_name ?? '',
-            '`address11`' => $shopuinfo->shop->address1 ?? '',
-            '`address22`' => $shopuinfo->shop->address2 ?? '',
-            '`city`' => $shopuinfo->shop->city ?? '',
-            '`country_name`' => $shopuinfo->shop->country_name ?? '',
-            '`price_pattern`' => isset($shopuinfo->shop->price_pattern) ? htmlspecialchars(strip_tags($shopuinfo->shop->price_pattern), ENT_QUOTES, "ISO-8859-1") : '',
-            '`zip`' => $shopuinfo->shop->zip ?? '',
-            '`timezone`' => $shopuinfo->shop->timezone ?? '',
-        ];
-        
-        // Use store_user_id if available (most reliable), otherwise use shop_name/store_name
-        if ($store_user_id > 0) {
-            $update_where = [["", "store_user_id", "=", $store_user_id]];
-            generate_log('OAUTH_CALLBACK', 'Using store_user_id for update', ['store_user_id' => $store_user_id]);
-        } else {
-            // Fallback: use the same OR condition as the SELECT query
-            $update_where = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
-            generate_log('OAUTH_CALLBACK', 'Using shop_name/store_name for update', ['shop' => $shop]);
+        // Use direct prepared statement to ensure password is updated correctly
+        try {
+            $conn = $GLOBALS['conn'];
+            
+            if (!$conn) {
+                throw new Exception("Database connection not available");
+            }
+            
+            // Prepare update data
+            $email = $shopuinfo->shop->email ?? '';
+            $store_idea = $shopuinfo->shop->plan_name ?? '';
+            $address11 = $shopuinfo->shop->address1 ?? '';
+            $address22 = $shopuinfo->shop->address2 ?? '';
+            $city = $shopuinfo->shop->city ?? '';
+            $country_name = $shopuinfo->shop->country_name ?? '';
+            $price_pattern = isset($shopuinfo->shop->price_pattern) ? htmlspecialchars(strip_tags($shopuinfo->shop->price_pattern), ENT_QUOTES, "ISO-8859-1") : '';
+            $zip = $shopuinfo->shop->zip ?? '';
+            $timezone = $shopuinfo->shop->timezone ?? '';
+            $updated_on = DATE;
+            $updated_at = DATE;
+            
+            generate_log('OAUTH_CALLBACK', 'Preparing direct SQL update', [
+                'store_user_id' => $store_user_id,
+                'shop' => $shop,
+                'password_length' => strlen($password)
+            ]);
+            
+            // Use store_user_id if available (most reliable)
+            if ($store_user_id > 0) {
+                $update_sql = "UPDATE " . TABLE_USER_SHOP . " SET 
+                    `password` = ?, 
+                    `updated_on` = ?, 
+                    `updated_at` = ?,
+                    `status` = '1',
+                    `is_demand_accept` = '1',
+                    `email` = ?,
+                    `store_idea` = ?,
+                    `address11` = ?,
+                    `address22` = ?,
+                    `city` = ?,
+                    `country_name` = ?,
+                    `price_pattern` = ?,
+                    `zip` = ?,
+                    `timezone` = ?
+                    WHERE `store_user_id` = ?";
+                
+                $stmt = mysqli_prepare($conn, $update_sql);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . mysqli_error($conn));
+                }
+                
+                mysqli_stmt_bind_param($stmt, "sssssssssssssi", 
+                    $password,
+                    $updated_on,
+                    $updated_at,
+                    $email,
+                    $store_idea,
+                    $address11,
+                    $address22,
+                    $city,
+                    $country_name,
+                    $price_pattern,
+                    $zip,
+                    $timezone,
+                    $store_user_id
+                );
+                
+                generate_log('OAUTH_CALLBACK', 'Using store_user_id for update', ['store_user_id' => $store_user_id]);
+            } else {
+                // Fallback: use shop_name or store_name
+                $update_sql = "UPDATE " . TABLE_USER_SHOP . " SET 
+                    `password` = ?, 
+                    `updated_on` = ?, 
+                    `updated_at` = ?,
+                    `status` = '1',
+                    `is_demand_accept` = '1',
+                    `email` = ?,
+                    `store_idea` = ?,
+                    `address11` = ?,
+                    `address22` = ?,
+                    `city` = ?,
+                    `country_name` = ?,
+                    `price_pattern` = ?,
+                    `zip` = ?,
+                    `timezone` = ?
+                    WHERE (`shop_name` = ? OR `store_name` = ?)";
+                
+                $stmt = mysqli_prepare($conn, $update_sql);
+                if (!$stmt) {
+                    throw new Exception("Failed to prepare statement: " . mysqli_error($conn));
+                }
+                
+                mysqli_stmt_bind_param($stmt, "sssssssssssssss", 
+                    $password,
+                    $updated_on,
+                    $updated_at,
+                    $email,
+                    $store_idea,
+                    $address11,
+                    $address22,
+                    $city,
+                    $country_name,
+                    $price_pattern,
+                    $zip,
+                    $timezone,
+                    $shop,
+                    $shop
+                );
+                
+                generate_log('OAUTH_CALLBACK', 'Using shop_name/store_name for update', ['shop' => $shop]);
+            }
+            
+            $execute_result = mysqli_stmt_execute($stmt);
+            $affected_rows = mysqli_stmt_affected_rows($stmt);
+            $error = mysqli_stmt_error($stmt);
+            
+            mysqli_stmt_close($stmt);
+            
+            generate_log('OAUTH_CALLBACK', 'Direct SQL update result', [
+                'shop' => $shop,
+                'execute_result' => $execute_result ? 'SUCCESS' : 'FAILED',
+                'affected_rows' => $affected_rows,
+                'error' => $error ? $error : 'NONE'
+            ]);
+            
+            if (!$execute_result) {
+                throw new Exception("Update failed: " . $error);
+            }
+            
+            if ($affected_rows == 0) {
+                generate_log('OAUTH_CALLBACK', 'WARNING: Update executed but no rows affected', [
+                    'shop' => $shop,
+                    'store_user_id' => $store_user_id
+                ]);
+            } else {
+                generate_log('OAUTH_CALLBACK', 'Update successful', [
+                    'shop' => $shop,
+                    'affected_rows' => $affected_rows
+                ]);
+            }
+            
+        } catch (Exception $e) {
+            generate_log('OAUTH_CALLBACK', 'ERROR in direct SQL update', [
+                'shop' => $shop,
+                'error' => $e->getMessage()
+            ]);
+            // Fallback to put_data method
+            $update_data = [
+                '`password`' => $password, 
+                '`updated_on`' => DATE, 
+                '`updated_at`' => DATE,
+                '`status`' => '1',
+                '`is_demand_accept`' => '1',
+                '`email`' => $email,
+                '`store_idea`' => $store_idea,
+                '`address11`' => $address11,
+                '`address22`' => $address22,
+                '`city`' => $city,
+                '`country_name`' => $country_name,
+                '`price_pattern`' => $price_pattern,
+                '`zip`' => $zip,
+                '`timezone`' => $timezone,
+            ];
+            
+            if ($store_user_id > 0) {
+                $update_where = [["", "store_user_id", "=", $store_user_id]];
+            } else {
+                $update_where = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
+            }
+            
+            $update_result = $cls_functions->put_data(TABLE_USER_SHOP, $update_data, $update_where);
+            generate_log('OAUTH_CALLBACK', 'Fallback put_data result', ['result' => $update_result]);
         }
-        
-        generate_log('OAUTH_CALLBACK', 'Update data prepared', [
-            'update_fields' => array_keys($update_data),
-            'password_included' => isset($update_data['`password`']) ? 'YES' : 'NO',
-            'where_clause' => json_encode($update_where)
-        ]);
-        
-        $update_result = $cls_functions->put_data(TABLE_USER_SHOP, $update_data, $update_where);
-        
-        $update_result_decoded = json_decode($update_result, true);
-        generate_log('OAUTH_CALLBACK', 'Update result', [
-            'shop' => $shop,
-            'result_status' => isset($update_result_decoded['status']) ? $update_result_decoded['status'] : 'NOT SET',
-            'affected_rows' => isset($update_result_decoded['data']['affected_rows']) ? $update_result_decoded['data']['affected_rows'] : 'N/A',
-            'query_status' => isset($update_result_decoded['data']['query_status']) ? $update_result_decoded['data']['query_status'] : 'N/A',
-            'full_result' => $update_result
-        ]);
         
         // Verify the update by querying the store again
         $verify_query = [["", "shop_name", "=", $shop], ["OR", "store_name", "=", $shop]];
