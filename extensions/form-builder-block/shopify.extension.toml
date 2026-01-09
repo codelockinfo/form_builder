@@ -13,6 +13,6 @@ handle = "form-builder-block"
 
 [extensions.settings]
 [[extensions.settings.files]]
-name = "form-block"
+name = "form-dynamic"
 accept = ["*.liquid"]
 
