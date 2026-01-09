@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="../assets/css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="../assets/css/owl.theme.default.min.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="../assets/js/style1.js" type="text/javascript"></script>
+    <script src="../assets/js/style2.js" type="text/javascript"></script>
     <script src="../assets/js/owl.carousel.js" type="text/javascript"></script>
     <script src="../assets/js/owl.carousel.min.js" type="text/javascript"></script>
     <script src="../assets/js/ckeditor.js" type="text/javascript"></script>

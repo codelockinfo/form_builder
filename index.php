@@ -225,7 +225,7 @@ if (isset($_GET['code'])) {
     }
 
     // Script tag registration (needed for both new and existing stores)
-    $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front5.js"]];
+    $asset = ["script_tag" => ["event" => "onload", "src" => "https://codelocksolutions.com/form_builder/assets/js/shopify_front6.js"]];
     shopify_call($password, $shop, "/admin/".CLS_API_VERSIION."/script_tags.json", $asset, 'POST', ['Content-Type: application/json']);
 
     $log_file = __DIR__ . '/oauth-debug.log';
