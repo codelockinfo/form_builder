@@ -2441,8 +2441,19 @@ class Client_functions extends common_function {
                             (strpos($_SERVER['REQUEST_URI'], '/render') !== false);
             
             // If not explicitly set, check if we're NOT in form_design.php (storefront mode)
-            if (!$is_storefront && strpos($_SERVER['REQUEST_URI'], 'form_design.php') === false) {
-                $is_storefront = true;
+            // Also check if we're NOT in admin/preview pages
+            if (!$is_storefront) {
+                $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+                $is_admin_page = (strpos($request_uri, 'form_design.php') !== false) ||
+                                (strpos($request_uri, 'form_list.php') !== false) ||
+                                (strpos($request_uri, 'submissions.php') !== false) ||
+                                (strpos($request_uri, 'cls_settings.php') !== false) ||
+                                (strpos($request_uri, '/user/') !== false && strpos($request_uri, 'form_design') !== false);
+                
+                // If not an admin page, assume it's storefront
+                if (!$is_admin_page) {
+                    $is_storefront = true;
+                }
             }
             
             error_log("=== Storefront Detection - form_id: $form_id ===");
@@ -2474,36 +2485,38 @@ class Client_functions extends common_function {
                     try {
                         // Use direct query as primary method - always use this result
                         // Order by position first, then by id as fallback
+                        // IMPORTANT: Don't filter by status in SQL - get ALL elements and filter in PHP
+                        // This ensures we get elements even if status column doesn't exist or has unexpected values
                         $direct_query = "SELECT element_id, element_data, id, position, status FROM " . TABLE_FORM_DATA . " WHERE form_id = " . intval($form_id) . " ORDER BY position ASC, id ASC";
-                        error_log("Executing direct query: " . $direct_query);
+                        error_log("Executing direct query for form_id: " . $form_id . " - Query: " . $direct_query);
                         $result = $this->db_connection->query($direct_query);
                         $direct_data = array();
                         if ($result) {
                             while ($row = $result->fetch_assoc()) {
                                 $direct_data[] = $row;
                             }
-                            error_log("Direct query SUCCESS - Found " . count($direct_data) . " elements");
+                            error_log("Direct query SUCCESS - Found " . count($direct_data) . " elements for form_id: " . $form_id);
                             if (count($direct_data) > 0) {
                                 $comeback_client = array('status' => 1, 'data' => $direct_data);
                             } else {
-                                error_log("WARNING: Direct query returned 0 elements for form_id: " . $form_id);
+                                error_log("WARNING: Direct query returned 0 elements for form_id: " . $form_id . " - Form may be empty or elements not saved yet");
                             }
                         } else {
                             $error_msg = method_exists($this->db_connection, 'error') ? $this->db_connection->error : 'unknown error';
-                            error_log("ERROR: Direct query returned false - " . $error_msg);
+                            error_log("ERROR: Direct query returned false for form_id: " . $form_id . " - Error: " . $error_msg);
                             // Fallback to select_result
                             $where_query = array(["", "form_id", "=", $form_id]);
                             $options_arr = array('limit' => 1000, 'skip' => 0);
                             $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position,status", $where_query, $options_arr);
-                            error_log("Fallback select_result found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
+                            error_log("Fallback select_result for form_id: " . $form_id . " found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
                         }
                     } catch (Exception $e) {
-                        error_log("EXCEPTION: Direct query failed - " . $e->getMessage());
+                        error_log("EXCEPTION: Direct query failed for form_id: " . $form_id . " - " . $e->getMessage());
                         // Fallback to select_result
                         $where_query = array(["", "form_id", "=", $form_id]);
                         $options_arr = array('limit' => 1000, 'skip' => 0);
                         $comeback_client = $this->select_result(TABLE_FORM_DATA, "element_id,element_data,id,position,status", $where_query, $options_arr);
-                        error_log("Fallback select_result found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
+                        error_log("Exception fallback select_result for form_id: " . $form_id . " found " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements");
                     }
                     error_log("=== Final result: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 0) . " elements ===");
                     
