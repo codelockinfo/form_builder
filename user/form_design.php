@@ -1010,9 +1010,9 @@ if ($form_id > 0) {
                                             <label class="Polaris-Choice">
                                                 <span class="Polaris-Choice__Control">
                                                     <span class="Polaris-Checkbox">
-                                                        <input name="require_login" id="required_login" type="checkbox"
+                                                        <input name="require_login" id="required_login_nested" type="checkbox"
                                                             class="Polaris-Checkbox__Input required_login" aria-invalid="false"
-                                                            aria-describedby="PolarisCheckbox26HelpText" role="checkbox"
+                                                            aria-describedby="PolarisCheckbox26HelpText_nested" role="checkbox"
                                                             aria-checked="false" value="1">
                                                         <span class="Polaris-Checkbox__Backdrop"></span>
                                                         <span class="Polaris-Checkbox__Icon">
@@ -1031,7 +1031,7 @@ if ($form_id > 0) {
                                                 <span class="Polaris-Choice__Label">Required Login</span>
                                             </label>
                                             <div class="Polaris-Choice__Descriptions">
-                                                <div class="Polaris-Choice__HelpText" id="PolarisCheckbox26HelpText">Only
+                                                <div class="Polaris-Choice__HelpText" id="PolarisCheckbox26HelpText_nested">Only
                                                     allow logged users to access</div>
                                             </div>
                                         </div>
@@ -1062,7 +1062,7 @@ if ($form_id > 0) {
                                                 </div>
                                             </div>
                                             <div class="Polaris-Select selectmain">
-                                                <select id="PolarisSelect18" class="select_code">
+                                                <select id="PolarisSelect18_nested" class="select_code">
                                                     <option value="embedCode">Embed code</option>
                                                     <option value="shortCode">Short code</option>
                                                     <option value="popup">Popup</option>
@@ -1084,10 +1084,10 @@ if ($form_id > 0) {
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div
                                                         class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                        <input id="PolarisTextField54" readonly="" placeholder=""
+                                                        <input id="PolarisTextField54_nested" readonly="" placeholder=""
                                                             class="Polaris-TextField__Input embed_code" type="text"
-                                                            aria-describedby="PolarisTextField54HelpText"
-                                                            aria-labelledby="PolarisTextField54Label" aria-invalid="false"
+                                                            aria-describedby="PolarisTextField54HelpText_nested"
+                                                            aria-labelledby="PolarisTextField54Label_nested" aria-invalid="false"
                                                             value=''>
                                                         <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
@@ -1110,7 +1110,7 @@ if ($form_id > 0) {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="Polaris-Labelled__HelpText" id="PolarisTextField54HelpText">Copy
+                                            <div class="Polaris-Labelled__HelpText" id="PolarisTextField54HelpText_nested">Copy
                                                 this shortcode and add it to your Shopify page or any Shopify file where you
                                                 want to display the form
                                             </div>
@@ -1121,7 +1121,7 @@ if ($form_id > 0) {
                                             <div class="">
                                                 <div class="Polaris-Labelled__LabelWrapper">
                                                     <div class="Polaris-Label">
-                                                        <label id="PolarisTextField55Label" for="PolarisTextField55"
+                                                        <label id="PolarisTextField55Label_nested" for="PolarisTextField55_nested"
                                                             class="Polaris-Label__Text">
                                                             <div>Copy and paste the short code on your page
                                                             </div>
@@ -1132,10 +1132,10 @@ if ($form_id > 0) {
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div
                                                             class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                            <input id="PolarisTextField55" readonly="" placeholder=""
+                                                            <input id="PolarisTextField55_nested" readonly="" placeholder=""
                                                                 class="Polaris-TextField__Input" type="text"
-                                                                aria-describedby="PolarisTextField55HelpText"
-                                                                aria-labelledby="PolarisTextField55Label"
+                                                                aria-describedby="PolarisTextField55HelpText_nested"
+                                                                aria-labelledby="PolarisTextField55Label_nested"
                                                                 aria-invalid="false" value="{formbuilder:ZmFsc2U=}">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
@@ -1175,10 +1175,10 @@ if ($form_id > 0) {
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div
                                                             class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                            <input id="PolarisTextField56" readonly="" placeholder=""
+                                                            <input id="PolarisTextField56_nested" readonly="" placeholder=""
                                                                 class="Polaris-TextField__Input" type="text"
-                                                                aria-describedby="PolarisTextField56HelpText"
-                                                                aria-labelledby="PolarisTextField56Label"
+                                                                aria-describedby="PolarisTextField56HelpText_nested"
+                                                                aria-labelledby="PolarisTextField56Label_nested"
                                                                 aria-invalid="false"
                                                                 value="<button class=&quot;globo-formbuilder-open&quot; data-id=&quot;ZmFsc2U=&quot;>Open form</button>">
                                                             <div class="Polaris-TextField__Backdrop"></div>
@@ -1218,9 +1218,9 @@ if ($form_id > 0) {
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div
                                                             class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--readOnly">
-                                                            <input id="PolarisTextField57" readonly="" placeholder=""
+                                                            <input id="PolarisTextField57_nested" readonly="" placeholder=""
                                                                 class="Polaris-TextField__Input" type="text"
-                                                                aria-labelledby="PolarisTextField57Label"
+                                                                aria-labelledby="PolarisTextField57Label_nested"
                                                                 aria-invalid="false"
                                                                 value="<div class=&quot;globo-form-publish-modal lightbox hidden&quot; data-id=&quot;ZmFsc2U=&quot;><div class=&quot;globo-form-modal-content&quot;><div class=&quot;globo-formbuilder&quot; data-id=&quot;ZmFsc2U=&quot;></div></div></div>">
                                                             <div class="Polaris-TextField__Backdrop"></div>
@@ -1245,7 +1245,7 @@ if ($form_id > 0) {
                                     <div class="form-control hidden">
                                         <label class="Polaris-Choice">
                                             <span class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input
-                                                        id="PolarisCheckbox27" type="checkbox"
+                                                        id="PolarisCheckbox27_nested" type="checkbox"
                                                         class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox"
                                                         aria-checked="false" value=""><span
                                                         class="Polaris-Checkbox__Backdrop"></span><span
@@ -1269,7 +1269,7 @@ if ($form_id > 0) {
                                                 </div>
                                             </div>
                                             <div class="Polaris-Select selectmain ">
-                                                <select id="PolarisSelect19" class="select_code">
+                                                <select id="PolarisSelect19_nested" class="select_code">
                                                     <option value="89667436713">1kfounder</option>
                                                     <option value="87362437289">contact</option>
                                                     <option value="90644250793">ddd</option>
@@ -1309,7 +1309,7 @@ if ($form_id > 0) {
                                                 </div>
                                             </div>
                                             <div class="Polaris-Select selectmain">
-                                                <select id="PolarisSelect20" class="select_code">
+                                                <select id="PolarisSelect20_nested" class="select_code">
                                                     <option value="top">At the top of the page</option>
                                                     <option value="bottom">At the bottom of the page</option>
                                                 </select>
@@ -1338,7 +1338,7 @@ if ($form_id > 0) {
                                                 </div>
                                             </div>
                                             <div class="Polaris-Select selectmain">
-                                                <select id="PolarisSelect21" class="select_code">
+                                                <select id="PolarisSelect21_nested" class="select_code">
                                                     <option value="forever">Automatically open and never show upagain after
                                                         close</option>
                                                     <option value="weeks">Automatically open after a period of time (Weeks)
@@ -1427,10 +1427,10 @@ if ($form_id > 0) {
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
                                                         <div class="Polaris-TextField__Prefix"
-                                                            id="PolarisTextField59-Prefix">hours</div>
-                                                        <input id="PolarisTextField59"
+                                                            id="PolarisTextField59-Prefix_nested">hours</div>
+                                                        <input id="PolarisTextField59_nested"
                                                             class="Polaris-TextField__Input hoursadd" min="1" type="number"
-                                                            aria-labelledby="PolarisTextField59Label PolarisTextField59-Prefix"
+                                                            aria-labelledby="PolarisTextField59Label_nested PolarisTextField59-Prefix_nested"
                                                             aria-invalid="false" value="1">
                                                         <div class="Polaris-TextField__Spinner" aria-hidden="true">
                                                             <div role="button" class="Polaris-TextField__Segment hourplus"
@@ -1478,10 +1478,10 @@ if ($form_id > 0) {
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
                                                         <div class="Polaris-TextField__Prefix"
-                                                            id="PolarisTextField60-Prefix">weeks</div>
-                                                        <input id="PolarisTextField60"
+                                                            id="PolarisTextField60-Prefix_nested">weeks</div>
+                                                        <input id="PolarisTextField60_nested"
                                                             class="Polaris-TextField__Input weekadd" min="1" type="number"
-                                                            aria-labelledby="PolarisTextField60Label PolarisTextField60-Prefix"
+                                                            aria-labelledby="PolarisTextField60Label_nested PolarisTextField60-Prefix_nested"
                                                             aria-invalid="false" value="1">
                                                         <div class="Polaris-TextField__Spinner" aria-hidden="true">
                                                             <div role="button" class="Polaris-TextField__Segment weekplus"
@@ -3083,7 +3083,7 @@ if ($form_id > 0) {
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
                                                 <div class="Polaris-Label">
-                                                    <label id="PolarisTextField59Label" for="PolarisTextField59" class="Polaris-Label__Text">
+                                                    <label id="PolarisTextField59Label_appearance" for="PolarisTextField59_appearance" class="Polaris-Label__Text">
                                                     <div>Floating text</div>
                                                     </label>
                                                 </div>
@@ -3091,7 +3091,7 @@ if ($form_id > 0) {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">
-                                                    <input id="PolarisTextField59" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField59Label" aria-invalid="false" value="">
+                                                    <input id="PolarisTextField59_appearance" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField59Label_appearance" aria-invalid="false" value="">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -3154,12 +3154,12 @@ if ($form_id > 0) {
                                         <div class="hidden">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label"><label id="PolarisTextField60Label" for="PolarisTextField60" class="Polaris-Label__Text">Form type</label></div>
+                                                <div class="Polaris-Label"><label id="PolarisTextField60Label_appearance" for="PolarisTextField60_appearance" class="Polaris-Label__Text">Form type</label></div>
                                             </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input id="PolarisTextField60" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField60Label" aria-invalid="false" value="normalForm">
+                                                    <input id="PolarisTextField60_appearance" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField60Label_appearance" aria-invalid="false" value="normalForm">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
                                                 </div>
@@ -5935,7 +5935,6 @@ if ($form_id > 0) {
             navigator.clipboard.writeText(formIdText).then(function() {
                 showCopySuccess();
             }).catch(function(err) {
-                console.error('Failed to copy:', err);
                 fallbackCopy(formIdText);
             });
         } else {
@@ -5958,12 +5957,9 @@ if ($form_id > 0) {
             const successful = document.execCommand('copy');
             if (successful) {
                 showCopySuccess();
-            } else {
-                alert('Failed to copy Form ID. Please copy manually: ' + text);
             }
         } catch (err) {
-            console.error('Fallback copy failed:', err);
-            alert('Failed to copy Form ID. Please copy manually: ' + text);
+            // Silent fail
         }
         
         document.body.removeChild(textArea);
@@ -6148,11 +6144,6 @@ if ($form_id > 0) {
         // Load store pages from Shopify API (using GraphQL)
         function loadStorePages(pageNo, searchKeyword, cursor) {
             currentPageNo = pageNo;
-            console.log('=== loadStorePages called ===');
-            console.log('Page No:', pageNo);
-            console.log('Search Keyword:', searchKeyword);
-            console.log('Cursor:', cursor);
-            console.log('Store:', store);
             
             $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;"><div class="Polaris-Spinner Polaris-Spinner--sizeSmall"></div><span style="margin-left: 10px;">Loading pages...</span></td></tr>');
             
@@ -6171,35 +6162,16 @@ if ($form_id > 0) {
                 ajaxData.cursor = cursor;
             }
             
-            console.log('=== AJAX Request Data ===');
-            console.log('URL:', 'ajax_call.php');
-            console.log('Request Data:', ajaxData);
-            console.log('Request Data (JSON):', JSON.stringify(ajaxData, null, 2));
-            
             $.ajax({
                 url: "ajax_call.php",
                 type: "POST",
                 dataType: "json",
                 data: ajaxData,
-                beforeSend: function() {
-                    console.log('=== AJAX Request Starting ===');
-                },
                 success: function(response) {
-                    console.log('=== AJAX Success Response ===');
-                    console.log('Full Response:', response);
-                    console.log('Response Type:', typeof response);
-                    console.log('Response (JSON):', JSON.stringify(response, null, 2));
-                    
                     if (response['code'] != undefined && response['code'] == '403') {
-                        console.error('403 Error - Access Denied');
                         redirect403();
                         return;
                     }
-                    
-                    console.log('Response outcome:', response.outcome);
-                    console.log('Response html type:', typeof response.html);
-                    console.log('Response html is array:', Array.isArray(response.html));
-                    console.log('Response html length:', response.html ? (Array.isArray(response.html) ? response.html.length : 'N/A') : 'null/undefined');
                     
                     if (response.outcome == 'true' || response.outcome === 'true') {
                         // Store API response for later use
@@ -6212,12 +6184,8 @@ if ($form_id > 0) {
                         // Build hierarchical selection structure
                         var html = buildHierarchicalSelection(response);
                         
-                        console.log('Final HTML length:', html.length);
-                        console.log('Final HTML preview:', html.substring(0, 200));
-                        
                         if (html) {
                             $('#pagesListBody').html(html);
-                            console.log('HTML inserted into table. Row count:', $('#pagesListBody .page-item-row, #pagesListBody .hierarchical-item').length);
                         } else {
                             $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;">No pages found.</td></tr>');
                         }
@@ -6225,61 +6193,29 @@ if ($form_id > 0) {
                         // No pagination needed - all pages loaded at once
                         $('#pagesPagination').html('');
                     } else {
-                        console.warn('=== Response outcome is false ===');
-                        console.warn('Full Response Object:', response);
-                        console.warn('Response (JSON):', JSON.stringify(response, null, 2));
-                        
                         var errorMsg = 'No pages found.';
                         if (response.report) {
                             errorMsg = response.report;
-                            console.error('Error Report:', response.report);
                         }
                         
-                        // Log errors array if present
-                        if (response.errors) {
-                            console.error('GraphQL Errors Array:', response.errors);
-                            console.error('GraphQL Errors (JSON):', JSON.stringify(response.errors, null, 2));
-                        }
-                        
-                        // Log full response if present
-                        if (response.full_response) {
-                            console.error('Full GraphQL Response:', response.full_response);
-                            console.error('Full GraphQL Response (JSON):', JSON.stringify(response.full_response, null, 2));
-                        }
-                        
-                        console.error('Displaying error message:', errorMsg);
                         $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px;">' + errorMsg + '</td></tr>');
                         $('#pagesPagination').html('');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('=== AJAX Error ===');
-                    console.error('Status:', status);
-                    console.error('Error:', error);
-                    console.error('XHR Status:', xhr.status);
-                    console.error('XHR Status Text:', xhr.statusText);
-                    console.error('Response Text:', xhr.responseText);
-                    console.error('Full XHR Object:', xhr);
-                    
                     var errorMsg = 'Error loading pages. Please try again.';
                     if (xhr.responseText) {
                         try {
                             var errorResponse = JSON.parse(xhr.responseText);
-                            console.error('Parsed Error Response:', errorResponse);
                             if (errorResponse.report) {
                                 errorMsg = errorResponse.report;
                             }
                         } catch (e) {
-                            console.error('Failed to parse error response:', e);
-                            console.error('Raw response text:', xhr.responseText);
+                            // Silent fail
                         }
                     }
                     
-                    console.error('Final Error Message:', errorMsg);
                     $('#pagesListBody').html('<tr><td colspan="2" style="text-align: center; padding: 20px; color: #dc2626;">' + errorMsg + '</td></tr>');
-                },
-                complete: function() {
-                    console.log('=== AJAX Request Complete ===');
                 }
             });
         }
@@ -6466,7 +6402,6 @@ if ($form_id > 0) {
                     },
                     error: function(xhr, status, error) {
                         $loadingRow.remove();
-                        console.error('Error loading more pages:', error);
                     }
                 });
             }
@@ -6533,44 +6468,7 @@ if ($form_id > 0) {
                         return;
                     }
                     
-                    console.log('Theme Settings API Response:', response);
-                    
                     if (response.outcome == 'true' || response.outcome === 'true') {
-                        console.log('Color Schemes:', response.color_schemes);
-                        console.log('Color Schemes Length:', response.color_schemes ? response.color_schemes.length : 0);
-                        console.log('Colors:', response.colors);
-                        console.log('Typography:', response.typography);
-                        console.log('Text Presets:', response.text_presets);
-                        
-                        // Debug: Log debug info if available
-                        if (response.debug) {
-                            console.log('=== DEBUG INFO ===');
-                            console.log('Current Color Schemes Found:', response.debug.current_color_schemes_count);
-                            console.log('Final Color Schemes Count:', response.debug.final_color_schemes_count);
-                            console.log('Color Schemes Count in Settings:', response.debug.color_schemes_count);
-                            console.log('Color Schemes Type:', response.debug.color_schemes_type);
-                            console.log('First Scheme Type:', response.debug.first_scheme_type);
-                            console.log('First Scheme Keys:', response.debug.first_scheme_keys);
-                            console.log('First Scheme Colors Type:', response.debug.first_scheme_colors_type);
-                            console.log('First Scheme Color Keys:', response.debug.first_scheme_color_keys);
-                            if (response.debug.color_schemes_sample) {
-                                console.log('Color Schemes Sample (first scheme colors):', response.debug.color_schemes_sample);
-                            }
-                            if (response.debug.first_scheme_full) {
-                                console.log('First Scheme Full Data:', response.debug.first_scheme_full);
-                                if (response.debug.first_scheme_full.settings) {
-                                    console.log('First Scheme Settings Content:', response.debug.first_scheme_full.settings);
-                                    console.log('First Scheme Settings Keys:', Object.keys(response.debug.first_scheme_full.settings || {}));
-                                }
-                            }
-                            if (response.debug.first_scheme_settings_keys) {
-                                console.log('First Scheme Settings Keys (from debug):', response.debug.first_scheme_settings_keys);
-                                console.log('First Scheme Settings Sample:', response.debug.first_scheme_settings_sample);
-                            }
-                            console.log('Full Debug Object:', response.debug);
-                            console.log('==================');
-                        }
-                        
                         // Show content and display theme settings
                         $('#themeSettingsContent').show();
                         displayThemeSettings(
@@ -6580,33 +6478,11 @@ if ($form_id > 0) {
                             response.text_presets || []
                         );
                     } else {
-                        console.warn('Theme Settings API returned false:', response.report || 'Unknown error');
-                        
                         // Show content even on error (it will be empty)
                         $('#themeSettingsContent').show();
-                        
-                        // Show user-friendly error message if scope is missing
-                        if (response.scope_error) {
-                            var message = 'Theme Settings Access Required\n\n' + 
-                                  'To access your Shopify theme settings, the app needs the "read_themes" permission.\n\n' +
-                                  'To fix this:\n' +
-                                  '1. Go to your Shopify Admin\n' +
-                                  '2. Navigate to Apps > Your Apps\n' +
-                                  '3. Find "Easy Form Builder" and click "Uninstall"\n' +
-                                  '4. Then click "Add app" or "Install" again\n' +
-                                  '5. Authorize all permissions when prompted\n' +
-                                  '6. Return to this page and refresh\n\n' +
-                                  'This will grant the app the required permissions to access theme settings.';
-                            alert(message);
-                        } else if (response.report) {
-                            // Show other errors too
-                            console.error('Theme settings error:', response.report);
-                        }
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Theme settings API error:', error);
-                    
                     // Hide loader and show content (will be empty)
                     $('#themeSettingsLoader').hide();
                     $('#themeSettingsContent').show();
@@ -6616,8 +6492,6 @@ if ($form_id > 0) {
         
         // Function to display theme settings
         function displayThemeSettings(colorSchemes, colors, typography, textPresets) {
-            console.log('Displaying theme settings with colorSchemes:', colorSchemes);
-            
             // Use API color schemes only - no fallback to defaults
             var schemesToDisplay = [];
             if (colorSchemes && colorSchemes.length > 0) {
@@ -6631,9 +6505,6 @@ if ($form_id > 0) {
                         swatch2: scheme.swatch2 || scheme.bg || '#ffffff'
                     };
                 });
-                console.log('Using API color schemes:', schemesToDisplay);
-            } else {
-                console.log('No color schemes available from API');
             }
             
             // Generate color schemes HTML
@@ -6884,7 +6755,6 @@ if ($form_id > 0) {
             var $selectedOption = $select.closest('.Polaris-Select').find('.Polaris-Select__SelectedOption');
             $selectedOption.text(selectedFont);
             // Here you would typically save the font selection via AJAX
-            console.log('Font changed:', fontType, selectedFont);
         });
         
         // Handle font toggle buttons (Heading/Accent)
@@ -6895,7 +6765,6 @@ if ($form_id > 0) {
             $btn.addClass('active');
             var fontType = $btn.data('font-type');
             // Here you would typically update the font selection based on the toggle
-            console.log('Font type selected:', fontType);
         });
         
         // Handle case toggle buttons (Default/Uppercase)
@@ -6906,7 +6775,6 @@ if ($form_id > 0) {
             $btn.addClass('active');
             var caseType = $btn.data('case');
             // Here you would typically save the case setting via AJAX
-            console.log('Case changed:', caseType);
         });
         
         // ===== Form Design Customizer (Integrated into Element Panels) =====
@@ -7323,7 +7191,7 @@ if ($form_id > 0) {
             var formId = $('.formid').val();
             
             if (!formId) {
-                alert('Form ID is missing');
+                // Form ID is missing - silent fail
                 return;
             }
             
@@ -7352,20 +7220,16 @@ if ($form_id > 0) {
                 },
                 success: function(response) {
                     if (response.result === 'success') {
-                        console.log('Element design settings saved successfully');
                         // Show success message
                         var originalText = $btn.find('.Polaris-Button__Text').text();
                         $btn.find('.Polaris-Button__Text').text('Saved!');
                         setTimeout(function() {
                             $btn.find('.Polaris-Button__Text').text(originalText);
                         }, 2000);
-                    } else {
-                        alert('Error saving design settings: ' + (response.msg || 'Unknown error'));
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error saving design settings:', error);
-                    alert('Error saving design settings. Please try again.');
+                    // Silent error handling
                 }
             });
         });
@@ -7379,21 +7243,17 @@ if ($form_id > 0) {
             // Add selected state to clicked box
             $box.addClass('selected');
             // Here you would typically apply the color scheme via AJAX
-            console.log('Color scheme selected:', schemeId);
         });
         
         // Handle add scheme button click
         $(document).on('click', '.color-scheme-box.add-scheme', function() {
             // Here you would typically open a modal or form to create a new color scheme
-            alert('Add new color scheme functionality - to be implemented');
-            console.log('Add scheme clicked');
         });
         
         // Select page
         $(document).on('click', '.selectPageBtn', function(e) {
             e.stopPropagation();
             var row = $(this).closest('tr');
-            console.log('Select button clicked. Row:', row);
             
             // Get page type
             selectedPageType = row.data('page-type');
@@ -7435,8 +7295,6 @@ if ($form_id > 0) {
                     $('#publishConfirmContent').show();
                     $('#confirmPublishBtn').show();
                 }, 500);
-            } else {
-                alert('Unable to extract page information. Please try selecting again.');
             }
         });
         
@@ -7463,7 +7321,7 @@ if ($form_id > 0) {
                 
                 window.location.href = customizerUrl;
             } else {
-                alert('Please select a page first.');
+                // Please select a page first - silent fail
             }
         });
         

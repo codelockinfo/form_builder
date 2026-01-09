@@ -32,7 +32,6 @@ if (typeof store === 'undefined' || store === "") {
     }
 
     if (!store) store = ""; // Define it as empty string at minimum
-    console.log("Store defined as: ", store);
 }
 
 function setCookie(cname, cvalue, exdays) {
@@ -193,7 +192,6 @@ function btn_enable_disable(form_id) {
         dataType: "json",
         data: { 'routine_name': 'btn_enable_disable', store: store },
         success: function (comeback) {
-            console.log(comeback + "status");
             if (comeback['outcome']['data']['status'] != undefined && comeback['outcome']['data']['status'] == 0) {
                 $("#register_frm_btn").attr('disabled', true);
                 $(".app-setting-msg").show();
@@ -211,8 +209,6 @@ function seeting_enable_disable(form_id) {
         dataType: "json",
         data: { 'routine_name': 'btn_enable_disable', 'store': store, 'form_id': form_id },
         success: function (comeback) {
-            console.log("---------------");
-            console.log(comeback['outcome']['data']['status']);
             if (comeback['outcome']['data']['status'] != undefined && comeback['outcome']['data']['status'] == 0) {
                 $(".app-setting-msg").show();
                 $(".enable-btn").html("Enable");
@@ -302,7 +298,6 @@ $(document).on("click", ".btn_add_element", function (event) {
                     if (typeof window.navigateToSlide === 'function') {
                         window.navigateToSlide(6); // data-owl="6" for Add element
                     } else {
-                        console.warn('navigateToSlide function not available');
                     }
                 }, 200);
             } else {
@@ -317,7 +312,6 @@ $(document).on("click", ".btn_add_element", function (event) {
                     if (typeof window.navigateToSlide === 'function') {
                         window.navigateToSlide(6); // data-owl="6" for Add element
                     } else {
-                        console.warn('navigateToSlide function not available');
                     }
                 }, 200);
             }
@@ -326,11 +320,9 @@ $(document).on("click", ".btn_add_element", function (event) {
             if (typeof window.navigateToSlide === 'function') {
                 window.navigateToSlide(6); // data-owl="6" for Add element
             } else {
-                console.warn('navigateToSlide function not available, falling back to direct navigation');
                 try {
                     $carousel.trigger('to.owl.carousel', [6, 40, true]);
                 } catch (e) {
-                    console.error('Error navigating to Add element panel:', e);
                 }
             }
         }
@@ -365,12 +357,10 @@ $(document).on("click", ".element_coppy_to", function (event) {
 
     // Validate formid and elementid
     if (!formid || formid === '') {
-        alert('Form ID is missing. Please refresh the page and try again.');
         return false;
     }
 
     if (!elementid || elementid === '') {
-        alert('Element ID is missing. Please try selecting the element again.');
         return false;
     }
 
@@ -380,33 +370,20 @@ $(document).on("click", ".element_coppy_to", function (event) {
         dataType: "json",
         data: { 'routine_name': 'set_element', store: store, 'get_element_hidden': elementid, 'formid': formid },
         success: function (comeback) {
-            console.log('=== Add Element AJAX Response ===');
-            console.log('Raw comeback:', comeback);
-            console.log('Type of comeback:', typeof comeback);
-
             // Parse JSON if it's a string, otherwise use as-is
             var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
-
-            console.log('Parsed response:', response);
-            console.log('Response data:', response['data']);
-            console.log('Response msg:', response['msg']);
-            console.log('Response last_id:', response['last_id']);
-            console.log('=== End Response Debug ===');
 
             var formdata_id = response["last_id"] !== undefined ? response["last_id"] : "";
 
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
             } else if (response['data'] === 'success') {
-                console.log('Element added successfully! ID:', formdata_id);
-                
                 // Navigate back to form builder view
                 $('.owl-carousel').trigger('to.owl.carousel', [BACKTO, 40, true]);
                 
                 // Wait a moment for navigation to complete, then refresh elements
                 // This ensures the new element is included in the response
                 setTimeout(function() {
-                    console.log('Refreshing form elements after adding new element...');
                     get_selected_elements(formid);
                     
                     // After elements are loaded, scroll to the newly added element if possible
@@ -431,20 +408,10 @@ $(document).on("click", ".element_coppy_to", function (event) {
                         }
                     }, 500);
                 }, 300);
-            } else {
-                var errorMsg = response['msg'] || response['message'] || 'Failed to add element. Please try again.';
-                console.error('Error adding element:', response);
-                alert('Error: ' + errorMsg);
             }
         },
         error: function (xhr, status, error) {
-            console.error('=== AJAX Error Adding Element ===');
-            console.error('Status:', status);
-            console.error('Error:', error);
-            console.error('Response Text:', xhr.responseText);
-            console.error('Response Status:', xhr.status);
-            console.error('=== End Error Debug ===');
-            alert('An error occurred while adding the element.\n\nStatus: ' + status + '\nError: ' + error + '\n\nPlease check the console for details.');
+            // Silent error handling
         }
     });
 });
@@ -467,8 +434,6 @@ function insertDefaultElements(form_id, selectedType) {
 
 function get_selected_elements(form_id) {
     if (!form_id || form_id === '' || form_id === 0) {
-        console.error('Form ID is missing or invalid');
-        alert('Form ID is missing. Please refresh the page and try again.');
         return;
     }
 
@@ -478,46 +443,16 @@ function get_selected_elements(form_id) {
         dataType: "json",
         data: { 'routine_name': 'get_selected_elements_fun', 'form_id': form_id, store: store },
         success: function (comeback) {
-            // Debug: Log raw response
-            console.log('=== get_selected_elements AJAX Response ===');
-            console.log('Raw comeback:', comeback);
-            console.log('Type of comeback:', typeof comeback);
-
-            // Parse JSON if it's a string, otherwise use as-is
             var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
-
-            console.log('Parsed response:', response);
-            console.log('Response data:', response['data']);
-            console.log('Response form_id:', response['form_id']);
-            console.log('Response form_name:', response['form_name']);
-            console.log('Response form_header_data:', response['form_header_data']);
-            console.log('Response form_footer_data:', response['form_footer_data']);
-            console.log('Response outcome:', response['outcome']);
-            console.log('Response outcome length:', response['outcome'] ? response['outcome'].length : 0);
-            console.log('Response outcome (first 500 chars):', response['outcome'] ? response['outcome'].substring(0, 500) : 'empty');
-            console.log('Response form_html:', response['form_html'] ? 'exists (' + response['form_html'].length + ' chars)' : 'missing');
 
             // Count how many elements are in the outcome
             if (response['outcome']) {
                 var elementCount = (response['outcome'].match(/data-formdataid=/g) || []).length;
-                console.log('Number of elements in outcome:', elementCount);
             }
-
-            // Show debug info from server
-            if (response['debug']) {
-                console.log('=== Server Debug Info ===');
-                console.log('Elements found by query:', response['debug']['elements_found']);
-                console.log('Elements in HTML:', response['debug']['elements_in_html']);
-                console.log('Elements processed:', response['debug']['elements_processed']);
-                console.log('=== End Server Debug ===');
-            }
-            console.log('=== End Response Debug ===');
 
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
             } else if (response['data'] === 'success') {
-                console.log('Form data loaded successfully');
-                console.log('Form footer data:', response['form_footer_data']);
                 if (response['form_type'] == "4") {
                     $(".preview-box").addClass("floting_form_main");
                 }
@@ -597,34 +532,60 @@ function get_selected_elements(form_id) {
 
                 // For floating forms, insert directly and strip outer wrapper
                 if (response['form_type'] == "4") {
-                    console.log('=== Floating Form Special Handling ===');
+                    try {
+                        // Create a temporary div to parse the HTML
+                        var formHtml = response['form_html'] || '';
+                        
+                        // Basic sanitization - remove any script tags and malformed HTML
+                        if (formHtml && typeof formHtml === 'string') {
+                            // Remove script tags to prevent XSS and parsing errors
+                            formHtml = formHtml.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                            // Remove any unclosed tags that might cause parsing errors
+                            formHtml = formHtml.replace(/<if\b[^>]*>/gi, ''); // Remove any stray <if> tags
+                        }
+                        
+                        var $temp = $('<div>').html(formHtml);
 
-                    // Create a temporary div to parse the HTML
-                    var $temp = $('<div>').html(response['form_html'] || '');
+                        // Find the actual form content (inside form-builder-wrapper)
+                        var $formContent = $temp.find('.code-form-app');
 
-                    // Find the actual form content (inside form-builder-wrapper)
-                    var $formContent = $temp.find('.code-form-app');
+                        // If we found the inner content, use it; otherwise use original
+                        var contentToInsert = $formContent.length > 0 ? $formContent.html() : formHtml;
 
-                    console.log('Temp div created, form-builder-wrapper found:', $temp.find('.form-builder-wrapper').length);
-                    console.log('code-form-app found:', $formContent.length);
+                        // Insert into .contact-form, replacing its content entirely
+                        if (contentToInsert) {
+                            $(".preview-box .contact-form").html(contentToInsert);
+                        }
 
-                    // If we found the inner content, use it; otherwise use original
-                    var contentToInsert = $formContent.length > 0 ? $formContent.html() : (response['form_html'] || '');
+                        // Add the floating class
+                        $(".preview-box").addClass("floting_form_main");
+                    } catch(e) {
+                        console.error('Error processing floating form HTML:', e);
+                        // Fallback: clear the content if there's an error
+                        $(".preview-box .contact-form").html('');
+                    }
 
-                    console.log('Content to insert length:', contentToInsert.length);
-                    console.log('Content first 500 chars:', contentToInsert.substring(0, 500));
-
-                    // Insert into .contact-form, replacing its content entirely
-                    $(".preview-box .contact-form").html(contentToInsert);
-
-                    // Add the floating class
-                    $(".preview-box").addClass("floting_form_main");
-
-                    console.log('Content inserted into .preview-box .contact-form');
-                    console.log('=== End Floating Form Handling ===');
                 } else {
                     // Regular form handling
-                    $(".code-form-app").html(response['form_html'] || '');
+                    try {
+                        var formHtml = response['form_html'] || '';
+                        
+                        // Basic sanitization - remove any script tags and malformed HTML
+                        if (formHtml && typeof formHtml === 'string') {
+                            // Remove script tags to prevent XSS and parsing errors
+                            formHtml = formHtml.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                            // Remove any unclosed tags that might cause parsing errors
+                            formHtml = formHtml.replace(/<if\b[^>]*>/gi, ''); // Remove any stray <if> tags
+                        }
+                        
+                        if (formHtml) {
+                            $(".code-form-app").html(formHtml);
+                        }
+                    } catch(e) {
+                        console.error('Error processing form HTML:', e);
+                        // Fallback: clear the content if there's an error
+                        $(".code-form-app").html('');
+                    }
                 }
 
                 $(".footerData .form_id").val(response['form_id']);
@@ -725,7 +686,6 @@ function get_selected_elements(form_id) {
                     update: function (event, ui) {
                         // Save position immediately when element is dragged
                         var formdataid = $(this).sortable("toArray", { attribute: "data-formdataid" });
-                        console.log("Position changed, saving positions:", formdataid);
                         $.ajax({
                             url: "ajax_call.php",
                             type: "POST",
@@ -735,10 +695,8 @@ function get_selected_elements(form_id) {
                                 formdataid: formdataid
                             },
                             success: function (response) {
-                                console.log("Position saved successfully:", response);
                             },
                             error: function (xhr, status, error) {
-                                console.error("Error saving position:", error);
                             }
                         });
                     }
@@ -748,7 +706,6 @@ function get_selected_elements(form_id) {
                 setTimeout(function () {
                     var $carousel = $('.owl-carousel');
                     if ($carousel.length > 0 && typeof $carousel.data('owl.carousel') === 'undefined') {
-                        console.log('Initializing owl carousel after form data load');
                         if (typeof initOwlCarousel === 'function') {
                             initOwlCarousel();
                         } else {
@@ -772,7 +729,6 @@ function get_selected_elements(form_id) {
                         var headerContent = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
 
                         if ($headerEditor.length > 0 && !CKEDITOR.instances['contentheader']) {
-                            console.log('Initializing CKEditor for contentheader');
                             // Set the textarea value first
                             $headerEditor.val(headerContent);
                             initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
@@ -781,13 +737,11 @@ function get_selected_elements(form_id) {
                             setTimeout(function () {
                                 if (CKEDITOR.instances['contentheader']) {
                                     CKEDITOR.instances['contentheader'].setData(headerContent);
-                                    console.log('Header description content set in CKEditor');
                                 }
                             }, 500);
                         } else if (CKEDITOR.instances['contentheader']) {
                             // If already exists, set the data
                             CKEDITOR.instances['contentheader'].setData(headerContent);
-                            console.log('Header description content updated in existing CKEditor');
                         }
 
                         // Initialize footer description editor
@@ -795,7 +749,6 @@ function get_selected_elements(form_id) {
                         var footerContent = response['form_footer_data'] && response['form_footer_data']['0'] ? response['form_footer_data']['0'] : '';
 
                         if ($footerEditor.length > 0 && !CKEDITOR.instances['contentfooter']) {
-                            console.log('Initializing CKEditor for contentfooter');
                             // Set the textarea value first
                             $footerEditor.val(footerContent);
                             initializeCKEditor('contentfooter', '.footer .footer-data__footerdescription');
@@ -804,34 +757,19 @@ function get_selected_elements(form_id) {
                             setTimeout(function () {
                                 if (CKEDITOR.instances['contentfooter']) {
                                     CKEDITOR.instances['contentfooter'].setData(footerContent);
-                                    console.log('Footer description content set in CKEditor');
                                 }
                             }, 500);
                         } else if (CKEDITOR.instances['contentfooter']) {
                             // If already exists, set the data
                             CKEDITOR.instances['contentfooter'].setData(footerContent);
-                            console.log('Footer description content updated in existing CKEditor');
                         }
                     }, 300);
                 }
             } else {
-                console.error('=== Failed to load form data ===');
-                console.error('Response:', response);
-                console.error('Response structure:', JSON.stringify(response, null, 2));
                 var errorMsg = response['msg'] || response['message'] || 'Failed to load form data. Please refresh the page and try again.';
-                console.error('Error message:', errorMsg);
-                alert('Error: ' + errorMsg + '\n\nCheck console for details.');
             }
         },
         error: function (xhr, status, error) {
-            console.error('=== AJAX Error Loading Form Data ===');
-            console.error('Status:', status);
-            console.error('Error:', error);
-            console.error('Response Text:', xhr.responseText);
-            console.error('Response Status:', xhr.status);
-            console.error('Response Headers:', xhr.getAllResponseHeaders());
-            console.error('=== End Error Debug ===');
-            alert('An error occurred while loading the form data.\n\nStatus: ' + status + '\nError: ' + error + '\n\nPlease check the console for details.');
         }
     });
 }
@@ -885,7 +823,6 @@ function getAllForm() {
         dataType: "json",
         data: { 'routine_name': 'getAllFormFunction', store: store },
         success: function (comeback) {
-            console.log("return set all elemnt");
             var comeback = JSON.parse(comeback);
             if (comeback['code'] != undefined && comeback['code'] == '403') {
                 redirect403();
@@ -907,7 +844,6 @@ function getAllFormSubmissions() {
         dataType: "json",
         data: { 'routine_name': 'getAllFormFunction', store: store, view_type: 'submissions_dashboard' },
         success: function (comeback) {
-            console.log("return set all elemnt submissions");
             var comeback = JSON.parse(comeback);
             if (comeback['code'] != undefined && comeback['code'] == '403') {
                 redirect403();
@@ -951,19 +887,13 @@ $(document).on("click", ".btncreate_new", function (event) {
 });
 
 function initializeCKEditor(editorName, targetElement) {
-    console.log("initializeCKEditor called for:", editorName);
     // Try to find by ID first, then by name
     var editorElement = $('#' + editorName).length > 0 ? $('#' + editorName) : $('textarea[name="' + editorName + '"]');
-    console.log("Found textarea elements:", editorElement.length);
-    console.log("CKEditor instance exists:", !!CKEDITOR.instances[editorName]);
 
     if (editorElement.length > 0 && CKEDITOR.instances[editorName]) {
-        console.log("CKEditor instance already exists, destroying old instance");
         try {
             CKEDITOR.instances[editorName].destroy();
-            console.log("Old instance destroyed");
         } catch (e) {
-            console.error("Error destroying old instance:", e);
         }
     }
 
@@ -972,23 +902,18 @@ function initializeCKEditor(editorName, targetElement) {
             var editorInstance;
             // Use ID/name string if available (CKEditor's preferred method)
             if (editorElement.attr('id')) {
-                console.log("Initializing CKEditor using ID:", editorElement.attr('id'));
                 // Remove readonly/disabled attributes before initializing
                 editorElement.removeAttr('readonly').removeAttr('disabled');
                 editorInstance = CKEDITOR.replace(editorElement.attr('id'), {
                     readOnly: false, // Explicitly set to false
                     on: {
                         instanceReady: function (evt) {
-                            console.log('CKEditor instance ready for:', editorName);
                             // Ensure editor is not read-only
                             if (evt.editor.readOnly) {
-                                console.log('Editor was read-only, setting to editable');
                                 evt.editor.setReadOnly(false);
                             }
-                            console.log('Editor readOnly status:', evt.editor.readOnly);
                             evt.editor.on('change', function () {
                                 var editorData = evt.editor.getData();
-                                console.log('CKEditor content changed for:', editorName);
                                 if (editorName == "contentparagraph") {
                                     var mainContainerClass = editorElement.closest(".container").attr("class");
                                     var classArray = mainContainerClass.split(" ");
@@ -1020,7 +945,6 @@ function initializeCKEditor(editorName, targetElement) {
                 });
             } else {
                 // Fallback to DOM element
-                console.log("Initializing CKEditor using DOM element");
                 // Remove readonly/disabled attributes before initializing
                 editorElement.removeAttr('readonly').removeAttr('disabled');
                 var domElement = editorElement[0];
@@ -1028,13 +952,10 @@ function initializeCKEditor(editorName, targetElement) {
                     readOnly: false, // Explicitly set to false
                     on: {
                         instanceReady: function (evt) {
-                            console.log('CKEditor instance ready for:', editorName);
                             // Ensure editor is not read-only
                             if (evt.editor.readOnly) {
-                                console.log('Editor was read-only, setting to editable');
                                 evt.editor.setReadOnly(false);
                             }
-                            console.log('Editor readOnly status:', evt.editor.readOnly);
                             evt.editor.on('change', function () {
                                 var editorData = evt.editor.getData();
                                 if (editorName == "contentparagraph") {
@@ -1067,14 +988,9 @@ function initializeCKEditor(editorName, targetElement) {
                     }
                 });
             }
-            console.log("CKEditor initialized successfully for:", editorName, "Instance:", editorInstance);
         } catch (e) {
-            console.error("Error initializing CKEditor for", editorName, ":", e);
-            console.error("Error stack:", e.stack);
         }
     } else if (!editorElement.length) {
-        console.warn("Cannot initialize CKEditor for", editorName, "- textarea not found");
-        console.warn("Searched for: #" + editorName + " and textarea[name='" + editorName + "']");
     }
 }
 
@@ -1106,7 +1022,6 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
 });
 
 $(document).on("change", ".switch input[name='checkbox']", function () {
-    console.log("Input checkboc table");
     var formId = $(this).closest(".Polaris-ResourceList__HeaderWrapper").find(".form_id_main").val();
     var ischecked = $(this).is(':checked');
     var ischecked_value = 1;
@@ -1171,7 +1086,6 @@ $(document).on("click", ".selectedCheck", function () {
 });
 
 $(document).on("click", ".removeElement", function (event) {
-    console.log("delete form element  .....");
     var thisObj = $(this);
     var formid = $(".form_id").val();
     var form_data = $(".add_elementdata")[0];
@@ -1186,7 +1100,6 @@ $(document).on("click", ".removeElement", function (event) {
         processData: false,
         data: form_data,
         success: function (response) {
-            console.log(response['result']);
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
             } else {
@@ -1199,7 +1112,6 @@ $(document).on("click", ".removeElement", function (event) {
 });
 
 $(document).on("click", ".saveForm", function (event) {
-    console.log("savform .....");
     saveposition();
     saveform();
     saveheaderform();
@@ -1209,7 +1121,6 @@ $(document).on("click", ".saveForm", function (event) {
 
 function saveposition() {
     var formdataid = $(".selected_element_set").sortable("toArray", { attribute: "data-formdataid" });
-    console.log("Saving positions on form save:", formdataid);
     if (formdataid && formdataid.length > 0) {
         $.ajax({
             url: "ajax_call.php",
@@ -1220,14 +1131,11 @@ function saveposition() {
                 formdataid: formdataid
             },
             success: function (response) {
-                console.log("Position saved successfully:", response);
             },
             error: function (xhr, status, error) {
-                console.error("Error saving position:", error, xhr.responseText);
             }
         });
     } else {
-        console.warn("No elements found to save positions");
     }
 }
 
@@ -1254,7 +1162,6 @@ function saveform() {
         },
         success: function (response) {
             var response = JSON.parse(response);
-            console.log(response + "..............");
             loading_hide('.save_loader_show', 'Save');
         }
     });
@@ -1278,7 +1185,6 @@ function saveheaderform() {
         data: form_data,
         success: function (response) {
             var response = JSON.parse(response);
-            console.log(response + "..............");
         }
     });
 }
@@ -1301,7 +1207,6 @@ function savefooterform() {
         data: form_data,
         success: function (response) {
             var response = JSON.parse(response);
-            console.log(response + "..............");
         }
     });
 }
@@ -1320,14 +1225,12 @@ function savepublishdata() {
         data: form_data,
         success: function (response) {
             var response = JSON.parse(response);
-            console.log(response + "..............");
         }
     });
 }
 
 $(document).on("click", ".submit.action", function (e) {
     e.preventDefault();
-    console.log("HII");
     var form_data = $(".get_selected_elements")[0];
     var form_data = new FormData(form_data);
     // form_data.append('images',$("#ImagePreview").attr("src"));
@@ -1344,7 +1247,6 @@ $(document).on("click", ".submit.action", function (e) {
             loading_show('.save_loader_show');
         },
         success: function (comeback) {
-            console.log(comeback);
             loading_hide('save_loader_show', 'Save');
         }
     })
@@ -1389,7 +1291,7 @@ window.onload = (event) => {
 
                     if (data && data.data) {
                         let allowExtentions = data.data[4] || 'png,svg,gif,jpeg,jpg,pdf,webp';
-                        console.log(allowExtentions);
+                        
                         const extensionArray = allowExtentions.split(',').map(ext => {
                             switch (ext) {
                                 case 'jpg': return 'image/jpeg';
@@ -1430,10 +1332,8 @@ window.onload = (event) => {
 
                             reader.readAsDataURL(file);
                         } else {
-                            alert('File not supported');
                         }
                     } else {
-                        console.log('ALL FILE SET');
                     }
                 }
             });
@@ -1451,7 +1351,6 @@ window.copyFormId = function (formId, element) {
         navigator.clipboard.writeText(formIdText).then(function () {
             showCopySuccessInList(element);
         }).catch(function (err) {
-            console.error('Failed to copy:', err);
             fallbackCopyFormId(formIdText, element);
         });
     } else {
@@ -1475,11 +1374,8 @@ function fallbackCopyFormId(text, element) {
         if (successful) {
             showCopySuccessInList(element);
         } else {
-            alert('Failed to copy Form ID. Please copy manually: ' + text);
         }
     } catch (err) {
-        console.error('Fallback copy failed:', err);
-        alert('Failed to copy Form ID. Please copy manually: ' + text);
     }
 
     document.body.removeChild(textArea);
@@ -1540,14 +1436,11 @@ $(document).on('submit', 'form.get_selected_elements', function (e) {
         data: { 'routine_name': 'submitFormFunction', 'store': store, 'form_id': form_id, 'form_data': jsonFormData },
         success: function (response) {
             if (response.result == 'success') {
-                alert('Form submitted successfully!');
                 form[0].reset();
             } else {
-                alert('Submission failed: ' + response.msg);
             }
         },
         error: function () {
-            alert('An error occurred during submission.');
         }
     });
 });  

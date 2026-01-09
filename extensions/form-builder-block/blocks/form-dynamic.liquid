@@ -20,7 +20,6 @@
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
     
     if (!blockContainer) {
-      console.warn('Block container not found for: easy-form-{{ block.id }}');
       return false;
     }
     
@@ -33,7 +32,6 @@
         '<strong>⚠️ Form ID Required</strong><br>' +
         'Please enter a Form ID in the block settings to display the form.' +
         '</div>';
-      console.warn('Form ID not provided in block settings');
       return false;
     }
     
@@ -53,14 +51,8 @@
           shop = hostname;
         }
       } catch(e) {
-        console.warn('Could not get shop from window.location');
       }
     }
-    
-    console.log('=== Easy Form Builder Initialization ===');
-    console.log('Block ID:', '{{ block.id }}');
-    console.log('Form ID:', formId);
-    console.log('Shop:', shop);
     
     // Load the form from app proxy
     try {
@@ -71,9 +63,7 @@
         blockContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Loading form...</div>';
       }
       
-      console.log('Fetching form ID:', formId, 'for shop:', shop);
       const renderUrl = `/apps/easy-form-builder/render?form_id=${encodeURIComponent(formId)}&shop=${encodeURIComponent(shop)}`;
-      console.log('Render URL:', renderUrl);
       
       const formResponse = await fetch(renderUrl, {
         method: 'GET',
@@ -84,28 +74,20 @@
         credentials: 'same-origin'
       });
       
-      console.log('Form response status:', formResponse.status);
-      
       if (!formResponse.ok) {
         // If 404, form doesn't exist - show error
         if (formResponse.status === 404) {
-          const errorText = await formResponse.text();
-          console.error('Form response error:', errorText);
           throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
         } else {
           // For other errors, also show error
-          const errorText = await formResponse.text();
-          console.error('Form response error:', errorText);
           throw new Error(`Failed to load form: ${formResponse.status} ${formResponse.statusText}`);
         }
       }
       
       const formHtml = await formResponse.text();
-      console.log('Form HTML received, length:', formHtml.length);
       
       // If form HTML is empty (form is disabled), hide the container
       if (!formHtml || formHtml.trim().length === 0) {
-        console.log('Form is disabled or empty - hiding form container');
         blockContainer.style.display = 'none';
         return false;
       }
@@ -117,13 +99,11 @@
         
         // Extract all script tags - with error handling
         const scripts = tempDiv.querySelectorAll('script');
-        console.log('Found scripts in form HTML:', scripts.length);
         scripts.forEach(function(oldScript, scriptIdx) {
           try {
             const scriptContent = oldScript.textContent || oldScript.innerHTML || '';
             // Skip empty scripts
             if (!scriptContent.trim()) {
-              console.log(`Skipping empty script ${scriptIdx}`);
               return;
             }
             
@@ -136,32 +116,25 @@
             // Use try-catch for appending
             try {
               document.head.appendChild(newScript);
-              console.log(`Script ${scriptIdx} appended successfully`);
             } catch(appendError) {
-              console.error(`Error appending script ${scriptIdx}:`, appendError);
               // Try using eval as fallback (less ideal but works)
               try {
                 eval(scriptContent);
-                console.log(`Script ${scriptIdx} executed via eval`);
               } catch(evalError) {
-                console.error(`Error executing script ${scriptIdx} via eval:`, evalError);
+                // Silent fail
               }
             }
             oldScript.remove();
           } catch(scriptError) {
-            console.error(`Error processing script ${scriptIdx}:`, scriptError);
-            console.error('Script content preview:', (oldScript.textContent || oldScript.innerHTML || '').substring(0, 200));
+            // Silent fail
           }
         });
         
         // Insert HTML without script tags
         blockContainer.innerHTML = tempDiv.innerHTML;
-        console.log('✅ Form HTML inserted');
         
         // Remove readonly/disabled attributes from form fields so users can type
         const formInputs = blockContainer.querySelectorAll('input, textarea, select');
-        console.log('=== Making Form Fields Editable ===');
-        console.log('Found form inputs:', formInputs.length);
         formInputs.forEach(function(input, idx) {
           const name = input.name || input.getAttribute('name') || 'NO_NAME';
           const hadReadonly = input.hasAttribute('readonly');
@@ -169,24 +142,20 @@
           const hasTabindex = input.hasAttribute('tabindex');
           const tabindexValue = hasTabindex ? input.getAttribute('tabindex') : null;
           
-          console.log(`Input ${idx} (${name}): BEFORE - readonly=${hadReadonly}, disabled=${wasDisabled}, tabindex=${tabindexValue}`);
           
           // Remove readonly
           if (hadReadonly) {
             input.removeAttribute('readonly');
-            console.log(`Input ${idx} (${name}): Removed readonly attribute`);
           }
           
           // Enable disabled inputs
           if (wasDisabled) {
             input.disabled = false;
-            console.log(`Input ${idx} (${name}): Enabled disabled input`);
           }
           
           // Remove negative tabindex (which prevents keyboard focus)
           if (hasTabindex && tabindexValue === '-1') {
             input.removeAttribute('tabindex');
-            console.log(`Input ${idx} (${name}): Removed tabindex="-1"`);
           }
           
           // Ensure input is focusable and editable
@@ -194,18 +163,7 @@
           input.style.userSelect = 'auto';
           
           // Verify the input is now editable
-          const isReadonly = input.readOnly;
-          const isDisabled = input.disabled;
-          const currentTabindex = input.hasAttribute('tabindex') ? input.getAttribute('tabindex') : 'none';
-          console.log(`Input ${idx} (${name}): AFTER - readonly=${isReadonly}, disabled=${isDisabled}, tabindex=${currentTabindex}, canEdit=${!isReadonly && !isDisabled}`);
-          
-          // Test if we can set a value (to verify it's editable)
-          const testValue = input.value;
-          input.value = testValue + ''; // Try to set value
-          const canSetValue = input.value !== undefined;
-          console.log(`Input ${idx} (${name}): canSetValue=${canSetValue}, currentValue="${input.value.substring(0, 20)}"`);
         });
-        console.log('✅ Form fields made editable');
         
         // Also use MutationObserver to catch any dynamically added readonly attributes
         if (typeof MutationObserver !== 'undefined') {
@@ -216,11 +174,9 @@
                 if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
                   if (target.hasAttribute('readonly')) {
                     target.removeAttribute('readonly');
-                    console.log('MutationObserver: Removed readonly from', target.name || 'unnamed input');
                   }
                   if (target.disabled) {
                     target.disabled = false;
-                    console.log('MutationObserver: Enabled', target.name || 'unnamed input');
                   }
                 }
               }
@@ -234,7 +190,6 @@
             });
           });
           
-          console.log('✅ MutationObserver set up to prevent readonly/disabled from being re-added');
         }
         
         // Initialize form fill tracking (track when user clicks/focuses on any input)
@@ -248,7 +203,6 @@
         initializeFloatingForm();
       } else {
         // Empty form HTML - form is disabled, hide the container
-        console.log('Form HTML is empty - form is disabled, hiding container');
         blockContainer.style.display = 'none';
         return false;
       }
@@ -256,12 +210,10 @@
       // Only show error if it's a real error (not just empty form)
       // Check if error message indicates form is disabled
       if (error.message && error.message.includes('Empty form HTML')) {
-        console.log('Form is disabled - hiding container');
         blockContainer.style.display = 'none';
         return false;
       }
       
-      console.error('❌ Error loading form:', error);
       // Only show error for actual errors (404, 500, etc.), not for disabled forms
       if (error.message && !error.message.includes('Empty form HTML')) {
         blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
@@ -282,7 +234,7 @@
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
     if (!blockContainer) {
       // Fallback to alert if container not found
-      alert(message);
+      // Silent fail
       return;
     }
     
@@ -374,10 +326,8 @@
   }
   
   function initializeFormFillTracking() {
-    console.log('=== Initializing Form Fill Tracking ===');
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
     if (!blockContainer) {
-      console.warn('Block container not found for fill tracking');
       return;
     }
     
@@ -398,10 +348,7 @@
       }
     }
     
-    console.log('Found forms for fill tracking:', forms.length);
-    
     if (forms.length === 0) {
-      console.warn('No forms found for fill tracking, retrying in 500ms...');
       setTimeout(function() {
         initializeFormFillTracking();
       }, 500);
@@ -433,10 +380,7 @@
         formId = "{{ block.settings.form_id }}" || '';
       }
       
-      console.log('Form ID for fill tracking:', formId);
-      
       if (!formId || formId.trim() === '' || formId.trim() === '0') {
-        console.error('Form ID not found for fill tracking');
         return;
       }
       
@@ -456,7 +400,6 @@
       }
       
       if (!shop) {
-        console.error('Shop domain not found for fill tracking');
         return;
       }
       
@@ -468,7 +411,6 @@
       
       // Get all form inputs (input, textarea, select)
       const formInputs = form.querySelectorAll('input, textarea, select');
-      console.log('Found form inputs for fill tracking:', formInputs.length);
       
       // Track fill when user focuses or clicks on any input
       const trackFill = function(event) {
@@ -479,11 +421,6 @@
         
         // Mark as tracked immediately to prevent duplicate tracking
         form.setAttribute('data-fill-tracked', 'true');
-        
-        console.log('=== Tracking Form Fill Event ===');
-        console.log('Form ID:', formId);
-        console.log('Shop:', shop);
-        console.log('Event type:', event ? event.type : 'unknown');
         
         // Send AJAX request to track fill
         const formData = new FormData();
@@ -518,34 +455,22 @@
         }
         
         const ajaxUrl = baseUrl + '/user/ajax_call.php';
-        console.log('AJAX URL:', ajaxUrl);
-        console.log('Form Data:', {
-          store: shop,
-          routine_name: 'trackFormFill',
-          form_id: formId
-        });
         
         fetch(ajaxUrl, {
           method: 'POST',
           body: formData
         })
         .then(function(response) {
-          console.log('Fill tracking response status:', response.status);
           if (!response.ok) {
             throw new Error('HTTP error! status: ' + response.status);
           }
           return response.json();
         })
         .then(function(data) {
-          console.log('Fill tracking response data:', data);
-          if (data.result === 'success') {
-            console.log('✅ Form fill event tracked successfully');
-          } else {
-            console.warn('❌ Failed to track fill event:', data.msg || 'Unknown error');
-          }
+          // Silent success
         })
         .catch(function(error) {
-          console.error('❌ Error tracking fill event:', error);
+          // Silent error
         });
       };
       
@@ -558,47 +483,34 @@
         
         // Track on focus (when user clicks into the field)
         input.addEventListener('focus', function(e) {
-          console.log('Input focused:', input.name || input.type, input.value);
           trackFill(e);
         }, { once: true });
         
         // Also track on click (in case focus doesn't fire)
         input.addEventListener('click', function(e) {
-          console.log('Input clicked:', input.name || input.type);
           trackFill(e);
         }, { once: true });
         
         // Also track on input (when user starts typing)
         input.addEventListener('input', function(e) {
-          console.log('Input changed:', input.name || input.type);
           trackFill(e);
         }, { once: true });
       });
-      
-      console.log('✅ Fill tracking event listeners attached to', formInputs.length, 'inputs');
-      
-      console.log('Fill tracking initialized for form', index);
     });
   }
   
   function initializeFormSubmission() {
-    console.log('=== Initializing Form Submission Handlers ===');
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
     if (!blockContainer) return;
     
     const forms = blockContainer.querySelectorAll('form.get_selected_elements');
-    console.log('Found forms:', forms.length);
     
     forms.forEach(function(form, index) {
-      console.log('Processing form', index);
       
       // Get form ID
       const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
       const formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || '';
-      console.log('Form ID:', formId);
-      
       if (!formId) {
-        console.error('Form ID not found for form', index);
         return;
       }
       
@@ -616,29 +528,19 @@
           shop = hostname;
         }
       }
-      console.log('Shop domain:', shop);
       
       // Form submit handler
       function handleFormSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('=== FORM SUBMIT EVENT ===');
-        console.log('Form:', form);
-        console.log('Form ID:', formId);
-        console.log('Shop:', shop);
         
         // Log all form inputs BEFORE modifying
-        console.log('=== Form Inputs Debug (BEFORE) ===');
         const allInputs = form.querySelectorAll('input, textarea, select');
-        console.log('Total inputs found:', allInputs.length);
         allInputs.forEach(function(input, idx) {
           const name = input.name || input.getAttribute('name') || 'NO_NAME';
           const value = input.value || input.getAttribute('value') || '';
           const type = input.type || input.tagName.toLowerCase();
           const disabled = input.disabled;
-          const readonly = input.readOnly;
-          const hasValue = value.trim().length > 0;
-          console.log(`Input ${idx}: name="${name}", type="${type}", value="${value.substring(0, 50)}", disabled=${disabled}, readonly=${readonly}, hasValue=${hasValue}`);
         });
         
         // Remove readonly/disabled attributes temporarily to ensure values are collected
@@ -647,52 +549,34 @@
         const readonlyStates = [];
         const disabledStates = [];
         
-        console.log('Readonly inputs found:', readonlyInputs.length);
-        console.log('Disabled inputs found:', disabledInputs.length);
-        
         // Store and remove readonly
         readonlyInputs.forEach(function(input) {
           readonlyStates.push({element: input, name: input.name});
           input.removeAttribute('readonly');
-          console.log('Removed readonly from:', input.name || 'unnamed input');
         });
         
         // Store and enable disabled inputs
         disabledInputs.forEach(function(input) {
           disabledStates.push({element: input, name: input.name});
           input.disabled = false;
-          console.log('Enabled input:', input.name || 'unnamed input');
         });
         
-        // Log inputs AFTER removing readonly/disabled
-        console.log('=== Form Inputs Debug (AFTER removing readonly/disabled) ===');
+        // Check if any values exist
         let hasAnyValue = false;
         allInputs.forEach(function(input, idx) {
-          const name = input.name || input.getAttribute('name') || 'NO_NAME';
           const value = input.value || input.getAttribute('value') || '';
-          const hasValue = value.trim().length > 0;
-          const isReadonly = input.readOnly;
-          const isDisabled = input.disabled;
-          console.log(`Input ${idx}: name="${name}", value="${value.substring(0, 50)}", hasValue=${hasValue}, readonly=${isReadonly}, disabled=${isDisabled}`);
-          if (hasValue) {
+          if (value.trim().length > 0) {
             hasAnyValue = true;
           }
         });
         
         // Warn if no values found
         if (!hasAnyValue) {
-          console.error('❌ ERROR: No form fields have values!');
-          console.error('This means the user cannot type in the fields or fields are being cleared.');
-          console.error('Checking field editability...');
-          
           // Test if we can set values programmatically
           allInputs.forEach(function(input, idx) {
-            const name = input.name || 'NO_NAME';
             const testValue = 'TEST_VALUE_' + idx;
             const oldValue = input.value;
             input.value = testValue;
-            const canSet = input.value === testValue;
-            console.error(`Field ${idx} (${name}): canSetValue=${canSet}, oldValue="${oldValue}", newValue="${input.value}"`);
             // Restore old value
             input.value = oldValue;
           });
@@ -719,11 +603,8 @@
         formData.append('form_id', formId);
         
         // Log FormData entries
-        console.log('=== FormData Entries ===');
         const formDataEntries = Array.from(formData.entries());
-        console.log('Total FormData entries:', formDataEntries.length);
         formDataEntries.forEach(function(entry, idx) {
-          console.log(`Entry ${idx}: ${entry[0]} = ${entry[1].toString().substring(0, 100)}`);
         });
         
         // Verify we have actual form data (not just system fields)
@@ -734,11 +615,8 @@
             formFieldNames.push(key);
           }
         });
-        console.log('Form field names (excluding system fields):', formFieldNames);
         
         if (formFieldNames.length === 0) {
-          console.error('ERROR: No form fields found! Form might be empty or fields have no name attributes.');
-          console.error('Form HTML:', form.outerHTML.substring(0, 500));
           showNotification('Error: Form fields not found. Please check form configuration.', 'error');
           return false;
         }
@@ -755,34 +633,23 @@
         
         // Get AJAX URL
         const ajaxUrl = 'https://codelocksolutions.com/form_builder/user/ajax_call.php';
-        console.log('Submitting to:', ajaxUrl);
         
         // Submit via fetch
-        console.log('=== Sending AJAX Request ===');
-        console.log('URL:', ajaxUrl);
-        console.log('Method: POST');
-        console.log('FormData entries count:', formDataEntries.length);
         
         fetch(ajaxUrl, {
           method: 'POST',
           body: formData
         })
         .then(function(response) {
-          console.log('Response status:', response.status);
-          console.log('Response headers:', response.headers);
           return response.text();
         })
         .then(function(responseText) {
-          console.log('Response text:', responseText);
           let data;
           try {
             data = JSON.parse(responseText);
           } catch(e) {
-            console.error('Failed to parse JSON:', e);
-            console.error('Response was:', responseText);
             throw new Error('Invalid JSON response: ' + responseText.substring(0, 200));
           }
-          console.log('Parsed response data:', data);
           
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -796,13 +663,11 @@
           if (data.result === 'success') {
             showNotification(data.msg || 'Form submitted successfully!', 'success');
             form.reset();
-            console.log('Form reset');
           } else {
             showNotification(data.msg || 'Something went wrong. Please try again.', 'error');
           }
         })
         .catch(function(error) {
-          console.error('Submission error:', error);
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
@@ -819,27 +684,22 @@
       
       // Attach submit handler to form
       form.addEventListener('submit', handleFormSubmit);
-      console.log('Submit handler attached to form', index);
       
       // Also attach to submit buttons - search more broadly
       // First try within form
       let submitButtons = form.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button, button.action.submit, .action.submit.classic-button.footer-data__submittext');
-      console.log('Found submit buttons in form:', submitButtons.length);
       
       // If none found, search in the block container (button might be outside form)
       if (submitButtons.length === 0) {
         submitButtons = blockContainer.querySelectorAll('button.submit, .submit.action, .footer-data__submittext, button[type="submit"], .action.submit, button.action.submit.classic-button, button.action.submit, .action.submit.classic-button.footer-data__submittext, button[class*="submit"], button[class*="action"]');
-        console.log('Found submit buttons in block container:', submitButtons.length);
       }
       
       // Log all buttons found for debugging
       if (submitButtons.length === 0) {
         const allButtons = blockContainer.querySelectorAll('button');
-        console.warn('No submit buttons found with selectors. All buttons in container:', allButtons.length);
         allButtons.forEach(function(btn, idx) {
           const classes = btn.className || '';
           const text = btn.textContent || btn.innerText || '';
-          console.log(`Button ${idx}: classes="${classes}", text="${text.trim().substring(0, 30)}", type="${btn.type}"`);
         });
       }
       
@@ -854,12 +714,8 @@
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          console.log('=== SUBMIT BUTTON CLICKED ===', btnIndex);
-          console.log('Button element:', newBtn);
-          console.log('Button classes:', newBtn.className);
           handleFormSubmit(e);
         });
-        console.log('Click handler attached to button', btnIndex, 'with classes:', newBtn.className);
       });
     });
   }
@@ -918,7 +774,6 @@
       }
     });
     
-    console.log('Button hover effects initialized for', buttons.length, 'buttons');
   }
   
   function initializeFloatingForm() {
@@ -929,7 +784,6 @@
     // Check if this is a floating form (has the floating-form-icon element)
     const floatingIcon = blockContainer.querySelector('.floating-form-icon');
     if (!floatingIcon) {
-      console.log('Not a floating form, skipping floating form initialization');
       return;
     }
     
@@ -937,11 +791,9 @@
     const closeBtn = blockContainer.querySelector('.floating-form-close');
     
     if (!overlay || !closeBtn) {
-      console.warn('Floating form elements not found');
       return;
     }
     
-    console.log('Initializing floating form functionality');
     
     // Open popup when icon is clicked
     floatingIcon.addEventListener('click', function(e) {
@@ -949,7 +801,6 @@
       e.stopPropagation();
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden'; // Prevent background scrolling
-      console.log('Floating form popup opened');
     });
     
     // Close popup when close button is clicked
@@ -958,7 +809,6 @@
       e.stopPropagation();
       overlay.classList.remove('active');
       document.body.style.overflow = ''; // Restore scrolling
-      console.log('Floating form popup closed');
     });
     
     // Close popup when clicking outside the form
@@ -966,7 +816,6 @@
       if (e.target === overlay) {
         overlay.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
-        console.log('Floating form popup closed (clicked outside)');
       }
     });
     
@@ -975,11 +824,9 @@
       if (e.key === 'Escape' && overlay.classList.contains('active')) {
         overlay.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
-        console.log('Floating form popup closed (Escape key)');
       }
     });
     
-    console.log('Floating form initialized successfully');
   }
   
   // Initialize when DOM is ready

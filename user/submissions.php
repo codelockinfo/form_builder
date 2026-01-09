@@ -26,8 +26,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
     <script>
     $(document).ready(function(){
         var form_id = "<?php echo $form_id; ?>";
-        console.log('Loading submissions for form_id:', form_id);
-        console.log('Store:', store);
         
         $.ajax({
             url: "ajax_call.php",
@@ -35,14 +33,12 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
             dataType: "json",
             data: {'routine_name': 'getFormSubmissions', 'store': store, 'form_id': form_id},
             success: function (response) {
-                console.log('Submissions response:', response);
                 
                 // Handle case where response might be a string (double-encoded JSON)
                 if (typeof response === 'string') {
                     try {
                         response = JSON.parse(response);
                     } catch(e) {
-                        console.error('Error parsing response:', e);
                         $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: Invalid response from server</td></tr>');
                         return;
                     }
@@ -52,12 +48,9 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     // Use display_field_configs from backend (new format)
                     var displayFieldConfigs = response.display_field_configs || [];
                     
-                    console.log('Raw response.display_field_configs:', response.display_field_configs);
-                    console.log('displayFieldConfigs length:', displayFieldConfigs.length);
                     
                     // If old format (form_fields), convert it
                     if (displayFieldConfigs.length === 0 && response.form_fields) {
-                        console.log('Using old format, converting form_fields');
                         var formFields = response.form_fields || {};
                         var fieldOrder = Object.keys(formFields);
                         
@@ -72,8 +65,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                         });
                     }
                     
-                    console.log('Final displayFieldConfigs:', displayFieldConfigs);
-                    console.log('Final displayFieldConfigs length:', displayFieldConfigs.length);
                     
                     // Build table header with dynamic columns
                     var headerHtml = '<tr>';
@@ -83,7 +74,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     // Add column headers for each form field (in order)
                     $.each(displayFieldConfigs, function(idx, fieldInfo) {
                         var fieldLabel = (fieldInfo.config && fieldInfo.config.label) || fieldInfo.uniqueKey || fieldInfo.fieldName || 'Field ' + (idx + 1);
-                        console.log('Adding header for field', idx, ':', fieldLabel, 'fieldName:', fieldInfo.fieldName);
                         headerHtml += '<th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">' + 
                                       $('<div>').text(fieldLabel).html() + '</th>';
                     });
@@ -93,9 +83,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     
                     var html = '';
                     if(response.data && response.data.length > 0) {
-                        console.log('Found', response.data.length, 'submissions');
-                        console.log('Display field configs count:', displayFieldConfigs.length);
-                        console.log('Display field configs:', displayFieldConfigs);
                         
                         $.each(response.data, function(i, item){
                             // Custom ID (sequential number starting from 1)
@@ -126,7 +113,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     
                                     dateStr = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds + ' IST';
                                 } catch(e) {
-                                    console.error('Error converting date:', e, dateStr);
                                     // If conversion fails, show original date
                                 }
                             }
@@ -134,8 +120,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                             
                             try {
                                 var formData = JSON.parse(item.submission_data);
-                                console.log('Form data for submission:', formData);
-                                console.log('All form data keys:', Object.keys(formData));
                                 
                                 // Track which field values we've used for fields that appear multiple times
                                 var usedFieldValues = {};
@@ -148,27 +132,18 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     var fieldNameBase = fieldInfo.fieldNameBase || (fieldInfo.config && fieldInfo.config.field_name_base) || '';
                                     var fieldLabel = (fieldInfo.config && fieldInfo.config.label) || '';
                                     
-                                    console.log('Processing field', idx, ':', {
-                                        fieldName: fieldName,
-                                        fieldNameBase: fieldNameBase,
-                                        fieldLabel: fieldLabel,
-                                        config: fieldInfo.config
-                                    });
-                                    
                                     // First, try the exact field name from config (this handles dynamic names like "first-name", "last-name", etc.)
                                     if (fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
                                         fieldValue = formData[fieldInfo.config.field_name];
-                                        console.log('  -> Found by config.field_name:', fieldInfo.config.field_name, '=', fieldValue);
                                     }
                                     // Try expected field name (generated from label)
                                     else if (fieldInfo.config && fieldInfo.config.expected_field_name && formData[fieldInfo.config.expected_field_name] !== undefined) {
                                         fieldValue = formData[fieldInfo.config.expected_field_name];
-                                        console.log('  -> Found by expected_field_name:', fieldInfo.config.expected_field_name, '=', fieldValue);
                                     }
                                     // Try fieldName directly
                                     else if (fieldName && formData[fieldName] !== undefined) {
                                         fieldValue = formData[fieldName];
-                                        console.log('  -> Found by fieldName:', fieldName, '=', fieldValue);
+                                       
                                     }
                                     // For text fields, try legacy names
                                     else if (fieldNameBase === 'text') {
@@ -232,7 +207,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     html += '<td style="padding: 10px; vertical-align: top;">' + safeFieldValue + '</td>';
                                 });
                             } catch(e) {
-                                console.error('Error parsing submission data:', e, item);
                                 // Fill empty cells for error case
                                 $.each(displayFieldConfigs, function(idx, fieldInfo) {
                                     html += '<td style="padding: 10px; vertical-align: top; color: #999;">-</td>';
@@ -246,13 +220,10 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     }
                     $('#submissions_list').html(html);
                 } else {
-                    console.error('Error loading submissions:', response.msg || 'Unknown error');
                     $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: ' + (response.msg || 'Failed to load submissions') + '</td></tr>');
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-                console.error('Response:', xhr.responseText);
                 $('#submissions_list').html('<tr><td colspan="3" style="padding: 10px; text-align: center; color: #d32f2f;">Error: Failed to load submissions. Check console for details.</td></tr>');
             }
         });

@@ -1,19 +1,8 @@
 <?php
-// Enable error logging for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('log_errors', 1);
-
-// Immediate logging to verify file is being called
-$log_file = __DIR__ . '/oauth-debug.log';
-$initial_log = "\n" . str_repeat("=", 80) . "\n";
-$initial_log .= "[" . date('Y-m-d H:i:s') . "] ========== INDEX.PHP LOADED ==========\n";
-$initial_log .= "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'NOT SET') . "\n";
-$initial_log .= "GET params: " . json_encode($_GET) . "\n";
-$initial_log .= "Has code param: " . (isset($_GET['code']) ? 'YES' : 'NO') . "\n";
-$initial_log .= "Shop param: " . (isset($_GET['shop']) ? $_GET['shop'] : 'NOT SET') . "\n";
-file_put_contents($log_file, $initial_log, FILE_APPEND);
-error_log("INDEX.PHP: File loaded - URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A'));
+// Error reporting disabled for production
+error_reporting(0);
+ini_set('display_errors', 0);
+ini_set('log_errors', 0);
 
 require_once './core/logger.php';
 ini_set('error_log', __DIR__ . '/oauth-debug.log');

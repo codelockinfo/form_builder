@@ -666,7 +666,7 @@ include_once('cls_header.php');
                 });
                 
                 if (selectedIds.length === 0) {
-                    alert('Please select at least one form to delete');
+                   
                     return;
                 }
                 
@@ -689,14 +689,14 @@ include_once('cls_header.php');
                                 store: store 
                             },
                             success: function (response) {
-                                console.log('Delete response:', response);
+                            
                                 
                                 // Parse response if it's a string
                                 if (typeof response === 'string') {
                                     try {
                                         response = JSON.parse(response);
                                     } catch(e) {
-                                        console.error('Failed to parse response:', e);
+                                      
                                     }
                                 }
                                 
@@ -704,9 +704,9 @@ include_once('cls_header.php');
                                 
                                 // Check if deletion was successful
                                 if (response && response.result === 'success') {
-                                    console.log('Form ' + formId + ' deleted successfully');
+                                 
                                 } else {
-                                    console.error('Failed to delete form ' + formId + ':', response);
+                                  
                                 }
                                 
                                 // When all deletions are complete, reload the form list
@@ -738,8 +738,7 @@ include_once('cls_header.php');
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error('AJAX error:', status, error);
-                                console.error('Response:', xhr.responseText);
+                            
                                 deleteCount++;
                                 if (deleteCount === totalCount) {
                                     flashNotice('Some forms could not be deleted. Check console for details.', 'inline-flash--error');

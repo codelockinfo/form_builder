@@ -24,7 +24,6 @@ tinymce.init({
         cb(blobInfo.blobUri(), { title: file.name });
       };
       reader.readAsDataURL(file);
-      console.log(file);
     };
     input.click();
   },

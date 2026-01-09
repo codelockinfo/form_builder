@@ -3800,21 +3800,15 @@ class Client_functions extends common_function {
 (function() {
     var scriptKey = "FB_FORM_BUILDER_" + ' . intval($form_id) . ';
     if (window[scriptKey]) {
-        console.log("FB_SCRIPT: Form ' . intval($form_id) . ' already initialized, skipping");
         return;
     }
     window[scriptKey] = true;
     
-    console.log("FB_SCRIPT_START - Form ID: ' . intval($form_id) . '");
     var FB_FORM_ID=' . intval($form_id) . ';
     var FB_SHOP="' . htmlspecialchars($shop_domain, ENT_QUOTES, 'UTF-8') . '";
     var FB_AJAX="' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '/user/ajax_call.php";
-    console.log("FB_FORM_ID",FB_FORM_ID);
-    console.log("FB_SHOP",FB_SHOP);
-    console.log("FB_AJAX",FB_AJAX);
 
     (function(){
-    console.log("FB_IIFE_START");
     
     function getShopDomain() {
         // Try multiple methods to get shop domain
@@ -3833,7 +3827,6 @@ class Client_functions extends common_function {
         e.preventDefault();
         e.stopPropagation();
         
-        console.log("=== FORM SUBMIT HANDLER TRIGGERED ===");
         
         var form = e.target.closest("form");
         if (!form) {
@@ -3841,12 +3834,9 @@ class Client_functions extends common_function {
         }
         
         if (!form) {
-            console.error("Form not found!");
-            alert("Form not found. Please refresh the page.");
             return false;
         }
         
-        console.log("Form found:", form);
         
         // Get form ID
         var formIdInput = form.querySelector("input[name=\'form_id\'], input.form_id");
@@ -3858,20 +3848,13 @@ class Client_functions extends common_function {
             }
         }
         
-        if (!formId) {
-            console.error("Form ID not found!");
-            alert("Form ID is missing. Please refresh the page.");
+        if (!formId) {  
             return false;
         }
         
-        console.log("Form ID:", formId);
-        
         var shop = getShopDomain();
-        console.log("Shop domain:", shop);
         
         if (!shop) {
-            console.error("Shop domain not found!");
-            alert("Store information is missing. Please refresh the page.");
             return false;
         }
         
@@ -3881,8 +3864,6 @@ class Client_functions extends common_function {
         formData.append("routine_name", "addformdata");
         formData.append("form_id", formId);
         
-        console.log("Submitting form data...");
-        console.log("Form fields:", Array.from(formData.entries()).map(function(pair) { return pair[0] + "=" + pair[1]; }).join(", "));
         
         // Disable submit button
         var submitBtn = form.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit");
@@ -3922,8 +3903,6 @@ class Client_functions extends common_function {
         }
         
         var ajaxUrl = baseUrl + "/user/ajax_call.php";
-        console.log("Submitting to:", ajaxUrl);
-        console.log("Base URL:", baseUrl);
         
         // Submit via fetch (works without jQuery)
         fetch(ajaxUrl, {
@@ -3931,11 +3910,9 @@ class Client_functions extends common_function {
             body: formData
         })
         .then(function(response) {
-            console.log("Response received:", response.status);
             return response.json();
         })
         .then(function(data) {
-            console.log("Response data:", data);
             
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -3949,21 +3926,15 @@ class Client_functions extends common_function {
             if (data.result === "success") {
                 // Show success message
                 var msg = data.msg || "Form submitted successfully!";
-                console.log("SUCCESS:", msg);
-                alert(msg);
                 
                 // Reset form
                 form.reset();
-                console.log("Form reset successfully");
+               
             } else {
                 var errorMsg = data.msg || "Something went wrong. Please try again.";
-                console.error("ERROR:", errorMsg);
-                alert(errorMsg);
             }
         })
         .catch(function(error) {
-            console.error("Submission error:", error);
-            console.error("Error details:", error.message, error.stack);
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = "1";
@@ -3972,7 +3943,6 @@ class Client_functions extends common_function {
                     submitBtn.innerHTML = originalText;
                 }
             }
-            alert("An error occurred: " + error.message + "\\nPlease check the console for details.");
         });
         
         return false;
@@ -3980,7 +3950,6 @@ class Client_functions extends common_function {
     
     // Attach event listeners when DOM is ready
     function attachHandlers() {
-        console.log("Attaching form submission handlers...");
         
         // Find all submit buttons - use multiple selectors
         var submitButtons = document.querySelectorAll(
@@ -3988,30 +3957,24 @@ class Client_functions extends common_function {
             "button[class*=\'submit\'], .action.submit, button.action.submit, " +
             ".classic-button.action.submit, button.classic-button.submit"
         );
-        console.log("Found submit buttons:", submitButtons.length);
         
         for (var i = 0; i < submitButtons.length; i++) {
             var btn = submitButtons[i];
-            console.log("Attaching handler to button " + i + ":", btn, "Classes:", btn.className);
             // Remove existing listeners by cloning
             var newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             newBtn.addEventListener("click", handleFormSubmit);
-            console.log("Handler attached to button " + i);
         }
         
         // Also handle form submit events
         var forms = document.querySelectorAll("form.get_selected_elements");
-        console.log("Found forms:", forms.length);
         
         // Use for loop instead of forEach for better compatibility
         for (var j = 0; j < forms.length; j++) {
             var form = forms[j];
-            console.log("Attaching submit handler to form " + j + ":", form);
             form.addEventListener("submit", handleFormSubmit);
         }
         
-        console.log("Handlers attached successfully");
     }
     
     // Function to initialize handlers - runs immediately and also on delays
@@ -4019,10 +3982,8 @@ class Client_functions extends common_function {
         // Check if form exists in DOM
         var formExists = document.querySelector("form.get_selected_elements");
         if (formExists) {
-            console.log("Form found in DOM, attaching handlers...");
             attachHandlers();
         } else {
-            console.log("Form not yet in DOM, will retry...");
         }
     }
     
@@ -4045,7 +4006,6 @@ class Client_functions extends common_function {
         var observer = new MutationObserver(function(mutations) {
             var formExists = document.querySelector("form.get_selected_elements");
             if (formExists) {
-                console.log("Form detected via MutationObserver, attaching handlers...");
                 attachHandlers();
                 observer.disconnect(); // Stop observing once form is found
             }
@@ -4057,7 +4017,6 @@ class Client_functions extends common_function {
             subtree: true
         });
         
-        console.log("MutationObserver started to detect form insertion");
     }
 })();
 
@@ -4065,44 +4024,35 @@ class Client_functions extends common_function {
 (function() {
     // Check if jQuery is already loaded
     if (typeof jQuery === "undefined" || typeof $ === "undefined") {
-        console.log("jQuery not found, loading jQuery...");
         var jqueryScript = document.createElement("script");
         jqueryScript.src = "' . htmlspecialchars($jquery_url) . '";
         jqueryScript.onload = function() {
-            console.log("jQuery loaded successfully");
             loadFormSubmissionScript();
         };
         jqueryScript.onerror = function() {
-            console.error("Failed to load jQuery, trying CDN...");
             var cdnScript = document.createElement("script");
             cdnScript.src = "https://code.jquery.com/jquery-3.6.0.min.js";
             cdnScript.onload = function() {
-                console.log("jQuery loaded from CDN");
                 loadFormSubmissionScript();
             };
             document.head.appendChild(cdnScript);
         };
         document.head.appendChild(jqueryScript);
     } else {
-        console.log("jQuery already loaded");
         loadFormSubmissionScript();
     }
     
     function loadFormSubmissionScript() {
         // Load form submission script
         if (document.querySelector("script[src*=\'shopify_front5.js\']")) {
-            console.log("Form submission script already loaded");
             return;
         }
         
-        console.log("Loading form submission script...");
         var script = document.createElement("script");
         script.src = "' . htmlspecialchars($frontend_js_url) . '";
         script.onload = function() {
-            console.log("Form submission script loaded successfully");
         };
         script.onerror = function() {
-            console.error("Failed to load form submission script");
         };
         document.head.appendChild(script);
     }
@@ -4111,27 +4061,23 @@ class Client_functions extends common_function {
 <script>
 // Immediate execution script - runs as soon as HTML is inserted
 (function() {
-    console.log("=== Form Builder Inline Script Executing ===");
-    console.log("Current URL:", window.location.href);
-    console.log("Script loaded at:", new Date().toISOString());
-    console.log("Document ready state:", document.readyState);
+   
     
         // Function to initialize handlers
         function initFormHandlers() {
-            console.log("=== Initializing Form Submission Handlers ===");
+        
             
             // Find forms directly - dont rely on wrapper
             var allForms = document.querySelectorAll("form.get_selected_elements");
-            console.log("Found forms (direct):", allForms.length);
+          
             
             // Find forms in the current scope (within the form wrapper)
             var formWrappers = document.querySelectorAll(".form-builder-wrapper");
-            console.log("Found form wrappers:", formWrappers.length);
-            
+          
             // Process forms directly first
             for (var i = 0; i < allForms.length; i++) {
                     var form = forms[i];
-                    console.log("Processing form", i, form);
+                 
                     
                     // Create a closure-safe handler function
                     (function(currentForm) {
@@ -4167,26 +4113,21 @@ class Client_functions extends common_function {
                             e.preventDefault();
                             e.stopPropagation();
                             
-                            console.log("=== FORM SUBMIT EVENT TRIGGERED ===");
-                            console.log("Form element:", currentForm);
+                          
                             
                             // Get shop domain
                             var shop = getShopDomain();
-                            console.log("Shop domain:", shop);
+                          
                             
                             if (!shop) {
-                                console.error("Shop domain not found!");
-                                alert("Store information not found. Please refresh the page.");
                                 return false;
                             }
                             
                             // Get form ID
                             var formId = getFormId();
-                            console.log("Form ID:", formId);
+                         
                             
                             if (!formId) {
-                                console.error("Form ID not found!");
-                                alert("Form ID not found. Please refresh the page.");
                                 return false;
                             }
                             
@@ -4196,13 +4137,13 @@ class Client_functions extends common_function {
                             formData.append("routine_name", "addformdata");
                             formData.append("form_id", formId);
                             
-                            console.log("=== Form Data Being Submitted ===");
+                          
                             var formDataArray = [];
                             for (var pair of formData.entries()) {
-                                console.log(pair[0] + ": " + pair[1]);
+                            
                                 formDataArray.push(pair[0] + "=" + pair[1]);
                             }
-                            console.log("Total fields:", formDataArray.length);
+                        
                             
                             // Disable submit button
                             var submitBtn = currentForm.querySelector("button.submit, .submit.action, .footer-data__submittext, button[type=\'submit\'], .action.submit");
@@ -4217,8 +4158,7 @@ class Client_functions extends common_function {
                             // Get base URL
                             var baseUrl = "' . htmlspecialchars($ajax_base_url, ENT_QUOTES, 'UTF-8') . '";
                             var ajaxUrl = baseUrl + "/user/ajax_call.php";
-                            console.log("=== Submitting to AJAX URL ===");
-                            console.log("URL:", ajaxUrl);
+                           
                             
                             // Submit via fetch
                             fetch(ajaxUrl, {
@@ -4226,9 +4166,7 @@ class Client_functions extends common_function {
                                 body: formData
                             })
                             .then(function(response) {
-                                console.log("=== AJAX Response Received ===");
-                                console.log("Status:", response.status);
-                                console.log("Status Text:", response.statusText);
+                            
                                 
                                 if (!response.ok) {
                                     throw new Error("HTTP error! status: " + response.status);
@@ -4237,20 +4175,16 @@ class Client_functions extends common_function {
                                 return response.text();
                             })
                             .then(function(text) {
-                                console.log("Response text:", text);
+                            
                                 
                                 var data;
                                 try {
                                     data = JSON.parse(text);
                                 } catch(e) {
-                                    console.error("Error parsing JSON:", e);
-                                    console.error("Response was:", text);
                                     throw new Error("Invalid JSON response");
                                 }
                                 
-                                console.log("=== Parsed Response Data ===");
-                                console.log("Result:", data.result);
-                                console.log("Message:", data.msg);
+                              
                                 
                                 if (submitBtn) {
                                     submitBtn.disabled = false;
@@ -4263,15 +4197,13 @@ class Client_functions extends common_function {
                                 
                                 if (data.result === "success") {
                                     var msg = data.msg || "Form submitted successfully!";
-                                    console.log("=== SUCCESS ===");
-                                    console.log("Message:", msg);
+                                  
                                     
                                     // Show success message
-                                    alert(msg);
                                     
                                     // Reset form
                                     currentForm.reset();
-                                    console.log("Form reset successfully");
+                                 
                                     
                                     // Clear all input fields manually for better compatibility
                                     var inputs = currentForm.querySelectorAll("input[type=\'text\'], input[type=\'email\'], input[type=\'tel\'], input[type=\'number\'], input[type=\'url\'], input[type=\'date\'], input[type=\'time\'], input[type=\'password\']");
@@ -4293,16 +4225,9 @@ class Client_functions extends common_function {
                                     
                                 } else {
                                     var errorMsg = data.msg || "Something went wrong. Please try again.";
-                                    console.error("=== ERROR ===");
-                                    console.error("Error message:", errorMsg);
-                                    alert(errorMsg);
                                 }
                             })
                             .catch(function(error) {
-                                console.error("=== SUBMISSION ERROR ===");
-                                console.error("Error:", error);
-                                console.error("Error message:", error.message);
-                                console.error("Error stack:", error.stack);
                                 
                                 if (submitBtn) {
                                     submitBtn.disabled = false;
@@ -4313,49 +4238,27 @@ class Client_functions extends common_function {
                                     }
                                 }
                                 
-                                alert("An error occurred: " + error.message + "\\nPlease check the console for details.");
-                            });
-                            
-                            return false;
-                        }
-                        
-                        // Attach submit handler to form
-                        currentForm.addEventListener("submit", handleFormSubmit);
-                        console.log("Submit handler attached to form", i);
-                        
-                        // Also attach click handlers to submit buttons - use comprehensive selectors
-                        var submitButtons = currentForm.querySelectorAll(
-                            "button.submit, " +
-                            ".submit.action, " +
-                            ".action.submit, " +
-                            ".footer-data__submittext, " +
-                            "button[type=\'submit\'], " +
-                            "button.action.submit, " +
-                            ".classic-button.submit, " +
-                            ".classic-button.action.submit, " +
-                            "button.classic-button.submit, " +
-                            "button.action.submit.classic-button, " +
-                            "button.footer-data__submittext, " +
+
                             ".action.submit.classic-button.footer-data__submittext"
                         );
-                        console.log("Found", submitButtons.length, "submit buttons in form", i);
-                        
+                      
                         // If no buttons found with those selectors, try finding ANY button in the form
                         if (submitButtons.length === 0) {
-                            console.log("No buttons found with standard selectors, trying all buttons...");
+                          
                             var allButtons = currentForm.querySelectorAll("button");
-                            console.log("Found", allButtons.length, "total buttons in form");
+                         
                             for (var b = 0; b < allButtons.length; b++) {
                                 var btn = allButtons[b];
                                 var btnText = btn.textContent || btn.innerText || "";
                                 var btnClasses = btn.className || "";
-                                console.log("Button", b, "- Text:", btnText.trim(), "- Classes:", btnClasses);
+                              
                                 // Check if button looks like a submit button
                                 if (btnText.toLowerCase().indexOf("submit") > -1 || 
                                     btnClasses.indexOf("submit") > -1 ||
                                     btnClasses.indexOf("action") > -1) {
                                     submitButtons = [btn];
-                                    console.log("Found submit button by text/class:", btn);
+                                 
+                                    
                                     break;
                                 }
                             }
@@ -4374,55 +4277,44 @@ class Client_functions extends common_function {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     e.stopImmediatePropagation();
-                                    console.log("=== SUBMIT BUTTON CLICKED ===");
-                                    console.log("Button index:", btnIndex);
-                                    console.log("Button element:", newBtn);
-                                    console.log("Button classes:", newBtn.className);
-                                    console.log("Button text:", (newBtn.textContent || newBtn.innerText || "").trim());
+                               
                                     handleFormSubmit(e);
                                     return false;
                                 });
                                 
-                                console.log("Click handler attached to button", btnIndex, "- Classes:", newBtn.className);
+                              
                             })(submitButtons[j], j);
                         }
                         
                         // Also attach to form submit event as backup
                         currentForm.addEventListener("submit", function(e) {
-                            console.log("=== FORM SUBMIT EVENT (backup handler) ===");
+                           
                             e.preventDefault();
                             e.stopPropagation();
                             handleFormSubmit(e);
                             return false;
                         });
                         
-                        console.log("All handlers attached to form", i);
+                     
                     })(form);
                 }
             }
         }
         
         // Run immediately and also on delays to catch dynamically loaded forms
-        console.log("=== Starting form handler initialization ===");
-        initFormHandlers();
-        setTimeout(function() { console.log("Retry 1 (100ms)"); initFormHandlers(); }, 100);
-        setTimeout(function() { console.log("Retry 2 (500ms)"); initFormHandlers(); }, 500);
-        setTimeout(function() { console.log("Retry 3 (1000ms)"); initFormHandlers(); }, 1000);
-        setTimeout(function() { console.log("Retry 4 (2000ms)"); initFormHandlers(); }, 2000);
-        setTimeout(function() { console.log("Retry 5 (3000ms)"); initFormHandlers(); }, 3000);
-        setTimeout(function() { console.log("Retry 6 (5000ms)"); initFormHandlers(); }, 5000);
+      
         
         // Also run when DOM is ready
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", function() {
-                console.log("DOMContentLoaded event fired");
+               
                 initFormHandlers();
             });
         }
         
         // Run when window loads
         window.addEventListener("load", function() {
-            console.log("Window load event fired");
+         
             initFormHandlers();
         });
         
@@ -4431,35 +4323,25 @@ class Client_functions extends common_function {
             var observer = new MutationObserver(function(mutations) {
                 var forms = document.querySelectorAll("form.get_selected_elements");
                 if (forms.length > 0) {
-                    console.log("Form detected via MutationObserver - forms found:", forms.length);
                     initFormHandlers();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true });
-            console.log("MutationObserver started");
-        } else {
-            console.log("MutationObserver not supported");
         }
         
         // Also try to find buttons directly and attach handlers
         function attachToAllButtons() {
             var allButtons = document.querySelectorAll("button.action.submit.classic-button.footer-data__submittext, button.footer-data__submittext, .footer-data__submittext");
-            console.log("=== Direct button search ===");
-            console.log("Found buttons with footer-data__submittext:", allButtons.length);
             for (var i = 0; i < allButtons.length; i++) {
                 var btn = allButtons[i];
-                console.log("Button", i, "- Classes:", btn.className, "- Text:", (btn.textContent || btn.innerText || "").trim());
                 // Find the form this button belongs to
                 var form = btn.closest("form");
                 if (form) {
-                    console.log("Found form for button", i);
                     // Attach handler
                     (function(currentBtn, currentForm) {
                         currentBtn.addEventListener("click", function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log("=== DIRECT BUTTON CLICK HANDLER ===");
-                            console.log("Form:", currentForm);
                             if (currentForm) {
                                 currentForm.dispatchEvent(new Event("submit"));
                             }
@@ -4473,7 +4355,7 @@ class Client_functions extends common_function {
         setTimeout(attachToAllButtons, 2000);
         setTimeout(attachToAllButtons, 5000);
 })();
-}catch(e){console.error("FB_ERROR",e.message,e.stack);}
+}catch(e){}
 })(); // Close the outer IIFE that prevents multiple executions
 </script>';
                     }

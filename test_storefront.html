@@ -172,35 +172,7 @@
     </div>
     
     <script>
-        // Override console.log to show in debug panel
-        const originalLog = console.log;
-        const originalError = console.error;
-        const originalWarn = console.warn;
-        
-        function addToConsole(message, type = 'log') {
-            const consoleOutput = document.getElementById('consoleOutput');
-            const logDiv = document.createElement('div');
-            logDiv.className = 'console-log console-' + type;
-            const timestamp = new Date().toLocaleTimeString();
-            logDiv.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
-            consoleOutput.appendChild(logDiv);
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-        
-        console.log = function(...args) {
-            originalLog.apply(console, args);
-            addToConsole(args.join(' '), 'log');
-        };
-        
-        console.error = function(...args) {
-            originalError.apply(console, args);
-            addToConsole(args.join(' '), 'error');
-        };
-        
-        console.warn = function(...args) {
-            originalWarn.apply(console, args);
-            addToConsole(args.join(' '), 'warn');
-        };
+        // Console overrides removed for production
         
         function clearConsole() {
             document.getElementById('consoleOutput').innerHTML = '';
@@ -240,17 +212,12 @@
             
             loadingDiv.style.display = 'block';
             errorDiv.style.display = 'none';
-            contentDiv.innerHTML = '';
+            contentDiv.innerHTML = '';           
             
-            console.log('=== Loading Form ===');
-            console.log('Shop Domain:', shopDomain);
-            console.log('Form ID:', formId);
-            console.log('Base URL:', baseUrl);
             
             try {
                 const renderUrl = `${baseUrl}/shopify/app-proxy.php/render?form_id=${encodeURIComponent(formId)}&shop=${encodeURIComponent(shopDomain)}`;
-                console.log('Render URL:', renderUrl);
-                
+                          
                 loadingDiv.innerHTML = 'Loading form from server...';
                 
                 const response = await fetch(renderUrl, {
@@ -261,19 +228,15 @@
                     credentials: 'same-origin'
                 });
                 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
                 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
+                    const errorText = await response.text();                   
                     throw new Error(`Failed to load form: ${response.status} ${response.statusText}\n${errorText}`);
                 }
                 
                 const formHtml = await response.text();
-                console.log('Form HTML received, length:', formHtml.length);
-                console.log('Form HTML preview:', formHtml.substring(0, 500));
-                
+                               
                 if (!formHtml || formHtml.trim().length === 0) {
                     throw new Error('Form HTML is empty');
                 }
@@ -281,9 +244,7 @@
                 loadingDiv.style.display = 'none';
                 contentDiv.innerHTML = formHtml;
                 
-                console.log('Form loaded successfully!');
-                console.log('Form elements found:', contentDiv.querySelectorAll('form').length);
-                console.log('Submit buttons found:', contentDiv.querySelectorAll('button.submit, .submit.action, .footer-data__submittext').length);
+              
                 
                 // Attach form submission handlers after form is loaded
                 setTimeout(() => {
@@ -293,14 +254,13 @@
                 // Check if scripts are loaded
                 setTimeout(() => {
                     const scripts = document.querySelectorAll('script[src*="shopify_front"]');
-                    console.log('Form scripts loaded:', scripts.length);
+                   
                     scripts.forEach((script, index) => {
-                        console.log(`Script ${index + 1}:`, script.src);
+                       
                     });
                 }, 1000);
                 
             } catch (error) {
-                console.error('Error loading form:', error);
                 loadingDiv.style.display = 'none';
                 showError('Failed to load form: ' + error.message);
             }
@@ -328,22 +288,22 @@
         
         // Function to attach form submission handlers
         function attachFormHandlers() {
-            console.log('=== Attaching Form Submission Handlers ===');
+           
             
             const shopDomain = document.getElementById('shopDomain').value.trim();
             
             // Find all forms
             const forms = document.querySelectorAll('form.get_selected_elements, form[class*="get_selected_elements"], form');
-            console.log('Found forms:', forms.length);
+           
             
             forms.forEach((form, formIndex) => {
-                console.log(`Form ${formIndex + 1}:`, form);
+              
                 
                 // Find form ID
                 const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
                 const formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || 
                               form.closest('.form-builder-container')?.getAttribute('data-form-id') || '';
-                console.log(`  Form ID: ${formId}`);
+              
                 
                 // Attach submit event to form
                 form.addEventListener('submit', function(e) {
@@ -351,7 +311,7 @@
                     e.stopPropagation();
                     handleFormSubmission(e, form, shopDomain, formId);
                 });
-                console.log(`  Submit handler attached to form ${formIndex + 1}`);
+               
             });
             
             // Find all submit buttons
@@ -359,10 +319,10 @@
                 'button.submit, .submit.action, .footer-data__submittext, .classic-button.submit, ' +
                 'button[class*="submit"], button.action.submit, .action.submit'
             );
-            console.log('Found submit buttons:', submitButtons.length);
+        
             
             submitButtons.forEach((btn, btnIndex) => {
-                console.log(`Button ${btnIndex + 1}:`, btn, 'Classes:', btn.className);
+               
                 
                 // Remove any existing listeners by cloning
                 const newBtn = btn.cloneNode(true);
@@ -376,40 +336,30 @@
                 newBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('=== SUBMIT BUTTON CLICKED ===');
-                    console.log('Button:', newBtn);
-                    console.log('Form:', form);
-                    console.log('Form ID:', formId);
+                    
                     
                     if (form) {
                         handleFormSubmission(e, form, shopDomain, formId);
                     } else {
-                        console.error('Form not found for button!');
-                        alert('Form not found. Please refresh the page.');
                     }
                 });
-                console.log(`  Click handler attached to button ${btnIndex + 1}`);
+              
             });
             
-            console.log('=== Handlers Attached Successfully ===');
+             
         }
         
         // Function to handle form submission
         function handleFormSubmission(e, form, shopDomain, formId) {
-            console.log('=== HANDLE FORM SUBMISSION ===');
-            console.log('Event:', e);
-            console.log('Form:', form);
-            console.log('Shop Domain:', shopDomain);
-            console.log('Form ID:', formId);
             
             if (!form) {
-                console.error('Form is null!');
+                
                 alert('Form not found. Please refresh the page.');
                 return false;
             }
             
             if (!formId) {
-                console.error('Form ID is missing!');
+                
                 // Try to get it again
                 const formIdInput = form.querySelector('input[name="form_id"], input.form_id');
                 formId = formIdInput ? formIdInput.value : form.getAttribute('data-id') || '';
@@ -418,38 +368,35 @@
                     alert('Form ID is missing. Please refresh the page.');
                     return false;
                 }
-                console.log('Form ID found:', formId);
+                
             }
             
             if (!shopDomain) {
-                console.error('Shop domain is missing!');
-                alert('Store information is missing. Please refresh the page.');
                 return false;
             }
             
             // Create FormData
             const formData = new FormData(form);
             
-            // Log all form fields BEFORE adding system fields
-            console.log('=== Form Fields (from form) ===');
+           
             const formFieldsBefore = {};
             for (let pair of formData.entries()) {
                 formFieldsBefore[pair[0]] = pair[1];
             }
-            console.log('Form fields:', formFieldsBefore);
+           
             
             // Now add system fields
             formData.append('store', shopDomain);
             formData.append('routine_name', 'addformdata');
             formData.append('form_id', formId);
             
-            console.log('=== Complete FormData being submitted ===');
+            
             const allFormData = {};
             for (let pair of formData.entries()) {
                 allFormData[pair[0]] = pair[1];
-                console.log(`  ${pair[0]}: ${pair[1]}`);
+                
             }
-            console.log('Total fields:', Object.keys(allFormData).length);
+            
             
             // Disable submit button
             const submitBtn = form.querySelector('button.submit, .submit.action, .footer-data__submittext, button[type="submit"]');
@@ -464,7 +411,7 @@
             const baseUrl = document.getElementById('baseUrl').value;
             const ajaxUrl = `${baseUrl}/user/ajax_call.php`;
             
-            console.log('Submitting to:', ajaxUrl);
+           
             
             // Submit via fetch
             fetch(ajaxUrl, {
@@ -472,9 +419,7 @@
                 body: formData
             })
             .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -482,18 +427,16 @@
                 return response.text();
             })
             .then(text => {
-                console.log('Response text:', text);
+              
                 
                 let data;
                 try {
                     data = JSON.parse(text);
                 } catch(e) {
-                    console.error('Failed to parse JSON:', e);
-                    console.error('Response was:', text);
+                    
                     throw new Error('Invalid JSON response from server');
                 }
                 
-                console.log('Response data:', data);
                 
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -503,33 +446,30 @@
                 
                 if (data.result === 'success') {
                     const msg = data.msg || 'Form submitted successfully!';
-                    console.log('SUCCESS:', msg);
-                    alert(msg);
+                    
+                
+                
                     
                     // Reset form
                     form.reset();
-                    console.log('Form reset');
+                    
                 } else {
                     const errorMsg = data.msg || 'Something went wrong. Please try again.';
-                    console.error('ERROR:', errorMsg);
-                    alert(errorMsg);
                 }
             })
             .catch(error => {
-                console.error('Submission error:', error);
+                
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.innerHTML = submitBtn.innerHTML.replace('Submitting...', 'Submit');
                 }
-                alert('An error occurred: ' + error.message + '\nPlease check the console for details.');
             });
             
             return false;
         }
         
-        console.log('Test storefront page loaded');
-        console.log('Ready to test forms!');
+        
     </script>
 </body>
 </html>

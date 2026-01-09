@@ -71,7 +71,7 @@
         $("#sortable-table tbody").sortable({
             placeholder: "placeholder",
             update: function(event, ui) {
-                console.log(ui);
+              
                 var order = $(this).sortable("toArray", { attribute: "data-postionid" });
                 var id = $(this).sortable("toArray", { attribute: "data-formdataid" });
                 $.post("update_order.php", { order: order,id:id });
@@ -80,7 +80,7 @@
         $("#abc tbody").sortable({
             placeholder: "placeholder",
             update: function(event, ui) {
-                console.log(ui);
+               
                 var order = $(this).sortable("toArray", { attribute: "data-postionid" });
                 var id = $(this).sortable("toArray", { attribute: "data-formdataid" });
                 $.post("update_order.php", { order: order,id:id });

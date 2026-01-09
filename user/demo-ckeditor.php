@@ -43,11 +43,10 @@
 
             $('#addHeaderDataForm').on('submit', function(event) {
                 event.preventDefault(); // Prevent default form submission
-                console.log(CKEDITOR);
+               
                 // Update CKEditor instances before getting the values
                 for (instance in CKEDITOR.instances) {
-                    console.log(CKEDITOR.instances[instance]);
-                    console.log(instance);
+                   
                     CKEDITOR.instances[instance].updateElement();
                 }
 
@@ -58,10 +57,10 @@
                     url: 'config.php',
                     data: formData,
                     success: function(response) {
-                        console.log('Form submitted successfully:', response);
+                      
                     },
                     error: function(error) {
-                        console.error('Error submitting form:', error);
+                        
                     }
                 });
             });
@@ -71,9 +70,7 @@
                     instanceReady: function(evt) {
                         // Attach the change event listener here
                         CKEDITOR.instances.contentheader.on('change', function() {
-                            console.log('value changed!!');
                             var desc = CKEDITOR.instances.contentheader.getData();
-                            console.log(desc);
                         });
                     }
                 }

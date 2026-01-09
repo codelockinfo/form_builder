@@ -610,7 +610,7 @@ s0.parentNode.insertBefore(s1,s0);
              var urlParams = new URLSearchParams(window.location.search);
              store = urlParams.get('shop');
         }
-        console.log("Loading submissions for store:", store);
+       
         
         // Tab switching
         $('.dashboard-tab').on('click', function() {
@@ -666,7 +666,7 @@ s0.parentNode.insertBefore(s1,s0);
                 dataType: "json",
                 data: { 'routine_name': 'getAllFormFunction', store: store, view_type: 'submissions_dashboard' },
                 success: function (comeback) {
-                    console.log("return set all elemnt submissions");
+                   
                     var comeback = JSON.parse(comeback);
                     if (comeback['code'] != undefined && comeback['code'] == '403') {
                         if (typeof redirect403 === 'function') {
@@ -679,7 +679,6 @@ s0.parentNode.insertBefore(s1,s0);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error loading forms:", error);
                     $(".set_all_form_submissions").html('<div class="form-list-loading">Error loading forms. Please try again.</div>');
                 }
             });
@@ -767,12 +766,10 @@ s0.parentNode.insertBefore(s1,s0);
                     updateActivityChart(data.daily_data || {});
                     updatePerformanceChart(data.form_data || {}, data.form_names || {});
                 } else {
-                    console.error("Error loading analytics:", response);
                 }
             },
             error: function(xhr, status, error) {
                 $('#analytics-loading').hide();
-                console.error("Error loading analytics:", error);
             }
         });
     }
