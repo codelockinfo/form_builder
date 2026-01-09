@@ -94,45 +94,10 @@
       
       if (formHtml && formHtml.trim().length > 0) {
         try {
-          // Basic HTML sanitization - remove any malformed tags or content
+          // Basic HTML sanitization - only remove clearly malformed content
           let sanitizedHtml = formHtml;
           
-          // Remove any unclosed script tags or malformed script content
-          sanitizedHtml = sanitizedHtml.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, function(match) {
-            try {
-              // Try to parse the script content to check if it's valid
-              const scriptMatch = match.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-              if (scriptMatch && scriptMatch[1]) {
-                let scriptContent = scriptMatch[1].trim();
-                
-                // Check if script contains HTML tags (which would cause "Unexpected token '<'" error)
-                if (scriptContent.match(/<[^>]+>/)) {
-                  // Remove HTML tags from script content
-                  scriptContent = scriptContent.replace(/<[^>]+>/g, '');
-                  // Reconstruct the script tag with cleaned content
-                  const scriptTagMatch = match.match(/<script([^>]*)>/i);
-                  const scriptAttrs = scriptTagMatch ? scriptTagMatch[1] : '';
-                  return '<script' + scriptAttrs + '>' + scriptContent + '</script>';
-                }
-                
-                // Skip if content looks malformed (contains unmatched brackets)
-                const openBraces = (scriptContent.match(/\{/g) || []).length;
-                const closeBraces = (scriptContent.match(/\}/g) || []).length;
-                const openParens = (scriptContent.match(/\(/g) || []).length;
-                const closeParens = (scriptContent.match(/\)/g) || []).length;
-                
-                // If braces or parens don't match, skip this script
-                if (Math.abs(openBraces - closeBraces) > 2 || Math.abs(openParens - closeParens) > 2) {
-                  return ''; // Remove malformed script
-                }
-              }
-              return match; // Keep valid scripts
-            } catch(e) {
-              return ''; // Remove if we can't parse
-            }
-          });
-          
-          // Remove any stray HTML tags that might cause issues
+          // Remove only clearly malformed tags (not valid scripts)
           sanitizedHtml = sanitizedHtml.replace(/<if\b[^>]*>/gi, ''); // Remove stray <if> tags
           sanitizedHtml = sanitizedHtml.replace(/<endif\b[^>]*>/gi, ''); // Remove stray <endif> tags
           
@@ -145,16 +110,13 @@
           } catch(htmlError) {
             // If innerHTML fails, try to clean it more aggressively
             sanitizedHtml = sanitizedHtml.replace(/<[^>]*$/gm, ''); // Remove incomplete tags at end of lines
-            sanitizedHtml = sanitizedHtml.replace(/[<>]/g, function(match, offset, string) {
-              // Check if it's part of a valid tag
-              const before = string.substring(Math.max(0, offset - 50), offset);
-              const after = string.substring(offset + 1, Math.min(string.length, offset + 51));
-              // If it looks like a stray bracket, remove it
-              if (match === '<' && !after.match(/^[a-z\/!]/i)) return '';
-              if (match === '>' && !before.match(/[a-z0-9"']$/i)) return '';
-              return match;
-            });
-            tempDiv.innerHTML = sanitizedHtml;
+            try {
+              tempDiv.innerHTML = sanitizedHtml;
+            } catch(secondError) {
+              // If still fails, try inserting without scripts
+              sanitizedHtml = sanitizedHtml.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+              tempDiv.innerHTML = sanitizedHtml;
+            }
           }
           
           // Extract all script tags - with comprehensive error handling
@@ -177,46 +139,18 @@
               // Remove any HTML tags that might have leaked into script
               scriptContent = scriptContent.replace(/<[^>]*>/g, '');
               
-              // Comprehensive syntax validation
+              // Only skip if clearly malformed (very strict criteria)
               const openBraces = (scriptContent.match(/\{/g) || []).length;
               const closeBraces = (scriptContent.match(/\}/g) || []).length;
               const openParens = (scriptContent.match(/\(/g) || []).length;
               const closeParens = (scriptContent.match(/\)/g) || []).length;
-              const openBrackets = (scriptContent.match(/\[/g) || []).length;
-              const closeBrackets = (scriptContent.match(/\]/g) || []).length;
               
-              // Check for mismatched brackets/parens/braces
-              if (Math.abs(openBraces - closeBraces) > 2 || 
-                  Math.abs(openParens - closeParens) > 2 || 
-                  Math.abs(openBrackets - closeBrackets) > 2) {
-                console.warn('Skipping script with mismatched brackets');
+              // Only skip if severely mismatched (more than 5 difference)
+              if (Math.abs(openBraces - closeBraces) > 5 || Math.abs(openParens - closeParens) > 5) {
+                console.warn('Skipping script with severely mismatched brackets');
                 oldScript.remove();
                 return;
               }
-              
-              // Check for incomplete strings
-              const singleQuotes = (scriptContent.match(/'/g) || []).length;
-              const doubleQuotes = (scriptContent.match(/"/g) || []).length;
-              const hasTemplateLiteral = scriptContent.includes('${');
-              
-              if (!hasTemplateLiteral && 
-                  ((singleQuotes % 2 !== 0 && singleQuotes > 0) || 
-                   (doubleQuotes % 2 !== 0 && doubleQuotes > 0))) {
-                console.warn('Skipping script with unmatched quotes');
-                oldScript.remove();
-                return;
-              }
-              
-              // Check for incomplete code at the end
-              const lastChars = scriptContent.trim().slice(-5);
-              if (lastChars.match(/[({[=]$/)) {
-                console.warn('Skipping script that appears incomplete');
-                oldScript.remove();
-                return;
-              }
-              
-              // Remove any stray script tags
-              scriptContent = scriptContent.replace(/<\/?script[^>]*>/gi, '');
               
               // Store script for execution
               const scriptData = {
@@ -244,7 +178,26 @@
             }
           });
           
-          // Execute scripts with comprehensive error handling
+          // Insert HTML FIRST (before scripts) so form is visible
+          try {
+            blockContainer.innerHTML = tempDiv.innerHTML;
+            // Clear loading message
+            const loadingDiv = blockContainer.querySelector('.form-loading');
+            if (loadingDiv) {
+              loadingDiv.remove();
+            }
+          } catch(insertError) {
+            // If insertion fails, try to insert a cleaned version
+            const cleanedHtml = tempDiv.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+            blockContainer.innerHTML = cleanedHtml;
+            // Clear loading message
+            const loadingDiv = blockContainer.querySelector('.form-loading');
+            if (loadingDiv) {
+              loadingDiv.remove();
+            }
+          }
+          
+          // Execute scripts AFTER HTML is inserted
           scriptsToExecute.forEach(function(scriptData, idx) {
             try {
               const newScript = document.createElement('script');
@@ -276,24 +229,15 @@
                     try {
                       eval(scriptData.content);
                     } catch(evalError) {
-                      console.warn('Could not execute script:', evalError);
+                      // Silent fail - script was malformed
                     }
                   }
                 }
               }
             } catch(execError) {
-              console.warn('Error executing script:', execError);
+              // Silent fail for this script
             }
           });
-          
-          // Insert HTML without script tags - with error handling
-          try {
-            blockContainer.innerHTML = tempDiv.innerHTML;
-          } catch(insertError) {
-            // If insertion fails, try to insert a cleaned version
-            const cleanedHtml = tempDiv.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-            blockContainer.innerHTML = cleanedHtml;
-          }
         } catch(mainError) {
           // If all else fails, show error message
           blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
