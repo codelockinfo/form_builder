@@ -3016,9 +3016,10 @@ class Client_functions extends common_function {
                                 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $textarea_id = 'false-textarea-' . $form_data_id;
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
-                                                    <label for="false-textarea-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                                    <textarea id="false-textarea-1" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'></textarea>
+                                                    <label for="'.$textarea_id.'" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                                    <textarea id="'.$textarea_id.'" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
                                                 </div>';
@@ -3336,9 +3337,9 @@ class Client_functions extends common_function {
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
                                 
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-select-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Dropdown" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span> </label>
+                                                <label for="false-select-'.$form_data_id.'" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Dropdown" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span> </label>
                                                 <div class="globo-form-input">
-                                                    <select name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" id="false-select-1" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"'.$element_design_style.'>
+                                                    <select name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" id="false-select-'.$form_data_id.'" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"'.$element_design_style.'>
                                                     <option value=""  disabled="disabled" selected="selected">'.$unserialize_elementdata[1].'</option>';
                                                     $dropdown_options = explode(",", $unserialize_elementdata[2]);
                                                     foreach ($dropdown_options as $index => $option) {
@@ -3370,9 +3371,9 @@ class Client_functions extends common_function {
                                     $is_keepossition_label = "position--label";
                                 }
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[8].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-country-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Country" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                            <label for="false-country-'.$form_data_id.'" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Country" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span  class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                             <div class="globo-form-input">
-                                            <select name="country-1" id="false-country-1" class="classic-input">
+                                            <select name="country-1" id="false-country-'.$form_data_id.'" class="classic-input">
                                             <option value="" disabled="disabled" selected="selected">'.$unserialize_elementdata[1].'</option>';
                                             $countries = [
                                                 'Afghanistan', 'Aland Islands', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla',
