@@ -2594,7 +2594,8 @@ class Client_functions extends common_function {
                             $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
                         }
                         
-                        // Ensure array has all 6 elements (backward compatibility - add missing elements)
+                        // Ensure array has all required elements (backward compatibility - add missing elements)
+                        // Minimum 6 elements for old format, 8 for new format
                         if (count($form_header_data) < 6) {
                             // Add missing elements: font_size, text_align, text_color
                             while (count($form_header_data) < 3) {
@@ -2610,6 +2611,18 @@ class Client_functions extends common_function {
                                 $form_header_data[] = '#000000'; // text_color
                             }
                         }
+                        // Ensure we have at least 8 elements for new format (add subheading settings if missing)
+                        if (count($form_header_data) < 8) {
+                            if (count($form_header_data) < 7) {
+                                $form_header_data[] = 16; // subheading_font_size
+                            }
+                            if (count($form_header_data) < 8) {
+                                $form_header_data[] = '#000000'; // subheading_text_color
+                            }
+                        }
+                        
+                        // Debug logging for header data
+                        error_log("Form Header Data - form_id: $form_id, show_header[0]: " . (isset($form_header_data[0]) ? $form_header_data[0] : 'NOT SET') . ", title[1]: " . (isset($form_header_data[1]) ? $form_header_data[1] : 'NOT SET') . ", count: " . count($form_header_data));
                         
                         $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0","Reset", "0","align-left");
                         if ($form_footer_data === false) {
@@ -2621,7 +2634,17 @@ class Client_functions extends common_function {
                             $publishdata = array("",'Please <a href="/account/login" title="login">login</a> to continue',md5(uniqid(rand(), true)));
                         }
                         
-                        $header_hidden = (isset($form_header_data[0]) && $form_header_data[0] == '1') ? "" : 'hidden';
+                        // Check if header should be shown - handle both string '1' and integer 1
+                        $show_header = false;
+                        if (isset($form_header_data[0])) {
+                            $header_show_value = $form_header_data[0];
+                            // Check for string '1', integer 1, or boolean true
+                            $show_header = ($header_show_value == '1' || $header_show_value === 1 || $header_show_value === true || $header_show_value == true);
+                        } else {
+                            // Default to showing header if not set (backward compatibility)
+                            $show_header = true;
+                        }
+                        $header_hidden = $show_header ? "" : 'hidden';
                         $form_type = (isset($formData['form_type']) && $formData['form_type'] !== '') ? $formData['form_type'] : '0';
                         $form_name = isset($formData['form_name']) && !empty($formData['form_name']) ? $formData['form_name'] : (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form');
                         
@@ -9393,22 +9416,32 @@ class Client_functions extends common_function {
     border-radius: 2px;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px 0 rgba(0,0,0,.2);
 }
-.code-form-app .header {
+.code-form-app .header,
+.code-form-app .formHeader {
     margin-bottom: 4%;
+    display: block !important;
 }
-.code-form-app .header .title {
+.code-form-app .header.hidden,
+.code-form-app .formHeader.hidden {
+    display: none !important;
+}
+.code-form-app .header .title,
+.code-form-app .formHeader .title {
     margin-bottom: 0.5rem;
     font-weight: 600;
     line-height: 1.5;
     font-size: 26px;
     color: #000;
+    display: block !important;
 }
-.code-form-app .header .description {
+.code-form-app .header .description,
+.code-form-app .formHeader .description {
     margin-top: 0;
     font-size: 16px;
     font-weight: 300;
     line-height: 1.7;
     color: #6c757d;
+    display: block !important;
 }
 .code-form-app .content {
     margin: 0 -5px;
