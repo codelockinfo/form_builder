@@ -103,7 +103,18 @@
               // Try to parse the script content to check if it's valid
               const scriptMatch = match.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
               if (scriptMatch && scriptMatch[1]) {
-                const scriptContent = scriptMatch[1].trim();
+                let scriptContent = scriptMatch[1].trim();
+                
+                // Check if script contains HTML tags (which would cause "Unexpected token '<'" error)
+                if (scriptContent.match(/<[^>]+>/)) {
+                  // Remove HTML tags from script content
+                  scriptContent = scriptContent.replace(/<[^>]+>/g, '');
+                  // Reconstruct the script tag with cleaned content
+                  const scriptTagMatch = match.match(/<script([^>]*)>/i);
+                  const scriptAttrs = scriptTagMatch ? scriptTagMatch[1] : '';
+                  return '<script' + scriptAttrs + '>' + scriptContent + '</script>';
+                }
+                
                 // Skip if content looks malformed (contains unmatched brackets)
                 const openBraces = (scriptContent.match(/\{/g) || []).length;
                 const closeBraces = (scriptContent.match(/\}/g) || []).length;
@@ -146,58 +157,132 @@
             tempDiv.innerHTML = sanitizedHtml;
           }
           
-          // Extract all script tags - with error handling
+          // Extract all script tags - with comprehensive error handling
           const scripts = tempDiv.querySelectorAll('script');
+          const scriptsToExecute = [];
+          
           scripts.forEach(function(oldScript, scriptIdx) {
             try {
-              const scriptContent = oldScript.textContent || oldScript.innerHTML || '';
+              let scriptContent = oldScript.textContent || oldScript.innerHTML || '';
+              
               // Skip empty scripts
-              if (!scriptContent.trim()) {
+              if (!scriptContent || !scriptContent.trim()) {
                 oldScript.remove();
                 return;
               }
               
-              // Validate script content before executing
+              // Clean up script content
+              scriptContent = scriptContent.trim();
+              
+              // Remove any HTML tags that might have leaked into script
+              scriptContent = scriptContent.replace(/<[^>]*>/g, '');
+              
+              // Comprehensive syntax validation
               const openBraces = (scriptContent.match(/\{/g) || []).length;
               const closeBraces = (scriptContent.match(/\}/g) || []).length;
               const openParens = (scriptContent.match(/\(/g) || []).length;
               const closeParens = (scriptContent.match(/\)/g) || []).length;
+              const openBrackets = (scriptContent.match(/\[/g) || []).length;
+              const closeBrackets = (scriptContent.match(/\]/g) || []).length;
               
-              // Skip if braces or parens are severely mismatched
-              if (Math.abs(openBraces - closeBraces) > 2 || Math.abs(openParens - closeParens) > 2) {
+              // Check for mismatched brackets/parens/braces
+              if (Math.abs(openBraces - closeBraces) > 2 || 
+                  Math.abs(openParens - closeParens) > 2 || 
+                  Math.abs(openBrackets - closeBrackets) > 2) {
+                console.warn('Skipping script with mismatched brackets');
                 oldScript.remove();
                 return;
               }
               
-              const newScript = document.createElement('script');
+              // Check for incomplete strings
+              const singleQuotes = (scriptContent.match(/'/g) || []).length;
+              const doubleQuotes = (scriptContent.match(/"/g) || []).length;
+              const hasTemplateLiteral = scriptContent.includes('${');
+              
+              if (!hasTemplateLiteral && 
+                  ((singleQuotes % 2 !== 0 && singleQuotes > 0) || 
+                   (doubleQuotes % 2 !== 0 && doubleQuotes > 0))) {
+                console.warn('Skipping script with unmatched quotes');
+                oldScript.remove();
+                return;
+              }
+              
+              // Check for incomplete code at the end
+              const lastChars = scriptContent.trim().slice(-5);
+              if (lastChars.match(/[({[=]$/)) {
+                console.warn('Skipping script that appears incomplete');
+                oldScript.remove();
+                return;
+              }
+              
+              // Remove any stray script tags
+              scriptContent = scriptContent.replace(/<\/?script[^>]*>/gi, '');
+              
+              // Store script for execution
+              const scriptData = {
+                content: scriptContent,
+                attributes: {}
+              };
+              
+              // Copy attributes
               Array.from(oldScript.attributes).forEach(function(attr) {
                 try {
-                  newScript.setAttribute(attr.name, attr.value);
+                  scriptData.attributes[attr.name] = attr.value;
                 } catch(attrError) {
                   // Skip invalid attributes
                 }
               });
-              newScript.textContent = scriptContent;
               
-              // Use try-catch for appending
-              try {
-                document.head.appendChild(newScript);
-              } catch(appendError) {
-                // Try using eval as fallback (less ideal but works)
-                try {
-                  eval(scriptContent);
-                } catch(evalError) {
-                  // Silent fail - script was malformed
-                }
-              }
+              scriptsToExecute.push(scriptData);
               oldScript.remove();
             } catch(scriptError) {
-              // Remove the problematic script
               try {
                 oldScript.remove();
               } catch(e) {
                 // Ignore
               }
+            }
+          });
+          
+          // Execute scripts with comprehensive error handling
+          scriptsToExecute.forEach(function(scriptData, idx) {
+            try {
+              const newScript = document.createElement('script');
+              
+              // Set attributes
+              Object.keys(scriptData.attributes).forEach(function(attrName) {
+                try {
+                  newScript.setAttribute(attrName, scriptData.attributes[attrName]);
+                } catch(attrError) {
+                  // Skip invalid attributes
+                }
+              });
+              
+              // Set script content
+              newScript.textContent = scriptData.content;
+              
+              // Try multiple methods to execute script
+              try {
+                document.head.appendChild(newScript);
+              } catch(appendError) {
+                // Try document fragment
+                try {
+                  const fragment = document.createDocumentFragment();
+                  fragment.appendChild(newScript);
+                  document.head.appendChild(fragment);
+                } catch(fragmentError) {
+                  // Try eval as last resort (only for inline scripts)
+                  if (!scriptData.attributes.src) {
+                    try {
+                      eval(scriptData.content);
+                    } catch(evalError) {
+                      console.warn('Could not execute script:', evalError);
+                    }
+                  }
+                }
+              }
+            } catch(execError) {
+              console.warn('Error executing script:', execError);
             }
           });
           
