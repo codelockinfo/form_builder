@@ -601,6 +601,10 @@ ul {
     /* padding-left: 28px;
     text-align: left; */
 }
+.code-form-control .checkbox-wrapper.checkbox-option {
+    display: flex !important;
+    align-items: center;
+}
 .code-form-control .checkbox-wrapper .checkbox-input {
     display: none;
 }
@@ -640,33 +644,40 @@ ul {
     content: "";
     margin: 0;
 }
-/* .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
+.code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
     pointer-events: none;
     user-select: none;
     background-color: #fff;
     box-shadow: none;
-    border: 1px solid;
+    border: 1px solid #d1d5db;
     box-sizing: border-box;
     box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
     border-radius: 0.25rem;
     transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-.code-form-control .checkbox-wrapper .checkbox-input ~ .checkbox-label:before,.code-form-control .radio-wrapper .radio-input ~ .radio-label:after {
+.code-form-control .radio-wrapper .radio-input ~ .radio-label:after {
     border-color: #EB1256;
+}
+.code-form-control .checkbox-wrapper .checkbox-label {
+    padding-left: 28px;
+    cursor: pointer;
 }
 .checkbox-wrapper .checkbox-input~.checkbox-label:after {
     background-repeat: no-repeat;
     background-position: 50%;
     background-size: 50% 50%;
+    opacity: 0;
+    transition: opacity .2s;
 }
 .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
     background-image: url(../images/checkbox.svg);
-} */
-/* .code-form-control  .checkbox-wrapper .checkbox-input:checked ~ .checkbox-label:before {
+    opacity: 1;
+}
+.code-form-control  .checkbox-wrapper .checkbox-input:checked ~ .checkbox-label:before {
     border-color: #EB1256;
     box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
     background-color: #EB1256;
-} */
+}
 /* checkbox end */
 /* radio button start */
 /* .code-form-control .globo-list-control .radio-wrapper .radio-input:checked ~ .radio-label:after {
@@ -682,10 +693,43 @@ ul {
 .code-form-app .content .code-form-control label.checkbox_new {
     text-align: center !important;
     width: 50% !important;
+    padding-left: 28px !important;
  }
  .checkboxs-input-new{
     width: 50% !important;
  }
+/* Ensure checkbox styling works in preview */
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
+    pointer-events: none;
+    user-select: none;
+    background-color: #fff;
+    box-shadow: none;
+    border: 1px solid #d1d5db;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+    border-radius: 0.25rem;
+    transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
+    border-color: #EB1256;
+    box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+    background-color: #EB1256;
+}
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 50% 50%;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
+    background-image: url(../images/checkbox.svg);
+    opacity: 1;
+}
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-label {
+    padding-left: 28px;
+    cursor: pointer;
+}
 .code-form-control  .globo-list-control .radio-wrapper .radio-input:checked~.radio-label:before {
     border-color: #fff;
     box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
