@@ -3278,9 +3278,9 @@ class Client_functions extends common_function {
                                         $checkbox_option_checked = "Checked";
                                     }
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
-                                                    <div class="checkbox-wrapper">
-                                                        <input class="checkbox-input ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
-                                                        <label class="checkbox-label globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
+                                                    <div class="checkbox-wrapper  checkbox-option">
+                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
+                                                        <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
                                                     </div>
                                                     </li>';
                                 }  
@@ -9457,7 +9457,7 @@ class Client_functions extends common_function {
 .code-form-app .content .code-form-control label {
     color: #212b36;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 14px;
     font-weight: 400;
     line-height: 20px;
     text-transform: initial;
