@@ -595,12 +595,42 @@ span.Polaris-Choice__Label {
 .contact-form .code-form-control .star-rating>fieldset label:hover:before {
     content: url(../images/star.svg);
 }
+/* When a star is checked, fill that star and all stars with higher values */
+/* Use class-based approach for better compatibility */
+.code-form-control .star-rating>fieldset label.star-filled:before,
+.contact-form .code-form-control .star-rating>fieldset label.star-filled:before {
+    content: url(../images/star.svg) !important;
+}
+.code-form-control .star-rating>fieldset label.star-empty:before,
+.contact-form .code-form-control .star-rating>fieldset label.star-empty:before {
+    content: url(../images/download.svg) !important;
+}
+/* Also handle checked state via CSS for fallback */
 .code-form-control .star-rating>fieldset input:checked + label:before,
 .contact-form .code-form-control .star-rating>fieldset input:checked + label:before {
     content: url(../images/star.svg);
 }
-.code-form-control .star-rating>fieldset input:checked ~ label:before,
-.contact-form .code-form-control .star-rating>fieldset input:checked ~ label:before {
+/* Fill all stars to the right (higher values) of the checked one in RTL */
+.code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] + label:before,
+.code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="3"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="3"] + label:before,
+.code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="2"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="2"] + label:before,
+.code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="1"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="1"] + label:before,
+.code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] + label:before,
+.code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="2"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="2"] + label:before,
+.code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="1"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="1"] + label:before,
+.code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] + label:before,
+.code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="1"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="1"] + label:before,
+.code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] + label:before {
     content: url(../images/star.svg);
 }
 .flex-wrap {

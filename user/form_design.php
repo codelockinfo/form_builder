@@ -7309,6 +7309,111 @@ if ($form_id > 0) {
             }, 500);
         }
         
+        // Function to update star rating display when a star is selected (for customizer preview)
+        function updateStarRatingDisplay(checkedInput) {
+            var $fieldset = $(checkedInput).closest('fieldset');
+            if (!$fieldset.length) return;
+            
+            var checkedValue = parseInt($(checkedInput).val()) || 0;
+            var $allInputs = $fieldset.find('input[type="radio"]');
+            
+            // For each input, find its associated label and update
+            $allInputs.each(function() {
+                var $input = $(this);
+                var inputValue = parseInt($input.val()) || 0;
+                var labelId = $input.attr('id');
+                if (!labelId) return;
+                
+                var $label = $fieldset.find('label[for="' + labelId + '"]');
+                if (!$label.length) return;
+                
+                // Remove existing classes
+                $label.removeClass('star-filled star-empty');
+                
+                // In RTL layout: inputs are ordered 5,4,3,2,1 in DOM
+                // When value=3 is checked, we want to fill 5,4,3 (which appear as first 3 from left)
+                // So fill all inputs with value >= checkedValue
+                if (checkedValue > 0 && inputValue >= checkedValue) {
+                    $label.addClass('star-filled');
+                } else {
+                    $label.addClass('star-empty');
+                }
+            });
+        }
+        
+        // Initialize star rating handlers for customizer preview
+        function initializeStarRatingHandlers() {
+            // Handle star rating input changes
+            $('.code-form-app .star-rating fieldset input[type="radio"]').off('change.starRating').on('change.starRating', function() {
+                updateStarRatingDisplay(this);
+            });
+            
+            // Handle star rating label clicks
+            $('.code-form-app .star-rating fieldset label').off('click.starRating').on('click.starRating', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var labelFor = $(this).attr('for');
+                if (!labelFor) return;
+                
+                var $input = $('#' + labelFor);
+                if ($input.length && $input.attr('type') === 'radio') {
+                    $input.prop('checked', true);
+                    updateStarRatingDisplay($input[0]);
+                    $input.trigger('change');
+                }
+            });
+            
+            // Initialize all stars as empty by default
+            $('.code-form-app .star-rating fieldset label').each(function() {
+                if (!$(this).hasClass('star-filled') && !$(this).hasClass('star-empty')) {
+                    $(this).addClass('star-empty');
+                }
+            });
+        }
+        
+        // Initialize on page load
+        $(document).ready(function() {
+            // Wait for form to load, then initialize
+            setTimeout(function() {
+                initializeStarRatingHandlers();
+            }, 2000);
+        });
+        
+        // Re-initialize when form elements are loaded/updated
+        var starRatingObserver = new MutationObserver(function(mutations) {
+            var shouldReinit = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length) {
+                    for (var i = 0; i < mutation.addedNodes.length; i++) {
+                        var node = mutation.addedNodes[i];
+                        if (node.nodeType === 1 && (node.classList.contains('star-rating') || node.querySelector('.star-rating'))) {
+                            shouldReinit = true;
+                            break;
+                        }
+                    }
+                }
+            });
+            if (shouldReinit) {
+                setTimeout(initializeStarRatingHandlers, 100);
+            }
+        });
+        
+        // Observe the preview container for changes
+        $(document).ready(function() {
+            var previewContainer = document.querySelector('.code-form-app');
+            if (previewContainer) {
+                starRatingObserver.observe(previewContainer, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+        
+        // Also re-initialize when form HTML is updated via AJAX (fallback)
+        $(document).ajaxComplete(function() {
+            setTimeout(initializeStarRatingHandlers, 300);
+        });
+        
         // Save element design settings
         $(document).on('click', '.save-element-design', function() {
             var $btn = $(this);

@@ -291,17 +291,44 @@
         top: 0;
         left: 0;
       }
+      .code-form-control .star-rating>fieldset label.star-filled:before,
+      .contact-form .code-form-control .star-rating>fieldset label.star-filled:before {
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+      }
+      .code-form-control .star-rating>fieldset label.star-empty:before,
+      .contact-form .code-form-control .star-rating>fieldset label.star-empty:before {
+        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg');
+      }
       .code-form-control .star-rating>fieldset label:hover:before,
       .contact-form .code-form-control .star-rating>fieldset label:hover:before {
         content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
       }
+      /* When a star is checked, fill that star and all stars with higher values (which appear to the left in RTL) */
+      .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] ~ input[value="1"] ~ label:before,
+      .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] ~ label:before,
+      .code-form-control .star-rating>fieldset input[value="1"]:checked ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ label:before {
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+      }
+      /* Also fill the label for the checked input itself */
       .code-form-control .star-rating>fieldset input:checked + label:before,
       .contact-form .code-form-control .star-rating>fieldset input:checked + label:before {
         content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
       }
-      .code-form-control .star-rating>fieldset input:checked ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input:checked ~ label:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+      /* Ensure inputs and labels are clickable */
+      .code-form-control .star-rating>fieldset input[type="radio"],
+      .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
+        pointer-events: auto !important;
+      }
+      .code-form-control .star-rating>fieldset label,
+      .contact-form .code-form-control .star-rating>fieldset label {
+        pointer-events: auto !important;
       }
       
       /* Options per line styles for checkboxes and radio buttons */
@@ -433,16 +460,25 @@
       fieldset.style.margin = '0';
     });
     
-    // Ensure star rating inputs are clickable
+    // Ensure star rating inputs are clickable and properly positioned
     const starInputs = container.querySelectorAll('.star-rating fieldset input[type="radio"]');
-    starInputs.forEach(function(input) {
+    starInputs.forEach(function(input, index) {
       input.style.position = 'absolute';
       input.style.opacity = '0';
       input.style.width = '1.5em';
       input.style.height = '1.5em';
       input.style.margin = '0';
       input.style.cursor = 'pointer';
-      input.style.zIndex = '2';
+      input.style.zIndex = '3';
+      input.style.pointerEvents = 'auto';
+      
+      // Ensure input is clickable and updates star display
+      if (!input.hasAttribute('data-star-input-handler')) {
+        input.setAttribute('data-star-input-handler', 'true');
+        input.addEventListener('change', function() {
+          updateStarRatingDisplay(this);
+        });
+      }
     });
     
     // Ensure star rating labels display horizontally and are clickable
@@ -459,17 +495,34 @@
       label.style.color = 'rgba(0,0,0,0)';
       label.style.position = 'relative';
       label.style.display = 'block';
+      label.style.pointerEvents = 'auto';
       
-      // Ensure label triggers input click
-      label.addEventListener('click', function(e) {
-        const input = document.getElementById(this.getAttribute('for'));
-        if (input && input.type === 'radio') {
-          input.checked = true;
-          // Trigger change event
-          const changeEvent = new Event('change', { bubbles: true });
-          input.dispatchEvent(changeEvent);
-        }
-      });
+      // Initialize star state (empty by default)
+      label.classList.add('star-empty');
+      
+      // Ensure label triggers input click - use once to avoid duplicates
+      if (!label.hasAttribute('data-star-handler-attached')) {
+        label.setAttribute('data-star-handler-attached', 'true');
+        label.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const inputId = this.getAttribute('for');
+          if (!inputId) return;
+          
+          const input = document.getElementById(inputId);
+          if (input && input.type === 'radio') {
+            // Check the clicked one (browser will uncheck others automatically for radio groups)
+            input.checked = true;
+            
+            // Update star display immediately
+            updateStarRatingDisplay(input);
+            
+            // Force visual update by triggering change event
+            const changeEvent = new Event('change', { bubbles: true });
+            input.dispatchEvent(changeEvent);
+          }
+        });
+      }
     });
     
     // Ensure checkbox and radio wrappers use flex
@@ -575,6 +628,40 @@
       });
       area.style.cursor = 'pointer';
     });
+  }
+  
+  // Function to update star rating display when a star is selected
+  function updateStarRatingDisplay(checkedInput) {
+    const fieldset = checkedInput.closest('fieldset');
+    if (!fieldset) return;
+    
+    const checkedValue = parseInt(checkedInput.value) || 0;
+    const allInputs = Array.from(fieldset.querySelectorAll('input[type="radio"]'));
+    
+    // For each input, find its associated label and update
+    allInputs.forEach(function(input) {
+      const inputValue = parseInt(input.value) || 0;
+      const labelId = input.getAttribute('id');
+      if (!labelId) return;
+      
+      const label = fieldset.querySelector('label[for="' + labelId + '"]');
+      if (!label) return;
+      
+      // Remove existing classes
+      label.classList.remove('star-filled', 'star-empty');
+      
+      // In RTL layout: inputs are ordered 5,4,3,2,1 in DOM
+      // When value=3 is checked, we want to fill 5,4,3 (which appear as first 3 from left)
+      // So fill all inputs with value >= checkedValue
+      if (checkedValue > 0 && inputValue >= checkedValue) {
+        label.classList.add('star-filled');
+      } else {
+        label.classList.add('star-empty');
+      }
+    });
+    
+    // Force CSS re-evaluation
+    void fieldset.offsetHeight;
   }
   
   // Function to fetch and apply design settings from customizer
