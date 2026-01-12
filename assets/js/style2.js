@@ -834,7 +834,11 @@ $(document).ready(function () {
 
     $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
         setTimeout(function () {
-            $('.selectFile').select2();
+            $('.selectFile').select2({
+                placeholder: '',
+                allowClear: false,
+                minimumResultsForSearch: Infinity
+            });
         }, 100);
     });
 

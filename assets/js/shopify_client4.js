@@ -49,11 +49,10 @@ function saveElementFormToTracker(formdataid) {
         }
     }
 
-    // Add file extension if exists
+    // Add file extension - always include, even if empty (to clear database when all are removed)
     var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
-    if (val) {
-        elementData['allowextention'] = val;
-    }
+    // Always set allowextention, even if empty array or null (to allow clearing from database)
+    elementData['allowextention'] = val || [];
 
     // Store in tracker
     elementChangesTracker.elements[formdataid] = elementData;
@@ -1131,8 +1130,35 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                 } else {
                     $(".elementAppend").html(comeback.outcome);
                     initializeCKEditor('contentparagraph', '');
+                    
+                    // Initialize Select2 for file extensions dropdown (without placeholder)
+                    setTimeout(function() {
+                        var $selectFile = $('.selectFile');
+                        
+                        // Read selected values from HTML BEFORE initializing Select2
+                        // This ensures we capture the values that were set by PHP from database
+                        var selectedValues = [];
+                        $selectFile.find('option[selected]').each(function() {
+                            var val = $(this).val();
+                            if (val && val !== '') {
+                                selectedValues.push(val);
+                            }
+                        });
+                        
+                        // Initialize Select2
+                        $selectFile.select2({
+                            placeholder: '',
+                            allowClear: false,
+                            minimumResultsForSearch: Infinity
+                        });
+                        
+                        // Set the selected values after Select2 is initialized
+                        if (selectedValues.length > 0) {
+                            $selectFile.val(selectedValues).trigger('change');
+                        }
+                    }, 150);
 
-                    // Restore saved data if exists
+                    // Restore saved data if exists in tracker
                     if (elementChangesTracker.elements[formdataId]) {
                         var savedData = elementChangesTracker.elements[formdataId];
                         var $newForm = $('form.add_elementdata[formdataid="' + formdataId + '"]');
@@ -1157,6 +1183,17 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                         }
                                     }
                                 }
+                            }
+                            
+                            // Restore allowextention (file extensions) from tracker after Select2 is initialized
+                            if (savedData['allowextention']) {
+                                setTimeout(function() {
+                                    var $selectFile = $newForm.find('.selectFile');
+                                    if ($selectFile.length && savedData['allowextention']) {
+                                        var extensions = Array.isArray(savedData['allowextention']) ? savedData['allowextention'] : [savedData['allowextention']];
+                                        $selectFile.val(extensions).trigger('change');
+                                    }
+                                }, 250);
                             }
                         }
                     }
@@ -1577,9 +1614,8 @@ function saveAllElementProperties() {
                 }
 
                 var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
-                if (val) {
-                    elementData['allowextention'] = val;
-                }
+                // Always set allowextention, even if empty array or null (to allow clearing from database)
+                elementData['allowextention'] = val || [];
             }
         }
 
@@ -1649,9 +1685,14 @@ function saveAllElementProperties() {
             var formData = new FormData();
             for (var key in elementData) {
                 if (Array.isArray(elementData[key])) {
-                    elementData[key].forEach(function (val) {
-                        formData.append(key + '[]', val);
-                    });
+                    // For allowextention, always append even if empty (to clear database)
+                    if (key === 'allowextention' && elementData[key].length === 0) {
+                        formData.append(key + '[]', '');
+                    } else {
+                        elementData[key].forEach(function (val) {
+                            formData.append(key + '[]', val);
+                        });
+                    }
                 } else {
                     formData.append(key, elementData[key]);
                 }
@@ -1687,14 +1728,14 @@ function saveform() {
     }
     var val = $(".selectFile").select2("val");
     var form_data = new FormData(form_data);
-    // Handle allowextention as array - append each value separately
-    if (val && Array.isArray(val)) {
+    // Handle allowextention as array - always append, even if empty (to clear database)
+    if (val && Array.isArray(val) && val.length > 0) {
         val.forEach(function(ext) {
             form_data.append("allowextention[]", ext);
         });
-    } else if (val) {
-        // If it's a string, append as is
-        form_data.append("allowextention", val);
+    } else {
+        // If empty or null, append empty array to clear database
+        form_data.append("allowextention[]", "");
     }
     form_data.append('store', store);
     form_data.append('routine_name', 'saveform');

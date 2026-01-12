@@ -6525,7 +6525,17 @@ class Client_functions extends common_function {
                         $datavalue3 = "active";
                     }
                     $allowmultiple_checked = (isset($formData[3]) && $formData[3] == '1') ? "checked" : '';
-                    $allowextention = (isset($formData[4]) && $formData[4] != '') ? explode(',',$formData[4]) : [];
+                    // Load allowextention from database - handle empty string properly
+                    $allowextention = [];
+                    if (isset($formData[4]) && $formData[4] !== '' && trim($formData[4]) !== '') {
+                        $extensionsArray = explode(',', $formData[4]);
+                        // Filter out empty values
+                        $allowextention = array_filter(array_map('trim', $extensionsArray), function($val) {
+                            return $val !== '' && $val !== null;
+                        });
+                        // Re-index array to ensure proper array structure
+                        $allowextention = array_values($allowextention);
+                    }
                     $extentions = [
                         'png', 'svg', 'gif', 'jpeg', 'jpg', 'pdf', 'webp',
                     ];
@@ -8605,9 +8615,25 @@ class Client_functions extends common_function {
                 if (count($post_data) > 1) {
                     $newKey = $post_data[1];
                     // Preserve array values (like allowextention[])
+                    // If the key ends with [], remove it as PHP automatically handles arrays
+                    if (substr($newKey, -2) === '[]') {
+                        $newKey = substr($newKey, 0, -2);
+                    }
                     $newData[$newKey] = $value;
                 } else {
-                    $newData[$key] = $value;
+                    // Handle keys without __ separator (like allowextention[] from FormData)
+                    // When FormData sends allowextention[], PHP receives it as allowextention (array)
+                    // So we need to handle both formats
+                    $cleanKey = $key;
+                    if (substr($cleanKey, -2) === '[]') {
+                        $cleanKey = substr($cleanKey, 0, -2);
+                    }
+                    // If key already exists (from previous processing), merge arrays
+                    if (isset($newData[$cleanKey]) && is_array($newData[$cleanKey]) && is_array($value)) {
+                        $newData[$cleanKey] = array_merge($newData[$cleanKey], $value);
+                    } else {
+                        $newData[$cleanKey] = $value;
+                    }
                 }
             }
             $form_id = isset($newData['form_id']) ?  $newData['form_id'] : '' ;
@@ -8703,19 +8729,64 @@ class Client_functions extends common_function {
             $buttontext = isset($newData['buttontext']) ?  $newData['buttontext'] : '' ;
             $allowmultiple = isset($newData['allowmultiple']) ?  $newData['allowmultiple'] : '0' ;
             // Handle allowextention - it can come as an array from multiple select
+            // Default to empty string to allow clearing from database
             $allowextention = '';
+            
+            // Debug: Log what we received
+            error_log("saveform: Checking allowextention for form_data_id=$form_data_id, elementid=$elementid");
+            error_log("saveform: newData keys: " . implode(', ', array_keys($newData)));
+            error_log("saveform: newData['allowextention[]']: " . (isset($newData['allowextention[]']) ? (is_array($newData['allowextention[]']) ? 'array: ' . implode(',', $newData['allowextention[]']) : 'not array: ' . $newData['allowextention[]']) : 'NOT SET'));
+            error_log("saveform: newData['allowextention']: " . (isset($newData['allowextention']) ? (is_array($newData['allowextention']) ? 'array: ' . implode(',', $newData['allowextention']) : 'not array: ' . $newData['allowextention']) : 'NOT SET'));
+            
+            // Check all possible key formats
+            $allowextentionArray = null;
             if (isset($newData['allowextention[]']) && is_array($newData['allowextention[]'])) {
-                // Handle array format from form submission
-                $allowextention = implode(',', array_filter(array_map('trim', $newData['allowextention[]'])));
+                $allowextentionArray = $newData['allowextention[]'];
+                error_log("saveform: Found allowextention[] as array in newData");
             } elseif (isset($newData['allowextention']) && is_array($newData['allowextention'])) {
-                // Handle array format from JavaScript
-                $allowextention = implode(',', array_filter(array_map('trim', $newData['allowextention'])));
-            } elseif (isset($newData['allowextention']) && !is_array($newData['allowextention'])) {
+                $allowextentionArray = $newData['allowextention'];
+                error_log("saveform: Found allowextention as array in newData");
+            } elseif (isset($newData['allowextention']) && !is_array($newData['allowextention']) && $newData['allowextention'] !== '') {
                 // Handle string format (comma-separated)
                 $allowextention = trim($newData['allowextention']);
-            } elseif (isset($_POST[$elementtitle . $form_data_id . '__allowextention']) && is_array($_POST[$elementtitle . $form_data_id . '__allowextention'])) {
-                // Direct POST access as fallback
-                $allowextention = implode(',', array_filter(array_map('trim', $_POST[$elementtitle . $form_data_id . '__allowextention'])));
+                error_log("saveform: Found allowextention as string in newData: '$allowextention'");
+            } else {
+                // Direct POST access as fallback - check all possible field name formats
+                $possibleKeys = array(
+                    $elementtitle . $form_data_id . '__allowextention[]',
+                    $elementtitle . $form_data_id . '__allowextention',
+                    'allowextention[]',
+                    'allowextention'
+                );
+                foreach ($possibleKeys as $postKey) {
+                    if (isset($_POST[$postKey])) {
+                        if (is_array($_POST[$postKey])) {
+                            $allowextentionArray = $_POST[$postKey];
+                            error_log("saveform: Found allowextention in POST with key: $postKey");
+                            break;
+                        } elseif (is_string($_POST[$postKey]) && $_POST[$postKey] !== '') {
+                            $allowextention = trim($_POST[$postKey]);
+                            error_log("saveform: Found allowextention as string in POST with key: $postKey: '$allowextention'");
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Process array if found
+            if ($allowextentionArray !== null) {
+                $filtered = array_filter(array_map('trim', $allowextentionArray), function($val) {
+                    return $val !== '' && $val !== null;
+                });
+                $allowextention = !empty($filtered) ? implode(',', $filtered) : '';
+                error_log("saveform: Processed allowextentionArray, result: '$allowextention'");
+            }
+            
+            error_log("saveform: Final allowextention value for form_data_id=$form_data_id, elementid=$elementid: '$allowextention' (length: " . strlen($allowextention) . ")");
+            
+            // Verify allowextention is being set correctly before serialization
+            if ($elementid == 10) {
+                error_log("saveform: File element (id=10) - allowextention will be saved at index 4: '$allowextention'");
             }
            
             $checkboxoption = isset($newData['checkboxoption']) ?  $newData['checkboxoption'] : '' ;
