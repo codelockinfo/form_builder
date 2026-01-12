@@ -9683,12 +9683,12 @@ class Client_functions extends common_function {
     }
     
     function get_form_design_settings() {
-        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'), 'settings' => array());
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'), 'settings' => array(), 'element_data' => array());
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
             
             if ($form_id <= 0) {
-                return array('result' => 'fail', 'msg' => 'Invalid form ID', 'settings' => array());
+                return array('result' => 'fail', 'msg' => 'Invalid form ID', 'settings' => array(), 'element_data' => array());
             }
             
             try {
@@ -9708,10 +9708,33 @@ class Client_functions extends common_function {
                     }
                 }
                 
-                return array('result' => 'success', 'msg' => 'Design settings loaded successfully', 'settings' => $design_settings);
+                // Get all element data for this form
+                $where_query_elements = array(["", "form_id", "=", "$form_id"]);
+                $elements_result = $this->select_result(TABLE_FORM_DATA, 'id, element_id, element_data', $where_query_elements);
+                
+                $element_data_map = array();
+                if ($elements_result['status'] == 1 && !empty($elements_result['data']) && is_array($elements_result['data'])) {
+                    foreach ($elements_result['data'] as $element) {
+                        $form_data_id = isset($element['id']) ? $element['id'] : 0;
+                        $element_id = isset($element['element_id']) ? $element['element_id'] : 0;
+                        $element_data_raw = isset($element['element_data']) ? $element['element_data'] : '';
+                        
+                        if ($form_data_id > 0 && !empty($element_data_raw)) {
+                            $element_data = @unserialize($element_data_raw);
+                            if ($element_data !== false && is_array($element_data)) {
+                                $element_data_map['element_' . $form_data_id] = array(
+                                    'element_id' => $element_id,
+                                    'data' => $element_data
+                                );
+                            }
+                        }
+                    }
+                }
+                
+                return array('result' => 'success', 'msg' => 'Design settings loaded successfully', 'settings' => $design_settings, 'element_data' => $element_data_map);
             } catch (Exception $e) {
                 error_log('Error loading form design settings: ' . $e->getMessage());
-                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage(), 'settings' => array());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage(), 'settings' => array(), 'element_data' => array());
             }
         }
         return $response_data;

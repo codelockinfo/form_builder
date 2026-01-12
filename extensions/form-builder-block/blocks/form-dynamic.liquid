@@ -16,7 +16,787 @@
 (function() {
   'use strict';
   
+  // Function to inject critical CSS styles for form elements
+  function injectFormStyles() {
+    // Check if styles already injected
+    if (document.getElementById('easy-form-builder-styles')) {
+      return;
+    }
+    
+    const styleElement = document.createElement('style');
+    styleElement.id = 'easy-form-builder-styles';
+    styleElement.textContent = `
+      /* File Upload Styles */
+      .upload-area,
+      .code-form-app .upload-area,
+      .contact-form .upload-area {
+        width: 100%;
+        min-height: 150px;
+        border: 1px dashed #eb1256;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding: 10px;
+      }
+      .upload-p,
+      .code-form-app .upload-p,
+      .contact-form .upload-p {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      .file_button,
+      .code-form-app .file_button,
+      .contact-form .file_button {
+        background-color: #ffffff;
+        padding: 10px 20px;
+        box-shadow: 0px 0px 5px #00000045;
+        margin-top: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+      }
+      input[type="file"][data-type="file"],
+      #fileimage,
+      input[id^="fileimage-"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 10;
+      }
+      .img-container,
+      .code-form-app .img-container,
+      .contact-form .img-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+      
+      /* Checkbox Styles */
+      .code-form-control .checkbox-wrapper,
+      .contact-form .code-form-control .checkbox-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+      }
+      .code-form-control .checkbox-wrapper.checkbox-option,
+      .contact-form .code-form-control .checkbox-wrapper.checkbox-option {
+        display: flex !important;
+        align-items: center;
+      }
+      
+      /* Radio Button Styles */
+      .code-form-control .radio-wrapper,
+      .contact-form .code-form-control .radio-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+      }
+      .code-form-control .radio-wrapper .radio-input,
+      .contact-form .code-form-control .radio-wrapper .radio-input {
+        position: absolute !important;
+        top: 1px !important;
+        left: 0px !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        cursor: pointer !important;
+        z-index: 3 !important;
+        pointer-events: auto !important;
+      }
+      .code-form-control .radio-wrapper .radio-label,
+      .contact-form .code-form-control .radio-wrapper .radio-label {
+        display: inline-block;
+        padding-left: 28px;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+      }
+      .code-form-control .radio-wrapper .radio-input~.radio-label:before,
+      .contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:before {
+        position: absolute;
+        top: 1px;
+        left: 0px;
+        display: block;
+        width: 20px;
+        height: 20px;
+        content: "";
+        margin: 0;
+        pointer-events: none;
+        user-select: none;
+        background-color: #fff;
+        box-shadow: none;
+        border: 2px solid #d1d5db;
+        box-sizing: border-box;
+        box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+        border-radius: 50%;
+        transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1;
+      }
+      .code-form-control .radio-wrapper .radio-input:checked~.radio-label:before,
+      .contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:before {
+        border-color: #EB1256;
+        box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+        background-color: #EB1256;
+      }
+      .code-form-control .radio-wrapper .radio-input~.radio-label:after,
+      .contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:after {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translate(-50%, -50%);
+        display: block;
+        width: 8px;
+        height: 8px;
+        content: "";
+        margin: 0;
+        background-color: #fff;
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity .2s;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .code-form-control .radio-wrapper .radio-input:checked~.radio-label:after,
+      .contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:after {
+        opacity: 1;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-input,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-input {
+        position: absolute !important;
+        top: 1px !important;
+        left: 0px !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        cursor: pointer !important;
+        z-index: 3 !important;
+        pointer-events: auto !important;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-label,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-label {
+        display: inline-block;
+        padding-left: 28px;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
+        position: absolute;
+        top: 1px;
+        left: 0px;
+        display: block;
+        width: 20px;
+        height: 20px;
+        content: "";
+        margin: 0;
+        pointer-events: none;
+        user-select: none;
+        background-color: #fff;
+        box-shadow: none;
+        border: 1px solid #d1d5db;
+        box-sizing: border-box;
+        box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+        border-radius: 0.25rem;
+        transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
+        border-color: #EB1256;
+        box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+        background-color: #EB1256;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+        position: absolute;
+        top: 1px;
+        left: 0px;
+        display: block;
+        width: 20px;
+        height: 20px;
+        content: "";
+        margin: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 12px 12px;
+        opacity: 0;
+        transition: opacity .2s;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after,
+      .contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
+        background-image: url('https://codelocksolutions.com/form_builder/assets/images/checkbox.svg');
+        opacity: 1;
+      }
+      
+      /* Rating Star Styles */
+      .code-form-control .star-rating>fieldset,
+      .contact-form .code-form-control .star-rating>fieldset {
+        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0;
+        margin: 0;
+      }
+      .code-form-control .star-rating>fieldset:not(:checked)>label,
+      .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label {
+        float: none;
+        display: flex;
+        align-items: center;
+        width: auto;
+        padding: 5px 0 5px 30px;
+        overflow: visible;
+        white-space: normal;
+        cursor: pointer;
+        font-size: 100%;
+        color: #000;
+        position: relative;
+        margin: 0;
+      }
+      .code-form-control .star-rating>fieldset:not(:checked)>input,
+      .contact-form .code-form-control .star-rating>fieldset:not(:checked)>input {
+        position: absolute;
+        left: 0;
+        margin: 0;
+        width: 20px;
+        height: 20px;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .code-form-control .star-rating>fieldset:not(:checked)>label:before,
+      .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid #d1d5db;
+        border-radius: 50%;
+        background-color: #fff;
+      }
+      .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before,
+      .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before {
+        border-color: #EB1256;
+        background-color: #EB1256;
+      }
+      .code-form-control .star-rating>fieldset>input:checked ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset>input:checked ~ label:before {
+        border-color: #EB1256;
+        background-color: #EB1256;
+      }
+      
+      /* Options per line styles for checkboxes and radio buttons */
+      .globo-list-control.option-1-column,
+      .contact-form .globo-list-control.option-1-column {
+        width: 100%;
+      }
+      .globo-list-control.option-2-column,
+      .contact-form .globo-list-control.option-2-column {
+        width: 50%;
+      }
+      .globo-list-control.option-3-column,
+      .contact-form .globo-list-control.option-3-column {
+        width: 33.333%;
+      }
+      .globo-list-control.option-4-column,
+      .contact-form .globo-list-control.option-4-column {
+        width: 25%;
+      }
+      .globo-list-control.option-5-column,
+      .contact-form .globo-list-control.option-5-column {
+        width: 20%;
+      }
+      .globo-list-control,
+      .contact-form .globo-list-control {
+        padding: 0 5px;
+        position: relative;
+        box-sizing: border-box;
+      }
+      
+      /* Layout column width styles */
+      .code-form-control.layout-1-column,
+      .contact-form .code-form-control.layout-1-column {
+        width: 8.333%;
+      }
+      .code-form-control.layout-2-column,
+      .contact-form .code-form-control.layout-2-column {
+        width: 16.666%;
+      }
+      .code-form-control.layout-3-column,
+      .contact-form .code-form-control.layout-3-column {
+        width: 25%;
+      }
+      .code-form-control.layout-4-column,
+      .contact-form .code-form-control.layout-4-column {
+        width: 33.333%;
+      }
+      .code-form-control.layout-5-column,
+      .contact-form .code-form-control.layout-5-column {
+        width: 41.666%;
+      }
+      .code-form-control.layout-6-column,
+      .contact-form .code-form-control.layout-6-column {
+        width: 50%;
+      }
+      .code-form-control.layout-7-column,
+      .contact-form .code-form-control.layout-7-column {
+        width: 58.333%;
+      }
+      .code-form-control.layout-8-column,
+      .contact-form .code-form-control.layout-8-column {
+        width: 66.666%;
+      }
+      .code-form-control.layout-9-column,
+      .contact-form .code-form-control.layout-9-column {
+        width: 75%;
+      }
+      .code-form-control.layout-10-column,
+      .contact-form .code-form-control.layout-10-column {
+        width: 83.333%;
+      }
+      .code-form-control.layout-11-column,
+      .contact-form .code-form-control.layout-11-column {
+        width: 91.666%;
+      }
+      .code-form-control.layout-12-column,
+      .contact-form .code-form-control.layout-12-column {
+        width: 100%;
+      }
+    `;
+    document.head.appendChild(styleElement);
+  }
+  
+  // Function to apply additional styles after form loads
+  function applyFormElementStyles(container) {
+    if (!container) return;
+    
+    // Ensure file inputs are positioned correctly (overlay on upload area)
+    const fileInputs = container.querySelectorAll('input[type="file"][data-type="file"]');
+    fileInputs.forEach(function(input) {
+      const uploadArea = input.closest('.upload-area');
+      if (uploadArea) {
+        input.style.position = 'absolute';
+        input.style.width = '100%';
+        input.style.height = '100%';
+        input.style.top = '0';
+        input.style.left = '0';
+        input.style.opacity = '0';
+        input.style.cursor = 'pointer';
+        input.style.zIndex = '10';
+      }
+    });
+    
+    // Ensure upload areas have proper styling
+    const uploadAreas = container.querySelectorAll('.upload-area');
+    uploadAreas.forEach(function(area) {
+      if (!area.style.minHeight) {
+        area.style.minHeight = '150px';
+      }
+      if (!area.style.border || area.style.border === 'none') {
+        area.style.border = '1px dashed #eb1256';
+      }
+      if (!area.style.display || area.style.display === 'none') {
+        area.style.display = 'flex';
+        area.style.flexDirection = 'column';
+        area.style.alignItems = 'center';
+        area.style.justifyContent = 'center';
+      }
+      area.style.position = 'relative';
+    });
+    
+    // Ensure star rating fieldset uses flex
+    const starRatings = container.querySelectorAll('.star-rating fieldset');
+    starRatings.forEach(function(fieldset) {
+      fieldset.style.display = 'flex';
+      fieldset.style.flexDirection = 'column';
+      fieldset.style.gap = '8px';
+      fieldset.style.padding = '0';
+      fieldset.style.margin = '0';
+    });
+    
+    // Ensure checkbox and radio wrappers use flex
+    const checkboxWrappers = container.querySelectorAll('.checkbox-wrapper');
+    checkboxWrappers.forEach(function(wrapper) {
+      wrapper.style.display = 'flex';
+      wrapper.style.alignItems = 'center';
+    });
+    
+    const radioWrappers = container.querySelectorAll('.radio-wrapper');
+    radioWrappers.forEach(function(wrapper) {
+      wrapper.style.display = 'flex';
+      wrapper.style.alignItems = 'center';
+    });
+  }
+  
+  // Function to initialize file upload handlers
+  function initializeFileUploadHandlers(container) {
+    if (!container) return;
+    
+    // Handle file button clicks
+    container.querySelectorAll('.file_button').forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const uploadArea = this.closest('.upload-area');
+        if (uploadArea) {
+          const fileInput = uploadArea.querySelector('input[type="file"]');
+          if (fileInput) {
+            fileInput.click();
+          }
+        }
+      });
+    });
+    
+    // Handle file input changes
+    container.querySelectorAll('input[type="file"][data-type="file"]').forEach(function(input) {
+      input.addEventListener('change', function(e) {
+        const uploadArea = this.closest('.upload-area');
+        if (uploadArea) {
+          const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
+          const fileButton = uploadArea.querySelector('.file_button, #fileButton, [id^="fileButton-"]');
+          const imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+          
+          if (this.files && this.files.length > 0) {
+            // Hide upload text and button
+            if (uploadText) uploadText.style.display = 'none';
+            if (fileButton) fileButton.style.display = 'none';
+            
+            // Show file names or previews
+            if (imgContainer) {
+              imgContainer.innerHTML = '';
+              Array.from(this.files).forEach(function(file) {
+                const fileWrapper = document.createElement('div');
+                fileWrapper.className = 'img-preview-wrapper';
+                fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px;';
+                
+                const fileName = document.createElement('p');
+                fileName.className = 'file-name';
+                fileName.textContent = file.name;
+                fileName.style.cssText = 'margin: 5px 0; font-size: 12px;';
+                
+                if (file.type.startsWith('image/')) {
+                  const reader = new FileReader();
+                  reader.onload = function(event) {
+                    const img = document.createElement('img');
+                    img.className = 'img-preview';
+                    img.src = event.target.result;
+                    img.style.cssText = 'width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #eb1256;';
+                    fileWrapper.insertBefore(img, fileName);
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  const folderIcon = document.createElement('div');
+                  folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; display: flex; align-items: center; justify-content: center;';
+                  folderIcon.textContent = '📁';
+                  fileWrapper.insertBefore(folderIcon, fileName);
+                }
+                
+                imgContainer.appendChild(fileWrapper);
+              });
+            }
+          } else {
+            // Show upload text and button if no files
+            if (uploadText) uploadText.style.display = 'block';
+            if (fileButton) fileButton.style.display = 'inline-block';
+            if (imgContainer) imgContainer.innerHTML = '';
+          }
+        }
+      });
+    });
+    
+    // Make upload area clickable
+    container.querySelectorAll('.upload-area').forEach(function(area) {
+      area.addEventListener('click', function(e) {
+        // Don't trigger if clicking on button or existing content
+        if (e.target.classList.contains('file_button') || e.target.closest('.img-preview-wrapper')) {
+          return;
+        }
+        const fileInput = this.querySelector('input[type="file"]');
+        if (fileInput) {
+          fileInput.click();
+        }
+      });
+      area.style.cursor = 'pointer';
+    });
+  }
+  
+  // Function to fetch and apply design settings from customizer
+  async function fetchAndApplyDesignSettings(formId, shop, container) {
+    if (!formId || !container) return;
+    
+    try {
+      // Get base URL for API calls
+      let baseUrl = '';
+      const scripts = document.querySelectorAll('script[src]');
+      for (let i = 0; i < scripts.length; i++) {
+        const src = scripts[i].src;
+        if (src.indexOf('/form_builder/') > -1) {
+          baseUrl = src.substring(0, src.indexOf('/form_builder/') + '/form_builder'.length);
+          break;
+        }
+      }
+      if (!baseUrl) {
+        baseUrl = 'https://codelocksolutions.com/form_builder';
+      }
+      
+      // Fetch design settings from API
+      const designSettingsUrl = baseUrl + '/user/ajax_call.php';
+      const formData = new FormData();
+      formData.append('routine_name', 'get_form_design_settings');
+      formData.append('form_id', formId);
+      formData.append('store', shop);
+      
+      const response = await fetch(designSettingsUrl, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        console.warn('Failed to fetch design settings');
+        return;
+      }
+      
+      const resultText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(resultText);
+      } catch(e) {
+        // Try to parse as JSON if it's wrapped
+        try {
+          result = JSON.parse(resultText);
+        } catch(e2) {
+          console.warn('Failed to parse design settings response');
+          return;
+        }
+      }
+      
+      // Handle different response formats
+      let designSettings = null;
+      let elementDataMap = null;
+      
+      if (result && result.result === 'success') {
+        // Check if settings are in result.settings or result.data
+        if (result.settings && typeof result.settings === 'object') {
+          designSettings = result.settings;
+        } else if (result.data && typeof result.data === 'object') {
+          designSettings = result.data;
+        }
+        
+        // Get element_data if available
+        if (result.element_data && typeof result.element_data === 'object') {
+          elementDataMap = result.element_data;
+        }
+      }
+      
+      // Apply element data settings (layout, options per line, etc.)
+      if (elementDataMap && typeof elementDataMap === 'object') {
+        Object.keys(elementDataMap).forEach(function(key) {
+          if (key.startsWith('element_')) {
+            const formDataId = key.replace('element_', '');
+            const elementInfo = elementDataMap[key];
+            
+            if (elementInfo && elementInfo.data && Array.isArray(elementInfo.data)) {
+              applyElementDataSettings(container, formDataId, elementInfo.element_id, elementInfo.data);
+            }
+          }
+        });
+      }
+      
+      // Apply design settings (font size, color, border radius, etc.)
+      if (designSettings && typeof designSettings === 'object') {
+        Object.keys(designSettings).forEach(function(key) {
+          if (key.startsWith('element_')) {
+            const formDataId = key.replace('element_', '');
+            const settings = designSettings[key];
+            
+            if (settings && typeof settings === 'object') {
+              applyElementDesignSettings(container, formDataId, settings);
+            }
+          }
+        });
+      }
+    } catch(error) {
+      console.warn('Error fetching design settings:', error);
+    }
+  }
+  
+  // Function to apply design settings to a specific element
+  function applyElementDesignSettings(container, formDataId, settings) {
+    if (!container || !formDataId || !settings) return;
+    
+    // Find all elements with this form_data_id
+    const elements = container.querySelectorAll('[data-formdataid="' + formDataId + '"]');
+    
+    elements.forEach(function(element) {
+      // Apply font size
+      if (settings.fontSize !== undefined && settings.fontSize !== null) {
+        const fontSize = parseInt(settings.fontSize) || 16;
+        element.style.fontSize = fontSize + 'px';
+        
+        // Also apply to input, textarea, select elements inside
+        const inputs = element.querySelectorAll('input, textarea, select, .classic-input');
+        inputs.forEach(function(input) {
+          input.style.fontSize = fontSize + 'px';
+        });
+        
+        // Apply to file button
+        const fileButton = element.querySelector('.file_button');
+        if (fileButton) {
+          fileButton.style.fontSize = fontSize + 'px';
+        }
+      }
+      
+      // Apply font weight
+      if (settings.fontWeight !== undefined && settings.fontWeight !== null) {
+        const fontWeight = settings.fontWeight || '400';
+        element.style.fontWeight = fontWeight;
+        const inputs = element.querySelectorAll('input, textarea, select, .classic-input');
+        inputs.forEach(function(input) {
+          input.style.fontWeight = fontWeight;
+        });
+        
+        // Apply to file button
+        const fileButton = element.querySelector('.file_button');
+        if (fileButton) {
+          fileButton.style.fontWeight = fontWeight;
+        }
+      }
+      
+      // Apply color
+      if (settings.color && settings.color !== '') {
+        element.style.color = settings.color;
+        const inputs = element.querySelectorAll('input, textarea, select, .classic-input, label, .label-content, .upload-p');
+        inputs.forEach(function(input) {
+          input.style.color = settings.color;
+        });
+        
+        // Apply to file button
+        const fileButton = element.querySelector('.file_button');
+        if (fileButton) {
+          fileButton.style.color = settings.color;
+        }
+      }
+      
+      // Apply border radius
+      if (settings.borderRadius !== undefined && settings.borderRadius !== null) {
+        const borderRadius = parseInt(settings.borderRadius) || 4;
+        const inputs = element.querySelectorAll('input, textarea, select, .classic-input');
+        inputs.forEach(function(input) {
+          input.style.borderRadius = borderRadius + 'px';
+        });
+        
+        // Apply to upload area and file button
+        const uploadArea = element.querySelector('.upload-area');
+        if (uploadArea) {
+          uploadArea.style.borderRadius = borderRadius + 'px';
+        }
+        const fileButton = element.querySelector('.file_button');
+        if (fileButton) {
+          fileButton.style.borderRadius = borderRadius + 'px';
+        }
+      }
+      
+      // Apply background color
+      if (settings.bgColor && settings.bgColor !== '') {
+        const inputs = element.querySelectorAll('input, textarea, select, .classic-input');
+        inputs.forEach(function(input) {
+          input.style.backgroundColor = settings.bgColor;
+        });
+        
+        // Apply to upload area
+        const uploadArea = element.querySelector('.upload-area');
+        if (uploadArea) {
+          uploadArea.style.backgroundColor = settings.bgColor;
+        }
+      }
+    });
+  }
+  
+  // Function to apply element data settings (layout, options per line, etc.)
+  function applyElementDataSettings(container, formDataId, elementId, elementData) {
+    if (!container || !formDataId || !elementData || !Array.isArray(elementData)) return;
+    
+    // Find all elements with this form_data_id
+    const elements = container.querySelectorAll('[data-formdataid="' + formDataId + '"]');
+    
+    elements.forEach(function(element) {
+      // Element ID 11 = Checkbox (element_type6)
+      // Element ID 13 = Radio Button (element_type8)
+      // Both use element_data[8] for "number of options per line"
+      // Checkbox: array($label, $checkboxoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth)
+      // Radio: array($label, $radiooption, $defaultselect, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth)
+      const elementIdNum = parseInt(elementId) || 0;
+      
+      if (elementIdNum == 11 || elementIdNum == 13) {
+        // Get number of options per line (index 8)
+        const optionsPerLine = elementData[8] ? String(elementData[8]) : '1';
+        
+        // Find all list items (li) within this element
+        const listItems = element.querySelectorAll('li.globo-list-control');
+        listItems.forEach(function(li) {
+          // Remove existing option-*-column classes
+          li.className = li.className.replace(/\boption-\d+-column\b/g, '');
+          // Add the correct class
+          li.classList.add('option-' + optionsPerLine + '-column');
+        });
+      }
+      
+      // Apply column width
+      // Checkbox (11): index 9
+      // Radio (13): index 9
+      // File (10): index 10
+      // Rating Star (15): index 6
+      // Others vary
+      let columnWidthIndex = -1;
+      if (elementIdNum == 11) { // Checkbox
+        columnWidthIndex = 9;
+      } else if (elementIdNum == 13) { // Radio
+        columnWidthIndex = 9;
+      } else if (elementIdNum == 10) { // File
+        columnWidthIndex = 10;
+      } else if (elementIdNum == 15) { // Rating Star
+        columnWidthIndex = 6;
+      } else if (elementIdNum == 1 || elementIdNum == 2 || elementIdNum == 3 || elementIdNum == 4 || elementIdNum == 5 || elementIdNum == 7 || elementIdNum == 20 || elementIdNum == 21 || elementIdNum == 22 || elementIdNum == 23) {
+        columnWidthIndex = 9;
+      } else if (elementIdNum == 9) { // Country/Dropdown
+        columnWidthIndex = 12;
+      }
+      
+      if (columnWidthIndex >= 0 && elementData[columnWidthIndex] !== undefined && elementData[columnWidthIndex] !== null) {
+        const columnWidth = String(elementData[columnWidthIndex]);
+        // Remove existing layout-*-column class
+        element.className = element.className.replace(/\blayout-\d+-column\b/g, '');
+        // Add the correct layout class
+        element.classList.add('layout-' + columnWidth + '-column');
+      }
+    });
+  }
+
   async function initializeFormBuilder() {
+    // Inject CSS styles first
+    injectFormStyles();
+    
     const blockContainer = document.getElementById("easy-form-{{ block.id }}");
     
     if (!blockContainer) {
@@ -178,6 +958,9 @@
             }
           });
           
+          // Inject critical CSS for form elements BEFORE inserting HTML
+          injectFormStyles();
+          
           // Insert HTML FIRST (before scripts) so form is visible
           try {
             blockContainer.innerHTML = tempDiv.innerHTML;
@@ -238,6 +1021,14 @@
               // Silent fail for this script
             }
           });
+          
+          // Apply styles after form is loaded
+          setTimeout(function() {
+            applyFormElementStyles(blockContainer);
+            initializeFileUploadHandlers(blockContainer);
+            // Fetch and apply design settings from customizer
+            fetchAndApplyDesignSettings(formId, shop, blockContainer);
+          }, 200);
         } catch(mainError) {
           // If all else fails, show error message
           blockContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f; text-align: center; border: 2px solid #d32f2f; border-radius: 4px; background: #ffebee;">' +
