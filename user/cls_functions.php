@@ -2900,14 +2900,32 @@ class Client_functions extends common_function {
                         if ($element_design !== null && is_array($element_design)) {
                             $styles = array();
                             
-                                // Border radius - apply if set (even if it's the default 4px, user might have explicitly set it)
-                                if (isset($element_design['borderRadius'])) {
-                                    $border_radius = intval($element_design['borderRadius']);
-                                    // Apply border radius if it's a valid number (including 0 for square corners)
-                                    if ($border_radius >= 0) {
-                                        $styles[] = 'border-radius: ' . $border_radius . 'px';
-                                    }
+                            // Font size - apply if set
+                            if (isset($element_design['fontSize'])) {
+                                $font_size = intval($element_design['fontSize']);
+                                if ($font_size > 0) {
+                                    $styles[] = 'font-size: ' . $font_size . 'px';
                                 }
+                            }
+                            
+                            // Font weight - apply if set
+                            if (isset($element_design['fontWeight'])) {
+                                $styles[] = 'font-weight: ' . $element_design['fontWeight'];
+                            }
+                            
+                            // Color - apply if set
+                            if (isset($element_design['color']) && !empty($element_design['color'])) {
+                                $styles[] = 'color: ' . $element_design['color'];
+                            }
+                            
+                            // Border radius - apply if set (even if it's the default 4px, user might have explicitly set it)
+                            if (isset($element_design['borderRadius'])) {
+                                $border_radius = intval($element_design['borderRadius']);
+                                // Apply border radius if it's a valid number (including 0 for square corners)
+                                if ($border_radius >= 0) {
+                                    $styles[] = 'border-radius: ' . $border_radius . 'px';
+                                }
+                            }
                             
                             // Background color - ONLY apply if explicitly set by user
                             // Do NOT apply default/system colors automatically
@@ -3363,12 +3381,15 @@ class Client_functions extends common_function {
                                     $is_allowmultiple = ' name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'"';
                                 }
                                 
+                                // Get design style for file element (border radius, font size, etc.)
+                                $element_design_style = $get_element_design_style($form_data_id, $unserialize_elementdata);
+                                
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input" data-formdataid="'.$form_data_id.'">
-                                            <div class="upload-area" id="uploadArea">
+                                            <div class="upload-area" id="uploadArea"'.$element_design_style.'>
                                                 <p class="upload-p '.$elementtitle.''.$form_data_id.'__placeholder"" id="uploadText">'.$unserialize_elementdata[2].'</p>
-                                                <span class="file_button '.$elementtitle.''.$form_data_id.'__buttontext '.$is_buttonhidden.'"  id="fileButton">'.$unserialize_elementdata[1].'</span>
+                                                <span class="file_button '.$elementtitle.''.$form_data_id.'__buttontext '.$is_buttonhidden.'"  id="fileButton"'.$element_design_style.'>'.$unserialize_elementdata[1].'</span>
                                                 <input id="fileimage" type="file" '.$is_allowmultiple.'>
                                                 <div class="img-container" id="imgContainer"></div>
                                             </div>
@@ -3763,7 +3784,12 @@ class Client_functions extends common_function {
                             $button_hover_bg_color = '#C8104A';
                         }
                         
-                        $button_style = 'style="font-size: '.$button_text_size.'px; color: '.$button_text_color.'; background-color: '.$button_bg_color.'; border-radius: '.$border_radius.'px; border-color: '.$button_bg_color.';"';
+                        // Calculate padding based on font size for dynamic button sizing
+                        // Padding should scale proportionally: larger font = more padding
+                        // Base padding ratio: for 16px font, use ~12px vertical and ~24px horizontal
+                        $vertical_padding = max(8, round($button_text_size * 0.75)); // 75% of font size, minimum 8px
+                        $horizontal_padding = max(16, round($button_text_size * 1.5)); // 150% of font size, minimum 16px
+                        $button_style = 'style="font-size: '.$button_text_size.'px; color: '.$button_text_color.'; background-color: '.$button_bg_color.'; border-radius: '.$border_radius.'px; border-color: '.$button_bg_color.'; padding: '.$vertical_padding.'px '.$horizontal_padding.'px; line-height: 1.2;"';
                         $button_hover_style = 'data-hover-bg="'.$button_hover_bg_color.'"';
                         
                         $form_html .= '<div class="footer forFooterAlign '.$footer_align.'">
@@ -4721,31 +4747,51 @@ class Client_functions extends common_function {
             // First try to use provided design_settings_array (more efficient)
             if ($design_settings_array !== null && is_array($design_settings_array)) {
                 $key = 'element_' . $form_data_id;
-                if (isset($design_settings_array[$key])) {
+                error_log("get_design_customizer_html: Looking for key '$key' in design_settings_array. Array keys: " . (is_array($design_settings_array) ? implode(', ', array_keys($design_settings_array)) : 'not array'));
+                if (isset($design_settings_array[$key]) && is_array($design_settings_array[$key])) {
                     $saved_settings = $design_settings_array[$key];
-                    error_log("Design settings loaded from array for element_$form_data_id: " . print_r($saved_settings, true));
+                    error_log("get_design_customizer_html: Design settings loaded from array for element_$form_data_id: " . print_r($saved_settings, true));
+                    error_log("get_design_customizer_html: Border radius in saved_settings: " . (isset($saved_settings['borderRadius']) ? $saved_settings['borderRadius'] : 'NOT SET'));
                 } else {
-                    error_log("No design settings found in array for key: element_$form_data_id. Available keys: " . implode(', ', array_keys($design_settings_array)));
-                }
-            } else if ($form_id > 0) {
-                // Fallback: load from database if array not provided
-            $shopinfo = $this->current_store_obj;
-            $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
-            
-            $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
-            $resource_array = array('single' => true);
-            $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
-            
-            if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
-                $design_settings = unserialize($form_result['data']['design_settings']);
-                if (is_array($design_settings)) {
-                    $key = 'element_' . $form_data_id;
-                    if (isset($design_settings[$key])) {
-                        $saved_settings = $design_settings[$key];
+                    error_log("get_design_customizer_html: No design settings found in array for key: element_$form_data_id. Available keys: " . (is_array($design_settings_array) ? implode(', ', array_keys($design_settings_array)) : 'not array'));
+                    // Try to find any key that might match (case-insensitive or partial match)
+                    foreach ($design_settings_array as $arr_key => $arr_value) {
+                        if (is_array($arr_value) && (strpos($arr_key, (string)$form_data_id) !== false)) {
+                            error_log("get_design_customizer_html: Found potential match: key='$arr_key' contains form_data_id='$form_data_id'");
                         }
                     }
                 }
+            } else {
+                error_log("get_design_customizer_html: design_settings_array is null or not array. Type: " . gettype($design_settings_array));
             }
+            
+            // If still not found, try loading from database
+            if ($saved_settings === null && $form_id > 0) {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (is_array($design_settings)) {
+                        $key = 'element_' . $form_data_id;
+                        error_log("get_design_customizer_html: Looking in database for key '$key'. Available keys: " . implode(', ', array_keys($design_settings)));
+                        if (isset($design_settings[$key]) && is_array($design_settings[$key])) {
+                            $saved_settings = $design_settings[$key];
+                            error_log("Design settings loaded from database for element_$form_data_id: " . print_r($saved_settings, true));
+                        } else {
+                            error_log("get_design_customizer_html: Key '$key' not found in database design_settings");
+                        }
+                    }
+                } else {
+                    error_log("get_design_customizer_html: Failed to load design_settings from database. Status: " . (isset($form_result['status']) ? $form_result['status'] : 'not set'));
+                }
+            }
+        } else {
+            error_log("get_design_customizer_html: Using provided saved_settings for element_$form_data_id: " . print_r($saved_settings, true));
         }
         
         // Default values - ensure color is preserved if set
@@ -4761,7 +4807,19 @@ class Client_functions extends common_function {
             }
         }
         error_log("Element $form_data_id - Final color value: $color (from saved_settings: " . (isset($saved_settings['color']) ? $saved_settings['color'] : 'not set') . ")");
-        $borderRadius = isset($saved_settings['borderRadius']) ? intval($saved_settings['borderRadius']) : 4;
+        // Border radius - check if it exists and is a valid number
+        $borderRadius = 4; // Default
+        if (isset($saved_settings['borderRadius'])) {
+            $border_radius_val = intval($saved_settings['borderRadius']);
+            if ($border_radius_val >= 0) {
+                $borderRadius = $border_radius_val;
+            }
+        }
+        // Ensure borderRadius is a valid integer and not empty
+        if (!is_numeric($borderRadius) || $borderRadius < 0) {
+            $borderRadius = 4;
+        }
+        error_log("Element $form_data_id - Final border radius value: $borderRadius (saved_settings is " . ($saved_settings === null ? 'NULL' : (is_array($saved_settings) ? 'array with keys: ' . implode(', ', array_keys($saved_settings)) : gettype($saved_settings))) . ", borderRadius in saved_settings: " . (isset($saved_settings['borderRadius']) ? $saved_settings['borderRadius'] : 'NOT SET') . ")");
         // Preserve bgColor if set, but only for buttons
         $bgColor = isset($saved_settings['bgColor']) && $saved_settings['bgColor'] !== '' ? $saved_settings['bgColor'] : '#007bff';
         
@@ -4941,17 +4999,84 @@ class Client_functions extends common_function {
                 $elementtitle = strtolower($comebackdata['element_title']);
                 $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
                 
-                // Extract design settings from element_data array (indices 10-14)
-                // Build design_settings array in the format expected by get_design_customizer_html
+                // First, try to get design settings from forms table (design_settings column)
+                // This is the primary source and takes precedence
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                $where_query = array(["", "id", "=", "$formid"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
                 $design_settings = array();
                 $design_settings_key = 'element_' . $form_data_id;
-                $design_settings[$design_settings_key] = array(
-                    'fontSize' => isset($formData[10]) ? intval($formData[10]) : 16,
-                    'fontWeight' => isset($formData[11]) ? $formData[11] : '400',
-                    'color' => isset($formData[12]) && $formData[12] !== '' ? $formData[12] : '#000000',
-                    'borderRadius' => isset($formData[13]) ? intval($formData[13]) : 4,
-                    'bgColor' => isset($formData[14]) && $formData[14] !== '' ? $formData[14] : ''
-                );
+                
+                // Check if design_settings exists in forms table
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $form_design_settings = unserialize($form_result['data']['design_settings']);
+                    error_log("form_element_data_html: Unserialized design_settings. Is array: " . (is_array($form_design_settings) ? 'YES' : 'NO'));
+                    if (is_array($form_design_settings)) {
+                        error_log("form_element_data_html: Looking for key '$design_settings_key'. Available keys: " . implode(', ', array_keys($form_design_settings)));
+                        if (isset($form_design_settings[$design_settings_key])) {
+                            // Use settings from forms table (primary source)
+                            $design_settings[$design_settings_key] = $form_design_settings[$design_settings_key];
+                            error_log("form_element_data_html: Loaded design settings from forms table for element_$form_data_id: " . print_r($design_settings[$design_settings_key], true));
+                            error_log("form_element_data_html: Border radius value: " . (isset($design_settings[$design_settings_key]['borderRadius']) ? $design_settings[$design_settings_key]['borderRadius'] : 'NOT SET'));
+                        } else {
+                            error_log("form_element_data_html: Design settings not found in forms table for key: $design_settings_key. Available keys: " . implode(', ', array_keys($form_design_settings)));
+                            // Try alternative key formats
+                            $alt_keys = array('element_' . $formdataid, 'element_' . (string)$formdataid, (string)$formdataid, $formdataid);
+                            foreach ($alt_keys as $alt_key) {
+                                if (isset($form_design_settings[$alt_key])) {
+                                    error_log("form_element_data_html: Found design settings with alternative key: $alt_key");
+                                    $design_settings[$design_settings_key] = $form_design_settings[$alt_key];
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        error_log("form_element_data_html: Unserialized design_settings is not an array. Type: " . gettype($form_design_settings));
+                    }
+                } else {
+                    error_log("form_element_data_html: No design_settings found in forms table for form_id: $formid. Status: " . (isset($form_result['status']) ? $form_result['status'] : 'not set'));
+                }
+                
+                // If not found in forms table, fallback to element_data array (indices 10-14)
+                if (!isset($design_settings[$design_settings_key])) {
+                    // Get border radius from element_data[13] - this is where it's saved when using save_all_element_design_settings
+                    // Debug: Log what's in formData
+                    error_log("form_element_data_html: formData array keys: " . (is_array($formData) ? implode(', ', array_keys($formData)) : 'not array'));
+                    error_log("form_element_data_html: formData[13] value: " . (isset($formData[13]) ? var_export($formData[13], true) : 'NOT SET'));
+                    error_log("form_element_data_html: formData[13] type: " . (isset($formData[13]) ? gettype($formData[13]) : 'N/A'));
+                    
+                    $element_border_radius = 4; // Default
+                    if (isset($formData[13])) {
+                        $element_border_radius = intval($formData[13]);
+                        // Ensure it's a valid positive number
+                        if ($element_border_radius < 0 || !is_numeric($formData[13])) {
+                            $element_border_radius = 4;
+                        }
+                    }
+                    
+                    $design_settings[$design_settings_key] = array(
+                        'fontSize' => isset($formData[10]) ? intval($formData[10]) : 16,
+                        'fontWeight' => isset($formData[11]) ? $formData[11] : '400',
+                        'color' => isset($formData[12]) && $formData[12] !== '' ? $formData[12] : '#000000',
+                        'borderRadius' => $element_border_radius,
+                        'bgColor' => isset($formData[14]) && $formData[14] !== '' ? $formData[14] : ''
+                    );
+                    error_log("form_element_data_html: Using fallback design settings from element_data for element_$form_data_id. borderRadius from formData[13]: " . (isset($formData[13]) ? var_export($formData[13], true) : 'not set') . ", intval: " . $element_border_radius . ", final: " . $design_settings[$design_settings_key]['borderRadius']);
+                } else {
+                    error_log("form_element_data_html: Using design settings from forms table. borderRadius: " . (isset($design_settings[$design_settings_key]['borderRadius']) ? $design_settings[$design_settings_key]['borderRadius'] : 'not set'));
+                }
+                
+                // Debug: Log what we're passing to get_design_customizer_html
+                error_log("form_element_data_html: About to call get_design_customizer_html for form_data_id=$form_data_id, elementid=$elementid, formid=$formid");
+                error_log("form_element_data_html: design_settings array keys: " . (is_array($design_settings) ? implode(', ', array_keys($design_settings)) : 'not array'));
+                error_log("form_element_data_html: design_settings_key='$design_settings_key', value exists: " . (isset($design_settings[$design_settings_key]) ? 'YES' : 'NO'));
+                if (isset($design_settings[$design_settings_key])) {
+                    error_log("form_element_data_html: design_settings[$design_settings_key] = " . print_r($design_settings[$design_settings_key], true));
+                }
 
                 $comeback = $datavalue1 = $datavalue2 = $datavalue3 = $formatedatavalue1 = $formatedatavalue2 = $formatedatavalue3 = $noperline_datavalue1 = $noperline_datavalue2 = $noperline_datavalue3 = $noperline_datavalue4 = $noperline_datavalue5 = '';
                 $comeback .= '<div class="header backheader">
@@ -6489,11 +6614,10 @@ class Client_functions extends common_function {
                             <div class="form-control">
                                 <div class="uikit select multiple" tabindex="0">
                                 <label class="label">Allowed extensions</label>
-                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention[]">
-                                    <option></option>';
+                                <select class="selectFile"style="width:100% "  multiple="multiple" name="'.$elementtitle.''.$form_data_id.'__allowextention[]">';
                                     foreach ($extentions as $extention) {
                                         $selected = in_array(trim($extention), array_map('trim', $allowextention), true) ? ' selected' : '';
-                                        $comeback .= '<option value="' . $extention . '"' . $selected . '>' . $extention . '</option>';
+                                        $comeback .= '<option value="' . htmlspecialchars($extention, ENT_QUOTES, 'UTF-8') . '"' . $selected . '>' . htmlspecialchars($extention, ENT_QUOTES, 'UTF-8') . '</option>';
                                     }
                         $comeback .=  '</select>
                                 </div>
@@ -8263,6 +8387,21 @@ class Client_functions extends common_function {
             $saved_count = 0;
             $errors = array();
             
+            // Get existing design_settings from forms table
+            $where_form = array(
+                ["", "id", "=", "$form_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
+            );
+            $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_form, ['single' => true]);
+            
+            $design_settings = array();
+            if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                $design_settings = unserialize($form_result['data']['design_settings']);
+                if (!is_array($design_settings)) {
+                    $design_settings = array();
+                }
+            }
+            
             foreach ($all_settings as $setting) {
                 $formdata_id = isset($setting['formdata_id']) ? intval($setting['formdata_id']) : 0;
                 $element_id = isset($setting['element_id']) ? intval($setting['element_id']) : 0;
@@ -8284,6 +8423,10 @@ class Client_functions extends common_function {
                     continue;
                 }
                 
+                // Update design_settings in forms table (used for loading)
+                $key = 'element_' . $formdata_id;
+                $design_settings[$key] = $settings;
+                
                 // Get existing element data
                 $where_query = array(
                     ["", "id", "=", "$formdata_id"],
@@ -8298,7 +8441,7 @@ class Client_functions extends common_function {
                         $element_data = array();
                     }
                     
-                    // Update design settings
+                    // Update design settings in element_data (backup/fallback)
                     $element_data[10] = isset($settings['fontSize']) ? intval($settings['fontSize']) : 16;
                     $element_data[11] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
                     $element_data[12] = isset($settings['color']) ? $settings['color'] : '#000000';
@@ -8319,6 +8462,16 @@ class Client_functions extends common_function {
                     $update_result = $this->put_data(TABLE_FORM_DATA, $fields, $where_update);
                     $saved_count++;
                 }
+            }
+            
+            // Save design_settings to forms table
+            if ($saved_count > 0) {
+                $update_design_settings = array('design_settings' => serialize($design_settings));
+                $update_where_form = array(
+                    ["", "id", "=", "$form_id"],
+                    ["AND", "store_client_id", "=", "$store_user_id"]
+                );
+                $this->put_data(TABLE_FORMS, $update_design_settings, $update_where_form);
             }
             
             if ($saved_count > 0) {
@@ -8451,6 +8604,7 @@ class Client_functions extends common_function {
                 $post_data = explode('__', $key);
                 if (count($post_data) > 1) {
                     $newKey = $post_data[1];
+                    // Preserve array values (like allowextention[])
                     $newData[$newKey] = $value;
                 } else {
                     $newData[$key] = $value;
@@ -8548,8 +8702,21 @@ class Client_functions extends common_function {
             $limitdatepicker = isset($newData['limitdatepicker']) ?  $newData['limitdatepicker'] : '0' ;
             $buttontext = isset($newData['buttontext']) ?  $newData['buttontext'] : '' ;
             $allowmultiple = isset($newData['allowmultiple']) ?  $newData['allowmultiple'] : '0' ;
-            // $allowextention = isset($newData['allowextention[]']) ?  $newData['allowextention[]'] : '' ;
-            $allowextention = isset($newData['allowextention']) ?  $newData['allowextention'] : '' ;
+            // Handle allowextention - it can come as an array from multiple select
+            $allowextention = '';
+            if (isset($newData['allowextention[]']) && is_array($newData['allowextention[]'])) {
+                // Handle array format from form submission
+                $allowextention = implode(',', array_filter(array_map('trim', $newData['allowextention[]'])));
+            } elseif (isset($newData['allowextention']) && is_array($newData['allowextention'])) {
+                // Handle array format from JavaScript
+                $allowextention = implode(',', array_filter(array_map('trim', $newData['allowextention'])));
+            } elseif (isset($newData['allowextention']) && !is_array($newData['allowextention'])) {
+                // Handle string format (comma-separated)
+                $allowextention = trim($newData['allowextention']);
+            } elseif (isset($_POST[$elementtitle . $form_data_id . '__allowextention']) && is_array($_POST[$elementtitle . $form_data_id . '__allowextention'])) {
+                // Direct POST access as fallback
+                $allowextention = implode(',', array_filter(array_map('trim', $_POST[$elementtitle . $form_data_id . '__allowextention'])));
+            }
            
             $checkboxoption = isset($newData['checkboxoption']) ?  $newData['checkboxoption'] : '' ;
             $radiooption = isset($newData['radiooption']) ?  $newData['radiooption'] : '' ;

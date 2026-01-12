@@ -981,6 +981,8 @@ ul {
     position: relative;
     overflow: hidden;
     padding: 10px;
+    /* Border radius will be set via inline styles from design settings */
+    /* Default border-radius removed to allow inline styles to work */
   }
   
   .file_button {

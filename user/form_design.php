@@ -6818,10 +6818,98 @@ if ($form_id > 0) {
         });
         
         // Update preview on design control changes (real-time preview)
-        $(document).on('input change', '.element-design-font-size, .element-design-font-weight, .element-design-border-radius', function() {
+        // Function to update element design preview in real-time (global function)
+        window.updateElementDesignPreview = function(formdataid) {
+            if (!formdataid) return;
+            
+            // Get design settings
+            var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+            var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
+            var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
+            var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
+            var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
+            if (isNaN(borderRadius) || borderRadius < 0) {
+                borderRadius = 4;
+            }
+            
+            // Apply to input, textarea, select elements in both preview containers
+            $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').css({
+                'font-size': fontSize + 'px',
+                'font-weight': fontWeight,
+                'color': color,
+                'border-radius': borderRadius + 'px'
+            });
+            
+            // Apply to file upload elements (upload-area and file_button) in both preview containers
+            // IMPORTANT: Use !important to override any CSS that might be conflicting
+            // Try multiple selector strategies to find the upload-area
+            var $uploadArea = $('.code-form-app .globo-form-input[data-formdataid="' + formdataid + '"] .upload-area, .contact-form .globo-form-input[data-formdataid="' + formdataid + '"] .upload-area');
+            if ($uploadArea.length === 0) {
+                // Try finding through code-form-control
+                $uploadArea = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .upload-area, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .upload-area');
+            }
+            if ($uploadArea.length === 0) {
+                // Fallback: find any upload-area and check if it's inside the right element
+                $('.code-form-app .upload-area, .contact-form .upload-area').each(function() {
+                    var $this = $(this);
+                    var $parent = $this.closest('[data-formdataid="' + formdataid + '"]');
+                    if ($parent.length) {
+                        $uploadArea = $uploadArea.add($this);
+                    }
+                });
+            }
+            if ($uploadArea.length) {
+                // Use attr to add !important to override any CSS
+                $uploadArea.each(function() {
+                    var $this = $(this);
+                    var currentStyle = $this.attr('style') || '';
+                    // Remove existing border-radius if any (with or without !important)
+                    currentStyle = currentStyle.replace(/border-radius\s*:\s*[^;]+!important;?/gi, '');
+                    currentStyle = currentStyle.replace(/border-radius\s*:\s*[^;]+;?/gi, '');
+                    // Add new border-radius with !important
+                    currentStyle += ' border-radius: ' + borderRadius + 'px !important;';
+                    $this.attr('style', currentStyle.trim());
+                });
+            } else {
+                // Debug: log if element not found
+                console.log('Upload area not found for formdataid:', formdataid);
+                console.log('Available upload-areas:', $('.code-form-app .upload-area, .contact-form .upload-area').length);
+            }
+            
+            var $fileButton = $('.code-form-app .globo-form-input[data-formdataid="' + formdataid + '"] .file_button, .contact-form .globo-form-input[data-formdataid="' + formdataid + '"] .file_button');
+            if ($fileButton.length === 0) {
+                $fileButton = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .file_button, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .file_button');
+            }
+            if ($fileButton.length === 0) {
+                $('.code-form-app .file_button, .contact-form .file_button').each(function() {
+                    var $this = $(this);
+                    var $parent = $this.closest('[data-formdataid="' + formdataid + '"]');
+                    if ($parent.length) {
+                        $fileButton = $fileButton.add($this);
+                    }
+                });
+            }
+            if ($fileButton.length) {
+                $fileButton.css({
+                    'font-size': fontSize + 'px',
+                    'font-weight': fontWeight,
+                    'color': color,
+                    'border-radius': borderRadius + 'px'
+                });
+            }
+        };
+        
+        $(document).on('input change keyup', '.element-design-font-size, .element-design-font-weight, .element-design-color-text, .element-design-border-radius', function() {
             var $control = $(this);
             var formdataid = $control.data('formdataid');
-            updateElementDesignPreview(formdataid);
+            if (formdataid) {
+                // Call global function directly for immediate update
+                if (typeof window.updateElementDesignPreview === 'function') {
+                    window.updateElementDesignPreview(formdataid);
+                } else if (typeof updateElementDesignPreview === 'function') {
+                    updateElementDesignPreview(formdataid);
+                }
+            }
         });
         
         // Function to update footer button preview in real-time (make it global)
@@ -6844,13 +6932,21 @@ if ($form_id > 0) {
                 buttonHoverBgColor = '#C8104A';
             }
             
+            // Calculate padding based on font size for dynamic button sizing
+            // Padding should scale proportionally: larger font = more padding
+            // Base padding ratio: for 16px font, use ~12px vertical and ~24px horizontal
+            var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75)); // 75% of font size, minimum 8px
+            var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5)); // 150% of font size, minimum 16px
+            
             // Apply to submit button
             $('.footer .action.submit.classic-button').css({
                 'font-size': buttonTextSize + 'px',
                 'color': buttonTextColor,
                 'background-color': buttonBgColor,
                 'border-color': buttonBgColor,
-                'border-radius': borderRadius + 'px'
+                'border-radius': borderRadius + 'px',
+                'padding': verticalPadding + 'px ' + horizontalPadding + 'px',
+                'line-height': '1.2'
             }).attr('data-hover-bg', buttonHoverBgColor);
             
             // Apply to reset button
@@ -6859,7 +6955,9 @@ if ($form_id > 0) {
                 'color': buttonTextColor,
                 'background-color': buttonBgColor,
                 'border-color': buttonBgColor,
-                'border-radius': borderRadius + 'px'
+                'border-radius': borderRadius + 'px',
+                'padding': verticalPadding + 'px ' + horizontalPadding + 'px',
+                'line-height': '1.2'
             }).attr('data-hover-bg', buttonHoverBgColor);
         };
         
@@ -7126,17 +7224,27 @@ if ($form_id > 0) {
             return false;
         });
         
-        // Update preview for a specific element
+        // Update preview for a specific element (local function - calls global if available)
         function updateElementDesignPreview(formdataid) {
-            // Get all design values for this element
+            // Use global function if available (it has better selectors for both preview containers)
+            if (typeof window.updateElementDesignPreview === 'function') {
+                window.updateElementDesignPreview(formdataid);
+                return;
+            }
+            
+            // Fallback: Get all design values for this element
             var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
             var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
             var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
-            var borderRadius = parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4;
+            var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
+            var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
+            if (isNaN(borderRadius) || borderRadius < 0) {
+                borderRadius = 4;
+            }
             var bgColor = $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || '';
             
             // Apply styles to the label (not the input field) with this formdataid
-            var $previewLabel = $('.contact-form .label-content[data-formdataid="' + formdataid + '"]');
+            var $previewLabel = $('.contact-form .label-content[data-formdataid="' + formdataid + '"], .code-form-app .label-content[data-formdataid="' + formdataid + '"]');
             if ($previewLabel.length) {
                 $previewLabel.css({
                     'font-size': fontSize + 'px',
@@ -7149,9 +7257,27 @@ if ($form_id > 0) {
             }
             
             // Apply border-radius to the input field (not font-size)
-            var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"]');
+            var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"], .code-form-app input[data-formdataid="' + formdataid + '"], .code-form-app textarea[data-formdataid="' + formdataid + '"]');
             if ($previewInput.length) {
                 $previewInput.css({
+                    'border-radius': borderRadius + 'px'
+                });
+            }
+            
+            // Apply to file upload elements (upload-area and file_button) in both preview containers
+            var $uploadArea = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .upload-area, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .upload-area');
+            if ($uploadArea.length) {
+                $uploadArea.css({
+                    'border-radius': borderRadius + 'px'
+                });
+            }
+            
+            var $fileButton = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .file_button, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .file_button');
+            if ($fileButton.length) {
+                $fileButton.css({
+                    'font-size': fontSize + 'px',
+                    'font-weight': fontWeight,
+                    'color': color,
                     'border-radius': borderRadius + 'px'
                 });
             }
