@@ -2057,28 +2057,49 @@ $(document).on("click", ".submit.action", function (e) {
 
 // File 
 window.onload = (event) => {
-    const fileButton = $('#fileButton');
-    const fileInput = $('#fileimage');
-    const imgContainer = $('#imgContainer');
-    const uploadText = $('#uploadText');
-    $(document).on('click', '#fileButton', function () {
-        $(this).closest(".globo-form-input").find('#fileimage').click();
+    // File upload handlers - use data-formdataid to find elements
+    $(document).on('click', '.file_button', function () {
+        var formdataid = $(this).closest(".globo-form-input").attr('data-formdataid');
+        if (formdataid) {
+            $(this).closest(".globo-form-input").find('#fileimage-' + formdataid).click();
+        } else {
+            // Fallback for old format
+            $(this).closest(".globo-form-input").find('input[type="file"]').click();
+        }
     });
 
     $(document).on('click', '.close-button', function (event) {
         event.preventDefault();
-        if ($(this).closest(".globo-form-input").find('.imgContainer').children().length === 0) {
-            $(this).closest(".globo-form-input").find('#uploadText').show();
-            $(this).closest(".globo-form-input").find('#fileButton').show();
-            $(this).closest(".globo-form-input").find('#fileimage').val('');
-            $(this).closest(".globo-form-input").find('.img-preview-wrapper').remove();
+        var $formInput = $(this).closest(".globo-form-input");
+        var formdataid = $formInput.attr('data-formdataid');
+        if ($formInput.find('.img-container').children().length === 0) {
+            if (formdataid) {
+                $formInput.find('#uploadText-' + formdataid).show();
+                $formInput.find('#fileButton-' + formdataid).show();
+                $formInput.find('#fileimage-' + formdataid).val('');
+            } else {
+                // Fallback for old format
+                $formInput.find('#uploadText, .upload-p').show();
+                $formInput.find('#fileButton, .file_button').show();
+                $formInput.find('input[type="file"]').val('');
+            }
+            $formInput.find('.img-preview-wrapper').remove();
         }
     });
 
-    $(document).on('change', '#fileimage', function (event) {
+    $(document).on('change', 'input[type="file"][data-type="file"]', function (event) {
         event.preventDefault();
         var $thisObj = $(this);
-        $(this).closest(".globo-form-input").find('#imgContainer').html(''); // Clear previous previews
+        var formdataid = $(this).attr('data-formdataid');
+        var $formInput = $(this).closest(".globo-form-input");
+        
+        // Clear previous previews
+        if (formdataid) {
+            $formInput.find('#imgContainer-' + formdataid).html('');
+        } else {
+            $formInput.find('.img-container, #imgContainer').html('');
+        }
+        
         const files = this.files;
 
         Array.from(files).forEach(file => {
@@ -2109,11 +2130,23 @@ window.onload = (event) => {
 
                         if (extensionArray.includes(file.type)) {
                             if (files.length > 0) {
-                                $thisObj.closest(".globo-form-input").find('#uploadText').hide();
-                                $thisObj.closest(".globo-form-input").find('#fileButton').hide();
+                                if (formdataid) {
+                                    $formInput.find('#uploadText-' + formdataid).hide();
+                                    $formInput.find('#fileButton-' + formdataid).hide();
+                                } else {
+                                    // Fallback for old format
+                                    $formInput.find('#uploadText, .upload-p').hide();
+                                    $formInput.find('#fileButton, .file_button').hide();
+                                }
                             } else {
-                                $thisObj.closest(".globo-form-input").find('#uploadText').show();
-                                $thisObj.closest(".globo-form-input").find('#fileButton').show();
+                                if (formdataid) {
+                                    $formInput.find('#uploadText-' + formdataid).show();
+                                    $formInput.find('#fileButton-' + formdataid).show();
+                                } else {
+                                    // Fallback for old format
+                                    $formInput.find('#uploadText, .upload-p').show();
+                                    $formInput.find('#fileButton, .file_button').show();
+                                }
                             }
 
                             const reader = new FileReader();
@@ -2130,7 +2163,13 @@ window.onload = (event) => {
                                 }
 
                                 imgPreviewWrapper.append(imgPreview).append(closeButton).append(fileName);
-                                $thisObj.closest(".globo-form-input").find('#imgContainer').append(imgPreviewWrapper);
+                                
+                                // Append to correct container
+                                if (formdataid) {
+                                    $formInput.find('#imgContainer-' + formdataid).append(imgPreviewWrapper);
+                                } else {
+                                    $formInput.find('.img-container, #imgContainer').append(imgPreviewWrapper);
+                                }
                             };
 
                             reader.readAsDataURL(file);

@@ -3387,11 +3387,11 @@ class Client_functions extends common_function {
                                 $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[10].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
                                         <label  class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="File" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                         <div class="globo-form-input" data-formdataid="'.$form_data_id.'">
-                                            <div class="upload-area" id="uploadArea"'.$element_design_style.'>
-                                                <p class="upload-p '.$elementtitle.''.$form_data_id.'__placeholder"" id="uploadText">'.$unserialize_elementdata[2].'</p>
-                                                <span class="file_button '.$elementtitle.''.$form_data_id.'__buttontext '.$is_buttonhidden.'"  id="fileButton"'.$element_design_style.'>'.$unserialize_elementdata[1].'</span>
-                                                <input id="fileimage" type="file" '.$is_allowmultiple.'>
-                                                <div class="img-container" id="imgContainer"></div>
+                                            <div class="upload-area" id="uploadArea-'.$form_data_id.'"'.$element_design_style.'>
+                                                <p class="upload-p '.$elementtitle.''.$form_data_id.'__placeholder" id="uploadText-'.$form_data_id.'">'.$unserialize_elementdata[2].'</p>
+                                                <span class="file_button '.$elementtitle.''.$form_data_id.'__buttontext '.$is_buttonhidden.'"  id="fileButton-'.$form_data_id.'"'.$element_design_style.'>'.$unserialize_elementdata[1].'</span>
+                                                <input id="fileimage-'.$form_data_id.'" type="file" data-formdataid="'.$form_data_id.'" data-type="file" '.$is_allowmultiple.'>
+                                                <div class="img-container" id="imgContainer-'.$form_data_id.'"></div>
                                             </div>
                                         </div>
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[5].'</small>
@@ -3433,10 +3433,11 @@ class Client_functions extends common_function {
                                     if (in_array(strtolower($option), array_map('strtolower', $checkbox_deafult_options))) {
                                         $checkbox_option_checked = "Checked";
                                     }
+                                    $checkbox_id = $form_data_id . '-checkbox-' . ($index + 1) . '-' . preg_replace('/[^a-zA-Z0-9]/', '-', $option);
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="checkbox-wrapper  checkbox-option">
-                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="false-checkbox-' . ($index + 1) . '-' . $option . '-" type="checkbox" data-type="checkbox" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
-                                                        <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="false-checkbox-' . ($index + 1) . '-' . $option . '-">' . $option . '</label>
+                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="' . $checkbox_id . '" type="checkbox" data-type="checkbox" data-formdataid="' . $form_data_id . '" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
+                                                        <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="' . $checkbox_id . '">' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '</label>
                                                     </div>
                                                     </li>';
                                 }  
@@ -3640,15 +3641,19 @@ class Client_functions extends common_function {
                                 if($unserialize_elementdata[3] == "1"){
                                     $is_keepossition_label = "position--label";
                                 }
+                                // Generate field name from label for rating star
+                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
+                                $rating_field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[6].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <label for="false-rating-star-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Rating" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
+                                                <label for="'.$form_data_id.'-rating-star-1" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Rating" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                 <div class="star-rating">
                                                     <fieldset>
-                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-5-stars" name="'.$form_data_id.'rating-star-1" value="5"><label for="'.$form_data_id.'false-rating-star-1-5-stars" title="5 Stars">5 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-4-stars" name="'.$form_data_id.'rating-star-1" value="4"><label for="'.$form_data_id.'false-rating-star-1-4-stars" title="4 Stars">4 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-3-stars" name="'.$form_data_id.'rating-star-1" value="3"><label for="'.$form_data_id.'false-rating-star-1-3-stars" title="3 Stars">3 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-2-stars" name="'.$form_data_id.'rating-star-1" value="2"><label for="'.$form_data_id.'false-rating-star-1-2-stars" title="2 Stars">2 stars</label>
-                                                        <input type="radio" data-type="rating-star" id="'.$form_data_id.'false-rating-star-1-1-star" name="'.$form_data_id.'rating-star-1" value="1"><label for="'.$form_data_id.'false-rating-star-1-1-star" title="1 Star">1 star</label>
+                                                        <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-5-stars" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="5"><label for="'.$form_data_id.'-rating-star-1-5-stars" title="5 Stars">5 stars</label>
+                                                        <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-4-stars" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="4"><label for="'.$form_data_id.'-rating-star-1-4-stars" title="4 Stars">4 stars</label>
+                                                        <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-3-stars" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="3"><label for="'.$form_data_id.'-rating-star-1-3-stars" title="3 Stars">3 stars</label>
+                                                        <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-2-stars" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="2"><label for="'.$form_data_id.'-rating-star-1-2-stars" title="2 Stars">2 stars</label>
+                                                        <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-1-star" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="1"><label for="'.$form_data_id.'-rating-star-1-1-star" title="1 Star">1 star</label>
                                                     </fieldset>
                                                 </div>
                                                 <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[1].'</small>
