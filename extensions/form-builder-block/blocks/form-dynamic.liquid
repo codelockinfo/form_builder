@@ -247,64 +247,52 @@
         opacity: 1;
       }
       
-      /* Rating Star Styles */
+      /* Rating Star Styles - Horizontal Display */
       .code-form-control .star-rating>fieldset,
       .contact-form .code-form-control .star-rating>fieldset {
         border: none;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        display: inline-block;
         padding: 0;
         margin: 0;
+        direction: rtl;
+        unicode-bidi: bidi-override;
       }
       .code-form-control .star-rating>fieldset:not(:checked)>label,
       .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label {
-        float: none;
-        display: flex;
-        align-items: center;
-        width: auto;
-        padding: 5px 0 5px 30px;
-        overflow: visible;
-        white-space: normal;
+        float: right;
+        width: 1.5em;
+        padding: 0;
+        overflow: hidden;
+        white-space: nowrap;
         cursor: pointer;
-        font-size: 100%;
-        color: #000;
+        font-size: 200%;
+        color: rgba(0,0,0,0);
         position: relative;
-        margin: 0;
+        margin: 0 2px;
       }
       .code-form-control .star-rating>fieldset:not(:checked)>input,
       .contact-form .code-form-control .star-rating>fieldset:not(:checked)>input {
         position: absolute;
-        left: 0;
-        margin: 0;
-        width: 20px;
-        height: 20px;
-        opacity: 0;
-        cursor: pointer;
-        z-index: 2;
+        clip: rect(0, 0, 0, 0);
       }
       .code-form-control .star-rating>fieldset:not(:checked)>label:before,
       .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 20px;
-        height: 20px;
-        border: 2px solid #d1d5db;
-        border-radius: 50%;
-        background-color: #fff;
+        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg');
+        display: block;
+        width: 100%;
+        height: 100%;
       }
       .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before,
       .contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before {
-        border-color: #EB1256;
-        background-color: #EB1256;
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
       }
       .code-form-control .star-rating>fieldset>input:checked ~ label:before,
       .contact-form .code-form-control .star-rating>fieldset>input:checked ~ label:before {
-        border-color: #EB1256;
-        background-color: #EB1256;
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+      }
+      .code-form-control .star-rating>fieldset>input:checked ~ label ~ label:before,
+      .contact-form .code-form-control .star-rating>fieldset>input:checked ~ label ~ label:before {
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
       }
       
       /* Options per line styles for checkboxes and radio buttons */
@@ -426,14 +414,29 @@
       area.style.position = 'relative';
     });
     
-    // Ensure star rating fieldset uses flex
+    // Ensure star rating fieldset displays horizontally
     const starRatings = container.querySelectorAll('.star-rating fieldset');
     starRatings.forEach(function(fieldset) {
-      fieldset.style.display = 'flex';
-      fieldset.style.flexDirection = 'column';
-      fieldset.style.gap = '8px';
+      fieldset.style.display = 'inline-block';
+      fieldset.style.direction = 'rtl';
+      fieldset.style.unicodeBidi = 'bidi-override';
       fieldset.style.padding = '0';
       fieldset.style.margin = '0';
+    });
+    
+    // Ensure star rating labels display horizontally
+    const starLabels = container.querySelectorAll('.star-rating fieldset label');
+    starLabels.forEach(function(label) {
+      label.style.float = 'right';
+      label.style.width = '1.5em';
+      label.style.padding = '0';
+      label.style.margin = '0 2px';
+      label.style.overflow = 'hidden';
+      label.style.whiteSpace = 'nowrap';
+      label.style.cursor = 'pointer';
+      label.style.fontSize = '200%';
+      label.style.color = 'rgba(0,0,0,0)';
+      label.style.position = 'relative';
     });
     
     // Ensure checkbox and radio wrappers use flex
