@@ -158,7 +158,6 @@ ul[role=tablist] .Polaris-Tabs__TabContainer:after {
     /* transform: translateY(30px) rotate(-45deg) skew(-15deg,-15deg) translateX(32px); */
     margin-top: 10px;
 }
-ul[role=tablist].last-child() .Polaris-Tabs__TabContainer:after
 ul[role=tablist] .Polaris-Tabs__TabContainer {
     align-items: center;
     height: 100%;
@@ -548,42 +547,56 @@ span.Polaris-Choice__Label {
  /* .star-rating>fieldset:not(:checked)>label:before {
     content: url(data:image/svg+xml; utf8, <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="star" class="svg-inline--fa fa-star fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="%23EB1256" d="M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z"></path></svg>);
 } */
-.code-form-control  .star-rating>fieldset {
+/* Star rating styles - apply to both customizer and storefront */
+.code-form-control .star-rating>fieldset,
+.contact-form .code-form-control .star-rating>fieldset {
     border: none;
-    display: inline-block;
+    display: block;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>label {
-    float: right;
-    width: 1em;
-    padding: 0 0.05em;
-    overflow: hidden;
-    white-space: nowrap;
+.code-form-control .star-rating>fieldset:not(:checked)>label,
+.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label {
+    float: none;
+    display: block;
+    width: auto;
+    padding: 5px 0;
+    overflow: visible;
+    white-space: normal;
     cursor: pointer;
-    font-size: 200%;
-    color: rgba(0,0,0,0);
+    font-size: 100%;
+    color: #000;
+    margin-left: 25px;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>input {
+.code-form-control .star-rating>fieldset:not(:checked)>input,
+.contact-form .code-form-control .star-rating>fieldset:not(:checked)>input {
     position: absolute;
-    clip: rect(0, 0, 0, 0);
-}
-.code-form-control .star-rating>fieldset:not(:checked)>label {
-    float: right;
-    width: 1em;
-    padding: 0 0.05em;
-    overflow: hidden;
-    white-space: nowrap;
+    left: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    opacity: 0;
     cursor: pointer;
-    font-size: 200%;
-    color: rgba(0,0,0,0);
+    z-index: 2;
 }
-.code-form-control  .star-rating>fieldset:not(:checked)>label:before {
-    content: url(../images/download.svg);
+.code-form-control .star-rating>fieldset:not(:checked)>label:before,
+.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background-color: #fff;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>label:hover:before{
-    content: url(../images/star.svg);
+.code-form-control .star-rating>fieldset:not(:checked)>label:hover:before,
+.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before {
+    border-color: #EB1256;
+    background-color: #EB1256;
 }
-.code-form-control .star-rating>fieldset>input:checked ~ label:before{
-    content: url(../images/star.svg);
+.code-form-control .star-rating>fieldset>input:checked ~ label:before,
+.contact-form .code-form-control .star-rating>fieldset>input:checked ~ label:before {
+    border-color: #EB1256;
+    background-color: #EB1256;
 }
 .flex-wrap {
     display: flex;
@@ -722,7 +735,9 @@ ul {
  .checkbox-option{
     display: flex !important;
  }
- .code-form-app .checkbox-input{
+ /* Checkbox input styles - apply to both customizer and storefront */
+ .code-form-app .checkbox-input,
+ .contact-form .checkbox-input {
     position: absolute !important;
     top: 1px !important;
     left: 0px !important;
@@ -735,7 +750,8 @@ ul {
     z-index: 3 !important;
     pointer-events: auto !important;
  }
-.code-form-app .code-form-control .checkbox-wrapper input[type=checkbox] {
+.code-form-app .code-form-control .checkbox-wrapper input[type=checkbox],
+.contact-form .code-form-control .checkbox-wrapper input[type=checkbox] {
     position: absolute !important;
     top: 1px !important;
     left: 0px !important;
@@ -748,7 +764,8 @@ ul {
     z-index: 3 !important;
     pointer-events: auto !important;
 }
-.code-form-app .content .code-form-control label.checkbox_new {
+.code-form-app .content .code-form-control label.checkbox_new,
+.contact-form .code-form-control label.checkbox_new {
     text-align: center !important;
     width: 50% !important;
     padding-left: 28px !important;
@@ -757,7 +774,9 @@ ul {
     width: 50% !important;
  }
 /* Ensure checkbox styling works in preview */
-.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
+/* Checkbox styles - apply to both customizer and storefront */
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before,
+.contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
     position: absolute;
     top: 1px;
     left: 0px;
@@ -777,12 +796,14 @@ ul {
     transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     z-index: 1;
 }
-.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before,
+.contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
     border-color: #EB1256;
     box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
     background-color: #EB1256;
 }
-.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after,
+.contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
     position: absolute;
     top: 1px;
     left: 0px;
@@ -799,11 +820,13 @@ ul {
     z-index: 2;
     pointer-events: none;
 }
-.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after,
+.contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
     background-image: url(../images/checkbox.svg);
     opacity: 1;
 }
-.code-form-app .code-form-control .checkbox-wrapper .checkbox-label {
+.code-form-app .code-form-control .checkbox-wrapper .checkbox-label,
+.contact-form .code-form-control .checkbox-wrapper .checkbox-label {
     display: inline-block;
     padding-left: 28px;
     cursor: pointer;
@@ -994,7 +1017,9 @@ ul {
     cursor: pointer;
   }
   
-  #fileimage {
+  input[type="file"][data-type="file"],
+  #fileimage,
+  input[id^="fileimage-"] {
     display: none;
   }
   
