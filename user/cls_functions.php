@@ -3474,8 +3474,8 @@ class Client_functions extends common_function {
                                         $radio_option_checked = "Checked";
                                     }
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
-                                                    <div class="radio-wrapper">
-                                                        <input class="radio-input  '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.'>
+                                                    <div class="radio-wrapper ">
+                                                        <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.'>
                                                         <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
                                                     </div>
                                                 </li>';
