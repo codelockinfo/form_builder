@@ -9515,6 +9515,8 @@ class Client_functions extends common_function {
 .code-form-app .content .code-form-control textarea {
     height: initial;
     min-height: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 .code-form-app .content .code-form-control.layout-1-column {
     width: 100%;
