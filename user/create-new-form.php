@@ -138,7 +138,7 @@ include_once('cls_header.php');
                                     </div>
                                     <div class="Polaris-ButtonGroup__Item">
                                         <div class="Polaris-BulkActions__BulkActionButton">
-                                            <button class="Polaris-Button" type="button">
+                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
                                                 <span class="Polaris-Button__Content">
                                                     <span class="Polaris-Button__Text">Duplicate selected form(s)</span>
                                                 </span>
@@ -232,7 +232,7 @@ include_once('cls_header.php');
                                     </div>
                                     <div class="Polaris-ButtonGroup__Item">
                                         <div class="Polaris-BulkActions__BulkActionButton">
-                                            <button class="Polaris-Button" type="button">
+                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
                                                 <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Duplicate selected form(s)</span></span>
                                             </button>
                                         </div>
@@ -653,6 +653,87 @@ include_once('cls_header.php');
                     $('#moreActionsPopover').hide();
                     $('[aria-controls^="Polarispopover"]').attr('aria-expanded', 'false');
                 }
+            });
+            
+            // Duplicate selected forms handler
+            $(document).on('click', '.duplicate-selected-forms', function() {
+                var selectedIds = [];
+                $('.selectedCheck:checked').each(function() {
+                    var formId = $(this).closest('.Polaris-ResourceList__HeaderWrapper').find('.form_id_main').val();
+                    if (formId) {
+                        selectedIds.push(formId);
+                    }
+                });
+                
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one form to duplicate.');
+                    return;
+                }
+                
+                // Show loading state
+                var duplicateCount = 0;
+                var totalCount = selectedIds.length;
+                
+                // Duplicate each form
+                selectedIds.forEach(function(formId, index) {
+                    $.ajax({
+                        url: "ajax_call.php",
+                        type: "post",
+                        dataType: "json",
+                        data: { 
+                            'routine_name': 'duplicateFormFunction', 
+                            'form_id': formId,
+                            store: store 
+                        },
+                        success: function (response) {
+                            // Parse response if it's a string
+                            if (typeof response === 'string') {
+                                try {
+                                    response = JSON.parse(response);
+                                } catch(e) {
+                                      
+                                }
+                            }
+                            
+                            duplicateCount++;
+                            
+                            // When all duplications are complete, reload the form list
+                            if (duplicateCount === totalCount) {
+                                // Reload the form list
+                                getAllForm();
+                                
+                                // Uncheck all checkboxes
+                                $('.selectedCheck').prop('checked', false);
+                                
+                                // Show success message using Polaris-style banner
+                                var successBanner = '<div class="Polaris-Banner Polaris-Banner--statusSuccess" style="margin: 20px 0;">' +
+                                    '<div class="Polaris-Banner__Ribbon"><span class="Polaris-Icon Polaris-Icon--colorSuccess">' +
+                                    '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">' +
+                                    '<path d="M0 10c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10-10-4.486-10-10zm15.696-2.804l-6.5 6.5c-.196.196-.512.196-.707 0l-3.5-3.5c-.196-.196-.196-.512 0-.707l.707-.707c.195-.195.511-.195.707 0l2.439 2.44 5.439-5.44c.195-.195.511-.195.707 0l.707.707c.196.196.196.512.001.707z"></path>' +
+                                    '</svg></span></div>' +
+                                    '<div class="Polaris-Banner__ContentWrapper">' +
+                                    '<div class="Polaris-Banner__Content"><p>' + totalCount + ' form(s) duplicated successfully</p></div>' +
+                                    '</div></div>';
+                                
+                                $('.set_all_form').prepend(successBanner);
+                                
+                                // Remove banner after 3 seconds
+                                setTimeout(function() {
+                                    $('.Polaris-Banner--statusSuccess').fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            duplicateCount++;
+                            if (duplicateCount === totalCount) {
+                                flashNotice('Some forms could not be duplicated. Check console for details.', 'inline-flash--error');
+                                getAllForm();
+                            }
+                        }
+                    });
+                });
             });
             
             // Delete selected forms handler

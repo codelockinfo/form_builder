@@ -606,11 +606,34 @@ ul {
     align-items: center;
 }
 .code-form-control .checkbox-wrapper .checkbox-input {
-    display: none;
+    position: absolute !important;
+    top: 1px !important;
+    left: 0px !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
 }
 .code-form-control input[type=checkbox], .code-form-control input[type=radio] {
     box-sizing: border-box;
     box-shadow: none!important;
+}
+.code-form-control .checkbox-wrapper input[type=checkbox] {
+    position: absolute !important;
+    top: 1px !important;
+    left: 0px !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
 }
 .globo-list-control.option-1-column {
     width: 100%;
@@ -634,7 +657,7 @@ ul {
 .code-form-control .checkbox-wrapper .globo-option,.code-form-control .radio-wrapper .globo-option {
     color: #000;
 }
-.code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before, .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+.code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
     position: absolute;
     top: 1px;
     left: 0px;
@@ -643,8 +666,6 @@ ul {
     height: 20px;
     content: "";
     margin: 0;
-}
-.code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
     pointer-events: none;
     user-select: none;
     background-color: #fff;
@@ -654,20 +675,34 @@ ul {
     box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
     border-radius: 0.25rem;
     transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
+}
+.code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    content: "";
+    margin: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px 12px;
+    opacity: 0;
+    transition: opacity .2s;
+    z-index: 2;
+    pointer-events: none;
 }
 .code-form-control .radio-wrapper .radio-input ~ .radio-label:after {
     border-color: #EB1256;
 }
 .code-form-control .checkbox-wrapper .checkbox-label {
+    display: inline-block;
     padding-left: 28px;
     cursor: pointer;
-}
-.checkbox-wrapper .checkbox-input~.checkbox-label:after {
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: 50% 50%;
-    opacity: 0;
-    transition: opacity .2s;
+    position: relative;
+    user-select: none;
 }
 .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
     background-image: url(../images/checkbox.svg);
@@ -688,8 +723,31 @@ ul {
     display: flex !important;
  }
  .code-form-app .checkbox-input{
+    position: absolute !important;
+    top: 1px !important;
+    left: 0px !important;
+    width: 20px !important;
     height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
  }
+.code-form-app .code-form-control .checkbox-wrapper input[type=checkbox] {
+    position: absolute !important;
+    top: 1px !important;
+    left: 0px !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
+}
 .code-form-app .content .code-form-control label.checkbox_new {
     text-align: center !important;
     width: 50% !important;
@@ -700,6 +758,14 @@ ul {
  }
 /* Ensure checkbox styling works in preview */
 .code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    content: "";
+    margin: 0;
     pointer-events: none;
     user-select: none;
     background-color: #fff;
@@ -709,6 +775,7 @@ ul {
     box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
     border-radius: 0.25rem;
     transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1;
 }
 .code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
     border-color: #EB1256;
@@ -716,19 +783,32 @@ ul {
     background-color: #EB1256;
 }
 .code-form-app .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
+    position: absolute;
+    top: 1px;
+    left: 0px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    content: "";
+    margin: 0;
     background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: 50% 50%;
+    background-position: center;
+    background-size: 12px 12px;
     opacity: 0;
     transition: opacity .2s;
+    z-index: 2;
+    pointer-events: none;
 }
 .code-form-app .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
     background-image: url(../images/checkbox.svg);
     opacity: 1;
 }
 .code-form-app .code-form-control .checkbox-wrapper .checkbox-label {
+    display: inline-block;
     padding-left: 28px;
     cursor: pointer;
+    position: relative;
+    user-select: none;
 }
 .code-form-control  .globo-list-control .radio-wrapper .radio-input:checked~.radio-label:before {
     border-color: #fff;
@@ -1087,4 +1167,15 @@ ul {
         width: 24px;
         height: 24px;
     }
+}
+
+/* Hide only the checkbox in forms list, keep the text visible */
+.Polaris-CheckableButton.selectedshow .Polaris-Choice,
+.Polaris-CheckableButton.selectedshow .Polaris-Choice__Control,
+.Polaris-CheckableButton.selectedshow .Polaris-Checkbox,
+.Polaris-CheckableButton.selectedshow .Polaris-Checkbox__Input,
+.Polaris-CheckableButton.selectedshow .Polaris-Checkbox__Backdrop,
+.Polaris-CheckableButton.selectedshow .Polaris-Checkbox__Icon {
+    display: none !important;
+    visibility: hidden !important;
 }

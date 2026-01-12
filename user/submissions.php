@@ -3,22 +3,63 @@ include_once('cls_header.php');
 $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
 ?>
 <body style="padding: 20px;">
-    <div style="max-width: 1000px; margin: 0 auto;">
+    <style>
+        .submissions-table-container {
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+            position: relative;
+        }
+        .submissions-table-container::-webkit-scrollbar {
+            height: 12px;
+        }
+        .submissions-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+        .submissions-table-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+        }
+        .submissions-table-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .submissions-table-wrapper {
+            min-width: 100%;
+            display: inline-block;
+        }
+        .submissions-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        .submissions-table thead th {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <div style="max-width: 100%; margin: 0 auto;">
         <div style="margin-bottom: 20px;">
             <a href="dashboard_submissions.php?shop=<?php echo $store; ?>" class="Polaris-Button">Back to Dashboard</a>
             <h2>Form Submissions</h2>
         </div>
         
         <div class="Polaris-Card">
-            <div class="Polaris-Card__Section">
-                <table class="Polaris-DataTable__Table" style="width: 100%; border-collapse: collapse;">
-                    <thead id="submissions_header">
-                        <!-- Populated by JS -->
-                    </thead>
-                    <tbody id="submissions_list">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
+            <div class="Polaris-Card__Section submissions-table-container">
+                <div class="submissions-table-wrapper">
+                    <table class="Polaris-DataTable__Table submissions-table">
+                        <thead id="submissions_header">
+                            <!-- Populated by JS -->
+                        </thead>
+                        <tbody id="submissions_list">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

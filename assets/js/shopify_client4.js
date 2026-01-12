@@ -7,6 +7,68 @@ var CLS_CIRCLE_MINUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 80 80" focus
 var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focusable="false" aria-hidden="true"><path d="M255,0C114.75,0,0,114.75,0,255s114.75,255,255,255s255-114.75,255-255S395.25,0,255,0z M382.5,280.5h-102v102h-51v-102    h-102v-51h102v-102h51v102h102V280.5z" fill-rule="evenodd" fill="#3f4eae"></path></svg>';
 var BACKTO = 0;
 
+// Global object to store all element changes
+var elementChangesTracker = {
+    elements: {}, // Store element form data by formdataid
+    designSettings: {}, // Store design settings by formdataid
+    header: null, // Store header form data
+    footer: null  // Store footer form data
+};
+
+// Function to save current element form data to tracker
+function saveElementFormToTracker(formdataid) {
+    if (!formdataid) return;
+
+    var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
+    if ($form.length === 0) return;
+
+    // Update CKEditor if exists
+    if (typeof CKEDITOR !== 'undefined') {
+        var $contentEditor = $form.find('textarea[name="contentparagraph"]');
+        if ($contentEditor.length && CKEDITOR.instances['contentparagraph']) {
+            CKEDITOR.instances['contentparagraph'].updateElement();
+        }
+    }
+
+    var formData = new FormData($form[0]);
+    var elementData = {};
+
+    // Convert FormData to object
+    for (var pair of formData.entries()) {
+        var key = pair[0];
+        var value = pair[1];
+
+        if (key.endsWith('[]')) {
+            key = key.replace('[]', '');
+            if (!elementData[key]) {
+                elementData[key] = [];
+            }
+            elementData[key].push(value);
+        } else {
+            elementData[key] = value;
+        }
+    }
+
+    // Add file extension if exists
+    var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
+    if (val) {
+        elementData['allowextention'] = val;
+    }
+
+    // Store in tracker
+    elementChangesTracker.elements[formdataid] = elementData;
+
+    // Also save design settings to tracker
+    var designSettings = {
+        fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+        fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
+        color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+        borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
+        bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
+    };
+    elementChangesTracker.designSettings[formdataid] = designSettings;
+}
+
 // Fix for "store is not defined" error
 if (typeof store === 'undefined' || store === "") {
     // Try to get from URL params
@@ -380,14 +442,14 @@ $(document).on("click", ".element_coppy_to", function (event) {
             } else if (response['data'] === 'success') {
                 // Navigate back to form builder view
                 $('.owl-carousel').trigger('to.owl.carousel', [BACKTO, 40, true]);
-                
+
                 // Wait a moment for navigation to complete, then refresh elements
                 // This ensures the new element is included in the response
-                setTimeout(function() {
+                setTimeout(function () {
                     get_selected_elements(formid);
-                    
+
                     // After elements are loaded, scroll to the newly added element if possible
-                    setTimeout(function() {
+                    setTimeout(function () {
                         if (formdata_id) {
                             var $newElement = $('.selected_element_set [data-formdataid="' + formdata_id + '"]');
                             if ($newElement.length > 0) {
@@ -395,13 +457,13 @@ $(document).on("click", ".element_coppy_to", function (event) {
                                 $('html, body').animate({
                                     scrollTop: $newElement.offset().top - 100
                                 }, 300);
-                                
+
                                 // Highlight the new element briefly
                                 $newElement.css({
                                     'background-color': '#e3f2fd',
                                     'transition': 'background-color 0.5s'
                                 });
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     $newElement.css('background-color', '');
                                 }, 2000);
                             }
@@ -535,7 +597,7 @@ function get_selected_elements(form_id) {
                     try {
                         // Create a temporary div to parse the HTML
                         var formHtml = response['form_html'] || '';
-                        
+
                         // Basic sanitization - remove any script tags and malformed HTML
                         if (formHtml && typeof formHtml === 'string') {
                             // Remove script tags to prevent XSS and parsing errors
@@ -543,7 +605,7 @@ function get_selected_elements(form_id) {
                             // Remove any unclosed tags that might cause parsing errors
                             formHtml = formHtml.replace(/<if\b[^>]*>/gi, ''); // Remove any stray <if> tags
                         }
-                        
+
                         var $temp = $('<div>').html(formHtml);
 
                         // Find the actual form content (inside form-builder-wrapper)
@@ -559,7 +621,7 @@ function get_selected_elements(form_id) {
 
                         // Add the floating class
                         $(".preview-box").addClass("floting_form_main");
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error processing floating form HTML:', e);
                         // Fallback: clear the content if there's an error
                         $(".preview-box .contact-form").html('');
@@ -569,7 +631,7 @@ function get_selected_elements(form_id) {
                     // Regular form handling
                     try {
                         var formHtml = response['form_html'] || '';
-                        
+
                         // Basic sanitization - remove any script tags and malformed HTML
                         if (formHtml && typeof formHtml === 'string') {
                             // Remove script tags to prevent XSS and parsing errors
@@ -577,11 +639,11 @@ function get_selected_elements(form_id) {
                             // Remove any unclosed tags that might cause parsing errors
                             formHtml = formHtml.replace(/<if\b[^>]*>/gi, ''); // Remove any stray <if> tags
                         }
-                        
+
                         if (formHtml) {
                             $(".code-form-app").html(formHtml);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         console.error('Error processing form HTML:', e);
                         // Fallback: clear the content if there's an error
                         $(".code-form-app").html('');
@@ -829,7 +891,7 @@ function getAllForm() {
             } else {
                 $(".set_all_form").html(comeback['outcome']);
                 // Update form count after forms are loaded
-                setTimeout(function() {
+                setTimeout(function () {
                     updateFormCount();
                 }, 100);
             }
@@ -890,107 +952,72 @@ function initializeCKEditor(editorName, targetElement) {
     // Try to find by ID first, then by name
     var editorElement = $('#' + editorName).length > 0 ? $('#' + editorName) : $('textarea[name="' + editorName + '"]');
 
-    if (editorElement.length > 0 && CKEDITOR.instances[editorName]) {
-        try {
-            CKEDITOR.instances[editorName].destroy();
-        } catch (e) {
-        }
-    }
-
-    if (editorElement.length > 0 && !CKEDITOR.instances[editorName]) {
-        try {
-            var editorInstance;
-            // Use ID/name string if available (CKEditor's preferred method)
-            if (editorElement.attr('id')) {
-                // Remove readonly/disabled attributes before initializing
-                editorElement.removeAttr('readonly').removeAttr('disabled');
-                editorInstance = CKEDITOR.replace(editorElement.attr('id'), {
-                    readOnly: false, // Explicitly set to false
-                    on: {
-                        instanceReady: function (evt) {
-                            // Ensure editor is not read-only
-                            if (evt.editor.readOnly) {
-                                evt.editor.setReadOnly(false);
-                            }
-                            evt.editor.on('change', function () {
-                                var editorData = evt.editor.getData();
-                                if (editorName == "contentparagraph") {
-                                    var mainContainerClass = editorElement.closest(".container").attr("class");
-                                    var classArray = mainContainerClass.split(" ");
-                                    var containerClass = classArray.find(className => className.startsWith("container_"));
-                                    $(".block-container ." + containerClass).find(".globo-paragraph").html(editorData);
-                                } else {
-                                    if (targetElement) {
-                                        $(targetElement).html(editorData);
-                                    }
-                                }
-                            });
-
-                            // Also update on blur
-                            evt.editor.on('blur', function () {
-                                var editorData = evt.editor.getData();
-                                if (editorName == "contentparagraph") {
-                                    var mainContainerClass = editorElement.closest(".container").attr("class");
-                                    var classArray = mainContainerClass.split(" ");
-                                    var containerClass = classArray.find(className => className.startsWith("container_"));
-                                    $(".block-container ." + containerClass).find(".globo-paragraph").html(editorData);
-                                } else {
-                                    if (targetElement) {
-                                        $(targetElement).html(editorData);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            } else {
-                // Fallback to DOM element
-                // Remove readonly/disabled attributes before initializing
-                editorElement.removeAttr('readonly').removeAttr('disabled');
-                var domElement = editorElement[0];
-                editorInstance = CKEDITOR.replace(domElement, {
-                    readOnly: false, // Explicitly set to false
-                    on: {
-                        instanceReady: function (evt) {
-                            // Ensure editor is not read-only
-                            if (evt.editor.readOnly) {
-                                evt.editor.setReadOnly(false);
-                            }
-                            evt.editor.on('change', function () {
-                                var editorData = evt.editor.getData();
-                                if (editorName == "contentparagraph") {
-                                    var mainContainerClass = editorElement.closest(".container").attr("class");
-                                    var classArray = mainContainerClass.split(" ");
-                                    var containerClass = classArray.find(className => className.startsWith("container_"));
-                                    $(".block-container ." + containerClass).find(".globo-paragraph").html(editorData);
-                                } else {
-                                    if (targetElement) {
-                                        $(targetElement).html(editorData);
-                                    }
-                                }
-                            });
-
-                            // Also update on blur
-                            evt.editor.on('blur', function () {
-                                var editorData = evt.editor.getData();
-                                if (editorName == "contentparagraph") {
-                                    var mainContainerClass = editorElement.closest(".container").attr("class");
-                                    var classArray = mainContainerClass.split(" ");
-                                    var containerClass = classArray.find(className => className.startsWith("container_"));
-                                    $(".block-container ." + containerClass).find(".globo-paragraph").html(editorData);
-                                } else {
-                                    if (targetElement) {
-                                        $(targetElement).html(editorData);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+    if (editorElement.length > 0) {
+        // If it's already a CKEditor instance, check if we need to recreate it
+        if (CKEDITOR.instances[editorName]) {
+            try {
+                // If it's already there and not read-only, just return the instance
+                if (!CKEDITOR.instances[editorName].readOnly) {
+                    return CKEDITOR.instances[editorName];
+                }
+                CKEDITOR.instances[editorName].destroy();
+            } catch (e) {
+                console.warn('Error destroying CKEditor instance:', e);
             }
-        } catch (e) {
         }
-    } else if (!editorElement.length) {
+
+        try {
+            // Remove readonly/disabled attributes before initializing
+            editorElement.removeAttr('readonly').removeAttr('disabled');
+
+            var editorInstance = CKEDITOR.replace(editorName, {
+                readOnly: false, // Explicitly set to false at initialization
+                on: {
+                    instanceReady: function (evt) {
+                        // Double check readOnly state
+                        if (evt.editor.readOnly) {
+                            evt.editor.setReadOnly(false);
+                        }
+
+                        // Focus the editor to ensure it's interactive
+                        // evt.editor.focus(); 
+
+                        evt.editor.on('change', function () {
+                            var editorData = evt.editor.getData();
+                            if (editorName == "contentparagraph") {
+                                var mainContainerClass = editorElement.closest(".container").attr("class");
+                                var classArray = mainContainerClass.split(" ");
+                                var containerClass = classArray.find(className => className.startsWith("container_"));
+                                $(".block-container ." + containerClass).find(".globo-paragraph").html(editorData);
+                            } else {
+                                if (targetElement) {
+                                    $(targetElement).html(editorData);
+                                }
+                            }
+                        });
+
+                        // Also update on blur
+                        evt.editor.on('blur', function () {
+                            var editorData = evt.editor.getData();
+                            if (targetElement) {
+                                $(targetElement).html(editorData);
+                            }
+                        });
+
+                        // Also update on keyup for real-time preview
+                        evt.editor.on('keyup', function () {
+                            var editorData = evt.editor.getData();
+                            if (targetElement) {
+                                $(targetElement).html(editorData);
+                            }
+                        });
+                    }
+                }
+            });
+            return editorInstance;
+        } catch (e) {
+            console.error('Error initializing CKEditor:', e);
+        }
     }
 }
 
@@ -999,6 +1026,13 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
     var elementId = $(this).data("elementid");
     var formId = $(this).closest(".clsselected_element").data("formid");
     var formdataId = $(this).closest(".clsselected_element").data("formdataid");
+
+    // Save current form data to tracker before switching
+    var currentFormdataid = $('form.add_elementdata').attr('formdataid');
+    if (currentFormdataid) {
+        saveElementFormToTracker(currentFormdataid);
+    }
+
     $('.owl-carousel').trigger('to.owl.carousel', [slideTo, 40, true]);
     if (elementId != undefined) {
         $.ajax({
@@ -1012,9 +1046,70 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                 } else {
                     $(".elementAppend").html(comeback.outcome);
                     initializeCKEditor('contentparagraph', '');
-                    // $('.myeditor').each(function(index,item){
-                    //     CKEDITOR.replace(item);
-                    // });
+
+                    // Restore saved data if exists
+                    if (elementChangesTracker.elements[formdataId]) {
+                        var savedData = elementChangesTracker.elements[formdataId];
+                        var $newForm = $('form.add_elementdata[formdataid="' + formdataId + '"]');
+                        if ($newForm.length) {
+                            // Restore form values
+                            for (var key in savedData) {
+                                if (key === 'allowextention') continue; // Skip, handled separately
+                                var $field = $newForm.find('[name="' + key + '"]');
+                                if ($field.length) {
+                                    if ($field.is(':checkbox') || $field.is(':radio')) {
+                                        $field.prop('checked', savedData[key] == $field.val());
+                                    } else if ($field.is('select')) {
+                                        $field.val(savedData[key]);
+                                        if ($field.hasClass('select2')) {
+                                            $field.trigger('change');
+                                        }
+                                    } else {
+                                        $field.val(savedData[key]);
+                                        // Update CKEditor if it's a textarea
+                                        if ($field.is('textarea') && CKEDITOR.instances[key]) {
+                                            CKEDITOR.instances[key].setData(savedData[key]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Restore saved design settings if exists
+                    if (elementChangesTracker.designSettings[formdataId]) {
+                        setTimeout(function () {
+                            var savedDesign = elementChangesTracker.designSettings[formdataId];
+                            $('.element-design-font-size[data-formdataid="' + formdataId + '"]').val(savedDesign.fontSize || 16);
+                            $('.element-design-font-weight[data-formdataid="' + formdataId + '"]').val(savedDesign.fontWeight || '400');
+                            $('.element-design-color-text[data-formdataid="' + formdataId + '"]').val(savedDesign.color || '#000000');
+                            $('.element-design-border-radius[data-formdataid="' + formdataId + '"]').val(savedDesign.borderRadius || 4);
+                            if (savedDesign.bgColor) {
+                                $('.element-design-bg-color-text[data-formdataid="' + formdataId + '"]').val(savedDesign.bgColor);
+                            }
+                            // Update preview
+                            if (typeof updateElementDesignPreview === 'function') {
+                                updateElementDesignPreview(formdataId);
+                            }
+                        }, 100);
+                    }
+                    
+                    // Add event listeners to save design settings to tracker when they change
+                    setTimeout(function() {
+                        $('.element-design-font-size[data-formdataid="' + formdataId + '"], .element-design-font-weight[data-formdataid="' + formdataId + '"], .element-design-color-text[data-formdataid="' + formdataId + '"], .element-design-border-radius[data-formdataid="' + formdataId + '"], .element-design-bg-color-text[data-formdataid="' + formdataId + '"]').off('change.designTracker').on('change.designTracker', function() {
+                            var formdataid = $(this).data('formdataid');
+                            if (formdataid) {
+                                var designSettings = {
+                                    fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                                    fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
+                                    color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+                                    borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
+                                    bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
+                                };
+                                elementChangesTracker.designSettings[formdataid] = designSettings;
+                            }
+                        });
+                    }, 200);
                 }
             }
         });
@@ -1047,6 +1142,12 @@ $(document).on("click", "#checkAll", function () {
         $(".selectedCheck").each(function () {
             $(this).prop("checked", true);
         });
+        $(".bultActionss").css("display", "block");
+        $(".selectedshow").css("display", "none");
+        $(".Polaris-Labelled--hidden").css("display", "none");
+        setTimeout(function () {
+            $('.Deselectcount').text('Select all form');
+        }, 100);
     } else {
         $(".selectedCheck").each(function () {
             $(this).prop("checked", false);
@@ -1073,7 +1174,7 @@ $(document).on("click", ".selectedCheck", function () {
         setTimeout(function () {
 
             var mychecked = $('.selectedCheck:checked').length;
-            $('.Deselectcount').text('Deselect all ' + mychecked + '  form');
+            $('.Deselectcount').text('Select all form');
 
         }, 100);
     }
@@ -1112,11 +1213,69 @@ $(document).on("click", ".removeElement", function (event) {
 });
 
 $(document).on("click", ".saveForm", function (event) {
-    saveposition();
-    saveform();
-    saveheaderform();
-    savefooterform();
-    savepublishdata();
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('Save button clicked');
+    
+    try {
+        // Save current visible form to tracker before saving
+        var currentFormdataid = $('form.add_elementdata').attr('formdataid');
+        if (currentFormdataid) {
+            console.log('Saving current form to tracker:', currentFormdataid);
+            saveElementFormToTracker(currentFormdataid);
+        }
+
+        // Save header and footer to tracker
+        var $headerForm = $(".add_headerdata");
+        if ($headerForm.length) {
+            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances["contentheader"]) {
+                CKEDITOR.instances["contentheader"].updateElement();
+            }
+            var formData = new FormData($headerForm[0]);
+            var headerData = {};
+            for (var pair of formData.entries()) {
+                headerData[pair[0]] = pair[1];
+            }
+            elementChangesTracker.header = headerData;
+        }
+
+        var $footerForm = $(".add_footerdata");
+        if ($footerForm.length) {
+            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances["contentfooter"]) {
+                CKEDITOR.instances["contentfooter"].updateElement();
+            }
+            var formData = new FormData($footerForm[0]);
+            var footerData = {};
+            for (var pair of formData.entries()) {
+                footerData[pair[0]] = pair[1];
+            }
+            elementChangesTracker.footer = footerData;
+        }
+
+        console.log('Starting save process...');
+        // Now save everything
+        saveposition();
+        saveAllElementProperties(); // Save all element properties (labels, placeholders, etc.)
+        saveheaderform();
+        savefooterform();
+        savepublishdata();
+        saveAllElementDesignSettings(); // Save all element design settings
+        
+        console.log('Save process completed');
+        
+        // Show success message
+        if (typeof flashNotice === 'function') {
+            flashNotice('All changes saved successfully!', 'inline-flash--success');
+        }
+    } catch (error) {
+        console.error('Error during save:', error);
+        if (typeof flashNotice === 'function') {
+            flashNotice('Error saving changes: ' + error.message, 'inline-flash--error');
+        }
+    }
+    
+    return false;
 });
 
 function saveposition() {
@@ -1139,12 +1298,176 @@ function saveposition() {
     }
 }
 
+function saveAllElementProperties() {
+    var formId = $('.formid').val();
+    if (!formId) {
+        return;
+    }
+
+    // Update CKEditor instances before collecting data
+    if (typeof CKEDITOR !== 'undefined') {
+        for (var instance in CKEDITOR.instances) {
+            if (CKEDITOR.instances[instance]) {
+                CKEDITOR.instances[instance].updateElement();
+            }
+        }
+    }
+
+    // Save current visible form to tracker
+    var currentFormdataid = $('form.add_elementdata').attr('formdataid');
+    if (currentFormdataid) {
+        saveElementFormToTracker(currentFormdataid);
+    }
+
+    // Collect data from tracker (all previously edited elements)
+    var allElementsData = [];
+
+    // Get all formdataids from builder list
+    var allFormdataids = [];
+    $('.builder-item-wrapper[data-formdataid]').each(function () {
+        var formdataid = $(this).data('formdataid');
+        if (formdataid && allFormdataids.indexOf(formdataid) === -1) {
+            allFormdataids.push(formdataid);
+        }
+    });
+
+    // Process each formdataid
+    allFormdataids.forEach(function (formdataid) {
+        var elementData = null;
+
+        // First, try to get from tracker (saved changes)
+        if (elementChangesTracker.elements[formdataid]) {
+            elementData = elementChangesTracker.elements[formdataid];
+        } else {
+            // If not in tracker, try to get from current DOM form
+            var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
+            if ($form.length) {
+                var elementFormData = new FormData($form[0]);
+                elementData = {};
+
+                for (var pair of elementFormData.entries()) {
+                    var key = pair[0];
+                    var value = pair[1];
+                    if (key.endsWith('[]')) {
+                        key = key.replace('[]', '');
+                        if (!elementData[key]) {
+                            elementData[key] = [];
+                        }
+                        elementData[key].push(value);
+                    } else {
+                        elementData[key] = value;
+                    }
+                }
+
+                var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
+                if (val) {
+                    elementData['allowextention'] = val;
+                }
+            }
+        }
+
+        if (elementData && elementData['formdata_id'] && elementData['element_id']) {
+            // Ensure required fields
+            elementData['form_id'] = elementData['form_id'] || formId;
+            elementData['store'] = store;
+            elementData['routine_name'] = 'saveform';
+            allElementsData.push(elementData);
+        }
+    });
+
+    // Also collect from preview elements that might have been edited
+    $('.code-form-control[data-id^="element"][data-formdataid]').each(function () {
+        var formdataid = $(this).data('formdataid');
+        var dataId = $(this).attr('data-id');
+        var elementid = dataId ? dataId.replace('element', '') : '';
+
+        if (!formdataid || !elementid) {
+            return;
+        }
+
+        // Check if we already have this formdataid
+        var exists = allElementsData.some(function (item) {
+            return item.formdata_id == formdataid;
+        });
+
+        if (!exists) {
+            // Try to find the form for this element
+            var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
+            if ($form.length) {
+                var elementFormData = new FormData($form[0]);
+                var elementData = {};
+
+                for (var pair of elementFormData.entries()) {
+                    var key = pair[0];
+                    var value = pair[1];
+                    if (key.endsWith('[]')) {
+                        key = key.replace('[]', '');
+                        if (!elementData[key]) {
+                            elementData[key] = [];
+                        }
+                        elementData[key].push(value);
+                    } else {
+                        elementData[key] = value;
+                    }
+                }
+
+                elementData['formdata_id'] = formdataid;
+                elementData['element_id'] = elementid;
+                elementData['form_id'] = formId;
+                elementData['store'] = store;
+                elementData['routine_name'] = 'saveform';
+
+                allElementsData.push(elementData);
+                processedFormdataids[formdataid] = true;
+            }
+        }
+    });
+
+    // Save each element
+    if (allElementsData.length > 0) {
+        var saveCount = 0;
+        var totalCount = allElementsData.length;
+
+        allElementsData.forEach(function (elementData) {
+            var formData = new FormData();
+            for (var key in elementData) {
+                if (Array.isArray(elementData[key])) {
+                    elementData[key].forEach(function (val) {
+                        formData.append(key + '[]', val);
+                    });
+                } else {
+                    formData.append(key, elementData[key]);
+                }
+            }
+
+            $.ajax({
+                url: "ajax_call.php",
+                type: "post",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (response) {
+                    saveCount++;
+                },
+                error: function (xhr, status, error) {
+                    saveCount++;
+                }
+            });
+        });
+    }
+}
+
 function saveform() {
+    // Keep this for backward compatibility, but saveAllElementProperties will be called instead
     var $content = CKEDITOR.instances["contentparagraph"];
     if ($content != undefined) {
         CKEDITOR.instances["contentparagraph"].updateElement();
     }
     var form_data = $(".add_elementdata")[0];
+    if (!form_data) {
+        return;
+    }
     var val = $(".selectFile").select2("val");
     var form_data = new FormData(form_data);
     form_data.append("allowextention", val);
@@ -1168,21 +1491,43 @@ function saveform() {
 }
 
 function saveheaderform() {
-    var $contentheader = CKEDITOR.instances["contentheader"];
-    if ($contentheader != undefined) {
-        CKEDITOR.instances["contentheader"].updateElement();
+    // Save header data to tracker
+    var $headerForm = $(".add_headerdata");
+    if ($headerForm.length) {
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances["contentheader"]) {
+            CKEDITOR.instances["contentheader"].updateElement();
+        }
+        var formData = new FormData($headerForm[0]);
+        var headerData = {};
+        for (var pair of formData.entries()) {
+            headerData[pair[0]] = pair[1];
+        }
+        elementChangesTracker.header = headerData;
     }
-    var form_data = $(".add_headerdata")[0];
-    var form_data = new FormData(form_data);
-    form_data.append('store', store);
-    form_data.append('routine_name', 'saveheaderform');
+
+    // Use tracked data or current form
+    var form_data = elementChangesTracker.header ? elementChangesTracker.header : {};
+    var formDataObj = new FormData();
+
+    for (var key in form_data) {
+        formDataObj.append(key, form_data[key]);
+    }
+
+    // If no tracked data, use current form
+    if (Object.keys(form_data).length === 0 && $headerForm.length) {
+        formDataObj = new FormData($headerForm[0]);
+    }
+
+    formDataObj.append('store', store);
+    formDataObj.append('routine_name', 'saveheaderform');
+
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
         contentType: false,
         processData: false,
-        data: form_data,
+        data: formDataObj,
         success: function (response) {
             var response = JSON.parse(response);
         }
@@ -1190,25 +1535,217 @@ function saveheaderform() {
 }
 
 function savefooterform() {
-    var $contentfooter = CKEDITOR.instances["contentfooter"];
-    if ($contentfooter != undefined) {
-        CKEDITOR.instances["contentfooter"].updateElement();
+    // Save footer data to tracker
+    var $footerForm = $(".add_footerdata");
+    if ($footerForm.length) {
+        if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances["contentfooter"]) {
+            CKEDITOR.instances["contentfooter"].updateElement();
+        }
+        var formData = new FormData($footerForm[0]);
+        var footerData = {};
+        for (var pair of formData.entries()) {
+            footerData[pair[0]] = pair[1];
+        }
+        elementChangesTracker.footer = footerData;
     }
-    var form_data = $(".add_footerdata")[0];
-    var form_data = new FormData(form_data);
-    form_data.append('store', store);
-    form_data.append('routine_name', 'savefooterform');
+
+    // Use tracked data or current form
+    var form_data = elementChangesTracker.footer ? elementChangesTracker.footer : {};
+    var formDataObj = new FormData();
+
+    for (var key in form_data) {
+        formDataObj.append(key, form_data[key]);
+    }
+
+    // If no tracked data, use current form
+    if (Object.keys(form_data).length === 0 && $footerForm.length) {
+        formDataObj = new FormData($footerForm[0]);
+    }
+
+    formDataObj.append('store', store);
+    formDataObj.append('routine_name', 'savefooterform');
+
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
         contentType: false,
         processData: false,
-        data: form_data,
+        data: formDataObj,
         success: function (response) {
             var response = JSON.parse(response);
         }
     });
+}
+
+function saveAllElementDesignSettings() {
+    var formId = $('.formid').val();
+    if (!formId) {
+        console.warn('saveAllElementDesignSettings: No form ID found');
+        return;
+    }
+    
+    console.log('saveAllElementDesignSettings: Starting, formId:', formId);
+    
+    // IMPORTANT: Save current visible form's design settings to tracker BEFORE collecting
+    // This ensures we capture the design settings even if the form is about to be removed
+    var currentFormdataid = $('form.add_elementdata').attr('formdataid');
+    if (currentFormdataid) {
+        var $fontSize = $('.element-design-font-size[data-formdataid="' + currentFormdataid + '"]');
+        if ($fontSize.length) {
+            var currentDesignSettings = {
+                fontSize: parseInt($fontSize.val()) || 16,
+                fontWeight: $('.element-design-font-weight[data-formdataid="' + currentFormdataid + '"]').val() || '400',
+                color: $('.element-design-color-text[data-formdataid="' + currentFormdataid + '"]').val() || '#000000',
+                borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + currentFormdataid + '"]').val()) || 4,
+                bgColor: $('.element-design-bg-color-text[data-formdataid="' + currentFormdataid + '"]').val() || ''
+            };
+            elementChangesTracker.designSettings[currentFormdataid] = currentDesignSettings;
+            console.log('Saved current form design settings to tracker:', currentFormdataid, currentDesignSettings);
+        }
+    }
+    
+    // Also save design settings from all visible design inputs (in case tracker missed some)
+    $('.element-design-font-size[data-formdataid]').each(function() {
+        var formdataid = $(this).data('formdataid');
+        if (formdataid && !elementChangesTracker.designSettings[formdataid]) {
+            var designSettings = {
+                fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
+                color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+                borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
+                bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
+            };
+            elementChangesTracker.designSettings[formdataid] = designSettings;
+            console.log('Saved design settings from DOM to tracker:', formdataid, designSettings);
+        }
+    });
+
+    // Build mapping of formdataid to elementid from preview elements (most reliable)
+    // Elements have data-id="elementX" and data-formdataid="Y" attributes
+    var formdataidToElementid = {};
+    $('.code-form-control[data-id^="element"][data-formdataid]').each(function () {
+        var dataId = $(this).attr('data-id');
+        var formdataid = $(this).data('formdataid');
+        if (dataId && dataId.startsWith('element') && formdataid) {
+            var elementid = dataId.replace('element', '');
+            formdataidToElementid[formdataid] = elementid;
+        }
+    });
+
+    // Also get from builder list items
+    $('.builder-item-wrapper[data-formdataid]').each(function () {
+        var formdataid = $(this).data('formdataid');
+        var elementid = $(this).find('.list-item').data('elementid') ||
+            $(this).find('.get_element_hidden').val() || '';
+        if (formdataid && elementid && !formdataidToElementid[formdataid]) {
+            formdataidToElementid[formdataid] = elementid;
+        }
+    });
+
+    // Also check from form inputs in settings panel
+    $('form.add_elementdata[formdataid]').each(function () {
+        var formdataid = $(this).attr('formdataid');
+        var elementid = $(this).find('input[name="element_id"]').val() ||
+            $(this).attr('elementid') || '';
+        if (formdataid && elementid && !formdataidToElementid[formdataid]) {
+            formdataidToElementid[formdataid] = elementid;
+        }
+    });
+
+    // Get all formdataids from builder list (all elements in the form)
+    var allFormdataids = [];
+    $('.builder-item-wrapper[data-formdataid]').each(function () {
+        var formdataid = $(this).data('formdataid');
+        if (formdataid && allFormdataids.indexOf(formdataid) === -1) {
+            allFormdataids.push(formdataid);
+        }
+    });
+
+    // Collect all element design settings from tracker AND current DOM
+    var allSettings = [];
+    allFormdataids.forEach(function (formdataid) {
+        var elementid = formdataidToElementid[formdataid] || '';
+
+        // If still no elementid, try to extract from preview container
+        if (!elementid) {
+            var $previewContainer = $('.code-form-control[data-formdataid="' + formdataid + '"]').first();
+            if ($previewContainer.length) {
+                var dataId = $previewContainer.attr('data-id');
+                if (dataId && dataId.startsWith('element')) {
+                    elementid = dataId.replace('element', '');
+                }
+            }
+        }
+
+        if (formdataid && elementid) {
+            var settings = null;
+            
+            // FIRST: Try to get from tracker (saved changes from previous edits)
+            if (elementChangesTracker.designSettings[formdataid]) {
+                settings = elementChangesTracker.designSettings[formdataid];
+            } else {
+                // SECOND: If not in tracker, try to get from current DOM (if form is visible)
+                var $fontSize = $('.element-design-font-size[data-formdataid="' + formdataid + '"]');
+                if ($fontSize.length) {
+                    settings = {
+                        fontSize: parseInt($fontSize.val()) || 16,
+                        fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
+                        color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+                        borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
+                        bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
+                    };
+                }
+            }
+            
+            // Only add if we have settings
+            if (settings) {
+                allSettings.push({
+                    formdata_id: formdataid,
+                    element_id: elementid,
+                    settings: settings
+                });
+            }
+        }
+    });
+
+    // Save all settings
+    console.log('saveAllElementDesignSettings: Found', allSettings.length, 'elements with design settings');
+    if (allSettings.length > 0) {
+        console.log('saveAllElementDesignSettings: Sending to server:', allSettings);
+        $.ajax({
+            url: "ajax_call.php",
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            data: {
+                routine_name: 'save_all_element_design_settings',
+                store: store,
+                form_id: formId,
+                all_settings: JSON.stringify(allSettings)
+            },
+            success: function (response) {
+                console.log('saveAllElementDesignSettings: Success response:', response);
+                try {
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+                    if (response.result === 'success') {
+                        console.log('Design settings saved successfully:', response.saved_count, 'elements');
+                    } else {
+                        console.error('Design settings save failed:', response.msg);
+                    }
+                } catch (e) {
+                    console.error('Error parsing response:', e, response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('saveAllElementDesignSettings: AJAX error:', status, error, xhr);
+            }
+        });
+    } else {
+        console.warn('saveAllElementDesignSettings: No design settings to save');
+    }
 }
 
 function savepublishdata() {
@@ -1291,7 +1828,7 @@ window.onload = (event) => {
 
                     if (data && data.data) {
                         let allowExtentions = data.data[4] || 'png,svg,gif,jpeg,jpg,pdf,webp';
-                        
+
                         const extensionArray = allowExtentions.split(',').map(ext => {
                             switch (ext) {
                                 case 'jpg': return 'image/jpeg';
