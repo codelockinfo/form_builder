@@ -907,6 +907,13 @@ function get_selected_elements(form_id, callback) {
                         callback();
                     }, 300); // Increased delay to ensure DOM is fully updated and rendered
                 }
+                
+                // Initialize star rating handlers after form HTML is loaded
+                setTimeout(function() {
+                    if (typeof window.initializeStarRatingHandlers === 'function') {
+                        window.initializeStarRatingHandlers();
+                    }
+                }, 500);
             } else {
                 var errorMsg = response['msg'] || response['message'] || 'Failed to load form data. Please refresh the page and try again.';
                 // Call callback even on failure

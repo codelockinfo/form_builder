@@ -256,13 +256,16 @@
         margin: 0;
         direction: rtl;
         unicode-bidi: bidi-override;
+        overflow: visible;
+        line-height: 1;
       }
       .code-form-control .star-rating>fieldset label,
       .contact-form .code-form-control .star-rating>fieldset label {
         float: right;
         width: 1.5em;
+        height: 1.5em;
         padding: 0;
-        overflow: hidden;
+        overflow: visible;
         white-space: nowrap;
         cursor: pointer;
         font-size: 200%;
@@ -270,6 +273,8 @@
         position: relative;
         margin: 0 2px;
         display: block;
+        line-height: 1;
+        box-sizing: border-box;
       }
       .code-form-control .star-rating>fieldset input[type="radio"],
       .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
@@ -278,18 +283,23 @@
         width: 1.5em;
         height: 1.5em;
         margin: 0;
+        padding: 0;
         cursor: pointer;
         z-index: 2;
+        top: 0;
+        left: 0;
       }
       .code-form-control .star-rating>fieldset label:before,
       .contact-form .code-form-control .star-rating>fieldset label:before {
         content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg');
         display: block;
-        width: 100%;
-        height: 100%;
+        width: 1.5em;
+        height: 1.5em;
         position: absolute;
         top: 0;
         left: 0;
+        object-fit: contain;
+        line-height: 1;
       }
       .code-form-control .star-rating>fieldset label.star-filled:before,
       .contact-form .code-form-control .star-rating>fieldset label.star-filled:before {

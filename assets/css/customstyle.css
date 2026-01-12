@@ -556,13 +556,16 @@ span.Polaris-Choice__Label {
     margin: 0;
     direction: rtl;
     unicode-bidi: bidi-override;
+    overflow: visible;
+    line-height: 1;
 }
 .code-form-control .star-rating>fieldset label,
 .contact-form .code-form-control .star-rating>fieldset label {
     float: right;
     width: 1.5em;
+    height: 1.5em;
     padding: 0;
-    overflow: hidden;
+    overflow: visible;
     white-space: nowrap;
     cursor: pointer;
     font-size: 200%;
@@ -570,6 +573,8 @@ span.Polaris-Choice__Label {
     position: relative;
     margin: 0 2px;
     display: block;
+    line-height: 1;
+    box-sizing: border-box;
 }
 .code-form-control .star-rating>fieldset input[type="radio"],
 .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
@@ -578,18 +583,23 @@ span.Polaris-Choice__Label {
     width: 1.5em;
     height: 1.5em;
     margin: 0;
+    padding: 0;
     cursor: pointer;
     z-index: 2;
+    top: 0;
+    left: 0;
 }
 .code-form-control .star-rating>fieldset label:before,
 .contact-form .code-form-control .star-rating>fieldset label:before {
     content: url(../images/download.svg);
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 1.5em;
+    height: 1.5em;
     position: absolute;
     top: 0;
     left: 0;
+    object-fit: contain;
+    line-height: 1;
 }
 .code-form-control .star-rating>fieldset label:hover:before,
 .contact-form .code-form-control .star-rating>fieldset label:hover:before {

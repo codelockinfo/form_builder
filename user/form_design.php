@@ -7342,14 +7342,24 @@ if ($form_id > 0) {
         }
         
         // Initialize star rating handlers for customizer preview
-        function initializeStarRatingHandlers() {
+        window.initializeStarRatingHandlers = function() {
+            var $starRatings = $('.code-form-app .star-rating');
+            if ($starRatings.length === 0) {
+                // Try alternative selector
+                $starRatings = $('.code-form-app .code-form-control .star-rating');
+            }
+            
+            if ($starRatings.length === 0) {
+                return; // No star ratings found
+            }
+            
             // Handle star rating input changes
-            $('.code-form-app .star-rating fieldset input[type="radio"]').off('change.starRating').on('change.starRating', function() {
+            $starRatings.find('fieldset input[type="radio"]').off('change.starRating').on('change.starRating', function() {
                 updateStarRatingDisplay(this);
             });
             
             // Handle star rating label clicks
-            $('.code-form-app .star-rating fieldset label').off('click.starRating').on('click.starRating', function(e) {
+            $starRatings.find('fieldset label').off('click.starRating').on('click.starRating', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 var labelFor = $(this).attr('for');
@@ -7364,18 +7374,26 @@ if ($form_id > 0) {
             });
             
             // Initialize all stars as empty by default
-            $('.code-form-app .star-rating fieldset label').each(function() {
-                if (!$(this).hasClass('star-filled') && !$(this).hasClass('star-empty')) {
-                    $(this).addClass('star-empty');
+            $starRatings.find('fieldset label').each(function() {
+                var $label = $(this);
+                if (!$label.hasClass('star-filled') && !$label.hasClass('star-empty')) {
+                    $label.addClass('star-empty');
                 }
             });
-        }
+            
+            // Also check if any stars are already checked and update their display
+            $starRatings.find('fieldset input[type="radio"]:checked').each(function() {
+                updateStarRatingDisplay(this);
+            });
+        };
         
         // Initialize on page load
         $(document).ready(function() {
             // Wait for form to load, then initialize
             setTimeout(function() {
-                initializeStarRatingHandlers();
+                if (typeof window.initializeStarRatingHandlers === 'function') {
+                    window.initializeStarRatingHandlers();
+                }
             }, 2000);
         });
         
@@ -7394,7 +7412,11 @@ if ($form_id > 0) {
                 }
             });
             if (shouldReinit) {
-                setTimeout(initializeStarRatingHandlers, 100);
+                setTimeout(function() {
+                    if (typeof window.initializeStarRatingHandlers === 'function') {
+                        window.initializeStarRatingHandlers();
+                    }
+                }, 100);
             }
         });
         
@@ -7411,7 +7433,11 @@ if ($form_id > 0) {
         
         // Also re-initialize when form HTML is updated via AJAX (fallback)
         $(document).ajaxComplete(function() {
-            setTimeout(initializeStarRatingHandlers, 300);
+            setTimeout(function() {
+                if (typeof window.initializeStarRatingHandlers === 'function') {
+                    window.initializeStarRatingHandlers();
+                }
+            }, 300);
         });
         
         // Save element design settings
