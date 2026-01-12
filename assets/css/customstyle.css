@@ -557,8 +557,8 @@ span.Polaris-Choice__Label {
     direction: rtl;
     unicode-bidi: bidi-override;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>label,
-.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label {
+.code-form-control .star-rating>fieldset label,
+.contact-form .code-form-control .star-rating>fieldset label {
     float: right;
     width: 1.5em;
     padding: 0;
@@ -569,29 +569,38 @@ span.Polaris-Choice__Label {
     color: rgba(0,0,0,0);
     position: relative;
     margin: 0 2px;
+    display: block;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>input,
-.contact-form .code-form-control .star-rating>fieldset:not(:checked)>input {
+.code-form-control .star-rating>fieldset input[type="radio"],
+.contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
     position: absolute;
-    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>label:before,
-.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:before {
+.code-form-control .star-rating>fieldset label:before,
+.contact-form .code-form-control .star-rating>fieldset label:before {
     content: url(../images/download.svg);
     display: block;
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
-.code-form-control .star-rating>fieldset:not(:checked)>label:hover:before,
-.contact-form .code-form-control .star-rating>fieldset:not(:checked)>label:hover:before {
+.code-form-control .star-rating>fieldset label:hover:before,
+.contact-form .code-form-control .star-rating>fieldset label:hover:before {
     content: url(../images/star.svg);
 }
-.code-form-control .star-rating>fieldset>input:checked ~ label:before,
-.contact-form .code-form-control .star-rating>fieldset>input:checked ~ label:before {
+.code-form-control .star-rating>fieldset input:checked + label:before,
+.contact-form .code-form-control .star-rating>fieldset input:checked + label:before {
     content: url(../images/star.svg);
 }
-.code-form-control .star-rating>fieldset>input:checked ~ label ~ label:before,
-.contact-form .code-form-control .star-rating>fieldset>input:checked ~ label ~ label:before {
+.code-form-control .star-rating>fieldset input:checked ~ label:before,
+.contact-form .code-form-control .star-rating>fieldset input:checked ~ label:before {
     content: url(../images/star.svg);
 }
 .flex-wrap {
