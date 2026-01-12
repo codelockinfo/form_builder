@@ -443,33 +443,61 @@ $(document).on("click", ".element_coppy_to", function (event) {
                 // Navigate back to form builder view
                 $('.owl-carousel').trigger('to.owl.carousel', [BACKTO, 40, true]);
 
-                // Wait a moment for navigation to complete, then refresh elements
-                // This ensures the new element is included in the response
+                // Immediately refresh to show the new element
+                // Use minimal delay and aggressive retry mechanism
                 setTimeout(function () {
-                    get_selected_elements(formid);
+                    var retryCount = 0;
+                    var maxRetries = 20; // Increased retries for better reliability
+                    var retryDelay = 250; // Slightly longer delay between retries for better reliability
+                    
+                    function refreshWithRetry() {
+                        // Refresh elements and preview
+                        // Store callback to check after refresh
+                        var checkCallback = function() {
+                            if (formdata_id) {
+                                // Delay to ensure DOM is fully updated after get_selected_elements completes
+                                setTimeout(function() {
+                                    // Check if element appears in preview and sidebar
+                                    // Try multiple selectors to be sure
+                                    var $previewElement = $('.code-form-app [data-formdataid="' + formdata_id + '"]');
+                                    var $previewElementAlt = $('.contact-form [data-formdataid="' + formdata_id + '"]');
+                                    var $sidebarElement = $('.selected_element_set [data-formdataid="' + formdata_id + '"]');
+                                    
+                                    var foundInPreview = ($previewElement.length > 0 || $previewElementAlt.length > 0);
+                                    var foundInSidebar = ($sidebarElement.length > 0);
+                                    
+                                    // If element not found and we haven't exceeded retries, try again
+                                    if ((!foundInPreview || !foundInSidebar) && retryCount < maxRetries) {
+                                        retryCount++;
+                                        setTimeout(refreshWithRetry, retryDelay);
+                                    } else {
+                                        // Element found or max retries reached
+                                        if (foundInSidebar && foundInPreview) {
+                                            // Scroll the element into view
+                                            $('html, body').animate({
+                                                scrollTop: $sidebarElement.offset().top - 100
+                                            }, 300);
 
-                    // After elements are loaded, scroll to the newly added element if possible
-                    setTimeout(function () {
-                        if (formdata_id) {
-                            var $newElement = $('.selected_element_set [data-formdataid="' + formdata_id + '"]');
-                            if ($newElement.length > 0) {
-                                // Scroll the element into view
-                                $('html, body').animate({
-                                    scrollTop: $newElement.offset().top - 100
-                                }, 300);
-
-                                // Highlight the new element briefly
-                                $newElement.css({
-                                    'background-color': '#e3f2fd',
-                                    'transition': 'background-color 0.5s'
-                                });
-                                setTimeout(function () {
-                                    $newElement.css('background-color', '');
-                                }, 2000);
+                                            // Highlight the new element briefly
+                                            $sidebarElement.css({
+                                                'background-color': '#e3f2fd',
+                                                'transition': 'background-color 0.5s'
+                                            });
+                                            setTimeout(function () {
+                                                $sidebarElement.css('background-color', '');
+                                            }, 2000);
+                                        }
+                                    }
+                                }, 400); // Increased delay to ensure DOM is fully updated and rendered
                             }
-                        }
-                    }, 500);
-                }, 300);
+                        };
+                        
+                        get_selected_elements(formid, checkCallback);
+                    }
+                    
+                    // Start the refresh with retry immediately
+                    refreshWithRetry();
+                }, 400); // Increased delay to ensure database transaction is committed
             }
         },
         error: function (xhr, status, error) {
@@ -494,8 +522,9 @@ function insertDefaultElements(form_id, selectedType) {
     });
 }
 
-function get_selected_elements(form_id) {
+function get_selected_elements(form_id, callback) {
     if (!form_id || form_id === '' || form_id === 0) {
+        if (callback) callback();
         return;
     }
 
@@ -503,7 +532,7 @@ function get_selected_elements(form_id) {
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
-        data: { 'routine_name': 'get_selected_elements_fun', 'form_id': form_id, store: store },
+        data: { 'routine_name': 'get_selected_elements_fun', 'form_id': form_id, store: store, '_t': new Date().getTime() },
         success: function (comeback) {
             var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
 
@@ -514,6 +543,8 @@ function get_selected_elements(form_id) {
 
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
+                if (callback) callback();
+                return;
             } else if (response['data'] === 'success') {
                 if (response['form_type'] == "4") {
                     $(".preview-box").addClass("floting_form_main");
@@ -615,16 +646,18 @@ function get_selected_elements(form_id) {
                         var contentToInsert = $formContent.length > 0 ? $formContent.html() : formHtml;
 
                         // Insert into .contact-form, replacing its content entirely
-                        if (contentToInsert) {
+                        // Simple validation: only skip if content is clearly empty
+                        if (contentToInsert && typeof contentToInsert === 'string' && contentToInsert.trim().length > 0) {
                             $(".preview-box .contact-form").html(contentToInsert);
                         }
+                        // If contentToInsert is empty, don't update - keep existing content
 
                         // Add the floating class
                         $(".preview-box").addClass("floting_form_main");
                     } catch (e) {
                         console.error('Error processing floating form HTML:', e);
-                        // Fallback: clear the content if there's an error
-                        $(".preview-box .contact-form").html('');
+                        // Don't clear on error - keep existing content to prevent losing all elements
+                        // $(".preview-box .contact-form").html(''); // Commented out to prevent clearing
                     }
 
                 } else {
@@ -640,13 +673,48 @@ function get_selected_elements(form_id) {
                             formHtml = formHtml.replace(/<if\b[^>]*>/gi, ''); // Remove any stray <if> tags
                         }
 
-                        if (formHtml) {
-                            $(".code-form-app").html(formHtml);
+                        // Update preview when we have HTML from a successful response
+                        // But only if it contains actual form elements (not just empty form structure)
+                        if (formHtml && typeof formHtml === 'string' && formHtml.trim().length > 0) {
+                            var elementCount = (formHtml.match(/data-formdataid=/g) || []).length;
+                            
+                            // Check current preview to see if it has elements
+                            var currentPreviewHtml = $(".code-form-app").html() || '';
+                            var currentElementCount = (currentPreviewHtml.match(/data-formdataid=/g) || []).length;
+                            
+                            // Only update if we have elements OR if this is a valid form structure with header/footer
+                            // But be very strict: if current preview has elements and new HTML has 0, don't update
+                            // This prevents clearing when backend returns stale data before delete is committed
+                            if (elementCount > 0) {
+                                // Has elements - always safe to update
+                                $(".code-form-app").html(formHtml);
+                                // Reset stale data flag and clear manually removed elements list
+                                window._lastRefreshHadStaleData = false;
+                                window._manuallyRemovedElements = [];
+                            } else if (elementCount === 0 && currentElementCount > 0) {
+                                // New HTML has 0 elements but current preview has elements
+                                // This means backend returned stale/invalid data (likely before delete committed)
+                                // Set flag to retry
+                                if (callback) {
+                                    window._lastRefreshHadStaleData = true;
+                                }
+                            } else if (elementCount === 0) {
+                                // Reset flag if we got valid data
+                                window._lastRefreshHadStaleData = false;
+                                // Both have 0 elements - check if it's a valid form structure with header/footer
+                                var hasHeader = formHtml.indexOf('formHeader') !== -1 || formHtml.indexOf('class="formHeader"') !== -1;
+                                var hasFooter = formHtml.indexOf('forFooterAlign') !== -1 || formHtml.indexOf('class="forFooterAlign"') !== -1 || formHtml.indexOf('Submit') !== -1;
+                                
+                                if (hasHeader || hasFooter) {
+                                    // No elements but has header/footer - valid form structure (form with only header/footer)
+                                    $(".code-form-app").html(formHtml);
+                                }
+                            }
                         }
                     } catch (e) {
                         console.error('Error processing form HTML:', e);
-                        // Fallback: clear the content if there's an error
-                        $(".code-form-app").html('');
+                        // Don't clear on error - keep existing content to prevent losing all elements
+                        // $(".code-form-app").html(''); // Commented out to prevent clearing
                     }
                 }
 
@@ -827,11 +895,23 @@ function get_selected_elements(form_id) {
                         }
                     }, 300);
                 }
+                
+                // Call callback after all DOM updates are complete
+                if (callback) {
+                    // Delay to ensure DOM is fully updated
+                    setTimeout(function() {
+                        callback();
+                    }, 300); // Increased delay to ensure DOM is fully updated and rendered
+                }
             } else {
                 var errorMsg = response['msg'] || response['message'] || 'Failed to load form data. Please refresh the page and try again.';
+                // Call callback even on failure
+                if (callback) callback();
             }
         },
         error: function (xhr, status, error) {
+            // Call callback on error as well
+            if (callback) callback();
         }
     });
 }
@@ -1203,9 +1283,24 @@ $(document).on("click", ".removeElement", function (event) {
         success: function (response) {
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
-            } else {
+            } else if (response['result'] === 'success' || response['message']) {
+                // Get the formdata_id that was removed from the form
+                var $form = $(".add_elementdata");
+                var formdata_id = $form.attr('formdataid') || $form.find('input[name="formdata_id"]').val() || '';
+                
+                // Navigate back to form builder view
                 $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-                get_selected_elements(formid);
+                
+                // Immediately remove from sidebar and preview for instant feedback
+                if (formdata_id) {
+                    $('.selected_element_set [data-formdataid="' + formdata_id + '"]').remove();
+                    // Also remove from preview immediately
+                    $('.code-form-app [data-formdataid="' + formdata_id + '"]').remove();
+                    $('.contact-form [data-formdataid="' + formdata_id + '"]').remove();
+                }
+                
+                // Reload page immediately to get fresh data from backend
+                window.location.reload();
             }
         }
     });
@@ -1216,13 +1311,10 @@ $(document).on("click", ".saveForm", function (event) {
     event.preventDefault();
     event.stopPropagation();
     
-    console.log('Save button clicked');
-    
     try {
         // Save current visible form to tracker before saving
         var currentFormdataid = $('form.add_elementdata').attr('formdataid');
         if (currentFormdataid) {
-            console.log('Saving current form to tracker:', currentFormdataid);
             saveElementFormToTracker(currentFormdataid);
         }
 
@@ -1253,7 +1345,6 @@ $(document).on("click", ".saveForm", function (event) {
             elementChangesTracker.footer = footerData;
         }
 
-        console.log('Starting save process...');
         // Now save everything
         saveposition();
         saveAllElementProperties(); // Save all element properties (labels, placeholders, etc.)
@@ -1261,8 +1352,6 @@ $(document).on("click", ".saveForm", function (event) {
         savefooterform();
         savepublishdata();
         saveAllElementDesignSettings(); // Save all element design settings
-        
-        console.log('Save process completed');
         
         // Show success message
         if (typeof flashNotice === 'function') {
