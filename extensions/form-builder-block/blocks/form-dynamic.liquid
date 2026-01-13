@@ -78,6 +78,14 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 10px;
+        min-height: 50px;
+        position: relative;
+        z-index: 1;
+        flex-wrap: wrap;
+        gap: 10px;
         justify-content: center;
       }
       
@@ -520,8 +528,6 @@
           const labelWidth = label.offsetWidth || 24;
           const labelHeight = label.offsetHeight || 24;
           
-          console.log('Star Rating Positioning - Input ID:', inputId, 'Input value:', input.value, 'Label for:', label.getAttribute('for'), 'Label title:', label.getAttribute('title'), 'Label position:', relativeLeft, relativeTop);
-          
           // Position input directly over its label
           input.style.position = 'absolute';
           input.style.opacity = '0';
@@ -535,7 +541,6 @@
           input.style.top = relativeTop + 'px';
           input.style.left = relativeLeft + 'px';
         } else {
-          console.warn('Star Rating Positioning - Label not found for input ID:', inputId);
           // Fallback positioning
           input.style.position = 'absolute';
           input.style.opacity = '0';
@@ -551,12 +556,10 @@
         if (!input.hasAttribute('data-star-input-handler')) {
           input.setAttribute('data-star-input-handler', 'true');
           input.addEventListener('change', function() {
-            console.log('Star Rating Storefront - Input change handler, value:', this.value);
             updateStarRatingDisplay(this);
           });
           input.addEventListener('click', function(e) {
             e.stopPropagation();
-            console.log('Star Rating Storefront - Input click handler, value:', this.value);
             this.checked = true;
             updateStarRatingDisplay(this);
             const changeEvent = new Event('change', { bubbles: true });
@@ -614,13 +617,11 @@
           e.stopPropagation();
           const inputId = this.getAttribute('for');
           if (!inputId) {
-            console.warn('Star Rating Storefront - Label missing for attribute:', this);
             return;
           }
           
           const input = document.getElementById(inputId);
           if (input && input.type === 'radio') {
-            console.log('Star Rating Storefront - Label clicked, input ID:', inputId, 'Input value:', input.value);
             // Check the clicked one (browser will uncheck others automatically for radio groups)
             input.checked = true;
             
@@ -631,7 +632,6 @@
             const changeEvent = new Event('change', { bubbles: true });
             input.dispatchEvent(changeEvent);
           } else {
-            console.warn('Star Rating Storefront - Input not found or wrong type:', inputId);
           }
         });
       }
@@ -649,12 +649,10 @@
       if (!input.hasAttribute('data-star-change-handler')) {
         input.setAttribute('data-star-change-handler', 'true');
         input.addEventListener('change', function() {
-          console.log('Star Rating Storefront - Input change event, value:', this.value);
           updateStarRatingDisplay(this);
         });
         input.addEventListener('click', function(e) {
           e.stopPropagation();
-          console.log('Star Rating Storefront - Input click event, value:', this.value);
           this.checked = true;
           updateStarRatingDisplay(this);
           const changeEvent = new Event('change', { bubbles: true });
@@ -708,8 +706,14 @@
           if (!imgContainer) {
             imgContainer = document.createElement('div');
             imgContainer.className = 'img-container';
-            imgContainer.style.cssText = 'width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: flex-start; padding: 10px;';
-            uploadArea.appendChild(imgContainer);
+            imgContainer.style.cssText = 'width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; align-items: flex-start; padding: 10px; min-height: 50px;';
+            // Insert before the file input or at the end
+            const fileInput = uploadArea.querySelector('input[type="file"]');
+            if (fileInput && fileInput.parentNode) {
+              fileInput.parentNode.insertBefore(imgContainer, fileInput);
+            } else {
+              uploadArea.appendChild(imgContainer);
+            }
           }
           
           if (this.files && this.files.length > 0) {
@@ -720,11 +724,14 @@
             // Clear existing content
             imgContainer.innerHTML = '';
             imgContainer.style.display = 'flex';
+            imgContainer.style.visibility = 'visible';
+            imgContainer.style.opacity = '1';
             
             // Adjust upload area styling when files are present
             uploadArea.style.justifyContent = 'flex-start';
             uploadArea.style.minHeight = 'auto';
             uploadArea.style.padding = '10px';
+            uploadArea.style.overflow = 'visible';
             
             // Show file names or previews
             Array.from(this.files).forEach(function(file) {
@@ -743,8 +750,9 @@
                   const img = document.createElement('img');
                   img.className = 'img-preview';
                   img.src = event.target.result;
-                  img.style.cssText = 'width: 150px; max-width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #eb1256; border-radius: 4px; background: #fff;';
+                  img.style.cssText = 'width: 150px; max-width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #eb1256; border-radius: 4px; background: #fff; display: block;';
                   img.alt = file.name;
+                  img.title = file.name;
                   fileWrapper.insertBefore(img, fileName);
                   imgContainer.appendChild(fileWrapper);
                 };
@@ -758,6 +766,7 @@
                 const folderIcon = document.createElement('div');
                 folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px;';
                 folderIcon.textContent = '📁';
+                folderIcon.title = file.name;
                 fileWrapper.insertBefore(folderIcon, fileName);
                 imgContainer.appendChild(fileWrapper);
               }
@@ -803,16 +812,13 @@
     const checkedInputValue = parseInt(checkedInput.value || checkedInput.getAttribute('value')) || 0;
     
     // Debug: Log the checked value
-    console.log('Star Rating Storefront - Clicked value:', checkedInputValue);
     
     // Ensure we have a valid value
     if (checkedInputValue <= 0 || checkedInputValue > 5) {
-      console.log('Star Rating Storefront - Invalid value, returning');
       return;
     }
     
     const allInputs = Array.from(fieldset.querySelectorAll('input[type="radio"]'));
-    console.log('Star Rating Storefront - Found inputs:', allInputs.length);
     
     // Get all inputs with their values
     // With flex-direction: row-reverse, the visual order is reversed from DOM order
@@ -829,14 +835,12 @@
       }
     });
     
-    console.log('Star Rating Storefront - Inputs array:', inputsArray.map(function(item) { return item.value; }));
     
     // The checked value directly corresponds to how many stars to fill
     // If checkedValue = 5, fill all stars (values 1, 2, 3, 4, 5)
     // If checkedValue = 4, fill first 4 stars (values 1, 2, 3, 4)
     // This works because with flex-direction: row-reverse, value 1 is leftmost, value 5 is rightmost
     const checkedValue = checkedInputValue;
-    console.log('Star Rating Storefront - Checked value:', checkedValue);
     
     // Now iterate through ALL inputs and fill based on value comparison
     inputsArray.forEach(function(item) {
@@ -844,7 +848,6 @@
       const inputValue = item.value;
       const labelId = input.getAttribute('id');
       if (!labelId) {
-        console.warn('Star Rating Storefront - Input missing ID');
         return;
       }
       
@@ -853,7 +856,6 @@
         // Try finding label by input's next sibling
         label = input.nextElementSibling;
         if (!label || label.tagName !== 'LABEL') {
-          console.warn('Star Rating Storefront - Label not found for input ID:', labelId);
           return;
         }
       }
@@ -866,7 +868,6 @@
       // Simple and explicit: fill if inputValue <= checkedValue
       const shouldFill = (inputValue >= 1 && inputValue <= checkedValue && checkedValue >= 1 && checkedValue <= 5);
       
-      console.log('Star Rating Storefront - Input value:', inputValue, 'Checked value:', checkedValue, 'Should fill:', shouldFill);
       
       if (shouldFill) {
         label.classList.add('star-filled');
@@ -925,7 +926,6 @@
       });
       
       if (!response.ok) {
-        console.warn('Failed to fetch design settings');
         return;
       }
       
@@ -938,7 +938,6 @@
         try {
           result = JSON.parse(resultText);
         } catch(e2) {
-          console.warn('Failed to parse design settings response');
           return;
         }
       }
@@ -989,7 +988,6 @@
         });
       }
     } catch(error) {
-      console.warn('Error fetching design settings:', error);
     }
   }
   
@@ -1279,7 +1277,6 @@
               
               // Only skip if severely mismatched (more than 5 difference)
               if (Math.abs(openBraces - closeBraces) > 5 || Math.abs(openParens - closeParens) > 5) {
-                console.warn('Skipping script with severely mismatched brackets');
                 oldScript.remove();
                 return;
               }

@@ -910,9 +910,32 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                     if (isFileField && fieldValue) {
                                         // Check if fieldValue is a URL or file path
                                         var fileDisplay = '';
-                                        if (fieldValue.startsWith('http://') || fieldValue.startsWith('https://') || fieldValue.startsWith('/')) {
+                                        
+                                        // Handle array of files (multiple uploads)
+                                        if (Array.isArray(fieldValue)) {
+                                            var fileList = [];
+                                            fieldValue.forEach(function(fileUrl) {
+                                                if (fileUrl && (fileUrl.startsWith('http://') || fileUrl.startsWith('https://') || fileUrl.startsWith('/'))) {
+                                                    var imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+                                                    var isImage = false;
+                                                    for (var ext = 0; ext < imageExtensions.length; ext++) {
+                                                        if (fileUrl.toLowerCase().indexOf(imageExtensions[ext]) !== -1) {
+                                                            isImage = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (isImage) {
+                                                        fileList.push('<img src="' + $('<div>').text(fileUrl).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; margin: 5px; display: block;" alt="Uploaded image" />');
+                                                    } else {
+                                                        var fileName = fileUrl.split('/').pop() || 'Download file';
+                                                        fileList.push('<a href="' + $('<div>').text(fileUrl).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline; display: block; margin: 5px;">' + $('<div>').text(fileName).html() + '</a>');
+                                                    }
+                                                }
+                                            });
+                                            fileDisplay = fileList.join('');
+                                        } else if (fieldValue.startsWith('http://') || fieldValue.startsWith('https://') || fieldValue.startsWith('/')) {
                                             // It's a URL - check if it's an image
-                                            var imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+                                            var imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
                                             var isImage = false;
                                             for (var ext = 0; ext < imageExtensions.length; ext++) {
                                                 if (fieldValue.toLowerCase().indexOf(imageExtensions[ext]) !== -1) {
@@ -921,7 +944,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                 }
                                             }
                                             if (isImage) {
-                                                fileDisplay = '<img src="' + $('<div>').text(fieldValue).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px;" alt="Uploaded image" />';
+                                                fileDisplay = '<img src="' + $('<div>').text(fieldValue).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; display: block;" alt="Uploaded image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" /><a href="' + $('<div>').text(fieldValue).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline; display: none;">View Image</a>';
                                             } else {
                                                 // Show as download link
                                                 var fileName = fieldValue.split('/').pop() || 'Download file';

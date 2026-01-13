@@ -9476,6 +9476,75 @@ class Client_functions extends common_function {
             
             $submission_data = $_POST;
             
+            // Process file uploads first
+            if (!empty($_FILES)) {
+                // Create upload directory if it doesn't exist
+                $upload_dir = ABS_PATH . '/assets/uploads/form_' . $form_id . '/';
+                if (!file_exists($upload_dir)) {
+                    @mkdir($upload_dir, 0755, true);
+                }
+                
+                // Process each uploaded file
+                foreach ($_FILES as $field_name => $file_data) {
+                    // Skip if not actually uploaded
+                    if (!isset($file_data['error']) || $file_data['error'] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
+                    
+                    // Handle both single and multiple file uploads
+                    if (is_array($file_data['name'])) {
+                        // Multiple files
+                        $uploaded_files = array();
+                        foreach ($file_data['name'] as $key => $name) {
+                            if ($file_data['error'][$key] === UPLOAD_ERR_OK) {
+                                $tmp_name = $file_data['tmp_name'][$key];
+                                $file_size = $file_data['size'][$key];
+                                $file_type = $file_data['type'][$key];
+                                
+                                // Generate unique filename
+                                $file_ext = pathinfo($name, PATHINFO_EXTENSION);
+                                $file_base = pathinfo($name, PATHINFO_FILENAME);
+                                $unique_filename = $file_base . '_' . time() . '_' . rand(1000, 9999) . '.' . $file_ext;
+                                $upload_path = $upload_dir . $unique_filename;
+                                
+                                // Move uploaded file
+                                if (@move_uploaded_file($tmp_name, $upload_path)) {
+                                    $file_url = MAIN_URL . '/assets/uploads/form_' . $form_id . '/' . $unique_filename;
+                                    $uploaded_files[] = $file_url;
+                                    error_log("File uploaded successfully: $upload_path");
+                                } else {
+                                    error_log("Failed to move uploaded file: $tmp_name to $upload_path");
+                                }
+                            }
+                        }
+                        if (!empty($uploaded_files)) {
+                            $submission_data[$field_name] = count($uploaded_files) === 1 ? $uploaded_files[0] : $uploaded_files;
+                        }
+                    } else {
+                        // Single file
+                        $tmp_name = $file_data['tmp_name'];
+                        $name = $file_data['name'];
+                        $file_size = $file_data['size'];
+                        $file_type = $file_data['type'];
+                        
+                        // Generate unique filename
+                        $file_ext = pathinfo($name, PATHINFO_EXTENSION);
+                        $file_base = pathinfo($name, PATHINFO_FILENAME);
+                        $unique_filename = $file_base . '_' . time() . '_' . rand(1000, 9999) . '.' . $file_ext;
+                        $upload_path = $upload_dir . $unique_filename;
+                        
+                        // Move uploaded file
+                        if (@move_uploaded_file($tmp_name, $upload_path)) {
+                            $file_url = MAIN_URL . '/assets/uploads/form_' . $form_id . '/' . $unique_filename;
+                            $submission_data[$field_name] = $file_url;
+                            error_log("File uploaded successfully: $upload_path, URL: $file_url");
+                        } else {
+                            error_log("Failed to move uploaded file: $tmp_name to $upload_path");
+                        }
+                    }
+                }
+            }
+            
             // Log before removing fields
             error_log("Before cleanup - submission_data keys: " . implode(", ", array_keys($submission_data)));
             error_log("Before cleanup - submission_data values: " . print_r($submission_data, true));
