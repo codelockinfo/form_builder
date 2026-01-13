@@ -745,16 +745,11 @@
       });
     });
     
-    // Handle file input changes
-    container.querySelectorAll('input[type="file"][data-type="file"]').forEach(function(input) {
-      // Remove existing event listeners by cloning
-      const newInput = input.cloneNode(true);
-      if (input.parentNode) {
-        input.parentNode.replaceChild(newInput, input);
-      }
-      
-      newInput.addEventListener('change', function(e) {
-        const uploadArea = this.closest('.upload-area');
+    // Handle file input changes - use event delegation to avoid cloning issues
+    container.addEventListener('change', function(e) {
+      if (e.target && e.target.type === 'file' && e.target.getAttribute('data-type') === 'file') {
+        const input = e.target;
+        const uploadArea = input.closest('.upload-area');
         if (!uploadArea) return;
         
         const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
@@ -765,20 +760,36 @@
         if (!imgContainer) {
           imgContainer = document.createElement('div');
           imgContainer.className = 'img-container';
-          imgContainer.id = 'imgContainer-' + (this.getAttribute('data-formdataid') || '');
+          imgContainer.id = 'imgContainer-' + (input.getAttribute('data-formdataid') || '');
           uploadArea.appendChild(imgContainer);
         }
         
-        if (this.files && this.files.length > 0) {
+        if (input.files && input.files.length > 0) {
           // Add class to upload area to hide text and button via CSS
           uploadArea.classList.add('has-files');
           
-          // Hide upload text and button immediately
+          // Hide upload text and button immediately with multiple methods
           if (uploadText) {
-            uploadText.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important;';
+            uploadText.style.setProperty('display', 'none', 'important');
+            uploadText.style.setProperty('visibility', 'hidden', 'important');
+            uploadText.style.setProperty('opacity', '0', 'important');
+            uploadText.style.setProperty('height', '0', 'important');
+            uploadText.style.setProperty('width', '0', 'important');
+            uploadText.style.setProperty('overflow', 'hidden', 'important');
+            uploadText.style.setProperty('margin', '0', 'important');
+            uploadText.style.setProperty('padding', '0', 'important');
+            uploadText.setAttribute('hidden', 'true');
           }
           if (fileButton) {
-            fileButton.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important;';
+            fileButton.style.setProperty('display', 'none', 'important');
+            fileButton.style.setProperty('visibility', 'hidden', 'important');
+            fileButton.style.setProperty('opacity', '0', 'important');
+            fileButton.style.setProperty('height', '0', 'important');
+            fileButton.style.setProperty('width', '0', 'important');
+            fileButton.style.setProperty('overflow', 'hidden', 'important');
+            fileButton.style.setProperty('margin', '0', 'important');
+            fileButton.style.setProperty('padding', '0', 'important');
+            fileButton.setAttribute('hidden', 'true');
           }
           
           // Clear existing content
@@ -789,11 +800,11 @@
           uploadArea.style.cssText = (uploadArea.getAttribute('style') || '') + '; justify-content: flex-start !important; min-height: auto !important; padding: 10px !important; overflow: visible !important; flex-direction: row !important; flex-wrap: wrap !important;';
           
           // Lower z-index of file input so preview shows above it
-          this.style.zIndex = '1';
-          this.style.pointerEvents = 'auto';
+          input.style.zIndex = '1';
+          input.style.pointerEvents = 'auto';
           
           // Show file names or previews
-          Array.from(this.files).forEach(function(file, index) {
+          Array.from(input.files).forEach(function(file, index) {
             const fileWrapper = document.createElement('div');
             fileWrapper.className = 'img-preview-wrapper';
             fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px; max-width: 200px; z-index: 3;';
@@ -863,10 +874,10 @@
           uploadArea.style.minHeight = '150px';
           uploadArea.style.flexDirection = 'column';
           uploadArea.style.overflow = 'hidden';
-          this.style.zIndex = '10';
+          input.style.zIndex = '10';
         }
-      });
-    });
+      }
+    }, true); // Use capture phase for event delegation
     
     // Make upload area clickable - prevent double-triggering
     container.querySelectorAll('.upload-area').forEach(function(area) {
