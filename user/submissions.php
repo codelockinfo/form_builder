@@ -89,7 +89,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     // Use display_field_configs from backend (new format)
                     var displayFieldConfigs = response.display_field_configs || [];
                     
-                    
                     // If old format (form_fields), convert it
                     if (displayFieldConfigs.length === 0 && response.form_fields) {
                         var formFields = response.form_fields || {};
@@ -104,6 +103,34 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 config: fieldConfig
                             });
                         });
+                    }
+                    
+                    // If still no field configs, try to extract from first submission's data
+                    if (displayFieldConfigs.length === 0 && response.data && response.data.length > 0) {
+                        try {
+                            var firstSubmission = JSON.parse(response.data[0].submission_data);
+                            var allFieldKeys = Object.keys(firstSubmission);
+                            
+                            // Create field configs from submission data keys
+                            $.each(allFieldKeys, function(idx, fieldKey) {
+                                // Skip system fields
+                                if (fieldKey === 'form_id' || fieldKey === 'id' || fieldKey === 'store') {
+                                    return;
+                                }
+                                
+                                displayFieldConfigs.push({
+                                    uniqueKey: fieldKey,
+                                    fieldName: fieldKey,
+                                    fieldNameBase: fieldKey,
+                                    config: {
+                                        label: fieldKey.replace(/-/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); }),
+                                        field_name: fieldKey
+                                    }
+                                });
+                            });
+                        } catch(e) {
+                            console.error('Error extracting fields from submission data:', e);
+                        }
                     }
                     
                     
@@ -228,6 +255,146 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                             }
                                         }
                                     }
+                                    // For textarea fields
+                                    else if (fieldNameBase === 'textarea') {
+                                        if (formData['textarea'] !== undefined) {
+                                            fieldValue = formData['textarea'];
+                                        } else {
+                                            var textareaLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (textareaLabelSlug && formData[textareaLabelSlug] !== undefined) {
+                                                fieldValue = formData[textareaLabelSlug];
+                                            }
+                                        }
+                                    }
+                                    // For file upload fields
+                                    else if (fieldNameBase === 'file' || (fieldInfo.config && fieldInfo.config.element_type && fieldInfo.config.element_type.toString() === '10')) {
+                                        // Try various file field name patterns
+                                        var fileFieldNames = ['file', 'fileimage', 'file-upload', 'upload'];
+                                        var foundFile = false;
+                                        for (var f = 0; f < fileFieldNames.length && !foundFile; f++) {
+                                            if (formData[fileFieldNames[f]] !== undefined) {
+                                                fieldValue = formData[fileFieldNames[f]];
+                                                foundFile = true;
+                                            }
+                                        }
+                                        // Try label-based name
+                                        if (!foundFile) {
+                                            var fileLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (fileLabelSlug && formData[fileLabelSlug] !== undefined) {
+                                                fieldValue = formData[fileLabelSlug];
+                                                foundFile = true;
+                                            }
+                                        }
+                                        // Try exact field name from config
+                                        if (!foundFile && fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                            fieldValue = formData[fieldInfo.config.field_name];
+                                            foundFile = true;
+                                        }
+                                    }
+                                    // For rating star fields
+                                    else if (fieldNameBase === 'rating-star' || (fieldInfo.config && fieldInfo.config.element_type && fieldInfo.config.element_type.toString() === '15')) {
+                                        // Try rating field names
+                                        var ratingFieldNames = ['rating', 'rating-star', 'star-rating', 'rating-1'];
+                                        var foundRating = false;
+                                        for (var r = 0; r < ratingFieldNames.length && !foundRating; r++) {
+                                            if (formData[ratingFieldNames[r]] !== undefined) {
+                                                fieldValue = formData[ratingFieldNames[r]];
+                                                foundRating = true;
+                                            }
+                                        }
+                                        // Try label-based name
+                                        if (!foundRating) {
+                                            var ratingLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (ratingLabelSlug && formData[ratingLabelSlug] !== undefined) {
+                                                fieldValue = formData[ratingLabelSlug];
+                                                foundRating = true;
+                                            }
+                                        }
+                                        // Try exact field name from config
+                                        if (!foundRating && fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                            fieldValue = formData[fieldInfo.config.field_name];
+                                            foundRating = true;
+                                        }
+                                        // Format rating display (e.g., "5 stars" or just "5")
+                                        if (fieldValue && !isNaN(fieldValue)) {
+                                            fieldValue = fieldValue + ' star' + (parseInt(fieldValue) !== 1 ? 's' : '');
+                                        }
+                                    }
+                                    // For checkbox fields
+                                    else if (fieldNameBase === 'checkbox' || (fieldInfo.config && fieldInfo.config.element_type && fieldInfo.config.element_type.toString() === '11')) {
+                                        // Try checkbox field names
+                                        var checkboxFieldNames = ['checkbox', 'checkbox-option'];
+                                        var foundCheckbox = false;
+                                        for (var c = 0; c < checkboxFieldNames.length && !foundCheckbox; c++) {
+                                            if (formData[checkboxFieldNames[c]] !== undefined) {
+                                                fieldValue = formData[checkboxFieldNames[c]];
+                                                foundCheckbox = true;
+                                            }
+                                        }
+                                        // Try label-based name
+                                        if (!foundCheckbox) {
+                                            var checkboxLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (checkboxLabelSlug && formData[checkboxLabelSlug] !== undefined) {
+                                                fieldValue = formData[checkboxLabelSlug];
+                                                foundCheckbox = true;
+                                            }
+                                        }
+                                        // Try exact field name from config
+                                        if (!foundCheckbox && fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                            fieldValue = formData[fieldInfo.config.field_name];
+                                            foundCheckbox = true;
+                                        }
+                                    }
+                                    // For radio fields
+                                    else if (fieldNameBase === 'radio' || (fieldInfo.config && fieldInfo.config.element_type && fieldInfo.config.element_type.toString() === '13')) {
+                                        // Try radio field names
+                                        var radioFieldNames = ['radio', 'radio-option'];
+                                        var foundRadio = false;
+                                        for (var rd = 0; rd < radioFieldNames.length && !foundRadio; rd++) {
+                                            if (formData[radioFieldNames[rd]] !== undefined) {
+                                                fieldValue = formData[radioFieldNames[rd]];
+                                                foundRadio = true;
+                                            }
+                                        }
+                                        // Try label-based name
+                                        if (!foundRadio) {
+                                            var radioLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (radioLabelSlug && formData[radioLabelSlug] !== undefined) {
+                                                fieldValue = formData[radioLabelSlug];
+                                                foundRadio = true;
+                                            }
+                                        }
+                                        // Try exact field name from config
+                                        if (!foundRadio && fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                            fieldValue = formData[fieldInfo.config.field_name];
+                                            foundRadio = true;
+                                        }
+                                    }
+                                    // For dropdown/select fields
+                                    else if (fieldNameBase === 'dropdown' || fieldNameBase === 'select' || (fieldInfo.config && fieldInfo.config.element_type && (fieldInfo.config.element_type.toString() === '9' || fieldInfo.config.element_type.toString() === '20'))) {
+                                        // Try dropdown field names
+                                        var dropdownFieldNames = ['dropdown', 'select', 'country'];
+                                        var foundDropdown = false;
+                                        for (var d = 0; d < dropdownFieldNames.length && !foundDropdown; d++) {
+                                            if (formData[dropdownFieldNames[d]] !== undefined) {
+                                                fieldValue = formData[dropdownFieldNames[d]];
+                                                foundDropdown = true;
+                                            }
+                                        }
+                                        // Try label-based name
+                                        if (!foundDropdown) {
+                                            var dropdownLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                                            if (dropdownLabelSlug && formData[dropdownLabelSlug] !== undefined) {
+                                                fieldValue = formData[dropdownLabelSlug];
+                                                foundDropdown = true;
+                                            }
+                                        }
+                                        // Try exact field name from config
+                                        if (!foundDropdown && fieldInfo.config && fieldInfo.config.field_name && formData[fieldInfo.config.field_name] !== undefined) {
+                                            fieldValue = formData[fieldInfo.config.field_name];
+                                            foundDropdown = true;
+                                        }
+                                    }
                                     // For other fields, try label-based name
                                     else {
                                         var otherLabelSlug = fieldLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -238,14 +405,43 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         }
                                     }
                                     
-                                    // Handle array values (like checkboxes)
+                                    // Handle array values (like checkboxes, multiple selects)
                                     if(Array.isArray(fieldValue)) {
                                         fieldValue = fieldValue.join(', ');
                                     }
                                     
-                                    // Escape HTML to prevent XSS
-                                    var safeFieldValue = $('<div>').text(fieldValue || '').html();
-                                    html += '<td style="padding: 10px; vertical-align: top;">' + safeFieldValue + '</td>';
+                                    // Handle file uploads - display as image or download link
+                                    var isFileField = fieldNameBase === 'file' || (fieldInfo.config && fieldInfo.config.element_type && fieldInfo.config.element_type.toString() === '10');
+                                    if (isFileField && fieldValue) {
+                                        // Check if fieldValue is a URL or file path
+                                        var fileDisplay = '';
+                                        if (fieldValue.startsWith('http://') || fieldValue.startsWith('https://') || fieldValue.startsWith('/')) {
+                                            // It's a URL - check if it's an image
+                                            var imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+                                            var isImage = false;
+                                            for (var ext = 0; ext < imageExtensions.length; ext++) {
+                                                if (fieldValue.toLowerCase().indexOf(imageExtensions[ext]) !== -1) {
+                                                    isImage = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (isImage) {
+                                                fileDisplay = '<img src="' + $('<div>').text(fieldValue).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px;" alt="Uploaded image" />';
+                                            } else {
+                                                // Show as download link
+                                                var fileName = fieldValue.split('/').pop() || 'Download file';
+                                                fileDisplay = '<a href="' + $('<div>').text(fieldValue).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline;">' + $('<div>').text(fileName).html() + '</a>';
+                                            }
+                                        } else if (fieldValue) {
+                                            // Just show the filename or value
+                                            fileDisplay = $('<div>').text(fieldValue).html();
+                                        }
+                                        html += '<td style="padding: 10px; vertical-align: top;">' + fileDisplay + '</td>';
+                                    } else {
+                                        // Escape HTML to prevent XSS (for non-file fields)
+                                        var safeFieldValue = $('<div>').text(fieldValue || '').html();
+                                        html += '<td style="padding: 10px; vertical-align: top;">' + safeFieldValue + '</td>';
+                                    }
                                 });
                             } catch(e) {
                                 // Fill empty cells for error case

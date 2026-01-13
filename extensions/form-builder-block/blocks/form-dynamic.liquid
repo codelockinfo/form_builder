@@ -266,7 +266,7 @@
         padding: 0;
         overflow: visible;
         white-space: nowrap;
-        cursor: pointer;
+        cursor: pointer !important;
         font-size: 200%;
         color: rgba(0,0,0,0);
         position: relative;
@@ -275,6 +275,7 @@
         line-height: 1;
         box-sizing: border-box;
         flex-shrink: 0;
+        background: transparent !important;
       }
       .code-form-control .star-rating>fieldset input[type="radio"],
       .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
@@ -284,10 +285,19 @@
         height: 1.5em;
         margin: 0;
         padding: 0;
-        cursor: pointer;
-        z-index: 2;
+        cursor: pointer !important;
+        z-index: 10;
         top: 0;
         left: 0;
+        pointer-events: auto !important;
+      }
+      .code-form-control .star-rating>fieldset label:hover,
+      .contact-form .code-form-control .star-rating>fieldset label:hover {
+        cursor: pointer !important;
+      }
+      .code-form-control .star-rating>fieldset input[type="radio"]:hover,
+      .contact-form .code-form-control .star-rating>fieldset input[type="radio"]:hover {
+        cursor: pointer !important;
       }
       .code-form-control .star-rating>fieldset label:before,
       .contact-form .code-form-control .star-rating>fieldset label:before {
@@ -302,12 +312,22 @@
         line-height: 1;
       }
       .code-form-control .star-rating>fieldset label.star-filled:before,
-      .contact-form .code-form-control .star-rating>fieldset label.star-filled:before {
+      .contact-form .code-form-control .star-rating>fieldset label.star-filled:before,
+      .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before,
+      .contact-form .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before {
         content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg') !important;
+        display: block !important;
+        width: 1.5em !important;
+        height: 1.5em !important;
       }
       .code-form-control .star-rating>fieldset label.star-empty:before,
-      .contact-form .code-form-control .star-rating>fieldset label.star-empty:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg');
+      .contact-form .code-form-control .star-rating>fieldset label.star-empty:before,
+      .code-form-control .star-rating>fieldset label[data-star-state="empty"]:before,
+      .contact-form .code-form-control .star-rating>fieldset label[data-star-state="empty"]:before {
+        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg') !important;
+        display: block !important;
+        width: 1.5em !important;
+        height: 1.5em !important;
       }
       .code-form-control .star-rating>fieldset label:hover:before,
       .contact-form .code-form-control .star-rating>fieldset label:hover:before {
@@ -468,9 +488,92 @@
       fieldset.style.justifyContent = 'flex-end';
       fieldset.style.padding = '0';
       fieldset.style.margin = '0';
+      fieldset.style.position = 'relative'; // Ensure fieldset is positioned for absolute children
     });
     
     // Ensure star rating inputs are clickable and properly positioned
+    // With flex-direction: row-reverse, we need to position each input over its corresponding label
+    // Use multiple attempts to ensure positioning works
+    function positionStarInputs() {
+      const starInputs = container.querySelectorAll('.star-rating fieldset input[type="radio"]');
+      starInputs.forEach(function(input) {
+        const inputId = input.getAttribute('id');
+        const fieldset = input.closest('fieldset');
+        if (!fieldset) return;
+        
+        const label = fieldset.querySelector('label[for="' + inputId + '"]');
+        
+        if (label) {
+          // Get label's position relative to fieldset
+          // Use offsetLeft/offsetTop for more reliable relative positioning
+          let relativeLeft = label.offsetLeft;
+          let relativeTop = label.offsetTop;
+          
+          // Fallback to getBoundingClientRect if offsetLeft/offsetTop don't work
+          if (relativeLeft === 0 && relativeTop === 0) {
+            const labelRect = label.getBoundingClientRect();
+            const fieldsetRect = fieldset.getBoundingClientRect();
+            relativeLeft = labelRect.left - fieldsetRect.left;
+            relativeTop = labelRect.top - fieldsetRect.top;
+          }
+          
+          const labelWidth = label.offsetWidth || 24;
+          const labelHeight = label.offsetHeight || 24;
+          
+          console.log('Star Rating Positioning - Input ID:', inputId, 'Input value:', input.value, 'Label for:', label.getAttribute('for'), 'Label title:', label.getAttribute('title'), 'Label position:', relativeLeft, relativeTop);
+          
+          // Position input directly over its label
+          input.style.position = 'absolute';
+          input.style.opacity = '0';
+          input.style.width = labelWidth + 'px';
+          input.style.height = labelHeight + 'px';
+          input.style.margin = '0';
+          input.style.padding = '0';
+          input.style.cursor = 'pointer';
+          input.style.zIndex = '10';
+          input.style.pointerEvents = 'auto';
+          input.style.top = relativeTop + 'px';
+          input.style.left = relativeLeft + 'px';
+        } else {
+          console.warn('Star Rating Positioning - Label not found for input ID:', inputId);
+          // Fallback positioning
+          input.style.position = 'absolute';
+          input.style.opacity = '0';
+          input.style.width = '1.5em';
+          input.style.height = '1.5em';
+          input.style.margin = '0';
+          input.style.cursor = 'pointer';
+          input.style.zIndex = '10';
+          input.style.pointerEvents = 'auto';
+        }
+        
+        // Ensure input is clickable and updates star display
+        if (!input.hasAttribute('data-star-input-handler')) {
+          input.setAttribute('data-star-input-handler', 'true');
+          input.addEventListener('change', function() {
+            console.log('Star Rating Storefront - Input change handler, value:', this.value);
+            updateStarRatingDisplay(this);
+          });
+          input.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Star Rating Storefront - Input click handler, value:', this.value);
+            this.checked = true;
+            updateStarRatingDisplay(this);
+            const changeEvent = new Event('change', { bubbles: true });
+            this.dispatchEvent(changeEvent);
+          });
+        }
+      });
+    }
+    
+    // Try positioning multiple times to ensure it works
+    positionStarInputs();
+    setTimeout(positionStarInputs, 50);
+    setTimeout(positionStarInputs, 100);
+    setTimeout(positionStarInputs, 200);
+    setTimeout(positionStarInputs, 500);
+    
+    // Also set initial positioning without delay as fallback
     const starInputs = container.querySelectorAll('.star-rating fieldset input[type="radio"]');
     starInputs.forEach(function(input, index) {
       input.style.position = 'absolute';
@@ -479,16 +582,8 @@
       input.style.height = '1.5em';
       input.style.margin = '0';
       input.style.cursor = 'pointer';
-      input.style.zIndex = '3';
+      input.style.zIndex = '10';
       input.style.pointerEvents = 'auto';
-      
-      // Ensure input is clickable and updates star display
-      if (!input.hasAttribute('data-star-input-handler')) {
-        input.setAttribute('data-star-input-handler', 'true');
-        input.addEventListener('change', function() {
-          updateStarRatingDisplay(this);
-        });
-      }
     });
     
     // Ensure star rating labels display horizontally and are clickable
@@ -506,6 +601,7 @@
       label.style.position = 'relative';
       label.style.display = 'block';
       label.style.pointerEvents = 'auto';
+      label.style.background = 'transparent';
       
       // Initialize star state (empty by default)
       label.classList.add('star-empty');
@@ -517,10 +613,14 @@
           e.preventDefault();
           e.stopPropagation();
           const inputId = this.getAttribute('for');
-          if (!inputId) return;
+          if (!inputId) {
+            console.warn('Star Rating Storefront - Label missing for attribute:', this);
+            return;
+          }
           
           const input = document.getElementById(inputId);
           if (input && input.type === 'radio') {
+            console.log('Star Rating Storefront - Label clicked, input ID:', inputId, 'Input value:', input.value);
             // Check the clicked one (browser will uncheck others automatically for radio groups)
             input.checked = true;
             
@@ -530,7 +630,35 @@
             // Force visual update by triggering change event
             const changeEvent = new Event('change', { bubbles: true });
             input.dispatchEvent(changeEvent);
+          } else {
+            console.warn('Star Rating Storefront - Input not found or wrong type:', inputId);
           }
+        });
+      }
+    });
+    
+    // Initialize display for any pre-checked stars
+    const checkedInputs = container.querySelectorAll('.star-rating fieldset input[type="radio"]:checked');
+    checkedInputs.forEach(function(input) {
+      updateStarRatingDisplay(input);
+    });
+    
+    // Also check all inputs to ensure they have change handlers
+    const allStarInputs = container.querySelectorAll('.star-rating fieldset input[type="radio"]');
+    allStarInputs.forEach(function(input) {
+      if (!input.hasAttribute('data-star-change-handler')) {
+        input.setAttribute('data-star-change-handler', 'true');
+        input.addEventListener('change', function() {
+          console.log('Star Rating Storefront - Input change event, value:', this.value);
+          updateStarRatingDisplay(this);
+        });
+        input.addEventListener('click', function(e) {
+          e.stopPropagation();
+          console.log('Star Rating Storefront - Input click event, value:', this.value);
+          this.checked = true;
+          updateStarRatingDisplay(this);
+          const changeEvent = new Event('change', { bubbles: true });
+          this.dispatchEvent(changeEvent);
         });
       }
     });
@@ -574,51 +702,77 @@
         if (uploadArea) {
           const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
           const fileButton = uploadArea.querySelector('.file_button, #fileButton, [id^="fileButton-"]');
-          const imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+          let imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+          
+          // Create img-container if it doesn't exist
+          if (!imgContainer) {
+            imgContainer = document.createElement('div');
+            imgContainer.className = 'img-container';
+            imgContainer.style.cssText = 'width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: flex-start; padding: 10px;';
+            uploadArea.appendChild(imgContainer);
+          }
           
           if (this.files && this.files.length > 0) {
             // Hide upload text and button
             if (uploadText) uploadText.style.display = 'none';
             if (fileButton) fileButton.style.display = 'none';
             
+            // Clear existing content
+            imgContainer.innerHTML = '';
+            imgContainer.style.display = 'flex';
+            
+            // Adjust upload area styling when files are present
+            uploadArea.style.justifyContent = 'flex-start';
+            uploadArea.style.minHeight = 'auto';
+            uploadArea.style.padding = '10px';
+            
             // Show file names or previews
-            if (imgContainer) {
-              imgContainer.innerHTML = '';
-              Array.from(this.files).forEach(function(file) {
-                const fileWrapper = document.createElement('div');
-                fileWrapper.className = 'img-preview-wrapper';
-                fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px;';
-                
-                const fileName = document.createElement('p');
-                fileName.className = 'file-name';
-                fileName.textContent = file.name;
-                fileName.style.cssText = 'margin: 5px 0; font-size: 12px;';
-                
-                if (file.type.startsWith('image/')) {
-                  const reader = new FileReader();
-                  reader.onload = function(event) {
-                    const img = document.createElement('img');
-                    img.className = 'img-preview';
-                    img.src = event.target.result;
-                    img.style.cssText = 'width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #eb1256;';
-                    fileWrapper.insertBefore(img, fileName);
-                  };
-                  reader.readAsDataURL(file);
-                } else {
-                  const folderIcon = document.createElement('div');
-                  folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; display: flex; align-items: center; justify-content: center;';
-                  folderIcon.textContent = '📁';
-                  fileWrapper.insertBefore(folderIcon, fileName);
-                }
-                
+            Array.from(this.files).forEach(function(file) {
+              const fileWrapper = document.createElement('div');
+              fileWrapper.className = 'img-preview-wrapper';
+              fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px; max-width: 200px;';
+              
+              const fileName = document.createElement('p');
+              fileName.className = 'file-name';
+              fileName.textContent = file.name;
+              fileName.style.cssText = 'margin: 5px 0; font-size: 12px; word-break: break-word; text-align: center; max-width: 100%;';
+              
+              if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                  const img = document.createElement('img');
+                  img.className = 'img-preview';
+                  img.src = event.target.result;
+                  img.style.cssText = 'width: 150px; max-width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #eb1256; border-radius: 4px; background: #fff;';
+                  img.alt = file.name;
+                  fileWrapper.insertBefore(img, fileName);
+                  imgContainer.appendChild(fileWrapper);
+                };
+                reader.onerror = function() {
+                  // If image fails to load, show file name only
+                  fileWrapper.appendChild(fileName);
+                  imgContainer.appendChild(fileWrapper);
+                };
+                reader.readAsDataURL(file);
+              } else {
+                const folderIcon = document.createElement('div');
+                folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px;';
+                folderIcon.textContent = '📁';
+                fileWrapper.insertBefore(folderIcon, fileName);
                 imgContainer.appendChild(fileWrapper);
-              });
-            }
+              }
+            });
           } else {
             // Show upload text and button if no files
             if (uploadText) uploadText.style.display = 'block';
             if (fileButton) fileButton.style.display = 'inline-block';
-            if (imgContainer) imgContainer.innerHTML = '';
+            if (imgContainer) {
+              imgContainer.innerHTML = '';
+              imgContainer.style.display = 'none';
+            }
+            // Reset upload area styling
+            uploadArea.style.justifyContent = 'center';
+            uploadArea.style.minHeight = '150px';
           }
         }
       });
@@ -645,43 +799,63 @@
     const fieldset = checkedInput.closest('fieldset');
     if (!fieldset) return;
     
-    // Get the checked value - ensure we read it correctly
+    // Get the checked value - use .value or getAttribute and ensure it's correct
     const checkedInputValue = parseInt(checkedInput.value || checkedInput.getAttribute('value')) || 0;
+    
+    // Debug: Log the checked value
+    console.log('Star Rating Storefront - Clicked value:', checkedInputValue);
     
     // Ensure we have a valid value
     if (checkedInputValue <= 0 || checkedInputValue > 5) {
+      console.log('Star Rating Storefront - Invalid value, returning');
       return;
     }
     
     const allInputs = Array.from(fieldset.querySelectorAll('input[type="radio"]'));
+    console.log('Star Rating Storefront - Found inputs:', allInputs.length);
     
     // Get all inputs with their values
-    const inputsArray = allInputs.map(function(input) {
+    // With flex-direction: row-reverse, the visual order is reversed from DOM order
+    // DOM: [5, 4, 3, 2, 1] -> Visual: [1, 2, 3, 4, 5] (left to right)
+    // The fill logic is simple: fill all stars where inputValue <= checkedValue
+    const inputsArray = [];
+    allInputs.forEach(function(input, index) {
       const value = parseInt(input.value || input.getAttribute('value')) || 0;
-      return {
-        input: input,
-        value: value
-      };
-    }).filter(function(item) {
-      // Only include valid values (1-5)
-      return item.value >= 1 && item.value <= 5;
+      if (value >= 1 && value <= 5) {
+        inputsArray.push({
+          input: input,
+          value: value
+        });
+      }
     });
     
+    console.log('Star Rating Storefront - Inputs array:', inputsArray.map(function(item) { return item.value; }));
+    
     // The checked value directly corresponds to how many stars to fill
+    // If checkedValue = 5, fill all stars (values 1, 2, 3, 4, 5)
+    // If checkedValue = 4, fill first 4 stars (values 1, 2, 3, 4)
+    // This works because with flex-direction: row-reverse, value 1 is leftmost, value 5 is rightmost
     const checkedValue = checkedInputValue;
+    console.log('Star Rating Storefront - Checked value:', checkedValue);
     
     // Now iterate through ALL inputs and fill based on value comparison
     inputsArray.forEach(function(item) {
       const input = item.input;
       const inputValue = item.value;
       const labelId = input.getAttribute('id');
-      if (!labelId) return;
+      if (!labelId) {
+        console.warn('Star Rating Storefront - Input missing ID');
+        return;
+      }
       
       let label = fieldset.querySelector('label[for="' + labelId + '"]');
       if (!label) {
         // Try finding label by input's next sibling
         label = input.nextElementSibling;
-        if (!label || label.tagName !== 'LABEL') return;
+        if (!label || label.tagName !== 'LABEL') {
+          console.warn('Star Rating Storefront - Label not found for input ID:', labelId);
+          return;
+        }
       }
       
       // Remove existing classes
@@ -689,21 +863,29 @@
       
       // Fill stars if their value is <= checkedValue
       // Example: If clicking star 5 (checkedValue = 5), fill values 1, 2, 3, 4, 5
+      // Simple and explicit: fill if inputValue <= checkedValue
       const shouldFill = (inputValue >= 1 && inputValue <= checkedValue && checkedValue >= 1 && checkedValue <= 5);
+      
+      console.log('Star Rating Storefront - Input value:', inputValue, 'Checked value:', checkedValue, 'Should fill:', shouldFill);
       
       if (shouldFill) {
         label.classList.add('star-filled');
         label.classList.remove('star-empty');
         label.setAttribute('data-star-state', 'filled');
-        // Also set inline style as backup
-        label.style.setProperty('--star-filled', '1');
         // Force reflow to ensure class is applied
         void label.offsetHeight;
+        // Force style recalculation
+        const computedStyle = window.getComputedStyle(label, ':before');
+        void computedStyle.content;
       } else {
         label.classList.add('star-empty');
         label.classList.remove('star-filled');
         label.setAttribute('data-star-state', 'empty');
-        label.style.setProperty('--star-filled', '0');
+        // Force reflow to ensure class is applied
+        void label.offsetHeight;
+        // Force style recalculation
+        const computedStyle = window.getComputedStyle(label, ':before');
+        void computedStyle.content;
       }
     });
     
