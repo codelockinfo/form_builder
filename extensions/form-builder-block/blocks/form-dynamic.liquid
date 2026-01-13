@@ -1,24 +1,8 @@
-{% comment %}
-  Dynamic Form Builder Block
-  This is a SINGLE reusable block that works for ALL forms
-  User enters Form ID in theme customizer settings
-{% endcomment %}
-
-<div id="easy-form-{{ block.id }}" 
-     class="form-builder-container" 
-     data-form-id="{{ block.settings.form_id }}"
-     style="width: {{ block.settings.form_width }}%; margin: 0 auto; text-align: {{ block.settings.form_alignment }};">
-  <div class="form-loading">Loading form...</div>
-</div>
-
+<div id="easy-form-{{ block.id }}" class="form-builder-container" data-form-id="{{ block.settings.form_id }}" style="width: {{ block.settings.form_width }}%; margin: 0 auto; text-align: {{ block.settings.form_alignment }};"><div class="form-loading">Loading form...</div></div>
 <script>
-// Multiple strategies to ensure code runs in Theme Customizer
 (function() {
   'use strict';
-  
-  // Function to inject critical CSS styles for form elements
   function injectFormStyles() {
-    // Check if styles already injected
     if (document.getElementById('easy-form-builder-styles')) {
       return;
     }
