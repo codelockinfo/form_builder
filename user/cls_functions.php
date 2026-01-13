@@ -1616,8 +1616,10 @@ class Client_functions extends common_function {
                         $field_label = isset($unserialized_data[0]) ? $unserialized_data[0] : '';
                         
                         // Map element_id to field name pattern (how it's stored in submission_data)
+                        // Handle both string and integer element_id values
                         $field_name_base = '';
-                        switch($element_id) {
+                        $element_id_str = (string)$element_id; // Convert to string for comparison
+                        switch($element_id_str) {
                             case '1': // Text
                                 $field_name_base = 'text';
                                 break;
@@ -1630,26 +1632,62 @@ class Client_functions extends common_function {
                             case '4': // Phone
                                 $field_name_base = 'phone';
                                 break;
-                            case '8': // Password
-                                $field_name_base = 'password';
-                                break;
-                            case '9': // Date
-                                $field_name_base = 'date';
-                                break;
-                            case '10': // File Upload
-                                $field_name_base = 'file';
+                            case '5': // URL
+                                $field_name_base = 'url';
                                 break;
                             case '6': // Checkbox
                                 $field_name_base = 'checkbox';
                                 break;
-                            case '7': // Select/Dropdown
-                                $field_name_base = 'select';
+                            case '7': // Text (alternative)
+                                $field_name_base = 'text';
+                                break;
+                            case '8': // Password
+                                $field_name_base = 'password';
+                                break;
+                            case '9': // Date/DateTime
+                                $field_name_base = 'date';
+                                break;
+                            case '10': // File Upload
+                                $field_name_base = 'file';
                                 break;
                             case '11': // Radio
                                 $field_name_base = 'radio';
                                 break;
                             case '12': // Address
                                 $field_name_base = 'address';
+                                break;
+                            case '13': // Checkbox (alternative)
+                                $field_name_base = 'checkbox';
+                                break;
+                            case '14': // Number
+                                $field_name_base = 'number';
+                                break;
+                            case '15': // Country
+                                $field_name_base = 'country';
+                                break;
+                            case '16': // Accept Terms
+                                $field_name_base = 'accept-terms';
+                                break;
+                            case '18': // Rating Star
+                                $field_name_base = 'rating-star';
+                                break;
+                            case '17': // Accept Terms (alternative)
+                                $field_name_base = 'accept-terms';
+                                break;
+                            case '19': // Accept Terms (alternative)
+                                $field_name_base = 'accept-terms';
+                                break;
+                            case '20': // Dropdown/Select
+                                $field_name_base = 'dropdown';
+                                break;
+                            case '21': // Address Line 1
+                                $field_name_base = 'address';
+                                break;
+                            case '22': // Address Line 2
+                                $field_name_base = 'address';
+                                break;
+                            case '23': // Country
+                                $field_name_base = 'country';
                                 break;
                         }
                         
@@ -1746,6 +1784,36 @@ class Client_functions extends common_function {
                                 }
                             }
                             
+                            // For rating star, password, and URL fields, also try label-based matching
+                            if (!$actual_field_name && in_array($element_id, array('5', '8', '18'))) {
+                                $label_slug = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($field_label)));
+                                $label_slug = trim($label_slug, '-');
+                                
+                                // Try exact label slug match
+                                if (isset($all_field_names[$label_slug])) {
+                                    $actual_field_name = $label_slug;
+                                } else {
+                                    // Try partial matches (field name contains label words or vice versa)
+                                    foreach ($all_field_names as $sub_field_name => $dummy) {
+                                        // For rating star, check if field name contains "rating" or "star"
+                                        if ($element_id == '18' && (stripos($sub_field_name, 'rating') !== false || stripos($sub_field_name, 'star') !== false)) {
+                                            $actual_field_name = $sub_field_name;
+                                            break;
+                                        }
+                                        // For password, check if field name contains "password" or "pwd" or "pass"
+                                        if ($element_id == '8' && (stripos($sub_field_name, 'password') !== false || stripos($sub_field_name, 'pwd') !== false || stripos($sub_field_name, 'pass') !== false)) {
+                                            $actual_field_name = $sub_field_name;
+                                            break;
+                                        }
+                                        // For URL, check if field name contains "url" or "website" or "link"
+                                        if ($element_id == '5' && (stripos($sub_field_name, 'url') !== false || stripos($sub_field_name, 'website') !== false || stripos($sub_field_name, 'link') !== false)) {
+                                            $actual_field_name = $sub_field_name;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            
                             // For text fields labeled "Name", also check if submissions use "name" field
                             if ($element_id == '1' && stripos($field_label, 'name') !== false && isset($all_field_names['name'])) {
                                 // Prefer "name" if available and label contains "name"
@@ -1754,7 +1822,20 @@ class Client_functions extends common_function {
                                 }
                             }
                             
-                            if ($actual_field_name || !empty($field_name_base)) {
+                            // Always include the field in config if it has a field_name_base
+                            // This ensures all form fields appear in the submissions table, even if no submissions exist yet
+                            if (!empty($field_name_base)) {
+                                // For password fields, also check label to ensure we catch them even if matching fails
+                                if ($element_id == '8' || $element_id == 8) {
+                                    error_log("getFormSubmissions - Found password field: element_id=$element_id, label=$field_label, form_data_id=$form_data_id, actual_field_name=" . ($actual_field_name ? $actual_field_name : 'NULL') . ", expected_field_name=$expected_field_name");
+                                    // Force include password fields even if no match found
+                                    if (!$actual_field_name) {
+                                        // Use expected field name or generate from label
+                                        $actual_field_name = $expected_field_name ? $expected_field_name : 'password-' . $form_data_id;
+                                        error_log("getFormSubmissions - Password field: Set actual_field_name to: $actual_field_name");
+                                    }
+                                }
+                                
                                 // Store with both the matched name and unique key
                                 $form_fields_config[$unique_key] = array(
                                     'label' => $field_label,
@@ -1802,31 +1883,50 @@ class Client_functions extends common_function {
             }
             
             // First, add fields in the order they appear in form configuration
+            // Store position for each field so we can sort later
+            $field_positions = array(); // Maps unique_key to position
             if (isset($form_data_result['data']) && is_array($form_data_result['data'])) {
                 foreach ($form_data_result['data'] as $element) {
                     $element_id = isset($element['element_id']) ? $element['element_id'] : '';
                     $form_data_id = isset($element['id']) ? $element['id'] : '';
+                    $position = isset($element['position']) ? intval($element['position']) : 9999;
                     
-                    // Map element_id to field name base
+                    // Map element_id to field name base (handle both string and integer)
                     $field_name_base = '';
-                    switch($element_id) {
+                    $element_id_str = (string)$element_id; // Convert to string for comparison
+                    switch($element_id_str) {
                         case '1': $field_name_base = 'text'; break;
                         case '2': $field_name_base = 'email'; break;
                         case '3': $field_name_base = 'textarea'; break;
                         case '4': $field_name_base = 'phone'; break;
+                        case '5': $field_name_base = 'url'; break;
+                        case '6': $field_name_base = 'checkbox'; break;
+                        case '7': $field_name_base = 'text'; break;
                         case '8': $field_name_base = 'password'; break;
                         case '9': $field_name_base = 'date'; break;
                         case '10': $field_name_base = 'file'; break;
-                        case '6': $field_name_base = 'checkbox'; break;
-                        case '7': $field_name_base = 'select'; break;
                         case '11': $field_name_base = 'radio'; break;
                         case '12': $field_name_base = 'address'; break;
+                        case '13': $field_name_base = 'checkbox'; break;
+                        case '14': $field_name_base = 'number'; break;
+                        case '15': $field_name_base = 'country'; break;
+                        case '16': $field_name_base = 'accept-terms'; break;
+                        case '17': $field_name_base = 'accept-terms'; break;
+                        case '18': $field_name_base = 'rating-star'; break;
+                        case '19': $field_name_base = 'accept-terms'; break;
+                        case '20': $field_name_base = 'dropdown'; break;
+                        case '21': $field_name_base = 'address'; break;
+                        case '22': $field_name_base = 'address'; break;
+                        case '23': $field_name_base = 'country'; break;
                     }
                     
                     if (!empty($field_name_base)) {
                         $unique_key = $field_name_base . '_' . $form_data_id;
+                        $field_positions[$unique_key] = $position; // Store position
+                        
                         if (isset($form_fields_config[$unique_key]) && !isset($added_keys[$unique_key])) {
                             $config = $form_fields_config[$unique_key];
+                            $config['position'] = $position; // Add position to config
                             $field_name_to_add = isset($config['field_name']) ? $config['field_name'] : $unique_key;
                             $display_field_configs[] = array(
                                 'fieldName' => $field_name_to_add,
@@ -1839,6 +1939,63 @@ class Client_functions extends common_function {
                     }
                 }
             }
+            
+            // Also ensure we store position for fields added from form_fields_config
+            // Get position from form_data_result if available
+            if (isset($form_data_result['data']) && is_array($form_data_result['data'])) {
+                foreach ($form_data_result['data'] as $element) {
+                    $form_data_id = isset($element['id']) ? $element['id'] : '';
+                    $position = isset($element['position']) ? intval($element['position']) : 9999;
+                    $element_id = isset($element['element_id']) ? $element['element_id'] : '';
+                    
+                    // Map element_id to field name base to get unique_key
+                    $field_name_base = '';
+                    $element_id_str = (string)$element_id;
+                    switch($element_id_str) {
+                        case '1': $field_name_base = 'text'; break;
+                        case '2': $field_name_base = 'email'; break;
+                        case '3': $field_name_base = 'textarea'; break;
+                        case '4': $field_name_base = 'phone'; break;
+                        case '5': $field_name_base = 'url'; break;
+                        case '6': $field_name_base = 'checkbox'; break;
+                        case '7': $field_name_base = 'text'; break;
+                        case '8': $field_name_base = 'password'; break;
+                        case '9': $field_name_base = 'date'; break;
+                        case '10': $field_name_base = 'file'; break;
+                        case '11': $field_name_base = 'radio'; break;
+                        case '12': $field_name_base = 'address'; break;
+                        case '13': $field_name_base = 'checkbox'; break;
+                        case '14': $field_name_base = 'number'; break;
+                        case '15': $field_name_base = 'country'; break;
+                        case '16': $field_name_base = 'accept-terms'; break;
+                        case '17': $field_name_base = 'accept-terms'; break;
+                        case '18': $field_name_base = 'rating-star'; break;
+                        case '19': $field_name_base = 'accept-terms'; break;
+                        case '20': $field_name_base = 'dropdown'; break;
+                        case '21': $field_name_base = 'address'; break;
+                        case '22': $field_name_base = 'address'; break;
+                        case '23': $field_name_base = 'country'; break;
+                    }
+                    
+                    if (!empty($field_name_base)) {
+                        $unique_key = $field_name_base . '_' . $form_data_id;
+                        $field_positions[$unique_key] = $position;
+                    }
+                }
+            }
+            
+            // Update position in configs that don't have it yet
+            foreach ($display_field_configs as &$config_item) {
+                if (!isset($config_item['config']['position'])) {
+                    $unique_key = (isset($config_item['config']['field_name_base']) ? $config_item['config']['field_name_base'] : '') . '_' . (isset($config_item['config']['form_data_id']) ? $config_item['config']['form_data_id'] : '');
+                    if (isset($field_positions[$unique_key])) {
+                        $config_item['config']['position'] = $field_positions[$unique_key];
+                    } else {
+                        $config_item['config']['position'] = 9999; // Default for fields without position
+                    }
+                }
+            }
+            unset($config_item); // Break reference
             
             // Then add any unmatched fields from submissions (fallback) in submission order
             if (!empty($submission_field_order)) {
@@ -1870,17 +2027,156 @@ class Client_functions extends common_function {
             // Finally, add any remaining fields from form_fields_config that weren't added
             foreach ($form_fields_config as $unique_key => $config) {
                 if (!isset($added_keys[$unique_key])) {
+                    $field_name_to_add = isset($config['field_name']) ? $config['field_name'] : (isset($config['expected_field_name']) ? $config['expected_field_name'] : $unique_key);
                     $display_field_configs[] = array(
-                        'fieldName' => isset($config['field_name']) ? $config['field_name'] : $unique_key,
+                        'fieldName' => $field_name_to_add,
                         'fieldNameBase' => isset($config['field_name_base']) ? $config['field_name_base'] : '',
                         'config' => $config
                     );
                     $added_keys[$unique_key] = true;
+                    if ($field_name_to_add) {
+                        $added_field_names[$field_name_to_add] = true;
+                    }
                 }
             }
             
+            // Also ensure ALL form elements are included, even if they weren't matched to submission data
+            // This is important for forms with no submissions yet
+            if (isset($form_data_result['data']) && is_array($form_data_result['data'])) {
+                $all_element_ids = array();
+                foreach ($form_data_result['data'] as $element) {
+                    $element_id = isset($element['element_id']) ? $element['element_id'] : '';
+                    $form_data_id = isset($element['id']) ? $element['id'] : '';
+                    $element_data = isset($element['element_data']) ? $element['element_data'] : '';
+                    $position = isset($element['position']) ? intval($element['position']) : 9999;
+                    $all_element_ids[] = "element_id=$element_id, form_data_id=$form_data_id, position=$position";
+                    
+                    // Log password fields specifically
+                    if ($element_id == '8' || $element_id == 8) {
+                        error_log("getFormSubmissions - Found password element: element_id=$element_id, form_data_id=$form_data_id, position=$position, element_data length=" . strlen($element_data));
+                    }
+                    
+                    // Unserialize element_data to get field label
+                    $unserialized_data = @unserialize($element_data);
+                    
+                    // Special handling for password fields (element_id 8) - they have complex data structure
+                    if (($element_id == '8' || $element_id == 8) && ($unserialized_data === false || !is_array($unserialized_data) || empty($unserialized_data))) {
+                        error_log("getFormSubmissions - Password field unserialize failed for form_data_id=$form_data_id, element_id=$element_id. Using default label.");
+                        $unserialized_data = array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2");
+                    }
+                    
+                    if ($unserialized_data !== false && is_array($unserialized_data) && !empty($unserialized_data)) {
+                        $field_label = isset($unserialized_data[0]) ? $unserialized_data[0] : '';
+                        
+                        // For password fields, ensure we have a label
+                        if (($element_id == '8' || $element_id == 8) && empty($field_label)) {
+                            $field_label = 'Password';
+                        }
+                        
+                        // Map element_id to field name base (handle both string and integer)
+                        $field_name_base = '';
+                        $element_id_str = (string)$element_id; // Convert to string for comparison
+                        switch($element_id_str) {
+                            case '1': $field_name_base = 'text'; break;
+                            case '2': $field_name_base = 'email'; break;
+                            case '3': $field_name_base = 'textarea'; break;
+                            case '4': $field_name_base = 'phone'; break;
+                            case '5': $field_name_base = 'url'; break;
+                            case '6': $field_name_base = 'checkbox'; break;
+                            case '7': $field_name_base = 'text'; break;
+                            case '8': $field_name_base = 'password'; break;
+                            case '9': $field_name_base = 'date'; break;
+                            case '10': $field_name_base = 'file'; break;
+                            case '11': $field_name_base = 'radio'; break;
+                            case '12': $field_name_base = 'address'; break;
+                            case '13': $field_name_base = 'checkbox'; break;
+                            case '14': $field_name_base = 'number'; break;
+                            case '15': $field_name_base = 'country'; break;
+                            case '16': $field_name_base = 'accept-terms'; break;
+                            case '17': $field_name_base = 'accept-terms'; break;
+                            case '18': $field_name_base = 'rating-star'; break;
+                            case '19': $field_name_base = 'accept-terms'; break;
+                            case '20': $field_name_base = 'dropdown'; break;
+                            case '21': $field_name_base = 'address'; break;
+                            case '22': $field_name_base = 'address'; break;
+                            case '23': $field_name_base = 'country'; break;
+                        }
+                        
+                        if (!empty($field_name_base)) {
+                            $unique_key = $field_name_base . '_' . $form_data_id;
+                            $field_positions[$unique_key] = $position; // Store position
+                            
+                            // Generate expected field name from label
+                            $expected_field_name = strtolower(trim($field_label));
+                            $expected_field_name = preg_replace('/[^a-z0-9]+/', '-', $expected_field_name);
+                            $expected_field_name = trim($expected_field_name, '-');
+                            if (empty($expected_field_name)) {
+                                $expected_field_name = $field_name_base . '-' . $form_data_id;
+                            }
+                            
+                            // If this field wasn't added yet, add it now
+                            if (!isset($added_keys[$unique_key])) {
+                                $display_field_configs[] = array(
+                                    'fieldName' => $expected_field_name,
+                                    'fieldNameBase' => $field_name_base,
+                                    'config' => array(
+                                        'label' => $field_label,
+                                        'element_id' => $element_id,
+                                        'form_data_id' => $form_data_id,
+                                        'field_name' => $expected_field_name,
+                                        'field_name_base' => $field_name_base,
+                                        'expected_field_name' => $expected_field_name,
+                                        'position' => $position
+                                    )
+                                );
+                                $added_keys[$unique_key] = true;
+                                $added_field_names[$expected_field_name] = true;
+                            }
+                        }
+                    }
+                }
+                error_log("getFormSubmissions - All element_ids found in form_data_result: " . implode(" | ", $all_element_ids));
+            }
+            
+            // Sort display_field_configs by position to maintain form order
+            usort($display_field_configs, function($a, $b) {
+                $pos_a = isset($a['config']['position']) ? intval($a['config']['position']) : 9999;
+                $pos_b = isset($b['config']['position']) ? intval($b['config']['position']) : 9999;
+                if ($pos_a == $pos_b) {
+                    // If positions are equal, sort by form_data_id
+                    $id_a = isset($a['config']['form_data_id']) ? intval($a['config']['form_data_id']) : 9999;
+                    $id_b = isset($b['config']['form_data_id']) ? intval($b['config']['form_data_id']) : 9999;
+                    return $id_a - $id_b;
+                }
+                return $pos_a - $pos_b;
+            });
+            
              // Debug logging
              error_log("getFormSubmissions - Total display_field_configs: " . count($display_field_configs));
+             
+             // Log which field types are included
+             $field_types_found = array();
+             $all_fields_log = array();
+             foreach ($display_field_configs as $config) {
+                 $element_id = isset($config['config']['element_id']) ? $config['config']['element_id'] : '';
+                 $field_name_base = isset($config['fieldNameBase']) ? $config['fieldNameBase'] : '';
+                 $field_name = isset($config['fieldName']) ? $config['fieldName'] : '';
+                 $label = isset($config['config']['label']) ? $config['config']['label'] : '';
+                 
+                 $all_fields_log[] = "element_id: $element_id, label: $label, fieldNameBase: $field_name_base, fieldName: $field_name";
+                 
+                 if ($element_id == '5' || $element_id == 5) {
+                     $field_types_found[] = "URL (element_id: $element_id, label: $label, fieldNameBase: $field_name_base)";
+                 }
+                 if ($element_id == '8' || $element_id == 8) {
+                     $field_types_found[] = "Password (element_id: $element_id, label: $label, fieldNameBase: $field_name_base)";
+                 }
+                 if ($element_id == '18' || $element_id == 18) {
+                     $field_types_found[] = "Rating Star (element_id: $element_id, label: $label, fieldNameBase: $field_name_base)";
+                 }
+             }
+             error_log("getFormSubmissions - All fields: " . implode(" | ", $all_fields_log));
+             error_log("getFormSubmissions - Rating/Password/URL fields found: " . implode(", ", $field_types_found));
              error_log("getFormSubmissions - display_field_configs: " . print_r($display_field_configs, true));
              error_log("getFormSubmissions - Total form_fields_config: " . count($form_fields_config));
              
