@@ -944,7 +944,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                 }
                                             }
                                             if (isImage) {
-                                                fileDisplay = '<img src="' + $('<div>').text(fieldValue).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; display: block;" alt="Uploaded image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" /><a href="' + $('<div>').text(fieldValue).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline; display: none;">View Image</a>';
+                                                fileDisplay = '<img src="' + $('<div>').text(fieldValue).html() + '" style="max-width: 100px; max-height: 100px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; display: block;" alt="Uploaded image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" /><a href="' + $('<div>').text(fieldValue).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline; display: none;">View Image</a>';
                                             } else {
                                                 // Show as download link
                                                 var fileName = fieldValue.split('/').pop() || 'Download file';
