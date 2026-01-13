@@ -6871,9 +6871,6 @@ if ($form_id > 0) {
                     $this.attr('style', currentStyle.trim());
                 });
             } else {
-                // Debug: log if element not found
-                console.log('Upload area not found for formdataid:', formdataid);
-                console.log('Available upload-areas:', $('.code-form-app .upload-area, .contact-form .upload-area').length);
             }
             
             var $fileButton = $('.code-form-app .globo-form-input[data-formdataid="' + formdataid + '"] .file_button, .contact-form .globo-form-input[data-formdataid="' + formdataid + '"] .file_button');
@@ -7318,17 +7315,12 @@ if ($form_id > 0) {
             var $checkedInput = $(checkedInput);
             var checkedInputValue = parseInt($checkedInput.prop('value') || $checkedInput.val()) || 0;
             
-            // Debug: Log the checked value
-            console.log('Star Rating Debug - Clicked value:', checkedInputValue);
-            
             // Ensure we have a valid value
             if (checkedInputValue <= 0 || checkedInputValue > 5) {
-                console.log('Star Rating Debug - Invalid value, returning');
                 return;
             }
             
             var $allInputs = $fieldset.find('input[type="radio"]');
-            console.log('Star Rating Debug - Found inputs:', $allInputs.length);
             
             // Get all inputs with their values and DOM order
             // With flex-direction: row-reverse, DOM order is reversed visually
@@ -7355,14 +7347,11 @@ if ($form_id > 0) {
                 return a.visualPosition - b.visualPosition;
             });
             
-            console.log('Star Rating Debug - Inputs array (sorted by visual position):', inputsArray.map(function(item) { return 'value:' + item.value + ', visual:' + item.visualPosition; }));
-            
             // The checked value directly corresponds to how many stars to fill
             // If user clicks visual position 5 (value=1), we want to fill 1 star
             // If user clicks visual position 1 (value=5), we want to fill 5 stars
             // So checkedValue = checkedInputValue (the input's value attribute)
             var checkedValue = checkedInputValue;
-            console.log('Star Rating Debug - Checked value:', checkedValue);
             
             // Now iterate through ALL inputs and fill based on value comparison
             inputsArray.forEach(function(item) {
@@ -7399,7 +7388,6 @@ if ($form_id > 0) {
                 
                 // Debug: Log each star's fill decision
                 if (inputValue === 5 || inputValue === checkedValue) {
-                    console.log('Star Rating Debug - Input value:', inputValue, 'Checked value:', checkedValue, 'Should fill:', shouldFill);
                 }
                 
                 if (shouldFill) {
@@ -7556,17 +7544,12 @@ if ($form_id > 0) {
                     var inputValue = parseInt($input.prop('value') || $input.val()) || 0;
                     var inputId = $input.attr('id');
                     var labelTitle = $label.attr('title') || '';
-                    // Debug: Log which input was found
-                    console.log('Star Rating Label Click - Label for:', labelFor, 'Label title:', labelTitle, 'Found input ID:', inputId, 'Input value:', inputValue);
-                    
                     // Verify the input value matches the label's expected value
                     var expectedValue = parseInt(labelTitle) || 0;
                     if (expectedValue > 0 && expectedValue !== inputValue) {
-                        console.warn('Star Rating Mismatch - Label title suggests value', expectedValue, 'but input has value', inputValue);
                         // Try to find the correct input by value
                         var $correctInput = $fieldset.find('input[type="radio"][value="' + expectedValue + '"]');
                         if ($correctInput.length) {
-                            console.log('Star Rating - Found correct input with value', expectedValue);
                             $input = $correctInput;
                             inputValue = expectedValue;
                         }
@@ -7577,7 +7560,6 @@ if ($form_id > 0) {
                     updateStarRatingDisplay($input[0]);
                     $input.trigger('change');
                 } else {
-                    console.log('Star Rating Label Click - Could not find input for label:', labelFor);
                 }
             });
             
