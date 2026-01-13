@@ -118,6 +118,36 @@
         display: block !important;
         margin: 0 auto !important;
       }
+      .img-remove-btn {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #d32f2f;
+        border: 2px solid #fff;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease;
+        line-height: 1;
+        padding: 0;
+      }
+      .img-remove-btn:hover {
+        background-color: #b71c1c;
+        transform: scale(1.1);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      }
+      .img-remove-btn:active {
+        transform: scale(0.95);
+      }
       
       /* Remove list markers from checkbox and radio lists - comprehensive rules */
       .code-form-control ul,
@@ -939,7 +969,62 @@
                     fileName.style.display = 'block';
                   }
                 };
+                
+                // Create remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'img-remove-btn';
+                removeBtn.type = 'button';
+                removeBtn.innerHTML = '×';
+                removeBtn.title = 'Remove image';
+                removeBtn.setAttribute('aria-label', 'Remove image');
+                removeBtn.onclick = function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  
+                  // Remove this file wrapper
+                  fileWrapper.remove();
+                  
+                  // Check if there are any remaining files
+                  const remainingWrappers = imgContainer.querySelectorAll('.img-preview-wrapper');
+                  if (remainingWrappers.length === 0) {
+                    // No files left, reset upload area
+                    uploadArea.classList.remove('has-files');
+                    
+                    // Show upload text and button again
+                    if (uploadText) {
+                      uploadText.style.cssText = '';
+                      uploadText.removeAttribute('style');
+                      uploadText.removeAttribute('hidden');
+                    }
+                    if (fileButton) {
+                      fileButton.style.cssText = '';
+                      fileButton.removeAttribute('style');
+                      fileButton.removeAttribute('hidden');
+                    }
+                    
+                    // Reset upload area styling
+                    uploadArea.style.justifyContent = 'center';
+                    uploadArea.style.minHeight = '150px';
+                    uploadArea.style.flexDirection = 'column';
+                    uploadArea.style.overflow = 'hidden';
+                    
+                    // Clear file input
+                    input.value = '';
+                    input.style.zIndex = '10';
+                  } else {
+                    // Update file input to remove this file (for multiple files)
+                    const dt = new DataTransfer();
+                    Array.from(input.files).forEach(function(f, idx) {
+                      if (idx !== index) {
+                        dt.items.add(f);
+                      }
+                    });
+                    input.files = dt.files;
+                  }
+                };
+                
                 fileWrapper.appendChild(img);
+                fileWrapper.appendChild(removeBtn);
                 fileWrapper.appendChild(fileName);
                 imgContainer.appendChild(fileWrapper);
                 
@@ -954,10 +1039,65 @@
               reader.readAsDataURL(file);
             } else {
               const folderIcon = document.createElement('div');
-              folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px;';
+              folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative;';
               folderIcon.textContent = '📁';
               folderIcon.title = file.name;
+              
+              // Create remove button for non-image files too
+              const removeBtn = document.createElement('button');
+              removeBtn.className = 'img-remove-btn';
+              removeBtn.type = 'button';
+              removeBtn.innerHTML = '×';
+              removeBtn.title = 'Remove file';
+              removeBtn.setAttribute('aria-label', 'Remove file');
+              removeBtn.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Remove this file wrapper
+                fileWrapper.remove();
+                
+                // Check if there are any remaining files
+                const remainingWrappers = imgContainer.querySelectorAll('.img-preview-wrapper');
+                if (remainingWrappers.length === 0) {
+                  // No files left, reset upload area
+                  uploadArea.classList.remove('has-files');
+                  
+                  // Show upload text and button again
+                  if (uploadText) {
+                    uploadText.style.cssText = '';
+                    uploadText.removeAttribute('style');
+                    uploadText.removeAttribute('hidden');
+                  }
+                  if (fileButton) {
+                    fileButton.style.cssText = '';
+                    fileButton.removeAttribute('style');
+                    fileButton.removeAttribute('hidden');
+                  }
+                  
+                  // Reset upload area styling
+                  uploadArea.style.justifyContent = 'center';
+                  uploadArea.style.minHeight = '150px';
+                  uploadArea.style.flexDirection = 'column';
+                  uploadArea.style.overflow = 'hidden';
+                  
+                  // Clear file input
+                  input.value = '';
+                  input.style.zIndex = '10';
+                } else {
+                  // Update file input to remove this file (for multiple files)
+                  const dt = new DataTransfer();
+                  Array.from(input.files).forEach(function(f, idx) {
+                    if (idx !== index) {
+                      dt.items.add(f);
+                    }
+                  });
+                  input.files = dt.files;
+                }
+              };
+              
               fileWrapper.appendChild(folderIcon);
+              fileWrapper.appendChild(removeBtn);
               fileWrapper.appendChild(fileName);
               imgContainer.appendChild(fileWrapper);
             }
