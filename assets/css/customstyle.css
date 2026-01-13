@@ -713,7 +713,34 @@ span.Polaris-Choice__Label {
 
 /* checkbox start */
 ul {
-    list-style-type: none;
+    list-style-type: none !important;
+    list-style: none !important;
+    list-style-image: none !important;
+  }
+  /* Remove all list markers from form lists */
+  .code-form-control ul,
+  .code-form-control ul li,
+  .code-form-control li,
+  .code-form-control .globo-list-control,
+  .code-form-control li.globo-list-control,
+  .code-form-control ul.flex-wrap,
+  .code-form-control ul.flex-wrap li {
+    list-style: none !important;
+    list-style-type: none !important;
+    list-style-image: none !important;
+    list-style-position: outside !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  .code-form-control ul::before,
+  .code-form-control ul::after,
+  .code-form-control li::before,
+  .code-form-control li::after,
+  .code-form-control li.globo-list-control::before,
+  .code-form-control li.globo-list-control::after {
+    display: none !important;
+    content: "" !important;
+    visibility: hidden !important;
   }
 .code-form-control .checkbox-wrapper {
     position: relative;

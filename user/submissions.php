@@ -136,10 +136,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                     // Use display_field_configs from backend (new format)
                     var displayFieldConfigs = response.display_field_configs || [];
                     
-                    // Debug: Log what we received
-                    console.log('Submissions - displayFieldConfigs received:', displayFieldConfigs);
-                    console.log('Submissions - Total fields:', displayFieldConfigs.length);
-                    
                     // Log specific fields we're looking for
                     // Check by fieldNameBase first, then by element_id, and also by label to catch mismatches
                     var ratingFields = displayFieldConfigs.filter(function(f) { 
@@ -156,16 +152,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 label === 'password' || label.indexOf('password') !== -1 ||
                                 fieldName.indexOf('password') !== -1 || fieldName.indexOf('pwd') !== -1 || fieldName.indexOf('pass') !== -1);
                     });
-                    // Log all fields with full details
-                    console.log('Submissions - All fields with details:', displayFieldConfigs.map(function(f) {
-                        return {
-                            fieldName: f.fieldName,
-                            fieldNameBase: f.fieldNameBase,
-                            element_id: (f.config && f.config.element_id) ? f.config.element_id : 'N/A',
-                            label: (f.config && f.config.label) ? f.config.label : 'N/A',
-                            fullConfig: f.config
-                        };
-                    }));
                     
                     // Specifically look for password-related fields
                     var allPasswordCandidates = displayFieldConfigs.filter(function(f) {
@@ -182,17 +168,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                fieldNameBase === 'password' ||
                                elementId === '8';
                     });
-                    console.log('Submissions - Password candidates found:', allPasswordCandidates);
-                    var urlFields = displayFieldConfigs.filter(function(f) { 
-                        var label = (f.config && f.config.label) ? f.config.label.toLowerCase() : '';
-                        return (f.fieldNameBase === 'url' || 
-                                (f.config && (f.config.element_id == '5' || f.config.element_id == 5)) ||
-                                label === 'url' || label === 'website' || label.indexOf('url') !== -1 || label.indexOf('website') !== -1 || label.indexOf('link') !== -1);
-                    });
-                    console.log('Submissions - Rating fields found:', ratingFields);
-                    console.log('Submissions - Password fields found:', passwordFields);
-                    console.log('Submissions - URL fields found:', urlFields);
-                    
                     // If old format (form_fields), convert it
                     if (displayFieldConfigs.length === 0 && response.form_fields) {
                         var formFields = response.form_fields || {};
@@ -226,7 +201,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                         }
                                     });
                                 } catch(e) {
-                                    console.error('Error parsing submission data:', e);
                                 }
                             });
                             
@@ -289,7 +263,6 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                 }
                             });
                         } catch(e) {
-                            console.error('Error extracting fields from submission data:', e);
                         }
                     }
                     

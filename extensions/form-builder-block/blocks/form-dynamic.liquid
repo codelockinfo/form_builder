@@ -78,8 +78,8 @@
         display: flex !important;
         flex-wrap: wrap !important;
         gap: 10px !important;
-        justify-content: flex-start !important;
-        align-items: flex-start !important;
+        justify-content: center !important;
+        align-items: center !important;
         padding: 10px !important;
         min-height: 50px !important;
         position: relative !important;
@@ -119,6 +119,80 @@
         margin: 0 auto !important;
       }
       
+      /* Remove list markers from checkbox and radio lists - comprehensive rules */
+      .code-form-control ul,
+      .contact-form .code-form-control ul,
+      .code-form-control ul.flex-wrap,
+      .contact-form .code-form-control ul.flex-wrap,
+      .code-form-control ul li,
+      .contact-form .code-form-control ul li,
+      .code-form-control .globo-list-control,
+      .contact-form .code-form-control .globo-list-control,
+      .code-form-control li.globo-list-control,
+      .contact-form .code-form-control li.globo-list-control,
+      .code-form-control li,
+      .contact-form .code-form-control li,
+      ul.code-form-control,
+      ul.contact-form,
+      li.code-form-control,
+      li.contact-form,
+      .code-form-control ul li.globo-list-control,
+      .contact-form .code-form-control ul li.globo-list-control {
+        list-style: none !important;
+        list-style-type: none !important;
+        list-style-position: outside !important;
+        list-style-image: none !important;
+        margin: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      /* Remove any pseudo-elements that might create markers */
+      .code-form-control ul::before,
+      .contact-form .code-form-control ul::before,
+      .code-form-control ul::after,
+      .contact-form .code-form-control ul::after,
+      .code-form-control ul.flex-wrap::before,
+      .contact-form .code-form-control ul.flex-wrap::before,
+      .code-form-control ul.flex-wrap::after,
+      .contact-form .code-form-control ul.flex-wrap::after,
+      .code-form-control li::before,
+      .contact-form .code-form-control li::before,
+      .code-form-control li::after,
+      .contact-form .code-form-control li::after,
+      .code-form-control li.globo-list-control::before,
+      .contact-form .code-form-control li.globo-list-control::before,
+      .code-form-control li.globo-list-control::after,
+      .contact-form .code-form-control li.globo-list-control::after,
+      .code-form-control .globo-list-control::before,
+      .contact-form .code-form-control .globo-list-control::before,
+      .code-form-control .globo-list-control::after,
+      .contact-form .code-form-control .globo-list-control::after,
+      .code-form-control ul li.globo-list-control::before,
+      .contact-form .code-form-control ul li.globo-list-control::before,
+      .code-form-control ul li.globo-list-control::after,
+      .contact-form .code-form-control ul li.globo-list-control::after {
+        display: none !important;
+        content: "" !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: none !important;
+        border: none !important;
+      }
+      /* Remove markers from all list items globally within form controls */
+      .code-form-control ul *,
+      .contact-form .code-form-control ul * {
+        list-style: none !important;
+        list-style-type: none !important;
+        list-style-image: none !important;
+      }
+      
       /* Checkbox Styles */
       .code-form-control .checkbox-wrapper,
       .contact-form .code-form-control .checkbox-wrapper {
@@ -126,6 +200,7 @@
         display: flex;
         align-items: center;
         min-height: 24px;
+        list-style: none !important;
       }
       .code-form-control .checkbox-wrapper.checkbox-option,
       .contact-form .code-form-control .checkbox-wrapper.checkbox-option {
@@ -140,6 +215,7 @@
         display: flex;
         align-items: center;
         min-height: 24px;
+        list-style: none !important;
       }
       .code-form-control .radio-wrapper .radio-input,
       .contact-form .code-form-control .radio-wrapper .radio-input {
@@ -703,11 +779,40 @@
       wrapper.style.display = 'flex';
       wrapper.style.alignItems = 'center';
     });
+    
+    // Remove list markers from all list items - apply inline styles to ensure they work
+    const allListItems = container.querySelectorAll('.code-form-control ul, .code-form-control li, .code-form-control .globo-list-control, .code-form-control ul li.globo-list-control');
+    allListItems.forEach(function(item) {
+      item.style.setProperty('list-style', 'none', 'important');
+      item.style.setProperty('list-style-type', 'none', 'important');
+      item.style.setProperty('list-style-image', 'none', 'important');
+      item.style.setProperty('margin-left', '0', 'important');
+      item.style.setProperty('padding-left', '0', 'important');
+    });
+    
+    // Also remove from ul elements
+    const allLists = container.querySelectorAll('.code-form-control ul, .code-form-control ul.flex-wrap');
+    allLists.forEach(function(list) {
+      list.style.setProperty('list-style', 'none', 'important');
+      list.style.setProperty('list-style-type', 'none', 'important');
+      list.style.setProperty('list-style-image', 'none', 'important');
+      list.style.setProperty('margin-left', '0', 'important');
+      list.style.setProperty('padding-left', '0', 'important');
+    });
   }
   
   // Function to initialize file upload handlers
   function initializeFileUploadHandlers(container) {
     if (!container) return;
+    
+    // Prevent multiple initializations
+    if (container.hasAttribute('data-file-handlers-initialized')) {
+      return;
+    }
+    container.setAttribute('data-file-handlers-initialized', 'true');
+    
+    // Global flag to prevent double-triggering across all handlers
+    let globalFileInputProcessing = false;
     
     // Handle file button clicks - prevent double-triggering
     container.querySelectorAll('.file_button').forEach(function(button) {
@@ -717,29 +822,34 @@
         button.parentNode.replaceChild(newButton, button);
       }
       
-      let isProcessing = false;
       newButton.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
         
-        if (isProcessing) {
+        if (globalFileInputProcessing) {
           return false;
         }
-        isProcessing = true;
+        globalFileInputProcessing = true;
         
         const uploadArea = this.closest('.upload-area');
         if (uploadArea) {
           const fileInput = uploadArea.querySelector('input[type="file"]');
-          if (fileInput) {
-            fileInput.click();
+          if (fileInput && !fileInput.disabled) {
+            // Use setTimeout to ensure the click happens after event propagation stops
+            setTimeout(function() {
+              fileInput.click();
+              // Reset flag after dialog would have opened
+              setTimeout(function() {
+                globalFileInputProcessing = false;
+              }, 500);
+            }, 10);
+          } else {
+            globalFileInputProcessing = false;
           }
+        } else {
+          globalFileInputProcessing = false;
         }
-        
-        // Reset flag after a short delay
-        setTimeout(function() {
-          isProcessing = false;
-        }, 300);
         
         return false;
       });
@@ -794,7 +904,7 @@
           
           // Clear existing content
           imgContainer.innerHTML = '';
-          imgContainer.style.cssText = 'width: 100% !important; display: flex !important; flex-wrap: wrap !important; gap: 10px !important; justify-content: flex-start !important; align-items: flex-start !important; padding: 10px !important; min-height: 50px !important; position: relative !important; z-index: 5 !important; visibility: visible !important; opacity: 1 !important; box-sizing: border-box !important;';
+          imgContainer.style.cssText = 'width: 100% !important; display: flex !important; flex-wrap: wrap !important; gap: 10px !important; justify-content: center !important; align-items: center !important; padding: 10px !important; min-height: 50px !important; position: relative !important; z-index: 5 !important; visibility: visible !important; opacity: 1 !important; box-sizing: border-box !important;';
           
           // Adjust upload area styling when files are present
           uploadArea.style.cssText = (uploadArea.getAttribute('style') || '') + '; justify-content: flex-start !important; min-height: auto !important; padding: 10px !important; overflow: visible !important; flex-direction: row !important; flex-wrap: wrap !important;';
@@ -887,27 +997,34 @@
         area.parentNode.replaceChild(newArea, area);
       }
       
-      let isProcessing = false;
       newArea.addEventListener('click', function(e) {
         // Don't trigger if clicking on button or existing content
-        if (e.target.classList.contains('file_button') || e.target.closest('.img-preview-wrapper') || e.target.closest('.img-container')) {
+        if (e.target.classList.contains('file_button') || 
+            e.target.closest('.file_button') ||
+            e.target.closest('.img-preview-wrapper') || 
+            e.target.closest('.img-container') ||
+            e.target.tagName === 'INPUT') {
           return;
         }
         
-        if (isProcessing) {
+        if (globalFileInputProcessing) {
           return false;
         }
-        isProcessing = true;
+        globalFileInputProcessing = true;
         
         const fileInput = this.querySelector('input[type="file"]');
-        if (fileInput) {
-          fileInput.click();
+        if (fileInput && !fileInput.disabled) {
+          // Use setTimeout to ensure the click happens after event propagation stops
+          setTimeout(function() {
+            fileInput.click();
+            // Reset flag after dialog would have opened
+            setTimeout(function() {
+              globalFileInputProcessing = false;
+            }, 500);
+          }, 10);
+        } else {
+          globalFileInputProcessing = false;
         }
-        
-        // Reset flag after a short delay
-        setTimeout(function() {
-          isProcessing = false;
-        }, 300);
       });
       newArea.style.cursor = 'pointer';
     });
