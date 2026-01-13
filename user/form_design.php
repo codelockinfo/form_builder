@@ -5976,12 +5976,29 @@ if ($form_id > 0) {
     }
     
     $(document).ready(function() {
+        // Initialize color schemes array early to prevent infinite retries
+        window.loadedColorSchemes = window.loadedColorSchemes || [];
+        
         get_selected_elements(<?php echo $form_id; ?>);
+        
+        // Load theme settings from API on page load (not just when clicking Theme Settings)
+        // This ensures color schemes are available when we try to load saved scheme
+        loadThemeSettingsFromAPI();
         
         // Load saved design settings after form is loaded (with longer delay)
         setTimeout(function() {
             loadSavedDesignSettings();
         }, 1500); // Longer delay to ensure form preview is loaded
+        
+        // Also trigger color scheme application after form loads
+        $(document).on('formLoaded.colorScheme', function() {
+            if (window.selectedColorScheme) {
+                setTimeout(function() {
+                    applyColorSchemeToPreview(window.selectedColorScheme);
+                }, 100);
+            }
+        });
+        
         seeting_enable_disable(<?php echo $form_id; ?>);
         // getFormTitle(<?php echo $form_id; ?>);
         
@@ -6480,18 +6497,25 @@ if ($form_id > 0) {
                     } else {
                         // Show content even on error (it will be empty)
                         $('#themeSettingsContent').show();
+                        // Set empty array to prevent infinite retries
+                        window.loadedColorSchemes = [];
                     }
                 },
                 error: function(xhr, status, error) {
                     // Hide loader and show content (will be empty)
                     $('#themeSettingsLoader').hide();
                     $('#themeSettingsContent').show();
+                    // Set empty array to prevent infinite retries
+                    window.loadedColorSchemes = [];
                 }
             });
         }
         
         // Function to display theme settings
         function displayThemeSettings(colorSchemes, colors, typography, textPresets) {
+            // Store loaded color schemes globally - ensure it's always set
+            window.loadedColorSchemes = colorSchemes || [];
+            
             // Use API color schemes only - no fallback to defaults
             var schemesToDisplay = [];
             if (colorSchemes && colorSchemes.length > 0) {
@@ -6506,6 +6530,9 @@ if ($form_id > 0) {
                     };
                 });
             }
+            
+            // Load saved color scheme if exists
+            loadSavedColorScheme();
             
             // Generate color schemes HTML
             var colorsHtml = '';
@@ -6536,6 +6563,9 @@ if ($form_id > 0) {
             }
             
             $('#colorSchemaContainer').html(colorsHtml);
+            
+            // Load saved color scheme and apply it
+            loadSavedColorScheme();
             
             // Use API typography only - no fallback to defaults
             var fontsToDisplay = typography && typography.length > 0 ? typography : [];
@@ -6840,6 +6870,88 @@ if ($form_id > 0) {
                 'border-radius': borderRadius + 'px'
             });
             
+            // Also apply border-radius directly to select elements with !important to override browser defaults
+            // Target select elements that have data-formdataid directly
+            $('.code-form-app select[data-formdataid="' + formdataid + '"], .contact-form select[data-formdataid="' + formdataid + '"]').each(function() {
+                $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+            });
+            
+            // Target select elements by finding the container that has a label with this formdataid
+            // This is needed for Country and other select elements that don't have data-formdataid directly
+            $('.code-form-app .label-content[data-formdataid="' + formdataid + '"], .contact-form .label-content[data-formdataid="' + formdataid + '"]').each(function() {
+                var $label = $(this);
+                // Find the parent code-form-control container
+                var $container = $label.closest('.code-form-control');
+                if ($container.length) {
+                    // Find the select element within this container
+                    var $select = $container.find('select.classic-input');
+                    if ($select.length) {
+                        $select.each(function() {
+                            $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                        });
+                    }
+                }
+            });
+            
+            // Also target select elements by class within code-form-control (fallback)
+            $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] select.classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] select.classic-input').each(function() {
+                $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+            });
+            
+            // Target Country select by ID pattern (false-country-{formdataid})
+            $('.code-form-app select#false-country-' + formdataid + ', .contact-form select#false-country-' + formdataid).each(function() {
+                $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+            });
+            
+            // Additional comprehensive fallback: Find ALL select.classic-input and check if they're in a container with matching label
+            // This catches Country and any other select elements that might not be caught by the above selectors
+            $('.code-form-app select.classic-input, .contact-form select.classic-input').each(function() {
+                var $select = $(this);
+                var $container = $select.closest('.code-form-control');
+                if ($container.length) {
+                    var $label = $container.find('.label-content[data-formdataid="' + formdataid + '"]');
+                    if ($label.length) {
+                        $select[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                    }
+                }
+            });
+            
+            // Also inject CSS rule to ensure border-radius is applied (most reliable method)
+            var styleId = 'border-radius-' + formdataid;
+            var $existingStyle = $('#' + styleId);
+            if ($existingStyle.length) {
+                $existingStyle.remove();
+            }
+            // Use multiple selectors to catch all possible cases
+            // Note: :has() selector might not work in all browsers, so we'll use attribute selectors as fallback
+            var styleContent = '<style id="' + styleId + '">' +
+                '.code-form-app select#false-country-' + formdataid + ', ' +
+                '.contact-form select#false-country-' + formdataid + ', ' +
+                '.code-form-app .code-form-control:has(.label-content[data-formdataid="' + formdataid + '"]) select.classic-input, ' +
+                '.contact-form .code-form-control:has(.label-content[data-formdataid="' + formdataid + '"]) select.classic-input { ' +
+                'border-radius: ' + borderRadius + 'px !important; ' +
+                '}' +
+                '</style>';
+            $('head').append(styleContent);
+            
+            // Also run with a delay to catch any dynamically loaded elements
+            setTimeout(function() {
+                $('.code-form-app select.classic-input, .contact-form select.classic-input').each(function() {
+                    var $select = $(this);
+                    var $container = $select.closest('.code-form-control');
+                    if ($container.length) {
+                        var $label = $container.find('.label-content[data-formdataid="' + formdataid + '"]');
+                        if ($label.length) {
+                            $select[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                        }
+                    }
+                });
+                // Also retry Country by ID
+                $('.code-form-app select#false-country-' + formdataid + ', .contact-form select#false-country-' + formdataid).each(function() {
+                    $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                });
+            }, 100);
+            
             // Apply to file upload elements (upload-area and file_button) in both preview containers
             // IMPORTANT: Use !important to override any CSS that might be conflicting
             // Try multiple selector strategies to find the upload-area
@@ -7029,9 +7141,24 @@ if ($form_id > 0) {
         
         // Apply saved settings immediately when customization panel inputs are available
         function applySavedSettingsToPreview() {
+            // Process all elements that have design settings (font-size, border-radius, etc.)
+            // Use a Set to avoid processing the same formdataid multiple times
+            var processedFormdataids = new Set();
+            
+            // Process elements with font-size
             $('.element-design-font-size').each(function() {
                 var formdataid = $(this).data('formdataid');
-                if (formdataid) {
+                if (formdataid && !processedFormdataids.has(formdataid)) {
+                    processedFormdataids.add(formdataid);
+                    updateElementDesignPreview(formdataid);
+                }
+            });
+            
+            // Also process elements with border-radius (in case they don't have font-size)
+            $('.element-design-border-radius').each(function() {
+                var formdataid = $(this).data('formdataid');
+                if (formdataid && !processedFormdataids.has(formdataid)) {
+                    processedFormdataids.add(formdataid);
                     updateElementDesignPreview(formdataid);
                 }
             });
@@ -7253,13 +7380,35 @@ if ($form_id > 0) {
                 }
             }
             
-            // Apply border-radius to the input field (not font-size)
-            var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"], .code-form-app input[data-formdataid="' + formdataid + '"], .code-form-app textarea[data-formdataid="' + formdataid + '"]');
+            // Apply border-radius to the input field, textarea, and select (not font-size)
+            var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"], .contact-form select[data-formdataid="' + formdataid + '"], .code-form-app input[data-formdataid="' + formdataid + '"], .code-form-app textarea[data-formdataid="' + formdataid + '"], .code-form-app select[data-formdataid="' + formdataid + '"]');
             if ($previewInput.length) {
                 $previewInput.css({
                     'border-radius': borderRadius + 'px'
                 });
             }
+            
+            // Also target select elements by finding the container that has a label with this formdataid
+            // This is needed for Country and other select elements that don't have data-formdataid directly
+            $('.code-form-app .label-content[data-formdataid="' + formdataid + '"], .contact-form .label-content[data-formdataid="' + formdataid + '"]').each(function() {
+                var $label = $(this);
+                // Find the parent code-form-control container
+                var $container = $label.closest('.code-form-control');
+                if ($container.length) {
+                    // Find the select element within this container
+                    var $select = $container.find('select.classic-input');
+                    if ($select.length) {
+                        $select.each(function() {
+                            $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                        });
+                    }
+                }
+            });
+            
+            // Target Country select by ID pattern (false-country-{formdataid})
+            $('.code-form-app select#false-country-' + formdataid + ', .contact-form select#false-country-' + formdataid).each(function() {
+                $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+            });
             
             // Apply to file upload elements (upload-area and file_button) in both preview containers
             var $uploadArea = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .upload-area, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .upload-area');
@@ -7300,10 +7449,142 @@ if ($form_id > 0) {
                 }
             });
             
+            // Function to apply border-radius to Country selects for a specific formdataid
+            function applyBorderRadiusToCountrySelect(formdataid) {
+                if (!formdataid) return;
+                
+                var $borderRadiusInput = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]');
+                if (!$borderRadiusInput.length) return;
+                
+                // Get border-radius value - try val() first, then attr('value') as fallback
+                var borderRadiusVal = $borderRadiusInput.val();
+                if (!borderRadiusVal || borderRadiusVal === '' || borderRadiusVal === null || borderRadiusVal === undefined) {
+                    borderRadiusVal = $borderRadiusInput.attr('value');
+                }
+                
+                if (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) {
+                    var borderRadius = parseInt(borderRadiusVal);
+                    if (!isNaN(borderRadius) && borderRadius >= 0) {
+                        // Apply to Country select by ID
+                        $('.code-form-app select#false-country-' + formdataid + ', .contact-form select#false-country-' + formdataid).each(function() {
+                            $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                        });
+                        
+                        // Apply to any select in container with matching label
+                        $('.code-form-app .label-content[data-formdataid="' + formdataid + '"], .contact-form .label-content[data-formdataid="' + formdataid + '"]').each(function() {
+                            var $label = $(this);
+                            var $container = $label.closest('.code-form-control');
+                            if ($container.length) {
+                                var $select = $container.find('select.classic-input');
+                                if ($select.length) {
+                                    $select.each(function() {
+                                        $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                                    });
+                                }
+                            }
+                        });
+                        
+                        // Also update the CSS injection
+                        var styleId = 'border-radius-' + formdataid;
+                        var $existingStyle = $('#' + styleId);
+                        if ($existingStyle.length) {
+                            $existingStyle.remove();
+                        }
+                        var styleContent = '<style id="' + styleId + '">' +
+                            '.code-form-app select#false-country-' + formdataid + ', ' +
+                            '.contact-form select#false-country-' + formdataid + ', ' +
+                            '.code-form-app .code-form-control:has(.label-content[data-formdataid="' + formdataid + '"]) select.classic-input, ' +
+                            '.contact-form .code-form-control:has(.label-content[data-formdataid="' + formdataid + '"]) select.classic-input { ' +
+                            'border-radius: ' + borderRadius + 'px !important; ' +
+                            '}' +
+                            '</style>';
+                        $('head').append(styleContent);
+                    }
+                }
+            }
+            
             // Apply settings for any design inputs that exist
             setTimeout(function() {
                 applySavedSettingsToPreview();
+                
+                // Apply border-radius to all Country selects
+                $('.element-design-border-radius').each(function() {
+                    var formdataid = $(this).data('formdataid');
+                    if (formdataid) {
+                        applyBorderRadiusToCountrySelect(formdataid);
+                    }
+                });
             }, 500);
+            
+            // Retry multiple times to catch late-loading elements
+            var retryDelays = [1000, 2000, 3000, 5000];
+            retryDelays.forEach(function(delay) {
+                setTimeout(function() {
+                    $('.element-design-border-radius').each(function() {
+                        var formdataid = $(this).data('formdataid');
+                        if (formdataid) {
+                            applyBorderRadiusToCountrySelect(formdataid);
+                        }
+                    });
+                }, delay);
+            });
+            
+            // Use MutationObserver to watch for new elements being added to the DOM
+            if (typeof MutationObserver !== 'undefined') {
+                var observer = new MutationObserver(function(mutations) {
+                    var shouldCheck = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length) {
+                            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                                var node = mutation.addedNodes[i];
+                                if (node.nodeType === 1) {
+                                    // Check if a select element or border-radius input was added
+                                    if ($(node).is('select') || $(node).find('select').length > 0 || 
+                                        $(node).is('.element-design-border-radius') || $(node).find('.element-design-border-radius').length > 0) {
+                                        shouldCheck = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    if (shouldCheck) {
+                        setTimeout(function() {
+                            $('.element-design-border-radius').each(function() {
+                                var formdataid = $(this).data('formdataid');
+                                if (formdataid) {
+                                    applyBorderRadiusToCountrySelect(formdataid);
+                                }
+                            });
+                        }, 100);
+                    }
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+            
+            // Also trigger when form HTML is loaded via AJAX
+            $(document).ajaxComplete(function() {
+                setTimeout(function() {
+                    $('.element-design-border-radius').each(function() {
+                        var formdataid = $(this).data('formdataid');
+                        if (formdataid) {
+                            applyBorderRadiusToCountrySelect(formdataid);
+                        }
+                    });
+                }, 300);
+            });
+            
+            // Load saved color scheme after form is loaded
+            // Note: This will be called again when color schemes are loaded in displayThemeSettings
+            // So we only need one call here as a fallback
+            setTimeout(function() {
+                loadSavedColorScheme(0);
+            }, 2000);
         }
         
         // Function to update star rating display when a star is selected (for customizer preview)
@@ -7395,6 +7676,26 @@ if ($form_id > 0) {
                     $label.removeClass('star-empty');
                     // Set inline style as backup to ensure it shows
                     $label.attr('data-star-state', 'filled');
+                    // Update background-image to show filled star
+                    // CRITICAL FIX: Use pixel values and !important
+                    $label[0].style.setProperty('width', '24px', 'important');
+                    $label[0].style.setProperty('height', '24px', 'important');
+                    $label[0].style.setProperty('min-width', '24px', 'important');
+                    $label[0].style.setProperty('min-height', '24px', 'important');
+                    $label[0].style.setProperty('background-image', 'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")', 'important');
+                    $label[0].style.setProperty('background-size', '24px 24px', 'important');
+                    
+                    $label.css({
+                        'background': 'url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px',
+                        'background-image': 'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")',
+                        'background-size': '24px 24px',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'center',
+                        'width': '24px',
+                        'height': '24px',
+                        'min-width': '24px',
+                        'min-height': '24px'
+                    });
                     // Force reflow to ensure class is applied
                     $label[0].offsetHeight;
                     // Force style recalculation
@@ -7404,6 +7705,26 @@ if ($form_id > 0) {
                     $label.addClass('star-empty');
                     $label.removeClass('star-filled');
                     $label.attr('data-star-state', 'empty');
+                    // Update background-image to show empty star
+                    // CRITICAL FIX: Use pixel values and !important
+                    $label[0].style.setProperty('width', '24px', 'important');
+                    $label[0].style.setProperty('height', '24px', 'important');
+                    $label[0].style.setProperty('min-width', '24px', 'important');
+                    $label[0].style.setProperty('min-height', '24px', 'important');
+                    $label[0].style.setProperty('background-image', 'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")', 'important');
+                    $label[0].style.setProperty('background-size', '24px 24px', 'important');
+                    
+                    $label.css({
+                        'background': 'url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px',
+                        'background-image': 'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")',
+                        'background-size': '24px 24px',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'center',
+                        'width': '24px',
+                        'height': '24px',
+                        'min-width': '24px',
+                        'min-height': '24px'
+                    });
                     // Force reflow to ensure class is applied
                     $label[0].offsetHeight;
                     // Force style recalculation
@@ -7425,8 +7746,11 @@ if ($form_id > 0) {
             }
             
             if ($starRatings.length === 0) {
+                // Try even more selectors
+                var $allStarRatings = $('.star-rating');
                 return; // No star ratings found
             }
+            
             
             // Ensure inputs and labels are clickable and properly positioned
             // With flex-direction: row-reverse, inputs need to be positioned over their labels
@@ -7563,28 +7887,134 @@ if ($form_id > 0) {
                 }
             });
             
-            // Initialize all stars as empty by default
+            // Initialize all stars as empty by default and ensure they're visible
+            var labelCount = 0;
             $starRatings.find('fieldset label').each(function() {
+                labelCount++;
                 var $label = $(this);
-                if (!$label.hasClass('star-filled') && !$label.hasClass('star-empty')) {
-                    $label.addClass('star-empty');
-                }
+                var labelId = $label.attr('for') || 'no-id';
+                // CRITICAL: Force all stars to be empty by default (remove star-filled if present)
+                $label.removeClass('star-filled');
+                $label.addClass('star-empty');
+                $label.attr('data-star-state', 'empty');
+                
+                // CRITICAL: Always start with empty star image, regardless of class
+                // We'll update to filled stars later if an input is checked
+                var starImage = 'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
+                
+                // CRITICAL FIX: Use pixel values and !important to override any conflicting CSS
+                // The issue is width/height are being set to 0px by some CSS rule
+                $label[0].style.setProperty('width', '24px', 'important');
+                $label[0].style.setProperty('height', '24px', 'important');
+                $label[0].style.setProperty('min-width', '24px', 'important');
+                $label[0].style.setProperty('min-height', '24px', 'important');
+                // CRITICAL: Set background-image with full URL (not stripped)
+                $label[0].style.setProperty('background-image', starImage, 'important');
+                $label[0].style.setProperty('background-size', '24px 24px', 'important');
+                $label[0].style.setProperty('background-repeat', 'no-repeat', 'important');
+                $label[0].style.setProperty('background-position', 'center', 'important');
+                // Also set background shorthand to ensure it works
+                $label[0].style.setProperty('background', starImage + ' no-repeat center / 24px 24px', 'important');
+                $label[0].style.setProperty('display', 'inline-block', 'important');
+                $label[0].style.setProperty('overflow', 'visible', 'important');
+                $label[0].style.setProperty('position', 'relative', 'important');
+                
+                // Also set via jQuery as fallback
+                $label.css({
+                    'background': starImage + ' no-repeat center / 24px 24px',
+                    'background-image': starImage,
+                    'background-size': '24px 24px',
+                    'background-repeat': 'no-repeat',
+                    'background-position': 'center',
+                    'overflow': 'visible',
+                    'position': 'relative',
+                    'display': 'inline-block',
+                    'width': '24px',
+                    'height': '24px',
+                    'min-width': '24px',
+                    'min-height': '24px',
+                    'margin': '0 2px',
+                    'color': 'transparent',
+                    'font-size': '0',
+                    'line-height': '0',
+                    'text-indent': '-9999px',
+                    'opacity': '1',
+                    'visibility': 'visible'
+                });
+                
             });
             
-            // Also check if any stars are already checked and update their display
-            $starRatings.find('fieldset input[type="radio"]:checked').each(function() {
-                updateStarRatingDisplay(this);
-            });
+            // Now check if any stars are already checked and update their display
+            // This will fill the appropriate stars based on the checked input
+            var checkedInputs = $starRatings.find('fieldset input[type="radio"]:checked');
+            if (checkedInputs.length > 0) {
+                checkedInputs.each(function() {
+                    updateStarRatingDisplay(this);
+                });
+            }
         };
         
         // Initialize on page load
         $(document).ready(function() {
             // Wait for form to load, then initialize
-            setTimeout(function() {
-                if (typeof window.initializeStarRatingHandlers === 'function') {
-                    window.initializeStarRatingHandlers();
+            // Try multiple times to ensure form is loaded
+            var initAttempts = 0;
+            var maxAttempts = 10;
+            var initInterval = setInterval(function() {
+                initAttempts++;
+                var $starRatings = $('.code-form-app .star-rating, .contact-form .star-rating');
+                
+                if ($starRatings.length > 0 || initAttempts >= maxAttempts) {
+                    clearInterval(initInterval);
+                    
+                    if (typeof window.initializeStarRatingHandlers === 'function') {
+                        window.initializeStarRatingHandlers();
+                    }
+                    
+                    // Also directly set background images on all star labels
+                    var directLabelCount = 0;
+                    $starRatings.find('fieldset label').each(function() {
+                        directLabelCount++;
+                        var $label = $(this);
+                        // CRITICAL: Force to empty
+                        $label.removeClass('star-filled');
+                        $label.addClass('star-empty');
+                        $label.attr('data-star-state', 'empty');
+                        
+                        // Always use empty star image initially
+                        var starImage = 'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
+                        
+                        // CRITICAL FIX: Use pixel values and !important
+                        $label[0].style.setProperty('width', '24px', 'important');
+                        $label[0].style.setProperty('height', '24px', 'important');
+                        $label[0].style.setProperty('min-width', '24px', 'important');
+                        $label[0].style.setProperty('min-height', '24px', 'important');
+                        // CRITICAL: Set background-image with full URL (not stripped)
+                        $label[0].style.setProperty('background-image', starImage, 'important');
+                        $label[0].style.setProperty('background-size', '24px 24px', 'important');
+                        // Also set background shorthand to ensure it works
+                        $label[0].style.setProperty('background', starImage + ' no-repeat center / 24px 24px', 'important');
+                        
+                        $label.css({
+                            'background': starImage + ' no-repeat center / 24px 24px',
+                            'background-image': starImage,
+                            'width': '24px',
+                            'height': '24px',
+                            'min-width': '24px',
+                            'min-height': '24px'
+                        });
+                        
+                    });
+                    
+                    // Now check if any inputs are checked and update display
+                    var checkedInputs = $starRatings.find('fieldset input[type="radio"]:checked');
+                    if (checkedInputs.length > 0) {
+                        checkedInputs.each(function() {
+                            updateStarRatingDisplay(this);
+                        });
+                    }
                 }
-            }, 2000);
+            }, 300);
         });
         
         // Re-initialize when form elements are loaded/updated
@@ -7681,6 +8111,707 @@ if ($form_id > 0) {
             });
         });
         
+        // Function to load saved color scheme
+        function loadSavedColorScheme(retryCount) {
+            retryCount = retryCount || 0;
+            var maxRetries = 10; // Maximum 10 retries (5 seconds total)
+            
+            var formId = $('.formid').val();
+            if (!formId) {
+                return;
+            }
+            
+            // Wait for color schemes to be loaded first
+            // Check if window.loadedColorSchemes exists and is an array (even if empty)
+            if (typeof window.loadedColorSchemes === 'undefined' || window.loadedColorSchemes === null) {
+                if (retryCount < maxRetries) {
+                    setTimeout(function() {
+                        loadSavedColorScheme(retryCount + 1);
+                    }, 500);
+                } else {
+                    // Set empty array to prevent further retries
+                    window.loadedColorSchemes = [];
+                }
+                return;
+            }
+            
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'get_form_color_scheme',
+                    store: store,
+                    form_id: formId
+                },
+                success: function(response) {
+                    if (response && response.result === 'success' && response.color_scheme_id) {
+                        var savedSchemeId = response.color_scheme_id;
+                        
+                        // Select the saved color scheme box - try multiple methods
+                        var $schemeBox = $('.color-scheme-box[data-scheme-id="' + savedSchemeId + '"]');
+                        if (!$schemeBox.length) {
+                            // Try with string comparison
+                            $schemeBox = $('.color-scheme-box').filter(function() {
+                                var boxId = $(this).data('scheme-id');
+                                return boxId == savedSchemeId || 
+                                       String(boxId) === String(savedSchemeId) ||
+                                       parseInt(boxId) == parseInt(savedSchemeId);
+                            });
+                        }
+                        
+                        if ($schemeBox.length) {
+                            $('.color-scheme-box').removeClass('selected');
+                            $schemeBox.addClass('selected');
+                            window.selectedColorSchemeId = savedSchemeId;
+                            
+                            // Find and apply the color scheme
+                            if (window.loadedColorSchemes && window.loadedColorSchemes.length > 0) {
+                                var savedScheme = window.loadedColorSchemes.find(function(scheme) {
+                                    var schemeIdStr = String(scheme.id || '');
+                                    var savedIdStr = String(savedSchemeId || '');
+                                    var schemeIdNum = parseInt(scheme.id) || 0;
+                                    var savedIdNum = parseInt(savedSchemeId) || 0;
+                                    
+                                    return schemeIdStr === savedIdStr || 
+                                           schemeIdNum === savedIdNum || 
+                                           scheme.id == savedSchemeId ||
+                                           schemeIdNum == savedIdNum;
+                                });
+                                
+                                // If not found, try by array index
+                                if (!savedScheme && savedIdNum > 0) {
+                                    var arrayIndex = savedIdNum - 1;
+                                    if (arrayIndex >= 0 && arrayIndex < window.loadedColorSchemes.length) {
+                                        savedScheme = window.loadedColorSchemes[arrayIndex];
+                                    }
+                                }
+                                
+                                if (savedScheme) {
+                                    window.selectedColorScheme = savedScheme;
+                                    if (typeof applyColorSchemeToPreview === 'function') {
+                                        applyColorSchemeToPreview(savedScheme);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                }
+            });
+        }
+        
+        // Function to save color scheme
+        function saveColorScheme() {
+            var formId = $('.formid').val();
+            if (!formId || !window.selectedColorSchemeId) {
+                return;
+            }
+            
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'save_form_color_scheme',
+                    store: store,
+                    form_id: formId,
+                    color_scheme_id: window.selectedColorSchemeId
+                },
+                success: function(response) {
+                },
+                error: function(xhr, status, error) {
+                }
+            });
+        }
+        
+        // Function to apply color scheme to form preview (define before use)
+        function applyColorSchemeToPreview(colorScheme) {
+            if (!colorScheme) return;
+            
+            var bgColor = colorScheme.bg || colorScheme.background || '#ffffff';
+            var textColor = colorScheme.text || '#000000';
+            var swatch1 = colorScheme.swatch1 || colorScheme.accent1 || textColor;
+            var swatch2 = colorScheme.swatch2 || colorScheme.accent2 || bgColor;
+            
+            // Function to actually apply the styles (can be called immediately or after form loads)
+            var applyStyles = function() {
+                // First, ensure ALL parent containers have transparent background
+                $('.preview-box, .iframe-wrapper, .preview-card, .contact-form').css({
+                    'background-color': 'transparent'
+                });
+                
+                // Apply to form container background ONLY (not full page background)
+                // Target ONLY the innermost form container with boxed-layout class
+                var $formContainer = $('.code-form-app.boxed-layout');
+                if (!$formContainer.length) {
+                    // Fallback: get the .code-form-app that's inside .contact-form
+                    $formContainer = $('.contact-form > .code-form-app');
+                }
+                if (!$formContainer.length) {
+                    // Last fallback: get first .code-form-app
+                    $formContainer = $('.code-form-app').first();
+                }
+                
+                if ($formContainer.length) {
+                    // ONLY apply background to the actual form container, not parent wrappers
+                    $formContainer.css({
+                        'background-color': bgColor,
+                        'color': textColor
+                    });
+                    
+                    // Explicitly ensure parent containers don't get the background
+                    $formContainer.parents('.contact-form, .preview-box, .iframe-wrapper, .preview-card').css({
+                        'background-color': 'transparent'
+                    });
+                    
+                    // Also ensure .contact-form wrapper doesn't get the background
+                    $('.contact-form').not($formContainer).css('background-color', 'transparent');
+                }
+                
+                // Apply to labels
+                $('.code-form-app label, .contact-form label, .code-form-app .label-content, .contact-form .label-content').each(function() {
+                    var $label = $(this);
+                    // Only apply if not already customized
+                    if (!$label.data('custom-color')) {
+                        $label.css('color', textColor);
+                    }
+                });
+                
+                // Apply to inputs (but exclude star rating inputs and radio buttons)
+                $('.code-form-app input[type="text"], .contact-form input[type="text"], ' +
+                  '.code-form-app input[type="email"], .contact-form input[type="email"], ' +
+                  '.code-form-app input[type="date"], .contact-form input[type="date"], ' +
+                  '.code-form-app input[type="datetime-local"], .contact-form input[type="datetime-local"], ' +
+                  '.code-form-app textarea, .contact-form textarea, ' +
+                  '.code-form-app select, .contact-form select').not('.star-rating input, fieldset input[type="radio"]').each(function() {
+                    var $input = $(this);
+                    // Only apply if not already customized
+                    if (!$input.data('custom-color') && !$input.data('custom-bg')) {
+                        // Get custom border-radius if exists (from element design settings)
+                        var formdataid = $input.data('formdataid');
+                        var customBorderRadius = null;
+                        if (formdataid) {
+                            var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
+                            if (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) {
+                                var borderRadius = parseInt(borderRadiusVal);
+                                if (!isNaN(borderRadius) && borderRadius >= 0) {
+                                    customBorderRadius = borderRadius + 'px';
+                                }
+                            }
+                        }
+                        
+                        // If no custom border-radius, check if element already has one set
+                        if (!customBorderRadius) {
+                            var existingBorderRadius = $input.css('border-radius');
+                            if (existingBorderRadius && existingBorderRadius !== '0px' && existingBorderRadius !== 'none') {
+                                customBorderRadius = existingBorderRadius;
+                            }
+                        }
+                        
+                        // Use custom border-radius if available, otherwise default to 4px
+                        var borderRadiusToApply = customBorderRadius || '4px';
+                        
+                        // Apply styles
+                        $input.css({
+                            'color': textColor,
+                            'background-color': bgColor,
+                            'border-color': swatch1,
+                            'border-width': '1px',
+                            'border-style': 'solid',
+                            'padding': '8px 12px',
+                            'border-radius': borderRadiusToApply,
+                            'display': 'block',
+                            'width': '100%',
+                            'box-sizing': 'border-box'
+                        });
+                        
+                        // For select elements, also set border-radius with !important to override browser defaults
+                        if ($input.is('select')) {
+                            $input[0].style.setProperty('border-radius', borderRadiusToApply, 'important');
+                        }
+                    }
+                });
+                
+                // Also target select elements by finding the container that has a label with formdataid
+                // This is needed for Country and other select elements that don't have data-formdataid directly
+                $('.code-form-app .label-content[data-formdataid], .contact-form .label-content[data-formdataid]').each(function() {
+                    var $label = $(this);
+                    var labelFormdataid = $label.data('formdataid');
+                    if (!labelFormdataid) return;
+                    
+                    // Get custom border-radius if exists (from element design settings)
+                    var customBorderRadius = null;
+                    var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + labelFormdataid + '"]').val();
+                    if (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) {
+                        var borderRadius = parseInt(borderRadiusVal);
+                        if (!isNaN(borderRadius) && borderRadius >= 0) {
+                            customBorderRadius = borderRadius + 'px';
+                        }
+                    }
+                    
+                    // If no custom border-radius, check if element already has one set
+                    if (!customBorderRadius) {
+                        var $container = $label.closest('.code-form-control');
+                        if ($container.length) {
+                            var $select = $container.find('select.classic-input');
+                            if ($select.length) {
+                                var existingBorderRadius = $select.css('border-radius');
+                                if (existingBorderRadius && existingBorderRadius !== '0px' && existingBorderRadius !== 'none') {
+                                    customBorderRadius = existingBorderRadius;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Use custom border-radius if available, otherwise default to 4px
+                    var borderRadiusToApply = customBorderRadius || '4px';
+                    
+                    // Find the parent code-form-control container
+                    var $container = $label.closest('.code-form-control');
+                    if ($container.length) {
+                        // Find the select element within this container
+                        var $select = $container.find('select.classic-input');
+                        if ($select.length && !$select.data('custom-color') && !$select.data('custom-bg')) {
+                            $select.each(function() {
+                                $(this)[0].style.setProperty('border-radius', borderRadiusToApply, 'important');
+                            });
+                        }
+                    }
+                });
+                
+                // Hide text in star rating labels
+                // Fix star rating labels - MUST have overflow: visible for :before pseudo-elements to show
+                var colorSchemeLabelCount = 0;
+                $('.code-form-app .star-rating fieldset label, .contact-form .star-rating fieldset label, .code-form-app .code-form-control .star-rating fieldset label, .contact-form .code-form-control .star-rating fieldset label').each(function() {
+                    colorSchemeLabelCount++;
+                    var $label = $(this);
+                    // Ensure star-empty class if not filled
+                    if (!$label.hasClass('star-filled')) {
+                        $label.addClass('star-empty');
+                    }
+                    
+                    // Set styles including background-image as fallback
+                    // Override background: transparent !important from customstyle.css
+                    var starImage = $label.hasClass('star-filled') ? 
+                        'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")' : 
+                        'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
+                    
+                    // CRITICAL FIX: Use pixel values and !important to override any conflicting CSS
+                    $label[0].style.setProperty('width', '24px', 'important');
+                    $label[0].style.setProperty('height', '24px', 'important');
+                    $label[0].style.setProperty('min-width', '24px', 'important');
+                    $label[0].style.setProperty('min-height', '24px', 'important');
+                    // CRITICAL: Set background-image with full URL (not stripped)
+                    $label[0].style.setProperty('background-image', starImage, 'important');
+                    $label[0].style.setProperty('background-size', '24px 24px', 'important');
+                    $label[0].style.setProperty('background-repeat', 'no-repeat', 'important');
+                    $label[0].style.setProperty('background-position', 'center', 'important');
+                    // Also set background shorthand to ensure it works
+                    $label[0].style.setProperty('background', starImage + ' no-repeat center / 24px 24px', 'important');
+                    $label[0].style.setProperty('display', 'inline-block', 'important');
+                    
+                    $label.css({
+                        'color': 'transparent',
+                        'font-size': '0',
+                        'line-height': '0',
+                        'overflow': 'visible',
+                        'text-indent': '-9999px',
+                        'position': 'relative',
+                        'display': 'inline-block',
+                        'width': '24px',
+                        'height': '24px',
+                        'min-width': '24px',
+                        'min-height': '24px',
+                        'margin': '0 2px',
+                        'cursor': 'pointer',
+                        // Override background: transparent !important
+                        'background': starImage + ' no-repeat center / 24px 24px',
+                        'background-image': starImage,
+                        'background-size': '24px 24px',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'center',
+                        'opacity': '1',
+                        'visibility': 'visible'
+                    });
+                    
+                });
+                
+                // Apply to buttons
+                $('.code-form-app button.submit, .contact-form button.submit, .code-form-app .submit.action, .contact-form .submit.action, .code-form-app .file_button, .contact-form .file_button').each(function() {
+                    var $btn = $(this);
+                    if (!$btn.data('custom-bg')) {
+                        // Get custom border-radius if exists (from footer design settings)
+                        var customBorderRadius = null;
+                        var footerBorderRadius = parseInt($('.footer-design-button-border-radius').val());
+                        if (!isNaN(footerBorderRadius) && footerBorderRadius >= 0) {
+                            customBorderRadius = footerBorderRadius + 'px';
+                        }
+                        
+                        // If no custom border-radius, check if element already has one set
+                        if (!customBorderRadius) {
+                            var existingBorderRadius = $btn.css('border-radius');
+                            if (existingBorderRadius && existingBorderRadius !== '0px' && existingBorderRadius !== 'none') {
+                                customBorderRadius = existingBorderRadius;
+                            }
+                        }
+                        
+                        // Use custom border-radius if available, otherwise preserve existing or default
+                        var borderRadiusToApply = customBorderRadius || $btn.css('border-radius') || '4px';
+                        
+                        $btn.css({
+                            'background-color': swatch1,
+                            'color': bgColor,
+                            'border-color': swatch1,
+                            'border-radius': borderRadiusToApply
+                        });
+                    }
+                });
+                
+                // Apply to upload area borders (preserve border-radius)
+                $('.code-form-app .upload-area, .contact-form .upload-area').each(function() {
+                    var $uploadArea = $(this);
+                    var existingBorderRadius = $uploadArea.css('border-radius');
+                    var borderRadiusToApply = existingBorderRadius && existingBorderRadius !== '0px' && existingBorderRadius !== 'none' ? existingBorderRadius : '4px';
+                    
+                    // Get custom border-radius if exists (from element design settings)
+                    var formdataid = $uploadArea.closest('[data-formdataid]').data('formdataid');
+                    if (formdataid) {
+                        var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
+                        if (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) {
+                            var borderRadius = parseInt(borderRadiusVal);
+                            if (!isNaN(borderRadius) && borderRadius >= 0) {
+                                borderRadiusToApply = borderRadius + 'px';
+                            }
+                        }
+                    }
+                    
+                    $uploadArea.css({
+                        'border-color': swatch1,
+                        'border-radius': borderRadiusToApply
+                    });
+                });
+                
+                // Hide the native file input (keep the custom upload area visible)
+                $('.code-form-app input[type="file"], .contact-form input[type="file"]').css({
+                    'position': 'absolute',
+                    'opacity': '0',
+                    'width': '0',
+                    'height': '0',
+                    'overflow': 'hidden',
+                    'clip': 'rect(0, 0, 0, 0)',
+                    'pointer-events': 'none'
+                });
+            };
+            
+            // Try to apply immediately
+            applyStyles();
+            
+            // Also apply after a short delay in case form is still loading
+            setTimeout(applyStyles, 100);
+            setTimeout(applyStyles, 500);
+            
+            // Apply to checked states via CSS
+            var styleId = 'preview-color-scheme-styles';
+            var $existingStyle = $('#' + styleId);
+            if ($existingStyle.length) {
+                $existingStyle.remove();
+            }
+            
+            var styleContent = '<style id="' + styleId + '">' +
+                // IMPORTANT: Exclude star rating inputs from general input styles
+                '.code-form-app .star-rating fieldset input[type="radio"], ' +
+                '.contact-form .star-rating fieldset input[type="radio"], ' +
+                '.code-form-app .code-form-control .star-rating fieldset input[type="radio"], ' +
+                '.contact-form .code-form-control .star-rating fieldset input[type="radio"] { ' +
+                'background-image: none !important; ' +
+                'pointer-events: auto !important; ' +
+                'user-select: none !important; ' +
+                'cursor: pointer !important; ' +
+                'position: absolute !important; ' +
+                'opacity: 0 !important; ' +
+                'width: 1.5em !important; ' +
+                'height: 1.5em !important; ' +
+                'margin: 0 !important; ' +
+                'padding: 0 !important; ' +
+                'z-index: 10 !important; ' +
+                '} ' +
+                // Exclude star rating labels from general input/label styles
+                '.code-form-app .star-rating fieldset label, ' +
+                '.contact-form .star-rating fieldset label, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label, ' +
+                '.contact-form .code-form-control .star-rating fieldset label { ' +
+                'pointer-events: auto !important; ' +
+                'user-select: none !important; ' +
+                'cursor: pointer !important; ' +
+                '} ' +
+                '.code-form-app .checkbox-input:checked + .checkbox-label:before, ' +
+                '.contact-form .checkbox-input:checked + .checkbox-label:before, ' +
+                '.code-form-app .radio-input:checked + .radio-label:before, ' +
+                '.contact-form .radio-input:checked + .radio-label:before { ' +
+                'background-color: ' + swatch1 + ' !important; ' +
+                'border-color: ' + swatch1 + ' !important; ' +
+                '}' +
+                // Star rating - ensure labels are visible and properly sized
+                // IMPORTANT: Override background: transparent !important from customstyle.css
+                // Also override any general input/label styles that might interfere
+                '.code-form-app .star-rating fieldset label, ' +
+                '.contact-form .star-rating fieldset label, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label, ' +
+                '.contact-form .code-form-control .star-rating fieldset label { ' +
+                'color: transparent !important; ' +
+                'font-size: 0 !important; ' +
+                'line-height: 0 !important; ' +
+                'overflow: visible !important; ' +
+                'text-indent: -9999px !important; ' +
+                'position: relative !important; ' +
+                'display: inline-block !important; ' +
+                'width: 24px !important; ' +
+                'height: 24px !important; ' +
+                'min-width: 24px !important; ' +
+                'min-height: 24px !important; ' +
+                'margin: 0 2px !important; ' +
+                'cursor: pointer !important; ' +
+                'vertical-align: middle !important; ' +
+                'pointer-events: auto !important; ' +
+                'user-select: none !important; ' +
+                'opacity: 1 !important; ' +
+                'visibility: visible !important; ' +
+                // Override background: transparent !important from customstyle.css
+                // Override background-image: none !important from general input styles
+                // CRITICAL: Empty stars should ALWAYS be visible with border/outline
+                'background: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
+                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") !important; ' +
+                'background-size: 24px 24px !important; ' +
+                'opacity: 1 !important; ' +
+                'visibility: visible !important; ' +
+                'background-repeat: no-repeat !important; ' +
+                'background-position: center !important; ' +
+                '} ' +
+                // Filled stars use filled star background
+                '.code-form-app .star-rating fieldset label.star-filled, ' +
+                '.contact-form .star-rating fieldset label.star-filled, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label.star-filled, ' +
+                '.contact-form .code-form-control .star-rating fieldset label.star-filled { ' +
+                'width: 24px !important; ' +
+                'height: 24px !important; ' +
+                'min-width: 24px !important; ' +
+                'min-height: 24px !important; ' +
+                'background: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
+                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") !important; ' +
+                'background-size: 24px 24px !important; ' +
+                'background-repeat: no-repeat !important; ' +
+                'background-position: center !important; ' +
+                '} ' +
+                // Star rating - show empty star icons (unfilled) - ensure they are visible
+                // This :before pseudo-element should show the empty star SVG
+                '.code-form-app .star-rating fieldset label:before, ' +
+                '.contact-form .star-rating fieldset label:before, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label:before, ' +
+                '.contact-form .code-form-control .star-rating fieldset label:before, ' +
+                '.code-form-app .star-rating > fieldset > label:before, ' +
+                '.contact-form .star-rating > fieldset > label:before { ' +
+                'content: "" !important; ' +
+                'display: block !important; ' +
+                'width: 24px !important; ' +
+                'height: 24px !important; ' +
+                'position: absolute !important; ' +
+                'top: 0 !important; ' +
+                'left: 0 !important; ' +
+                'opacity: 1 !important; ' +
+                'z-index: 0 !important; ' +
+                'visibility: visible !important; ' +
+                // CRITICAL: Empty stars should show with border/outline
+                'background: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
+                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") !important; ' +
+                'background-size: 24px 24px !important; ' +
+                'background-repeat: no-repeat !important; ' +
+                'background-position: center !important; ' +
+                '} ' +
+                // Apply text color to empty stars using CSS mask overlay
+                '.code-form-app .star-rating fieldset label:not(.star-filled):after, ' +
+                '.contact-form .star-rating fieldset label:not(.star-filled):after, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label:not(.star-filled):after, ' +
+                '.contact-form .code-form-control .star-rating fieldset label:not(.star-filled):after, ' +
+                '.code-form-app .star-rating > fieldset > label:not(.star-filled):after, ' +
+                '.contact-form .star-rating > fieldset > label:not(.star-filled):after { ' +
+                'content: "" !important; ' +
+                'position: absolute !important; ' +
+                'top: 0 !important; ' +
+                'left: 0 !important; ' +
+                'width: 24px !important; ' +
+                'height: 24px !important; ' +
+                'background-color: ' + textColor + ' !important; ' +
+                'mask: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
+                '-webkit-mask: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
+                'mask-size: 24px 24px !important; ' +
+                '-webkit-mask-size: 24px 24px !important; ' +
+                'opacity: 1 !important; ' +
+                'z-index: 1 !important; ' +
+                'pointer-events: none !important; ' +
+                'visibility: visible !important; ' +
+                '} ' +
+                // Star rating - show filled star icons - update :before to show filled star
+                '.code-form-app .star-rating fieldset label.star-filled:before, ' +
+                '.contact-form .star-rating fieldset label.star-filled:before, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label.star-filled:before, ' +
+                '.contact-form .code-form-control .star-rating fieldset label.star-filled:before, ' +
+                '.code-form-app .star-rating fieldset label[data-star-state="filled"]:before, ' +
+                '.contact-form .star-rating fieldset label[data-star-state="filled"]:before, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label[data-star-state="filled"]:before, ' +
+                '.contact-form .code-form-control .star-rating fieldset label[data-star-state="filled"]:before, ' +
+                '.code-form-app .star-rating fieldset input:checked ~ label:before, ' +
+                '.contact-form .star-rating fieldset input:checked ~ label:before, ' +
+                '.code-form-app .code-form-control .star-rating fieldset input:checked ~ label:before, ' +
+                '.contact-form .code-form-control .star-rating fieldset input:checked ~ label:before, ' +
+                '.code-form-app .star-rating fieldset input:checked + label:before, ' +
+                '.contact-form .star-rating fieldset input:checked + label:before, ' +
+                '.code-form-app .code-form-control .star-rating fieldset input:checked + label:before, ' +
+                '.contact-form .code-form-control .star-rating fieldset input:checked + label:before { ' +
+                'content: "" !important; ' +
+                'opacity: 1 !important; ' +
+                'visibility: visible !important; ' +
+                'background: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
+                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") !important; ' +
+                'background-size: 24px 24px !important; ' +
+                'background-repeat: no-repeat !important; ' +
+                'background-position: center !important; ' +
+                '} ' +
+                // Apply accent color to filled stars using CSS mask overlay
+                '.code-form-app .star-rating fieldset label.star-filled:after, ' +
+                '.contact-form .star-rating fieldset label.star-filled:after, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label.star-filled:after, ' +
+                '.contact-form .code-form-control .star-rating fieldset label.star-filled:after, ' +
+                '.code-form-app .star-rating fieldset label[data-star-state="filled"]:after, ' +
+                '.contact-form .star-rating fieldset label[data-star-state="filled"]:after, ' +
+                '.code-form-app .code-form-control .star-rating fieldset label[data-star-state="filled"]:after, ' +
+                '.contact-form .code-form-control .star-rating fieldset label[data-star-state="filled"]:after, ' +
+                '.code-form-app .star-rating fieldset input:checked ~ label:after, ' +
+                '.contact-form .star-rating fieldset input:checked ~ label:after, ' +
+                '.code-form-app .code-form-control .star-rating fieldset input:checked ~ label:after, ' +
+                '.contact-form .code-form-control .star-rating fieldset input:checked ~ label:after, ' +
+                '.code-form-app .star-rating fieldset input:checked + label:after, ' +
+                '.contact-form .star-rating fieldset input:checked + label:after, ' +
+                '.code-form-app .code-form-control .star-rating fieldset input:checked + label:after, ' +
+                '.contact-form .code-form-control .star-rating fieldset input:checked + label:after, ' +
+                '.code-form-app .star-rating > fieldset > label.star-filled:after, ' +
+                '.contact-form .star-rating > fieldset > label.star-filled:after { ' +
+                'content: "" !important; ' +
+                'position: absolute !important; ' +
+                'top: 0 !important; ' +
+                'left: 0 !important; ' +
+                'width: 24px !important; ' +
+                'height: 24px !important; ' +
+                'background-color: ' + swatch1 + ' !important; ' +
+                'mask: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
+                '-webkit-mask: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
+                'mask-size: 24px 24px !important; ' +
+                '-webkit-mask-size: 24px 24px !important; ' +
+                'z-index: 2 !important; ' +
+                'pointer-events: none !important; ' +
+                'opacity: 1 !important; ' +
+                'visibility: visible !important; ' +
+                '} ' +
+                // Hide native file input fields (the redundant "Choose File" input)
+                '.code-form-app input[type="file"], ' +
+                '.contact-form input[type="file"], ' +
+                '.code-form-app .upload-area input[type="file"], ' +
+                '.contact-form .upload-area input[type="file"], ' +
+                '.code-form-app .globo-form-input input[type="file"], ' +
+                '.contact-form .globo-form-input input[type="file"] { ' +
+                'position: absolute !important; ' +
+                'opacity: 0 !important; ' +
+                'width: 0 !important; ' +
+                'height: 0 !important; ' +
+                'overflow: hidden !important; ' +
+                'clip: rect(0, 0, 0, 0) !important; ' +
+                'pointer-events: none !important; ' +
+                'visibility: hidden !important; ' +
+                'border: none !important; ' +
+                'padding: 0 !important; ' +
+                'margin: 0 !important; ' +
+                '} ' +
+                // Hide native file input fields (the redundant "Choose File" input)
+                '.code-form-app input[type="file"], ' +
+                '.contact-form input[type="file"], ' +
+                '.code-form-app .upload-area input[type="file"], ' +
+                '.contact-form .upload-area input[type="file"], ' +
+                '.code-form-app .globo-form-input input[type="file"], ' +
+                '.contact-form .globo-form-input input[type="file"] { ' +
+                'position: absolute !important; ' +
+                'opacity: 0 !important; ' +
+                'width: 0 !important; ' +
+                'height: 0 !important; ' +
+                'overflow: hidden !important; ' +
+                'clip: rect(0, 0, 0, 0) !important; ' +
+                'pointer-events: none !important; ' +
+                'visibility: hidden !important; ' +
+                'border: none !important; ' +
+                'padding: 0 !important; ' +
+                'margin: 0 !important; ' +
+                '} ' +
+                '</style>';
+            $('head').append(styleContent);
+            
+            // Also listen for form updates and re-apply
+            $(document).off('formUpdated.colorScheme').on('formUpdated.colorScheme', function() {
+                setTimeout(applyStyles, 100);
+            });
+            
+            // Re-initialize star rating handlers after color scheme is applied to ensure stars are visible
+            setTimeout(function() {
+                if (typeof window.initializeStarRatingHandlers === 'function') {
+                    window.initializeStarRatingHandlers();
+                }
+                // Force stars to be visible by ensuring labels have proper styling and background images
+                $('.code-form-app .star-rating fieldset label, .contact-form .star-rating fieldset label').each(function() {
+                    var $label = $(this);
+                    // Ensure label has star-empty class if not filled
+                    if (!$label.hasClass('star-filled')) {
+                        $label.addClass('star-empty');
+                    }
+                    // Set inline styles to ensure stars show
+                    // Override background: transparent !important from customstyle.css
+                    var starImage = $label.hasClass('star-filled') ? 
+                        'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")' : 
+                        'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
+                    $label.css({
+                        'overflow': 'visible',
+                        'position': 'relative',
+                        'display': 'inline-block',
+                        'width': '1.5em',
+                        'height': '1.5em',
+                        'margin': '0 2px',
+                        // Override background: transparent !important
+                        'background': starImage + ' no-repeat center / 1.5em 1.5em',
+                        'background-image': starImage,
+                        'background-size': '1.5em 1.5em',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'center'
+                    });
+                });
+                // Also trigger a re-render of stars
+                $('.code-form-app .star-rating fieldset input[type="radio"], .contact-form .star-rating fieldset input[type="radio"]').each(function() {
+                    if ($(this).is(':checked')) {
+                        if (typeof updateStarRatingDisplay === 'function') {
+                            updateStarRatingDisplay(this);
+                        }
+                    } else {
+                        // Initialize empty stars for unchecked inputs
+                        var $fieldset = $(this).closest('fieldset');
+                        if ($fieldset.length && typeof updateStarRatingDisplay === 'function') {
+                            // Set first star as checked to initialize display
+                            var $firstInput = $fieldset.find('input[type="radio"]').first();
+                            if ($firstInput.length) {
+                                updateStarRatingDisplay($firstInput[0]);
+                            }
+                        }
+                    }
+                });
+            }, 300);
+        }
+        
         // Handle color scheme box clicks
         $(document).on('click', '.color-scheme-box:not(.add-scheme)', function() {
             var $box = $(this);
@@ -7689,7 +8820,102 @@ if ($form_id > 0) {
             $('.color-scheme-box').removeClass('selected');
             // Add selected state to clicked box
             $box.addClass('selected');
-            // Here you would typically apply the color scheme via AJAX
+            
+            // Store selected scheme ID
+            window.selectedColorSchemeId = schemeId;
+            
+            // Find the color scheme data from the loaded schemes
+            if (window.loadedColorSchemes && window.loadedColorSchemes.length > 0) {
+                // Try to find by exact match first
+                var selectedScheme = window.loadedColorSchemes.find(function(scheme) {
+                    // Try multiple comparison methods
+                    var schemeIdStr = String(scheme.id || '');
+                    var clickedIdStr = String(schemeId || '');
+                    var schemeIdNum = parseInt(scheme.id) || 0;
+                    var clickedIdNum = parseInt(schemeId) || 0;
+                    
+                    return schemeIdStr === clickedIdStr || 
+                           schemeIdNum === clickedIdNum || 
+                           scheme.id == schemeId ||
+                           schemeIdNum == clickedIdNum;
+                });
+                
+                // If not found, try by array index (schemes might be 0-indexed in array but 1-indexed in display)
+                if (!selectedScheme && clickedIdNum > 0) {
+                    var arrayIndex = clickedIdNum - 1;
+                    if (arrayIndex >= 0 && arrayIndex < window.loadedColorSchemes.length) {
+                        selectedScheme = window.loadedColorSchemes[arrayIndex];
+                    }
+                }
+                
+                if (selectedScheme) {
+                    window.selectedColorScheme = selectedScheme;
+                    // Save color scheme immediately when selected
+                    saveColorScheme();
+                    // Apply color scheme to preview
+                    if (typeof applyColorSchemeToPreview === 'function') {
+                        applyColorSchemeToPreview(selectedScheme);
+                    } else {
+                        // Direct application if function not available
+                        var bgColor = selectedScheme.bg || selectedScheme.background || '#ffffff';
+                        var textColor = selectedScheme.text || '#000000';
+                        var swatch1 = selectedScheme.swatch1 || selectedScheme.accent1 || textColor;
+                        var swatch2 = selectedScheme.swatch2 || selectedScheme.accent2 || bgColor;
+                        
+                        // Apply with retries to ensure form is loaded
+                        var applyDirect = function() {
+                            // First, ensure ALL parent containers have transparent background
+                            $('.preview-box, .iframe-wrapper, .preview-card, .contact-form').css('background-color', 'transparent');
+                            
+                            // Apply to form container ONLY
+                            var $formContainer = $('.code-form-app.boxed-layout');
+                            if (!$formContainer.length) {
+                                $formContainer = $('.contact-form > .code-form-app');
+                            }
+                            if (!$formContainer.length) {
+                                $formContainer = $('.code-form-app').first();
+                            }
+                            
+                            if ($formContainer.length) {
+                                $formContainer.css({
+                                    'background-color': bgColor,
+                                    'color': textColor
+                                });
+                                
+                                // Explicitly ensure parent containers don't get the background
+                                $formContainer.parents('.contact-form, .preview-box, .iframe-wrapper, .preview-card').css('background-color', 'transparent');
+                                $('.contact-form').not($formContainer).css('background-color', 'transparent');
+                            }
+                            $('.code-form-app label, .contact-form label, .code-form-app .label-content, .contact-form .label-content').css('color', textColor);
+                            $('.code-form-app input, .contact-form input, .code-form-app textarea, .contact-form textarea, .code-form-app select, .contact-form select').not('.star-rating input').css({
+                                'color': textColor,
+                                'background-color': bgColor,
+                                'border-color': swatch1
+                            });
+                            $('.code-form-app button, .contact-form button, .code-form-app .file_button, .contact-form .file_button').css({
+                                'background-color': swatch1,
+                                'color': bgColor,
+                                'border-color': swatch1
+                            });
+                            $('.code-form-app .upload-area, .contact-form .upload-area').css('border-color', swatch1);
+                        };
+                        
+                        applyDirect();
+                        setTimeout(applyDirect, 100);
+                        setTimeout(applyDirect, 500);
+                    }
+                }
+            }
+        });
+        
+        // Save color scheme when Save button is clicked
+        $(document).on('click', '.saveForm', function() {
+            saveColorScheme();
+        });
+        
+        // Save color scheme when Publish button is clicked
+        $(document).on('click', '.publish-form-btn', function() {
+            saveColorScheme();
         });
         
         // Handle add scheme button click

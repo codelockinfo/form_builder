@@ -1144,8 +1144,8 @@ ul {
     padding: 10px;
     /* Border radius will be set via inline styles from design settings */
     /* Default border-radius removed to allow inline styles to work */
-}
-
+  }
+  
 .upload-p,
 .code-form-app .upload-p,
 .contact-form .upload-p {
@@ -1164,7 +1164,7 @@ ul {
     border-radius: 5px;
     cursor: pointer;
     display: inline-block;
-}
+  }
   
   input[type="file"][data-type="file"],
   #fileimage,
@@ -1180,7 +1180,7 @@ ul {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
-}
+  }
   
 .img-preview-wrapper,
 .code-form-app .img-preview-wrapper,
@@ -1189,7 +1189,7 @@ ul {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
+  }
   
 .img-preview,
 .code-form-app .img-preview,
@@ -1198,7 +1198,7 @@ ul {
     max-height: 150px;
     object-fit: contain;
     border: 1px solid #eb1256;
-}
+  }
   
   .close-button {
     position: absolute;

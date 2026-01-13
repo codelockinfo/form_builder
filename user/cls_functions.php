@@ -2735,6 +2735,30 @@ class Client_functions extends common_function {
                 $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
               }else if($_POST['form_type'] == 6){
                 $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "4"]);
+              }else if($_POST['form_type'] == 7){
+                // Refund Form Template
+                // Customer Information: Full Name (text), Email (email), Phone (tel)
+                // Order Details: Order Number (text), Order Date (date), Product Name (text)
+                // Refund Request: Reason (select/dropdown), Description (textarea)
+                // Evidence: File upload
+                // Refund Preferences: Refund Type (radio), UPI/Bank (text), IFSC (text)
+                // Confirmation: Checkbox
+                // Submit button is added automatically
+                $where_query = array(
+                    ["", "id", "=", "1"],      // Full Name (Text input)
+                    ["OR", "id", "=", "2"],    // Email Address (Email input)
+                    ["OR", "id", "=", "20"],   // Phone Number (Tel input)
+                    ["OR", "id", "=", "1"],    // Order Number (Text input)
+                    ["OR", "id", "=", "9"],    // Order Date (Date picker)
+                    ["OR", "id", "=", "1"],    // Product Name (Text input)
+                    ["OR", "id", "=", "15"],   // Reason for Refund (Dropdown/Select)
+                    ["OR", "id", "=", "9"],    // Date and Time (Date time picker) - replaced textarea
+                    ["OR", "id", "=", "10"],    // Upload Images/Video (File upload)
+                    ["OR", "id", "=", "13"],   // Refund Type (Radio buttons) - element_id 13 is Radio
+                    ["OR", "id", "=", "1"],    // UPI ID / Bank Account No (Text input)
+                    ["OR", "id", "=", "1"],    // IFSC Code (Text input)
+                    ["OR", "id", "=", "12"]    // Agree to Refund Policy (Checkbox) - element_id 12 is Checkbox
+                );
               }
 
                 $sortedData = array();
@@ -2764,36 +2788,115 @@ class Client_functions extends common_function {
                     $element_type14 = array("20","21","22","23");
                     $element_type15 = array("14");
 
-                    if(in_array($elementid,$element_type)){
-                        $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
-                    }else if(in_array($elementid,$element_type2)){
-                        $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
-                    }else if(in_array($elementid,$element_type3)){
-                        $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
-                    }else if(in_array($elementid,$element_type4)){
-                        $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
-                    }else if(in_array($elementid,$element_type5)){
-                        $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
-                    }else if(in_array($elementid,$element_type6)){
-                        $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
-                    }else if(in_array($elementid,$element_type7)){
-                        $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
-                    }else if(in_array($elementid,$element_type8)){
-                        $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
-                    }else if(in_array($elementid,$element_type9)){
-                        $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
-                    }else if(in_array($elementid,$element_type10)){
-                        $element_data = serialize(array("Heading", "", "2"));
-                    }else if(in_array($elementid,$element_type11)){
-                        $element_data = serialize(array("Paragraph", "2"));
-                    }else if(in_array($elementid,$element_type12)){
-                        $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
-                    }else if(in_array($elementid,$element_type13)){
-                        $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
-                    }else if(in_array($elementid,$element_type14)){
-                        $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
-                    }else if(in_array($elementid,$element_type15)){
-                        $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                    // Custom handling for Refund Form (form_type 7)
+                    if(isset($_POST['form_type']) && $_POST['form_type'] == 7){
+                        // Refund Form specific element data based on counter position and element type
+                        if($counter == 1 && $elementid == 1){
+                            // Full Name (Text input)
+                            $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 2 && $elementid == 2){
+                            // Email Address (Email input)
+                            $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 3 && $elementid == 20){
+                            // Phone Number (Tel input)
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 4 && $elementid == 1){
+                            // Order Number / Order ID (Text input)
+                            $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 5 && $elementid == 4){
+                            // Order Date (Date picker)
+                            $element_data = serialize(array("Order Date", "Order Date", "","1", "100", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                        }else if($counter == 6 && $elementid == 1){
+                            // Product Name (Text input)
+                            $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 7 && $elementid == 15){
+                            // Reason for Refund (Dropdown/Select)
+                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "1", "0", "0", "1", "0", "2"));
+                        }else if($counter == 8 && $elementid == 9){
+                            // Date and Time (Date time picker) - replaced textarea
+                            $element_data = serialize(array("Date and Time", "Date and Time", "","1", "100", "0", "0", "2", "0", "Y-m-d H:i", "12h", "0", "2"));
+                        }else if($counter == 9 && $elementid == 10){
+                            // Upload Images / Video (File upload)
+                            $element_data = serialize(array("Upload Images / Video", "Upload Images / Video", "", "0", "", "", "0", "0", "1", "0", "2"));
+                        }else if($counter == 10 && $elementid == 13){
+                            // Refund Type (Radio buttons) - element_id 13 is Radio, format: array(label, options_comma_separated, "", "", required, ...)
+                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "1", "0", "0", "0", "1", "2"));
+                        }else if($counter == 11 && $elementid == 1){
+                            // UPI ID / Bank Account No (Text input)
+                            $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 12 && $elementid == 1){
+                            // IFSC Code (Text input)
+                            $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 13 && $elementid == 12){
+                            // Agree to Refund Policy & Terms (Checkbox) - element_id 12 is Checkbox, format: array(label, required_flag, "", "2")
+                            $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "2"));
+                        }else{
+                            // Fallback to default
+                            if(in_array($elementid,$element_type)){
+                                $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                            }else if(in_array($elementid,$element_type2)){
+                                $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }else if(in_array($elementid,$element_type3)){
+                                $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                            }else if(in_array($elementid,$element_type4)){
+                                $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                            }else if(in_array($elementid,$element_type5)){
+                                $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
+                            }else if(in_array($elementid,$element_type6)){
+                                $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                            }else if(in_array($elementid,$element_type7)){
+                                $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
+                            }else if(in_array($elementid,$element_type8)){
+                                $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                            }else if(in_array($elementid,$element_type9)){
+                                $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                            }else if(in_array($elementid,$element_type10)){
+                                $element_data = serialize(array("Heading", "", "2"));
+                            }else if(in_array($elementid,$element_type11)){
+                                $element_data = serialize(array("Paragraph", "2"));
+                            }else if(in_array($elementid,$element_type12)){
+                                $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                            }else if(in_array($elementid,$element_type13)){
+                                $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                            }else if(in_array($elementid,$element_type14)){
+                                $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }else if(in_array($elementid,$element_type15)){
+                                $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                            }
+                        }
+                    }else{
+                        // Default handling for other form types
+                        if(in_array($elementid,$element_type)){
+                            $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type2)){
+                            $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type3)){
+                            $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                        }else if(in_array($elementid,$element_type4)){
+                            $element_data = serialize(array("Date time", "Date time", "","0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                        }else if(in_array($elementid,$element_type5)){
+                            $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type6)){
+                            $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                        }else if(in_array($elementid,$element_type7)){
+                            $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
+                        }else if(in_array($elementid,$element_type8)){
+                            $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                        }else if(in_array($elementid,$element_type9)){
+                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                        }else if(in_array($elementid,$element_type10)){
+                            $element_data = serialize(array("Heading", "", "2"));
+                        }else if(in_array($elementid,$element_type11)){
+                            $element_data = serialize(array("Paragraph", "2"));
+                        }else if(in_array($elementid,$element_type12)){
+                            $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                        }else if(in_array($elementid,$element_type13)){
+                            $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                        }else if(in_array($elementid,$element_type14)){
+                            $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if(in_array($elementid,$element_type15)){
+                            $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                        }
                     }
 
                     $mysql_date = date('Y-m-d H:i:s');
@@ -5059,7 +5162,7 @@ class Client_functions extends common_function {
                     foreach ($design_settings_array as $arr_key => $arr_value) {
                         if (is_array($arr_value) && (strpos($arr_key, (string)$form_data_id) !== false)) {
                             error_log("get_design_customizer_html: Found potential match: key='$arr_key' contains form_data_id='$form_data_id'");
-                        }
+                }
                     }
                 }
             } else {
@@ -5319,11 +5422,11 @@ class Client_functions extends common_function {
                     if (is_array($form_design_settings)) {
                         error_log("form_element_data_html: Looking for key '$design_settings_key'. Available keys: " . implode(', ', array_keys($form_design_settings)));
                         if (isset($form_design_settings[$design_settings_key])) {
-                            // Use settings from forms table (primary source)
-                            $design_settings[$design_settings_key] = $form_design_settings[$design_settings_key];
-                            error_log("form_element_data_html: Loaded design settings from forms table for element_$form_data_id: " . print_r($design_settings[$design_settings_key], true));
+                        // Use settings from forms table (primary source)
+                        $design_settings[$design_settings_key] = $form_design_settings[$design_settings_key];
+                        error_log("form_element_data_html: Loaded design settings from forms table for element_$form_data_id: " . print_r($design_settings[$design_settings_key], true));
                             error_log("form_element_data_html: Border radius value: " . (isset($design_settings[$design_settings_key]['borderRadius']) ? $design_settings[$design_settings_key]['borderRadius'] : 'NOT SET'));
-                        } else {
+                    } else {
                             error_log("form_element_data_html: Design settings not found in forms table for key: $design_settings_key. Available keys: " . implode(', ', array_keys($form_design_settings)));
                             // Try alternative key formats
                             $alt_keys = array('element_' . $formdataid, 'element_' . (string)$formdataid, (string)$formdataid, $formdataid);
@@ -5334,8 +5437,8 @@ class Client_functions extends common_function {
                                     break;
                                 }
                             }
-                        }
-                    } else {
+                    }
+                } else {
                         error_log("form_element_data_html: Unserialized design_settings is not an array. Type: " . gettype($form_design_settings));
                     }
                 } else {
@@ -10100,6 +10203,102 @@ class Client_functions extends common_function {
             } catch (Exception $e) {
                 error_log('Error loading form design settings: ' . $e->getMessage());
                 return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage(), 'settings' => array(), 'element_data' => array());
+            }
+        }
+        return $response_data;
+    }
+    
+    /**
+     * Save form color scheme
+     */
+    function save_form_color_scheme() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            $color_scheme_id = isset($_POST['color_scheme_id']) ? intval($_POST['color_scheme_id']) : null;
+            
+            if ($form_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID');
+            }
+            
+            try {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                // Get existing design settings
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                $design_settings = array();
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (!is_array($design_settings)) {
+                        $design_settings = array();
+                    }
+                }
+                
+                // Save color scheme ID
+                $design_settings['color_scheme_id'] = $color_scheme_id;
+                
+                // Save to database
+                $update_data = array('design_settings' => serialize($design_settings));
+                $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $update_result = $this->put_data(TABLE_FORMS, $update_data, $update_where);
+                
+                $update_result_decoded = json_decode($update_result, true);
+                if ($update_result_decoded && isset($update_result_decoded['status']) && $update_result_decoded['status'] == '1') {
+                    return array('result' => 'success', 'msg' => 'Color scheme saved successfully', 'color_scheme_id' => $color_scheme_id);
+                } else {
+                    return array('result' => 'fail', 'msg' => 'Failed to save color scheme');
+                }
+            } catch (Exception $e) {
+                error_log('Error saving form color scheme: ' . $e->getMessage());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage());
+            }
+        }
+        return $response_data;
+    }
+    
+    /**
+     * Get form color scheme
+     */
+    function get_form_color_scheme() {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
+            
+            if ($form_id <= 0) {
+                return array('result' => 'fail', 'msg' => 'Invalid form ID');
+            }
+            
+            try {
+                $shopinfo = $this->current_store_obj;
+                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+                
+                // Get design settings
+                $where_query = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
+                $resource_array = array('single' => true);
+                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                
+                $design_settings = array();
+                if ($form_result['status'] == 1 && !empty($form_result['data']['design_settings'])) {
+                    $design_settings = unserialize($form_result['data']['design_settings']);
+                    if (!is_array($design_settings)) {
+                        $design_settings = array();
+                    }
+                }
+                
+                $color_scheme_id = isset($design_settings['color_scheme_id']) ? $design_settings['color_scheme_id'] : null;
+                
+                if ($color_scheme_id !== null) {
+                    return array('result' => 'success', 'msg' => 'Color scheme loaded successfully', 'color_scheme_id' => $color_scheme_id);
+                } else {
+                    return array('result' => 'fail', 'msg' => 'No color scheme saved');
+                }
+            } catch (Exception $e) {
+                error_log('Error loading form color scheme: ' . $e->getMessage());
+                return array('result' => 'fail', 'msg' => 'Error: ' . $e->getMessage());
             }
         }
         return $response_data;
