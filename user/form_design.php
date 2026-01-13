@@ -7314,31 +7314,118 @@ if ($form_id > 0) {
             var $fieldset = $(checkedInput).closest('fieldset');
             if (!$fieldset.length) return;
             
-            var checkedValue = parseInt($(checkedInput).val()) || 0;
-            var $allInputs = $fieldset.find('input[type="radio"]');
+            // Get the checked value - use .prop('value') or .val() and ensure it's correct
+            var $checkedInput = $(checkedInput);
+            var checkedInputValue = parseInt($checkedInput.prop('value') || $checkedInput.val()) || 0;
             
-            // For each input, find its associated label and update
-            $allInputs.each(function() {
+            // Debug: Log the checked value
+            console.log('Star Rating Debug - Clicked value:', checkedInputValue);
+            
+            // Ensure we have a valid value
+            if (checkedInputValue <= 0 || checkedInputValue > 5) {
+                console.log('Star Rating Debug - Invalid value, returning');
+                return;
+            }
+            
+            var $allInputs = $fieldset.find('input[type="radio"]');
+            console.log('Star Rating Debug - Found inputs:', $allInputs.length);
+            
+            // Get all inputs with their values and DOM order
+            // With flex-direction: row-reverse, DOM order is reversed visually
+            // DOM: [5, 4, 3, 2, 1] -> Visual: [1, 2, 3, 4, 5] (left to right)
+            var inputsArray = [];
+            $allInputs.each(function(index) {
                 var $input = $(this);
-                var inputValue = parseInt($input.val()) || 0;
+                var value = parseInt($input.prop('value') || $input.val()) || 0;
+                if (value >= 1 && value <= 5) {
+                    // Calculate visual position: with row-reverse, first DOM element is last visually
+                    // Visual position = 6 - value (since value 5 is visual position 1, value 1 is visual position 5)
+                    var visualPosition = 6 - value;
+                    inputsArray.push({
+                        input: $input,
+                        value: value,
+                        visualPosition: visualPosition,
+                        domIndex: index
+                    });
+                }
+            });
+            
+            // Sort by visual position to ensure correct order
+            inputsArray.sort(function(a, b) {
+                return a.visualPosition - b.visualPosition;
+            });
+            
+            console.log('Star Rating Debug - Inputs array (sorted by visual position):', inputsArray.map(function(item) { return 'value:' + item.value + ', visual:' + item.visualPosition; }));
+            
+            // The checked value directly corresponds to how many stars to fill
+            // If user clicks visual position 5 (value=1), we want to fill 1 star
+            // If user clicks visual position 1 (value=5), we want to fill 5 stars
+            // So checkedValue = checkedInputValue (the input's value attribute)
+            var checkedValue = checkedInputValue;
+            console.log('Star Rating Debug - Checked value:', checkedValue);
+            
+            // Now iterate through ALL inputs and fill based on value comparison
+            inputsArray.forEach(function(item) {
+                var $input = item.input;
+                var inputValue = item.value;
                 var labelId = $input.attr('id');
                 if (!labelId) return;
                 
                 var $label = $fieldset.find('label[for="' + labelId + '"]');
+                if (!$label.length) {
+                    // Try finding label by input's next sibling
+                    $label = $input.next('label');
+                }
                 if (!$label.length) return;
                 
                 // Remove existing classes
                 $label.removeClass('star-filled star-empty');
                 
-                // In RTL layout: inputs are ordered 5,4,3,2,1 in DOM
-                // When value=3 is checked, we want to fill 5,4,3 (which appear as first 3 from left)
-                // So fill all inputs with value >= checkedValue
-                if (checkedValue > 0 && inputValue >= checkedValue) {
+                // Fill stars based on visual position
+                // With flex-direction: row-reverse:
+                // - Visual position 1 (leftmost) = value 1
+                // - Visual position 5 (rightmost) = value 5
+                // When user clicks visual position N, we want to fill N stars
+                // Since checkedValue is the input's value attribute, and with row-reverse:
+                // - value 5 appears at visual position 1 (leftmost)
+                // - value 1 appears at visual position 5 (rightmost)
+                // So if checkedValue = 5, we want to fill all 5 stars (values 1-5)
+                // If checkedValue = 4, we want to fill 4 stars (values 1-4)
+                // The logic: fill if inputValue <= checkedValue
+                // But wait - with row-reverse, value 5 is leftmost, so if we click leftmost, checkedValue=5
+                // We want to fill all stars, so we fill if inputValue <= 5 (all values 1,2,3,4,5)
+                // This is correct! The issue might be that we're not getting the right checkedValue
+                var shouldFill = (inputValue >= 1 && inputValue <= checkedValue && checkedValue >= 1 && checkedValue <= 5);
+                
+                // Debug: Log each star's fill decision
+                if (inputValue === 5 || inputValue === checkedValue) {
+                    console.log('Star Rating Debug - Input value:', inputValue, 'Checked value:', checkedValue, 'Should fill:', shouldFill);
+                }
+                
+                if (shouldFill) {
                     $label.addClass('star-filled');
+                    $label.removeClass('star-empty');
+                    // Set inline style as backup to ensure it shows
+                    $label.attr('data-star-state', 'filled');
+                    // Force reflow to ensure class is applied
+                    $label[0].offsetHeight;
+                    // Force style recalculation
+                    var computedStyle = window.getComputedStyle($label[0], ':before');
+                    void computedStyle.content;
                 } else {
                     $label.addClass('star-empty');
+                    $label.removeClass('star-filled');
+                    $label.attr('data-star-state', 'empty');
+                    // Force reflow to ensure class is applied
+                    $label[0].offsetHeight;
+                    // Force style recalculation
+                    var computedStyle = window.getComputedStyle($label[0], ':before');
+                    void computedStyle.content;
                 }
             });
+            
+            // Force a repaint to ensure all changes are visible
+            $fieldset[0].offsetHeight;
         }
         
         // Initialize star rating handlers for customizer preview
@@ -7353,23 +7440,144 @@ if ($form_id > 0) {
                 return; // No star ratings found
             }
             
+            // Ensure inputs and labels are clickable and properly positioned
+            // With flex-direction: row-reverse, inputs need to be positioned over their labels
+            // Use a small delay to ensure layout is complete before positioning
+            setTimeout(function() {
+                $starRatings.find('fieldset').each(function() {
+                    var $fieldset = $(this);
+                    
+                    // Position each input over its corresponding label
+                    $fieldset.find('input[type="radio"]').each(function() {
+                        var $input = $(this);
+                        var inputId = $input.attr('id');
+                        var $label = $fieldset.find('label[for="' + inputId + '"]');
+                        
+                        if ($label.length) {
+                            // Get label's position relative to fieldset
+                            var labelOffset = $label.position();
+                            var labelWidth = $label.outerWidth() || 24;
+                            var labelHeight = $label.outerHeight() || 24;
+                            
+                            $input.css({
+                                'pointer-events': 'auto',
+                                'cursor': 'pointer',
+                                'z-index': '10',
+                                'position': 'absolute',
+                                'opacity': '0',
+                                'width': labelWidth + 'px',
+                                'height': labelHeight + 'px',
+                                'top': labelOffset.top + 'px',
+                                'left': labelOffset.left + 'px',
+                                'margin': '0',
+                                'padding': '0'
+                            });
+                        } else {
+                            // Fallback positioning
+                            $input.css({
+                                'pointer-events': 'auto',
+                                'cursor': 'pointer',
+                                'z-index': '10',
+                                'position': 'absolute',
+                                'opacity': '0',
+                                'width': '1.5em',
+                                'height': '1.5em'
+                            });
+                        }
+                    });
+                });
+            }, 100);
+            
+            // Also set initial positioning without delay as fallback
+            $starRatings.find('fieldset input[type="radio"]').each(function() {
+                var $input = $(this);
+                $input.css({
+                    'pointer-events': 'auto',
+                    'cursor': 'pointer',
+                    'z-index': '10',
+                    'position': 'absolute',
+                    'opacity': '0',
+                    'width': '1.5em',
+                    'height': '1.5em'
+                });
+            });
+            
+            $starRatings.find('fieldset label').each(function() {
+                var $label = $(this);
+                $label.css({
+                    'pointer-events': 'auto',
+                    'cursor': 'pointer',
+                    'position': 'relative',
+                    'z-index': '5'
+                });
+            });
+            
             // Handle star rating input changes
             $starRatings.find('fieldset input[type="radio"]').off('change.starRating').on('change.starRating', function() {
                 updateStarRatingDisplay(this);
+            });
+            
+            // Handle star rating input clicks directly
+            $starRatings.find('fieldset input[type="radio"]').off('click.starRating').on('click.starRating', function(e) {
+                e.stopPropagation();
+                var $input = $(this);
+                $input.prop('checked', true);
+                updateStarRatingDisplay(this);
+                $input.trigger('change');
             });
             
             // Handle star rating label clicks
             $starRatings.find('fieldset label').off('click.starRating').on('click.starRating', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var labelFor = $(this).attr('for');
-                if (!labelFor) return;
+                var $label = $(this);
+                var labelFor = $label.attr('for');
                 
-                var $input = $('#' + labelFor);
-                if ($input.length && $input.attr('type') === 'radio') {
+                // Try to find input by 'for' attribute first - this is the most reliable
+                var $input = labelFor ? $('#' + labelFor) : null;
+                
+                // If not found, try finding the input that comes before this label in DOM
+                if (!$input || !$input.length) {
+                    $input = $label.prev('input[type="radio"]');
+                }
+                
+                // If still not found, try finding by value from label text or title
+                if (!$input || !$input.length) {
+                    var labelTitle = $label.attr('title') || '';
+                    var labelText = $label.text().trim();
+                    // Extract number from title (e.g., "5 Stars" -> 5) or text (e.g., "5 stars" -> 5)
+                    var starValue = parseInt(labelTitle) || parseInt(labelText) || 0;
+                    if (starValue > 0 && starValue <= 5) {
+                        $input = $fieldset.find('input[type="radio"][value="' + starValue + '"]');
+                    }
+                }
+                
+                if ($input && $input.length && $input.attr('type') === 'radio') {
+                    var inputValue = parseInt($input.prop('value') || $input.val()) || 0;
+                    var inputId = $input.attr('id');
+                    var labelTitle = $label.attr('title') || '';
+                    // Debug: Log which input was found
+                    console.log('Star Rating Label Click - Label for:', labelFor, 'Label title:', labelTitle, 'Found input ID:', inputId, 'Input value:', inputValue);
+                    
+                    // Verify the input value matches the label's expected value
+                    var expectedValue = parseInt(labelTitle) || 0;
+                    if (expectedValue > 0 && expectedValue !== inputValue) {
+                        console.warn('Star Rating Mismatch - Label title suggests value', expectedValue, 'but input has value', inputValue);
+                        // Try to find the correct input by value
+                        var $correctInput = $fieldset.find('input[type="radio"][value="' + expectedValue + '"]');
+                        if ($correctInput.length) {
+                            console.log('Star Rating - Found correct input with value', expectedValue);
+                            $input = $correctInput;
+                            inputValue = expectedValue;
+                        }
+                    }
+                    
                     $input.prop('checked', true);
+                    // Ensure we pass the correct input element
                     updateStarRatingDisplay($input[0]);
                     $input.trigger('change');
+                } else {
+                    console.log('Star Rating Label Click - Could not find input for label:', labelFor);
                 }
             });
             

@@ -551,23 +551,24 @@ span.Polaris-Choice__Label {
 .code-form-control .star-rating>fieldset,
 .contact-form .code-form-control .star-rating>fieldset {
     border: none;
-    display: inline-block;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
     padding: 0;
     margin: 0;
-    direction: rtl;
-    unicode-bidi: bidi-override;
     overflow: visible;
     line-height: 1;
 }
 .code-form-control .star-rating>fieldset label,
-.contact-form .code-form-control .star-rating>fieldset label {
-    float: right;
+.contact-form .code-form-control .star-rating>fieldset label,
+.code-form-app .star-rating>fieldset label,
+.code-form-app .code-form-control .star-rating>fieldset label {
     width: 1.5em;
     height: 1.5em;
     padding: 0;
     overflow: visible;
     white-space: nowrap;
-    cursor: pointer;
+    cursor: pointer !important;
     font-size: 200%;
     color: rgba(0,0,0,0);
     position: relative;
@@ -575,22 +576,31 @@ span.Polaris-Choice__Label {
     display: block;
     line-height: 1;
     box-sizing: border-box;
+    pointer-events: auto !important;
+    z-index: 5;
+    flex-shrink: 0;
+    background: transparent !important;
 }
 .code-form-control .star-rating>fieldset input[type="radio"],
-.contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
+.contact-form .code-form-control .star-rating>fieldset input[type="radio"],
+.code-form-app .star-rating>fieldset input[type="radio"],
+.code-form-app .code-form-control .star-rating>fieldset input[type="radio"] {
     position: absolute;
     opacity: 0;
     width: 1.5em;
     height: 1.5em;
     margin: 0;
     padding: 0;
-    cursor: pointer;
-    z-index: 2;
+    cursor: pointer !important;
+    z-index: 10;
     top: 0;
     left: 0;
+    pointer-events: auto !important;
 }
 .code-form-control .star-rating>fieldset label:before,
-.contact-form .code-form-control .star-rating>fieldset label:before {
+.contact-form .code-form-control .star-rating>fieldset label:before,
+.code-form-app .star-rating>fieldset label:before,
+.code-form-app .code-form-control .star-rating>fieldset label:before {
     content: url(../images/download.svg);
     display: block;
     width: 1.5em;
@@ -600,25 +610,78 @@ span.Polaris-Choice__Label {
     left: 0;
     object-fit: contain;
     line-height: 1;
+    background: transparent;
 }
 .code-form-control .star-rating>fieldset label:hover:before,
-.contact-form .code-form-control .star-rating>fieldset label:hover:before {
+.contact-form .code-form-control .star-rating>fieldset label:hover:before,
+.code-form-app .star-rating>fieldset label:hover:before,
+.code-form-app .code-form-control .star-rating>fieldset label:hover:before {
     content: url(../images/star.svg);
+}
+/* Ensure cursor pointer on hover for star rating labels and inputs */
+.code-form-control .star-rating>fieldset label:hover,
+.contact-form .code-form-control .star-rating>fieldset label:hover,
+.code-form-app .star-rating>fieldset label:hover,
+.code-form-app .code-form-control .star-rating>fieldset label:hover {
+    cursor: pointer !important;
+}
+.code-form-control .star-rating>fieldset input[type="radio"]:hover,
+.contact-form .code-form-control .star-rating>fieldset input[type="radio"]:hover,
+.code-form-app .star-rating>fieldset input[type="radio"]:hover,
+.code-form-app .code-form-control .star-rating>fieldset input[type="radio"]:hover {
+    cursor: pointer !important;
 }
 /* When a star is checked, fill that star and all stars with higher values */
 /* Use class-based approach for better compatibility */
 .code-form-control .star-rating>fieldset label.star-filled:before,
-.contact-form .code-form-control .star-rating>fieldset label.star-filled:before {
+.contact-form .code-form-control .star-rating>fieldset label.star-filled:before,
+.code-form-app .star-rating>fieldset label.star-filled:before,
+.code-form-app .code-form-control .star-rating>fieldset label.star-filled:before,
+.code-form-control .star-rating>fieldset label[data-star-state="filled"]:before,
+.contact-form .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before,
+.code-form-app .star-rating>fieldset label[data-star-state="filled"]:before,
+.code-form-app .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before {
     content: url(../images/star.svg) !important;
+    display: block !important;
+    width: 1.5em !important;
+    height: 1.5em !important;
 }
 .code-form-control .star-rating>fieldset label.star-empty:before,
-.contact-form .code-form-control .star-rating>fieldset label.star-empty:before {
+.contact-form .code-form-control .star-rating>fieldset label.star-empty:before,
+.code-form-app .star-rating>fieldset label.star-empty:before,
+.code-form-app .code-form-control .star-rating>fieldset label.star-empty:before {
     content: url(../images/download.svg) !important;
+    display: block !important;
+    width: 1.5em !important;
+    height: 1.5em !important;
 }
 /* Also handle checked state via CSS for fallback */
 .code-form-control .star-rating>fieldset input:checked + label:before,
 .contact-form .code-form-control .star-rating>fieldset input:checked + label:before {
-    content: url(../images/star.svg);
+    content: url(../images/star.svg) !important;
+}
+/* Fill all stars up to the checked one */
+.code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="2"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="2"] + label:before,
+.code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="3"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="3"] + label:before,
+.code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="4"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="4"] + label:before,
+.code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="5"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ input[value="5"] + label:before,
+.code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="3"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="3"] + label:before,
+.code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="4"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="4"] + label:before,
+.code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="5"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="5"] + label:before,
+.code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="4"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="4"] + label:before,
+.code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="5"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="5"] + label:before,
+.code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="5"] + label:before,
+.contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="5"] + label:before {
+    content: url(../images/star.svg) !important;
 }
 /* Fill all stars to the right (higher values) of the checked one in RTL */
 .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] + label:before,

@@ -251,17 +251,16 @@
       .code-form-control .star-rating>fieldset,
       .contact-form .code-form-control .star-rating>fieldset {
         border: none;
-        display: inline-block;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
         padding: 0;
         margin: 0;
-        direction: rtl;
-        unicode-bidi: bidi-override;
         overflow: visible;
         line-height: 1;
       }
       .code-form-control .star-rating>fieldset label,
       .contact-form .code-form-control .star-rating>fieldset label {
-        float: right;
         width: 1.5em;
         height: 1.5em;
         padding: 0;
@@ -275,6 +274,7 @@
         display: block;
         line-height: 1;
         box-sizing: border-box;
+        flex-shrink: 0;
       }
       .code-form-control .star-rating>fieldset input[type="radio"],
       .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
@@ -303,7 +303,7 @@
       }
       .code-form-control .star-rating>fieldset label.star-filled:before,
       .contact-form .code-form-control .star-rating>fieldset label.star-filled:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg') !important;
       }
       .code-form-control .star-rating>fieldset label.star-empty:before,
       .contact-form .code-form-control .star-rating>fieldset label.star-empty:before {
@@ -463,9 +463,9 @@
     // Ensure star rating fieldset displays horizontally
     const starRatings = container.querySelectorAll('.star-rating fieldset');
     starRatings.forEach(function(fieldset) {
-      fieldset.style.display = 'inline-block';
-      fieldset.style.direction = 'rtl';
-      fieldset.style.unicodeBidi = 'bidi-override';
+      fieldset.style.display = 'flex';
+      fieldset.style.flexDirection = 'row-reverse';
+      fieldset.style.justifyContent = 'flex-end';
       fieldset.style.padding = '0';
       fieldset.style.margin = '0';
     });
@@ -494,11 +494,11 @@
     // Ensure star rating labels display horizontally and are clickable
     const starLabels = container.querySelectorAll('.star-rating fieldset label');
     starLabels.forEach(function(label) {
-      label.style.float = 'right';
       label.style.width = '1.5em';
       label.style.padding = '0';
       label.style.margin = '0 2px';
-      label.style.overflow = 'hidden';
+      label.style.overflow = 'visible';
+      label.style.flexShrink = '0';
       label.style.whiteSpace = 'nowrap';
       label.style.cursor = 'pointer';
       label.style.fontSize = '200%';
@@ -645,28 +645,65 @@
     const fieldset = checkedInput.closest('fieldset');
     if (!fieldset) return;
     
-    const checkedValue = parseInt(checkedInput.value) || 0;
+    // Get the checked value - ensure we read it correctly
+    const checkedInputValue = parseInt(checkedInput.value || checkedInput.getAttribute('value')) || 0;
+    
+    // Ensure we have a valid value
+    if (checkedInputValue <= 0 || checkedInputValue > 5) {
+      return;
+    }
+    
     const allInputs = Array.from(fieldset.querySelectorAll('input[type="radio"]'));
     
-    // For each input, find its associated label and update
-    allInputs.forEach(function(input) {
-      const inputValue = parseInt(input.value) || 0;
+    // Get all inputs with their values
+    const inputsArray = allInputs.map(function(input) {
+      const value = parseInt(input.value || input.getAttribute('value')) || 0;
+      return {
+        input: input,
+        value: value
+      };
+    }).filter(function(item) {
+      // Only include valid values (1-5)
+      return item.value >= 1 && item.value <= 5;
+    });
+    
+    // The checked value directly corresponds to how many stars to fill
+    const checkedValue = checkedInputValue;
+    
+    // Now iterate through ALL inputs and fill based on value comparison
+    inputsArray.forEach(function(item) {
+      const input = item.input;
+      const inputValue = item.value;
       const labelId = input.getAttribute('id');
       if (!labelId) return;
       
-      const label = fieldset.querySelector('label[for="' + labelId + '"]');
-      if (!label) return;
+      let label = fieldset.querySelector('label[for="' + labelId + '"]');
+      if (!label) {
+        // Try finding label by input's next sibling
+        label = input.nextElementSibling;
+        if (!label || label.tagName !== 'LABEL') return;
+      }
       
       // Remove existing classes
       label.classList.remove('star-filled', 'star-empty');
       
-      // In RTL layout: inputs are ordered 5,4,3,2,1 in DOM
-      // When value=3 is checked, we want to fill 5,4,3 (which appear as first 3 from left)
-      // So fill all inputs with value >= checkedValue
-      if (checkedValue > 0 && inputValue >= checkedValue) {
+      // Fill stars if their value is <= checkedValue
+      // Example: If clicking star 5 (checkedValue = 5), fill values 1, 2, 3, 4, 5
+      const shouldFill = (inputValue >= 1 && inputValue <= checkedValue && checkedValue >= 1 && checkedValue <= 5);
+      
+      if (shouldFill) {
         label.classList.add('star-filled');
+        label.classList.remove('star-empty');
+        label.setAttribute('data-star-state', 'filled');
+        // Also set inline style as backup
+        label.style.setProperty('--star-filled', '1');
+        // Force reflow to ensure class is applied
+        void label.offsetHeight;
       } else {
         label.classList.add('star-empty');
+        label.classList.remove('star-filled');
+        label.setAttribute('data-star-state', 'empty');
+        label.style.setProperty('--star-filled', '0');
       }
     });
     
