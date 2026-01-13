@@ -659,7 +659,6 @@ function get_selected_elements(form_id, callback) {
                         // Add the floating class
                         $(".preview-box").addClass("floting_form_main");
                     } catch (e) {
-                        console.error('Error processing floating form HTML:', e);
                         // Don't clear on error - keep existing content to prevent losing all elements
                         // $(".preview-box .contact-form").html(''); // Commented out to prevent clearing
                     }
@@ -716,7 +715,6 @@ function get_selected_elements(form_id, callback) {
                             }
                         }
                     } catch (e) {
-                        console.error('Error processing form HTML:', e);
                         // Don't clear on error - keep existing content to prevent losing all elements
                         // $(".code-form-app").html(''); // Commented out to prevent clearing
                     }
@@ -1053,7 +1051,6 @@ function initializeCKEditor(editorName, targetElement) {
                 }
                 CKEDITOR.instances[editorName].destroy();
             } catch (e) {
-                console.warn('Error destroying CKEditor instance:', e);
             }
         }
 
@@ -1107,7 +1104,6 @@ function initializeCKEditor(editorName, targetElement) {
             });
             return editorInstance;
         } catch (e) {
-            console.error('Error initializing CKEditor:', e);
         }
     }
 }
@@ -1530,7 +1526,6 @@ $(document).on("click", ".saveForm", function (event) {
             flashNotice('All changes saved successfully!', 'inline-flash--success');
         }
     } catch (error) {
-        console.error('Error during save:', error);
         if (typeof flashNotice === 'function') {
             flashNotice('Error saving changes: ' + error.message, 'inline-flash--error');
         }
