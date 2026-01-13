@@ -925,7 +925,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
                                                         }
                                                     }
                                                     if (isImage) {
-                                                        fileList.push('<img src="' + $('<div>').text(fileUrl).html() + '" style="max-width: 150px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; margin: 5px; display: block;" alt="Uploaded image" />');
+                                                        fileList.push('<img src="' + $('<div>').text(fileUrl).html() + '" style="max-width: 100px; max-height: 100px; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; margin: 5px; display: block;" alt="Uploaded image" />');
                                                     } else {
                                                         var fileName = fileUrl.split('/').pop() || 'Download file';
                                                         fileList.push('<a href="' + $('<div>').text(fileUrl).html() + '" target="_blank" style="color: #0066cc; text-decoration: underline; display: block; margin: 5px;">' + $('<div>').text(fileName).html() + '</a>');

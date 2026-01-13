@@ -74,19 +74,49 @@
       .img-container,
       .code-form-app .img-container,
       .contact-form .img-container {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: flex-start;
-        align-items: flex-start;
-        padding: 10px;
-        min-height: 50px;
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        padding: 10px !important;
+        min-height: 50px !important;
+        position: relative !important;
+        z-index: 5 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        box-sizing: border-box !important;
+      }
+      .upload-area.has-files .upload-p,
+      .upload-area.has-files .file_button {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+      }
+      .img-preview-wrapper {
         position: relative;
-        z-index: 1;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 5px;
+        max-width: 200px;
+        z-index: 3;
+      }
+      .img-preview {
+        width: 150px !important;
+        max-width: 100% !important;
+        max-height: 150px !important;
+        height: auto !important;
+        object-fit: contain !important;
+        border: 1px solid #eb1256 !important;
+        border-radius: 4px !important;
+        background: #fff !important;
+        display: block !important;
+        margin: 0 auto !important;
       }
       
       /* Checkbox Styles */
@@ -679,10 +709,25 @@
   function initializeFileUploadHandlers(container) {
     if (!container) return;
     
-    // Handle file button clicks
+    // Handle file button clicks - prevent double-triggering
     container.querySelectorAll('.file_button').forEach(function(button) {
-      button.addEventListener('click', function(e) {
+      // Remove existing listeners by cloning
+      const newButton = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(newButton, button);
+      }
+      
+      let isProcessing = false;
+      newButton.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        if (isProcessing) {
+          return false;
+        }
+        isProcessing = true;
+        
         const uploadArea = this.closest('.upload-area');
         if (uploadArea) {
           const fileInput = uploadArea.querySelector('input[type="file"]');
@@ -690,116 +735,170 @@
             fileInput.click();
           }
         }
+        
+        // Reset flag after a short delay
+        setTimeout(function() {
+          isProcessing = false;
+        }, 300);
+        
+        return false;
       });
     });
     
     // Handle file input changes
     container.querySelectorAll('input[type="file"][data-type="file"]').forEach(function(input) {
-      input.addEventListener('change', function(e) {
+      // Remove existing event listeners by cloning
+      const newInput = input.cloneNode(true);
+      if (input.parentNode) {
+        input.parentNode.replaceChild(newInput, input);
+      }
+      
+      newInput.addEventListener('change', function(e) {
         const uploadArea = this.closest('.upload-area');
-        if (uploadArea) {
-          const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
-          const fileButton = uploadArea.querySelector('.file_button, #fileButton, [id^="fileButton-"]');
-          let imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+        if (!uploadArea) return;
+        
+        const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
+        const fileButton = uploadArea.querySelector('.file_button, #fileButton, [id^="fileButton-"]');
+        let imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+        
+        // Create img-container if it doesn't exist
+        if (!imgContainer) {
+          imgContainer = document.createElement('div');
+          imgContainer.className = 'img-container';
+          imgContainer.id = 'imgContainer-' + (this.getAttribute('data-formdataid') || '');
+          uploadArea.appendChild(imgContainer);
+        }
+        
+        if (this.files && this.files.length > 0) {
+          // Add class to upload area to hide text and button via CSS
+          uploadArea.classList.add('has-files');
           
-          // Create img-container if it doesn't exist
-          if (!imgContainer) {
-            imgContainer = document.createElement('div');
-            imgContainer.className = 'img-container';
-            imgContainer.style.cssText = 'width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; align-items: flex-start; padding: 10px; min-height: 50px;';
-            // Insert before the file input or at the end
-            const fileInput = uploadArea.querySelector('input[type="file"]');
-            if (fileInput && fileInput.parentNode) {
-              fileInput.parentNode.insertBefore(imgContainer, fileInput);
-            } else {
-              uploadArea.appendChild(imgContainer);
-            }
+          // Hide upload text and button immediately
+          if (uploadText) {
+            uploadText.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important;';
+          }
+          if (fileButton) {
+            fileButton.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important;';
           }
           
-          if (this.files && this.files.length > 0) {
-            // Hide upload text and button
-            if (uploadText) uploadText.style.display = 'none';
-            if (fileButton) fileButton.style.display = 'none';
+          // Clear existing content
+          imgContainer.innerHTML = '';
+          imgContainer.style.cssText = 'width: 100% !important; display: flex !important; flex-wrap: wrap !important; gap: 10px !important; justify-content: flex-start !important; align-items: flex-start !important; padding: 10px !important; min-height: 50px !important; position: relative !important; z-index: 5 !important; visibility: visible !important; opacity: 1 !important; box-sizing: border-box !important;';
+          
+          // Adjust upload area styling when files are present
+          uploadArea.style.cssText = (uploadArea.getAttribute('style') || '') + '; justify-content: flex-start !important; min-height: auto !important; padding: 10px !important; overflow: visible !important; flex-direction: row !important; flex-wrap: wrap !important;';
+          
+          // Lower z-index of file input so preview shows above it
+          this.style.zIndex = '1';
+          this.style.pointerEvents = 'auto';
+          
+          // Show file names or previews
+          Array.from(this.files).forEach(function(file, index) {
+            const fileWrapper = document.createElement('div');
+            fileWrapper.className = 'img-preview-wrapper';
+            fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px; max-width: 200px; z-index: 3;';
             
-            // Clear existing content
-            imgContainer.innerHTML = '';
-            imgContainer.style.display = 'flex';
-            imgContainer.style.visibility = 'visible';
-            imgContainer.style.opacity = '1';
+            const fileName = document.createElement('p');
+            fileName.className = 'file-name';
+            fileName.textContent = file.name;
+            fileName.style.cssText = 'margin: 5px 0 0 0; font-size: 12px; word-break: break-word; text-align: center; max-width: 100%; color: #333;';
             
-            // Adjust upload area styling when files are present
-            uploadArea.style.justifyContent = 'flex-start';
-            uploadArea.style.minHeight = 'auto';
-            uploadArea.style.padding = '10px';
-            uploadArea.style.overflow = 'visible';
-            
-            // Show file names or previews
-            Array.from(this.files).forEach(function(file) {
-              const fileWrapper = document.createElement('div');
-              fileWrapper.className = 'img-preview-wrapper';
-              fileWrapper.style.cssText = 'position: relative; display: flex; flex-direction: column; align-items: center; margin: 5px; max-width: 200px;';
-              
-              const fileName = document.createElement('p');
-              fileName.className = 'file-name';
-              fileName.textContent = file.name;
-              fileName.style.cssText = 'margin: 5px 0; font-size: 12px; word-break: break-word; text-align: center; max-width: 100%;';
-              
-              if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                  const img = document.createElement('img');
-                  img.className = 'img-preview';
-                  img.src = event.target.result;
-                  img.style.cssText = 'width: 150px; max-width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #eb1256; border-radius: 4px; background: #fff; display: block;';
-                  img.alt = file.name;
-                  img.title = file.name;
-                  fileWrapper.insertBefore(img, fileName);
-                  imgContainer.appendChild(fileWrapper);
+            if (file.type && file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = function(event) {
+                const img = document.createElement('img');
+                img.className = 'img-preview';
+                img.src = event.target.result;
+                img.setAttribute('style', 'width: 150px !important; max-width: 100% !important; max-height: 150px !important; height: auto !important; object-fit: contain !important; border: 1px solid #eb1256 !important; border-radius: 4px !important; background: #fff !important; display: block !important; margin: 0 auto !important;');
+                img.alt = file.name;
+                img.title = file.name;
+                img.onerror = function() {
+                  this.style.display = 'none';
+                  if (fileName.parentNode) {
+                    fileName.style.display = 'block';
+                  }
                 };
-                reader.onerror = function() {
-                  // If image fails to load, show file name only
-                  fileWrapper.appendChild(fileName);
-                  imgContainer.appendChild(fileWrapper);
-                };
-                reader.readAsDataURL(file);
-              } else {
-                const folderIcon = document.createElement('div');
-                folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px;';
-                folderIcon.textContent = '📁';
-                folderIcon.title = file.name;
-                fileWrapper.insertBefore(folderIcon, fileName);
+                fileWrapper.appendChild(img);
+                fileWrapper.appendChild(fileName);
                 imgContainer.appendChild(fileWrapper);
-              }
-            });
-          } else {
-            // Show upload text and button if no files
-            if (uploadText) uploadText.style.display = 'block';
-            if (fileButton) fileButton.style.display = 'inline-block';
-            if (imgContainer) {
-              imgContainer.innerHTML = '';
-              imgContainer.style.display = 'none';
+                
+                // Force reflow to ensure visibility
+                void imgContainer.offsetHeight;
+              };
+              reader.onerror = function() {
+                // If image fails to load, show file name only
+                fileWrapper.appendChild(fileName);
+                imgContainer.appendChild(fileWrapper);
+              };
+              reader.readAsDataURL(file);
+            } else {
+              const folderIcon = document.createElement('div');
+              folderIcon.style.cssText = 'width: 150px; height: 150px; background: #f0f0f0; border: 1px solid #eb1256; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 48px;';
+              folderIcon.textContent = '📁';
+              folderIcon.title = file.name;
+              fileWrapper.appendChild(folderIcon);
+              fileWrapper.appendChild(fileName);
+              imgContainer.appendChild(fileWrapper);
             }
-            // Reset upload area styling
-            uploadArea.style.justifyContent = 'center';
-            uploadArea.style.minHeight = '150px';
+          });
+        } else {
+          // Remove has-files class
+          uploadArea.classList.remove('has-files');
+          
+          // Show upload text and button if no files
+          if (uploadText) {
+            uploadText.style.cssText = '';
+            uploadText.removeAttribute('style');
           }
+          if (fileButton) {
+            fileButton.style.cssText = '';
+            fileButton.removeAttribute('style');
+          }
+          if (imgContainer) {
+            imgContainer.innerHTML = '';
+            imgContainer.style.display = 'none';
+          }
+          // Reset upload area styling
+          uploadArea.style.justifyContent = 'center';
+          uploadArea.style.minHeight = '150px';
+          uploadArea.style.flexDirection = 'column';
+          uploadArea.style.overflow = 'hidden';
+          this.style.zIndex = '10';
         }
       });
     });
     
-    // Make upload area clickable
+    // Make upload area clickable - prevent double-triggering
     container.querySelectorAll('.upload-area').forEach(function(area) {
-      area.addEventListener('click', function(e) {
+      // Remove existing listeners by cloning
+      const newArea = area.cloneNode(true);
+      if (area.parentNode) {
+        area.parentNode.replaceChild(newArea, area);
+      }
+      
+      let isProcessing = false;
+      newArea.addEventListener('click', function(e) {
         // Don't trigger if clicking on button or existing content
-        if (e.target.classList.contains('file_button') || e.target.closest('.img-preview-wrapper')) {
+        if (e.target.classList.contains('file_button') || e.target.closest('.img-preview-wrapper') || e.target.closest('.img-container')) {
           return;
         }
+        
+        if (isProcessing) {
+          return false;
+        }
+        isProcessing = true;
+        
         const fileInput = this.querySelector('input[type="file"]');
         if (fileInput) {
           fileInput.click();
         }
+        
+        // Reset flag after a short delay
+        setTimeout(function() {
+          isProcessing = false;
+        }, 300);
       });
-      area.style.cursor = 'pointer';
+      newArea.style.cursor = 'pointer';
     });
   }
   
@@ -1916,7 +2015,62 @@
           
           if (data.result === 'success') {
             showNotification(data.msg || 'Form submitted successfully!', 'success');
+            
+            // Custom form reset to handle star ratings and file uploads
             form.reset();
+            
+            // Clear star ratings
+            const starInputs = form.querySelectorAll('.star-rating input[type="radio"]');
+            starInputs.forEach(function(input) {
+              input.checked = false;
+              const fieldset = input.closest('fieldset');
+              if (fieldset) {
+                const labels = fieldset.querySelectorAll('label');
+                labels.forEach(function(label) {
+                  label.classList.remove('star-filled');
+                  label.classList.add('star-empty');
+                  label.removeAttribute('data-star-state');
+                });
+              }
+            });
+            
+            // Clear file upload previews
+            const uploadAreas = form.querySelectorAll('.upload-area');
+            uploadAreas.forEach(function(uploadArea) {
+              // Remove has-files class
+              uploadArea.classList.remove('has-files');
+              
+              const imgContainer = uploadArea.querySelector('.img-container, #imgContainer, [id^="imgContainer-"]');
+              if (imgContainer) {
+                imgContainer.innerHTML = '';
+                imgContainer.style.display = 'none';
+              }
+              
+              // Show upload text and button again
+              const uploadText = uploadArea.querySelector('.upload-p, #uploadText, [id^="uploadText-"]');
+              const fileButton = uploadArea.querySelector('.file_button, #fileButton, [id^="fileButton-"]');
+              if (uploadText) {
+                uploadText.style.cssText = '';
+                uploadText.removeAttribute('style');
+              }
+              if (fileButton) {
+                fileButton.style.cssText = '';
+                fileButton.removeAttribute('style');
+              }
+              
+              // Reset upload area styling
+              uploadArea.style.justifyContent = 'center';
+              uploadArea.style.minHeight = '150px';
+              uploadArea.style.flexDirection = 'column';
+              uploadArea.style.overflow = 'hidden';
+              
+              // Reset file input
+              const fileInput = uploadArea.querySelector('input[type="file"]');
+              if (fileInput) {
+                fileInput.value = '';
+                fileInput.style.zIndex = '10';
+              }
+            });
           } else {
             showNotification(data.msg || 'Something went wrong. Please try again.', 'error');
           }
