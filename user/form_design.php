@@ -6849,26 +6849,43 @@ if ($form_id > 0) {
         
         // Update preview on design control changes (real-time preview)
         // Function to update element design preview in real-time (global function)
-        window.updateElementDesignPreview = function(formdataid) {
-            if (!formdataid) return;
-            
-            // Get design settings
-            var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
-            var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
-            var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
-            var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
-            var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
-            if (isNaN(borderRadius) || borderRadius < 0) {
-                borderRadius = 4;
-            }
-            
-            // Apply to input, textarea, select elements in both preview containers
-            $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').css({
-                'font-size': fontSize + 'px',
-                'font-weight': fontWeight,
-                'color': color,
-                'border-radius': borderRadius + 'px'
-            });
+    window.updateElementDesignPreview = function(formdataid) {
+        if (!formdataid) return;
+        
+        // Get design settings
+        var labelFontSize = parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+        var inputFontSize = parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+        
+        // Fallback for backward compatibility or missing new inputs
+        if ($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').length === 0) {
+             var oldFontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+             labelFontSize = oldFontSize;
+             inputFontSize = oldFontSize;
+        }
+
+        var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
+        var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
+        var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
+        var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
+        if (isNaN(borderRadius) || borderRadius < 0) {
+            borderRadius = 4;
+        }
+        
+        // Apply to input, textarea, select elements (Input Font Size)
+        $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').css({
+            'font-size': inputFontSize + 'px',
+            'font-weight': fontWeight,
+            'color': color,
+            'border-radius': borderRadius + 'px'
+        });
+
+        // Apply to Labels (Label Font Size)
+        var $labels = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] label, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] label, .code-form-app .label-content[data-formdataid="' + formdataid + '"], .contact-form .label-content[data-formdataid="' + formdataid + '"]');
+        $labels.css({
+            'font-size': labelFontSize + 'px',
+            'font-weight': fontWeight,
+            'color': color
+        });
             
             // Also apply border-radius directly to select elements with !important to override browser defaults
             // Target select elements that have data-formdataid directly
@@ -7008,7 +7025,7 @@ if ($form_id > 0) {
             }
         };
         
-        $(document).on('input change keyup', '.element-design-font-size, .element-design-font-weight, .element-design-color-text, .element-design-border-radius', function() {
+        $(document).on('input change keyup', '.element-design-label-font-size, .element-design-input-font-size, .element-design-font-size, .element-design-font-weight, .element-design-color-text, .element-design-border-radius', function() {
             var $control = $(this);
             var formdataid = $control.data('formdataid');
             if (formdataid) {

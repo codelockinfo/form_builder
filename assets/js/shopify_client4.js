@@ -64,7 +64,9 @@ function saveElementFormToTracker(formdataid) {
         borderRadius = 4;
     }
     var designSettings = {
-        fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+        fontSize: 16,
+        labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+        inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
         fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
         color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
         borderRadius: borderRadius,
@@ -453,23 +455,23 @@ $(document).on("click", ".element_coppy_to", function (event) {
                     var retryCount = 0;
                     var maxRetries = 20; // Increased retries for better reliability
                     var retryDelay = 250; // Slightly longer delay between retries for better reliability
-                    
+
                     function refreshWithRetry() {
                         // Refresh elements and preview
                         // Store callback to check after refresh
-                        var checkCallback = function() {
+                        var checkCallback = function () {
                             if (formdata_id) {
                                 // Delay to ensure DOM is fully updated after get_selected_elements completes
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     // Check if element appears in preview and sidebar
                                     // Try multiple selectors to be sure
                                     var $previewElement = $('.code-form-app [data-formdataid="' + formdata_id + '"]');
                                     var $previewElementAlt = $('.contact-form [data-formdataid="' + formdata_id + '"]');
                                     var $sidebarElement = $('.selected_element_set [data-formdataid="' + formdata_id + '"]');
-                                    
+
                                     var foundInPreview = ($previewElement.length > 0 || $previewElementAlt.length > 0);
                                     var foundInSidebar = ($sidebarElement.length > 0);
-                                    
+
                                     // If element not found and we haven't exceeded retries, try again
                                     if ((!foundInPreview || !foundInSidebar) && retryCount < maxRetries) {
                                         retryCount++;
@@ -495,10 +497,10 @@ $(document).on("click", ".element_coppy_to", function (event) {
                                 }, 400); // Increased delay to ensure DOM is fully updated and rendered
                             }
                         };
-                        
+
                         get_selected_elements(formid, checkCallback);
                     }
-                    
+
                     // Start the refresh with retry immediately
                     refreshWithRetry();
                 }, 400); // Increased delay to ensure database transaction is committed
@@ -680,11 +682,11 @@ function get_selected_elements(form_id, callback) {
                         // But only if it contains actual form elements (not just empty form structure)
                         if (formHtml && typeof formHtml === 'string' && formHtml.trim().length > 0) {
                             var elementCount = (formHtml.match(/data-formdataid=/g) || []).length;
-                            
+
                             // Check current preview to see if it has elements
                             var currentPreviewHtml = $(".code-form-app").html() || '';
                             var currentElementCount = (currentPreviewHtml.match(/data-formdataid=/g) || []).length;
-                            
+
                             // Only update if we have elements OR if this is a valid form structure with header/footer
                             // But be very strict: if current preview has elements and new HTML has 0, don't update
                             // This prevents clearing when backend returns stale data before delete is committed
@@ -707,7 +709,7 @@ function get_selected_elements(form_id, callback) {
                                 // Both have 0 elements - check if it's a valid form structure with header/footer
                                 var hasHeader = formHtml.indexOf('formHeader') !== -1 || formHtml.indexOf('class="formHeader"') !== -1;
                                 var hasFooter = formHtml.indexOf('forFooterAlign') !== -1 || formHtml.indexOf('class="forFooterAlign"') !== -1 || formHtml.indexOf('Submit') !== -1;
-                                
+
                                 if (hasHeader || hasFooter) {
                                     // No elements but has header/footer - valid form structure (form with only header/footer)
                                     $(".code-form-app").html(formHtml);
@@ -897,17 +899,17 @@ function get_selected_elements(form_id, callback) {
                         }
                     }, 300);
                 }
-                
+
                 // Call callback after all DOM updates are complete
                 if (callback) {
                     // Delay to ensure DOM is fully updated
-                    setTimeout(function() {
+                    setTimeout(function () {
                         callback();
                     }, 300); // Increased delay to ensure DOM is fully updated and rendered
                 }
-                
+
                 // Initialize star rating handlers after form HTML is loaded
-                setTimeout(function() {
+                setTimeout(function () {
                     if (typeof window.initializeStarRatingHandlers === 'function') {
                         window.initializeStarRatingHandlers();
                     }
@@ -1133,28 +1135,28 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                 } else {
                     $(".elementAppend").html(comeback.outcome);
                     initializeCKEditor('contentparagraph', '');
-                    
+
                     // Initialize Select2 for file extensions dropdown (without placeholder)
-                    setTimeout(function() {
+                    setTimeout(function () {
                         var $selectFile = $('.selectFile');
-                        
+
                         // Read selected values from HTML BEFORE initializing Select2
                         // This ensures we capture the values that were set by PHP from database
                         var selectedValues = [];
-                        $selectFile.find('option[selected]').each(function() {
+                        $selectFile.find('option[selected]').each(function () {
                             var val = $(this).val();
                             if (val && val !== '') {
                                 selectedValues.push(val);
                             }
                         });
-                        
+
                         // Initialize Select2
                         $selectFile.select2({
                             placeholder: '',
                             allowClear: false,
                             minimumResultsForSearch: Infinity
                         });
-                        
+
                         // Set the selected values after Select2 is initialized
                         if (selectedValues.length > 0) {
                             $selectFile.val(selectedValues).trigger('change');
@@ -1187,10 +1189,10 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                     }
                                 }
                             }
-                            
+
                             // Restore allowextention (file extensions) from tracker after Select2 is initialized
                             if (savedData['allowextention']) {
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     var $selectFile = $newForm.find('.selectFile');
                                     if ($selectFile.length && savedData['allowextention']) {
                                         var extensions = Array.isArray(savedData['allowextention']) ? savedData['allowextention'] : [savedData['allowextention']];
@@ -1205,7 +1207,14 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                     if (elementChangesTracker.designSettings[formdataId]) {
                         setTimeout(function () {
                             var savedDesign = elementChangesTracker.designSettings[formdataId];
-                            $('.element-design-font-size[data-formdataid="' + formdataId + '"]').val(savedDesign.fontSize || 16);
+
+                            // Restore Label and Input font sizes
+                            var labelFontSize = savedDesign.labelFontSize || savedDesign.fontSize || 16;
+                            var inputFontSize = savedDesign.inputFontSize || savedDesign.fontSize || 16;
+
+                            $('.element-design-label-font-size[data-formdataid="' + formdataId + '"]').val(labelFontSize);
+                            $('.element-design-input-font-size[data-formdataid="' + formdataId + '"]').val(inputFontSize);
+
                             $('.element-design-font-weight[data-formdataid="' + formdataId + '"]').val(savedDesign.fontWeight || '400');
                             $('.element-design-color-text[data-formdataid="' + formdataId + '"]').val(savedDesign.color || '#000000');
                             $('.element-design-border-radius[data-formdataid="' + formdataId + '"]').val(savedDesign.borderRadius || 4);
@@ -1217,9 +1226,9 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                 updateElementDesignPreview(formdataId);
                             }
                         }, 100);
-                        
+
                         // Also update preview after a short delay to ensure DOM is ready
-                        setTimeout(function() {
+                        setTimeout(function () {
                             if (typeof updateElementDesignPreview === 'function') {
                                 updateElementDesignPreview(formdataId);
                             }
@@ -1228,15 +1237,16 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                         // If not in tracker, read values from the newly loaded inputs (which have values from database)
                         // and apply them to preview. This handles the case after page reload.
                         setTimeout(function () {
-                            var $fontSize = $('.element-design-font-size[data-formdataid="' + formdataId + '"]');
+                            var $labelFontSize = $('.element-design-label-font-size[data-formdataid="' + formdataId + '"]');
                             var $borderRadius = $('.element-design-border-radius[data-formdataid="' + formdataId + '"]');
-                            
-                            if ($fontSize.length) {
+
+                            if ($labelFontSize.length) {
                                 // Read values from the input fields (they already have correct values from database)
-                                var fontSize = parseInt($fontSize.val()) || 16;
+                                var labelFontSize = parseInt($('.element-design-label-font-size[data-formdataid="' + formdataId + '"]').val()) || 16;
+                                var inputFontSize = parseInt($('.element-design-input-font-size[data-formdataid="' + formdataId + '"]').val()) || 16;
                                 var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataId + '"]').val() || '400';
                                 var color = $('.element-design-color-text[data-formdataid="' + formdataId + '"]').val() || '#000000';
-                                
+
                                 // Read border radius - check both .val() and the value attribute
                                 var borderRadiusVal = $borderRadius.val();
                                 // If value is empty or default (4), try reading from the value attribute directly
@@ -1246,13 +1256,13 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                         borderRadiusVal = attrValue;
                                     }
                                 }
-                                
+
                                 // If still default value (4), try to load from database via AJAX
                                 var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined && borderRadiusVal !== 'undefined') ? parseInt(borderRadiusVal) : 4;
                                 if (isNaN(borderRadius) || borderRadius < 0) {
                                     borderRadius = 4;
                                 }
-                                
+
                                 // If we got the default value of 4, try loading from database
                                 if (borderRadius === 4) {
                                     var formId = $('.formid').val();
@@ -1266,7 +1276,7 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                                 store: store,
                                                 form_id: formId
                                             },
-                                            success: function(response) {
+                                            success: function (response) {
                                                 try {
                                                     if (typeof response === 'string') {
                                                         response = JSON.parse(response);
@@ -1278,13 +1288,13 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                                             if (!isNaN(dbBorderRadius) && dbBorderRadius >= 0 && dbBorderRadius !== 4) {
                                                                 $borderRadius.val(dbBorderRadius);
                                                                 borderRadius = dbBorderRadius;
-                                                                
+
                                                                 // Update tracker
                                                                 if (!elementChangesTracker.designSettings[formdataId]) {
                                                                     elementChangesTracker.designSettings[formdataId] = {};
                                                                 }
                                                                 elementChangesTracker.designSettings[formdataId].borderRadius = dbBorderRadius;
-                                                                
+
                                                                 // Apply to preview
                                                                 if (typeof updateElementDesignPreview === 'function') {
                                                                     updateElementDesignPreview(formdataId);
@@ -1292,38 +1302,40 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                                             }
                                                         }
                                                     }
-                                                } catch(e) {
+                                                } catch (e) {
                                                     // Silent error handling
                                                 }
                                             },
-                                            error: function(xhr, status, error) {
+                                            error: function (xhr, status, error) {
                                                 // Silent error handling
                                             }
                                         });
                                     }
                                 }
-                                
+
                                 var bgColor = $('.element-design-bg-color-text[data-formdataid="' + formdataId + '"]').val() || '';
-                                
+
                                 // Save to tracker for future edits
                                 if (!elementChangesTracker.designSettings[formdataId]) {
                                     elementChangesTracker.designSettings[formdataId] = {};
                                 }
-                                elementChangesTracker.designSettings[formdataId].fontSize = fontSize;
+                                elementChangesTracker.designSettings[formdataId].fontSize = 16;
+                                elementChangesTracker.designSettings[formdataId].labelFontSize = labelFontSize;
+                                elementChangesTracker.designSettings[formdataId].inputFontSize = inputFontSize;
                                 elementChangesTracker.designSettings[formdataId].fontWeight = fontWeight;
                                 elementChangesTracker.designSettings[formdataId].color = color;
                                 elementChangesTracker.designSettings[formdataId].borderRadius = borderRadius;
                                 elementChangesTracker.designSettings[formdataId].bgColor = bgColor;
-                                
+
                                 // Apply to preview
                                 if (typeof updateElementDesignPreview === 'function') {
                                     updateElementDesignPreview(formdataId);
                                 }
                             }
                         }, 200);
-                        
+
                         // Also update preview after a longer delay to ensure DOM is fully ready
-                        setTimeout(function() {
+                        setTimeout(function () {
                             // Re-read border radius value in case it was set after initial load
                             var $borderRadius = $('.element-design-border-radius[data-formdataid="' + formdataId + '"]');
                             if ($borderRadius.length) {
@@ -1336,10 +1348,10 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                             }
                         }, 500);
                     }
-                    
+
                     // Add event listeners to save design settings to tracker when they change
-                    setTimeout(function() {
-                        $('.element-design-font-size[data-formdataid="' + formdataId + '"], .element-design-font-weight[data-formdataid="' + formdataId + '"], .element-design-color-text[data-formdataid="' + formdataId + '"], .element-design-border-radius[data-formdataid="' + formdataId + '"], .element-design-bg-color-text[data-formdataid="' + formdataId + '"]').off('change.designTracker').on('change.designTracker', function() {
+                    setTimeout(function () {
+                        $('.element-design-label-font-size[data-formdataid="' + formdataId + '"], .element-design-input-font-size[data-formdataid="' + formdataId + '"], .element-design-font-weight[data-formdataid="' + formdataId + '"], .element-design-color-text[data-formdataid="' + formdataId + '"], .element-design-border-radius[data-formdataid="' + formdataId + '"], .element-design-bg-color-text[data-formdataid="' + formdataId + '"]').off('change.designTracker').on('change.designTracker', function () {
                             var formdataid = $(this).data('formdataid');
                             if (formdataid) {
                                 var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
@@ -1348,7 +1360,9 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                                     borderRadius = 4;
                                 }
                                 var designSettings = {
-                                    fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                                    fontSize: 16,
+                                    labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                                    inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
                                     fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
                                     color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
                                     borderRadius: borderRadius,
@@ -1455,10 +1469,10 @@ $(document).on("click", ".removeElement", function (event) {
                 // Get the formdata_id that was removed from the form
                 var $form = $(".add_elementdata");
                 var formdata_id = $form.attr('formdataid') || $form.find('input[name="formdata_id"]').val() || '';
-                
+
                 // Navigate back to form builder view
                 $(thisObj).closest(".polarisformcontrol").find(".backBtn").trigger("click");
-                
+
                 // Immediately remove from sidebar and preview for instant feedback
                 if (formdata_id) {
                     $('.selected_element_set [data-formdataid="' + formdata_id + '"]').remove();
@@ -1466,7 +1480,7 @@ $(document).on("click", ".removeElement", function (event) {
                     $('.code-form-app [data-formdataid="' + formdata_id + '"]').remove();
                     $('.contact-form [data-formdataid="' + formdata_id + '"]').remove();
                 }
-                
+
                 // Reload page immediately to get fresh data from backend
                 window.location.reload();
             }
@@ -1478,7 +1492,7 @@ $(document).on("click", ".removeElement", function (event) {
 $(document).on("click", ".saveForm", function (event) {
     event.preventDefault();
     event.stopPropagation();
-    
+
     try {
         // Save current visible form to tracker before saving
         var currentFormdataid = $('form.add_elementdata').attr('formdataid');
@@ -1520,7 +1534,7 @@ $(document).on("click", ".saveForm", function (event) {
         savefooterform();
         savepublishdata();
         saveAllElementDesignSettings(); // Save all element design settings
-        
+
         // Show success message
         if (typeof flashNotice === 'function') {
             flashNotice('All changes saved successfully!', 'inline-flash--success');
@@ -1530,7 +1544,7 @@ $(document).on("click", ".saveForm", function (event) {
             flashNotice('Error saving changes: ' + error.message, 'inline-flash--error');
         }
     }
-    
+
     return false;
 });
 
@@ -1732,7 +1746,7 @@ function saveform() {
     var form_data = new FormData(form_data);
     // Handle allowextention as array - always append, even if empty (to clear database)
     if (val && Array.isArray(val) && val.length > 0) {
-        val.forEach(function(ext) {
+        val.forEach(function (ext) {
             form_data.append("allowextention[]", ext);
         });
     } else {
@@ -1851,31 +1865,30 @@ function saveAllElementDesignSettings() {
     if (!formId) {
         return;
     }
-    
+
     // IMPORTANT: Save current visible form's design settings to tracker BEFORE collecting
     // This ensures we capture the design settings even if the form is about to be removed
     var currentFormdataid = $('form.add_elementdata').attr('formdataid');
     if (currentFormdataid) {
-        var $fontSize = $('.element-design-font-size[data-formdataid="' + currentFormdataid + '"]');
-        if ($fontSize.length) {
-                var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + currentFormdataid + '"]').val();
-            var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
-            if (isNaN(borderRadius) || borderRadius < 0) {
-                borderRadius = 4;
-            }
-            var currentDesignSettings = {
-                fontSize: parseInt($fontSize.val()) || 16,
-                fontWeight: $('.element-design-font-weight[data-formdataid="' + currentFormdataid + '"]').val() || '400',
-                color: $('.element-design-color-text[data-formdataid="' + currentFormdataid + '"]').val() || '#000000',
-                borderRadius: borderRadius,
-                bgColor: $('.element-design-bg-color-text[data-formdataid="' + currentFormdataid + '"]').val() || ''
-            };
-            elementChangesTracker.designSettings[currentFormdataid] = currentDesignSettings;
+        var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + currentFormdataid + '"]').val();
+        var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
+        if (isNaN(borderRadius) || borderRadius < 0) {
+            borderRadius = 4;
         }
+        var currentDesignSettings = {
+            fontSize: 16, // Default for backward compatibility
+            labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + currentFormdataid + '"]').val()) || 16,
+            inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + currentFormdataid + '"]').val()) || 16,
+            fontWeight: $('.element-design-font-weight[data-formdataid="' + currentFormdataid + '"]').val() || '400',
+            color: $('.element-design-color-text[data-formdataid="' + currentFormdataid + '"]').val() || '#000000',
+            borderRadius: borderRadius,
+            bgColor: $('.element-design-bg-color-text[data-formdataid="' + currentFormdataid + '"]').val() || ''
+        };
+        elementChangesTracker.designSettings[currentFormdataid] = currentDesignSettings;
     }
-    
+
     // Also save design settings from all visible design inputs (in case tracker missed some)
-    $('.element-design-font-size[data-formdataid]').each(function() {
+    $('.element-design-label-font-size[data-formdataid]').each(function () {
         var formdataid = $(this).data('formdataid');
         if (formdataid && !elementChangesTracker.designSettings[formdataid]) {
             var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
@@ -1884,7 +1897,9 @@ function saveAllElementDesignSettings() {
                 borderRadius = 4;
             }
             var designSettings = {
-                fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                fontSize: 16,
+                labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
                 fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
                 color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
                 borderRadius: borderRadius,
@@ -1953,21 +1968,23 @@ function saveAllElementDesignSettings() {
 
         if (formdataid && elementid) {
             var settings = null;
-            
+
             // FIRST: Try to get from tracker (saved changes from previous edits)
             if (elementChangesTracker.designSettings[formdataid]) {
                 settings = elementChangesTracker.designSettings[formdataid];
             } else {
                 // SECOND: If not in tracker, try to get from current DOM (if form is visible)
-                var $fontSize = $('.element-design-font-size[data-formdataid="' + formdataid + '"]');
-                if ($fontSize.length) {
+                var $labelFontSize = $('.element-design-label-font-size[data-formdataid="' + formdataid + '"]');
+                if ($labelFontSize.length) {
                     var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
                     var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
                     if (isNaN(borderRadius) || borderRadius < 0) {
                         borderRadius = 4;
                     }
                     settings = {
-                        fontSize: parseInt($fontSize.val()) || 16,
+                        fontSize: 16,
+                        labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
+                        inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
                         fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
                         color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
                         borderRadius: borderRadius,
@@ -1975,7 +1992,7 @@ function saveAllElementDesignSettings() {
                     };
                 }
             }
-            
+
             // Only add if we have settings
             if (settings) {
                 allSettings.push({
@@ -2094,14 +2111,14 @@ window.onload = (event) => {
         var $thisObj = $(this);
         var formdataid = $(this).attr('data-formdataid');
         var $formInput = $(this).closest(".globo-form-input");
-        
+
         // Clear previous previews
         if (formdataid) {
             $formInput.find('#imgContainer-' + formdataid).html('');
         } else {
             $formInput.find('.img-container, #imgContainer').html('');
         }
-        
+
         const files = this.files;
 
         Array.from(files).forEach(file => {
@@ -2165,7 +2182,7 @@ window.onload = (event) => {
                                 }
 
                                 imgPreviewWrapper.append(imgPreview).append(closeButton).append(fileName);
-                                
+
                                 // Append to correct container
                                 if (formdataid) {
                                     $formInput.find('#imgContainer-' + formdataid).append(imgPreviewWrapper);
@@ -2287,4 +2304,4 @@ $(document).on('submit', 'form.get_selected_elements', function (e) {
         error: function () {
         }
     });
-});  
+});

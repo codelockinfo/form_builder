@@ -1,8 +1,8 @@
 <?php
 
-// Temporarily enable error display for debugging
+// Disable error display for AJAX to avoid corrupting JSON
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 header("Access-Control-Allow-Origin: *");

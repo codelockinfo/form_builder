@@ -2300,13 +2300,15 @@ class Client_functions extends common_function {
         
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         $shopinfo = (object)$this->current_store_obj;
+        
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
             // Select public_id field to display 6-digit ID
             $comeback_client = $this->select_result(TABLE_FORMS, 'id, form_name, status, store_client_id, public_id', $where_query);
             $html="";
             
-            foreach($comeback_client['data'] as $templates){
+            if (isset($comeback_client['data']) && is_array($comeback_client['data'])) {
+                foreach($comeback_client['data'] as $templates){
                     $form_status = $templates['status'];
                     $form_status_check = ($form_status == 1) ? 'checked="checked"' : '';
                     $html .= '<div class="Polaris-ResourceList__HeaderWrapper border-radi-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
@@ -2374,9 +2376,10 @@ class Client_functions extends common_function {
                                     </div>
                                 </div>
                             </div>';
-                }
             }
-        $response_data = array('data' => 'success', 'msg' => 'select successfully','outcome' => $html);
+            }
+            $response_data = array('result' => 'success', 'msg' => 'select successfully','outcome' => $html);
+        }
         $response = json_encode($response_data);
         return $response;
     }
@@ -2747,17 +2750,16 @@ class Client_functions extends common_function {
                 $where_query = array(
                     ["", "id", "=", "1"],      // Full Name (Text input)
                     ["OR", "id", "=", "2"],    // Email Address (Email input)
-                    ["OR", "id", "=", "20"],   // Phone Number (Tel input)
+                    ["OR", "id", "=", "7"],    // Phone Number (Number input)
                     ["OR", "id", "=", "1"],    // Order Number (Text input)
                     ["OR", "id", "=", "9"],    // Order Date (Date picker)
                     ["OR", "id", "=", "1"],    // Product Name (Text input)
-                    ["OR", "id", "=", "15"],   // Reason for Refund (Dropdown/Select)
-                    ["OR", "id", "=", "9"],    // Date and Time (Date time picker) - replaced textarea
-                    ["OR", "id", "=", "10"],    // Upload Images/Video (File upload)
+                    ["OR", "id", "=", "14"],   // Reason for Refund (Dropdown/Select)
                     ["OR", "id", "=", "13"],   // Refund Type (Radio buttons) - element_id 13 is Radio
                     ["OR", "id", "=", "1"],    // UPI ID / Bank Account No (Text input)
                     ["OR", "id", "=", "1"],    // IFSC Code (Text input)
-                    ["OR", "id", "=", "12"]    // Agree to Refund Policy (Checkbox) - element_id 12 is Checkbox
+                    ["OR", "id", "=", "10"],    // Upload Images/Video (File upload)
+                    ["OR", "id", "=", "12"]   // Agree to Refund Policy (Checkbox) - element_id 12 is Checkbox
                 );
               }
 
@@ -2797,38 +2799,39 @@ class Client_functions extends common_function {
                         }else if($counter == 2 && $elementid == 2){
                             // Email Address (Email input)
                             $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "2"));
-                        }else if($counter == 3 && $elementid == 20){
-                            // Phone Number (Tel input)
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }else if($counter == 3 && $elementid == 7){
+                            // Phone Number (Number input)
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "", "0", "0", "1", "0", "2"));
                         }else if($counter == 4 && $elementid == 1){
                             // Order Number / Order ID (Text input)
                             $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "2"));
-                        }else if($counter == 5 && $elementid == 4){
-                            // Order Date (Date picker)
-                            $element_data = serialize(array("Order Date", "Order Date", "","1", "100", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                        }else if($counter == 5 && $elementid == 9){
+                            $element_data = serialize(array("Order Date", "Order Date", "","0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "2"));
                         }else if($counter == 6 && $elementid == 1){
                             // Product Name (Text input)
                             $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }else if($counter == 7 && $elementid == 15){
+                        }else if($counter == 7 && $elementid == 14){
                             // Reason for Refund (Dropdown/Select)
-                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "1", "0", "0", "1", "0", "2"));
-                        }else if($counter == 8 && $elementid == 9){
-                            // Date and Time (Date time picker) - replaced textarea
-                            $element_data = serialize(array("Date and Time", "Date and Time", "","1", "100", "0", "0", "2", "0", "Y-m-d H:i", "12h", "0", "2"));
-                        }else if($counter == 9 && $elementid == 10){
-                            // Upload Images / Video (File upload)
-                            $element_data = serialize(array("Upload Images / Video", "Upload Images / Video", "", "0", "", "", "0", "0", "1", "0", "2"));
-                        }else if($counter == 10 && $elementid == 13){
-                            // Refund Type (Radio buttons) - element_id 13 is Radio, format: array(label, options_comma_separated, "", "", required, ...)
-                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "1", "0", "0", "0", "1", "2"));
-                        }else if($counter == 11 && $elementid == 1){
+                            // Fixed: Changed index 4 from "1" to "" to remove stray "1" description
+                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "2"));
+                        }else if($counter == 8 && $elementid == 13){
+                            // Refund Type (Radio buttons) - element_id 13 is Radio
+                            // Changed index 8 to "2" (alignment), and index 4 to "0" (Show Label)
+                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "2", "2"));
+                        }else if($counter == 9 && $elementid == 1){
                             // UPI ID / Bank Account No (Text input)
                             $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }else if($counter == 12 && $elementid == 1){
+                        }else if($counter == 10 && $elementid == 1){
                             // IFSC Code (Text input)
                             $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }else if($counter == 13 && $elementid == 12){
-                            // Agree to Refund Policy & Terms (Checkbox) - element_id 12 is Checkbox, format: array(label, required_flag, "", "2")
+                        }else if($counter == 11 && $elementid == 10){
+                            // Upload Images / Video (File upload) - Moved to last
+                            // Fixed: Added distinct Label and Button Text
+                            // Format: Label, Button Text, Description, Multi-select, ...
+                            // Fixed: Set Index 10 to "2" for Layout (50%), will be ignored as font-size by new check
+                            $element_data = serialize(array("Upload Video Proof", "Select File", "Upload a video (max 20MB)", "0", "", "", "0", "0", "1", "0", "2"));
+                        }else if($counter == 12 && $elementid == 12){
+                            // Agree to Refund Policy & Terms (Checkbox)
                             $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "2"));
                         }else{
                             // Fallback to default
@@ -3288,23 +3291,33 @@ class Client_functions extends common_function {
                         // If not found, try to get from element_data array (indices 10-14)
                         if ($element_design === null && is_array($element_data_array)) {
                             $element_design = array(
-                                'fontSize' => isset($element_data_array[10]) ? intval($element_data_array[10]) : 16,
-                                'fontWeight' => isset($element_data_array[11]) ? $element_data_array[11] : '400',
-                                'color' => isset($element_data_array[12]) && $element_data_array[12] !== '' ? $element_data_array[12] : '#000000',
-                                'borderRadius' => isset($element_data_array[13]) ? intval($element_data_array[13]) : 4,
-                                'bgColor' => isset($element_data_array[14]) && $element_data_array[14] !== '' ? $element_data_array[14] : ''
+                                'inputFontSize' => (isset($element_data_array[30]) && $element_data_array[30] !== '') ? intval($element_data_array[30]) : (isset($element_data_array[10]) && intval($element_data_array[10]) > 9 ? intval($element_data_array[10]) : 16),
+                                'labelFontSize' => (isset($element_data_array[35]) && $element_data_array[35] !== '') ? intval($element_data_array[35]) : (isset($element_data_array[15]) && intval($element_data_array[15]) > 9 ? intval($element_data_array[15]) : 16),
+                                'fontWeight' => isset($element_data_array[31]) ? $element_data_array[31] : (isset($element_data_array[11]) ? $element_data_array[11] : '400'),
+                                'color' => isset($element_data_array[32]) && $element_data_array[32] !== '' ? $element_data_array[32] : (isset($element_data_array[12]) ? $element_data_array[12] : '#000000'),
+                                'borderRadius' => isset($element_data_array[33]) ? intval($element_data_array[33]) : (isset($element_data_array[13]) ? intval($element_data_array[13]) : 4),
+                                'bgColor' => isset($element_data_array[34]) && $element_data_array[34] !== '' ? $element_data_array[34] : (isset($element_data_array[14]) ? $element_data_array[14] : '')
                             );
+                            // Backward compatibility check for fontSize
+                            if (!isset($element_design['fontSize'])) {
+                                $element_design['fontSize'] = $element_design['inputFontSize'];
+                            }
                         }
                         
                         if ($element_design !== null && is_array($element_design)) {
                             $styles = array();
                             
-                            // Font size - apply if set
-                            if (isset($element_design['fontSize'])) {
-                                $font_size = intval($element_design['fontSize']);
-                                if ($font_size > 0) {
-                                    $styles[] = 'font-size: ' . $font_size . 'px';
-                                }
+                            // Font size - apply if set (Input/Placeholder font size)
+                            $inputFontSize = 0;
+                            if (isset($element_design['inputFontSize']) && intval($element_design['inputFontSize']) > 0) {
+                                $inputFontSize = intval($element_design['inputFontSize']);
+                            } elseif (isset($element_design['fontSize'])) {
+                                $inputFontSize = intval($element_design['fontSize']);
+                            }
+
+                            // Fix: Ignore small values (e.g. 1, 2, 3) used for layout columns to prevent conflict
+                            if ($inputFontSize > 9) {
+                                $styles[] = 'font-size: ' . $inputFontSize . 'px';
                             }
                             
                             // Font weight - apply if set
@@ -3356,12 +3369,17 @@ class Client_functions extends common_function {
                         // If not found, try to get from element_data array (indices 10-14)
                         if ($element_design === null && is_array($element_data_array)) {
                             $element_design = array(
-                                'fontSize' => isset($element_data_array[10]) ? intval($element_data_array[10]) : 16,
-                                'fontWeight' => isset($element_data_array[11]) ? $element_data_array[11] : '400',
-                                'color' => isset($element_data_array[12]) && $element_data_array[12] !== '' ? $element_data_array[12] : '#000000',
-                                'borderRadius' => isset($element_data_array[13]) ? intval($element_data_array[13]) : 4,
-                                'bgColor' => isset($element_data_array[14]) && $element_data_array[14] !== '' ? $element_data_array[14] : ''
+                                'inputFontSize' => (isset($element_data_array[30]) && $element_data_array[30] !== '') ? intval($element_data_array[30]) : (isset($element_data_array[10]) && intval($element_data_array[10]) > 9 ? intval($element_data_array[10]) : 16),
+                                'labelFontSize' => (isset($element_data_array[35]) && $element_data_array[35] !== '') ? intval($element_data_array[35]) : (isset($element_data_array[15]) && intval($element_data_array[15]) > 9 ? intval($element_data_array[15]) : 16),
+                                'fontWeight' => isset($element_data_array[31]) ? $element_data_array[31] : (isset($element_data_array[11]) ? $element_data_array[11] : '400'),
+                                'color' => isset($element_data_array[32]) && $element_data_array[32] !== '' ? $element_data_array[32] : (isset($element_data_array[12]) ? $element_data_array[12] : '#000000'),
+                                'borderRadius' => isset($element_data_array[33]) ? intval($element_data_array[33]) : (isset($element_data_array[13]) ? intval($element_data_array[13]) : 4),
+                                'bgColor' => isset($element_data_array[34]) && $element_data_array[34] !== '' ? $element_data_array[34] : (isset($element_data_array[14]) ? $element_data_array[14] : '')
                             );
+                            // Backward compatibility check for fontSize
+                            if (!isset($element_design['fontSize'])) {
+                                $element_design['fontSize'] = $element_design['inputFontSize'];
+                            }
                         }
                         
                         if ($element_design !== null && is_array($element_design)) {
@@ -3375,12 +3393,17 @@ class Client_functions extends common_function {
                                 }
                             }
                             
-                            // Font size - apply if set and different from default
-                            if (isset($element_design['fontSize']) && intval($element_design['fontSize']) > 0) {
-                                $font_size = intval($element_design['fontSize']);
-                                if ($font_size != 16) { // Only apply if different from default
-                                    $styles[] = 'font-size: ' . $font_size . 'px';
-                                }
+                            // Font size - apply if set (Label font size)
+                            $labelFontSize = 0;
+                            if (isset($element_design['labelFontSize']) && intval($element_design['labelFontSize']) > 0) {
+                                $labelFontSize = intval($element_design['labelFontSize']);
+                            } elseif (isset($element_design['fontSize'])) {
+                                $labelFontSize = intval($element_design['fontSize']);
+                            }
+
+                            // Fix: Ignore small values (e.g. 1, 2, 3) used for layout columns
+                            if ($labelFontSize > 9) { // Only apply if > 9
+                                $styles[] = 'font-size: ' . $labelFontSize . 'px';
                             }
                             
                             // Font weight - apply if set and different from default
@@ -3543,7 +3566,7 @@ class Client_functions extends common_function {
                                                     <div class="globo-form-input">
                                                         <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                                     </div>
-                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                                 </div>';
                             }
                             if($elements['id'] == 2){
@@ -3576,7 +3599,7 @@ class Client_functions extends common_function {
                                     <div class="globo-form-input">
                                         <input type="text" data-type="email" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value=""  maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                     </div>
-                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 22 || $elements['id'] == 23 || $elements['id'] == 4){
@@ -3609,7 +3632,7 @@ class Client_functions extends common_function {
                                                     <label for="'.$textarea_id.'" class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="textarea" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
                                                     <textarea id="'.$textarea_id.'" data-type="textarea" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" rows="3" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'></textarea>
                                                         <small class="help-text globo-description"></small>
-                                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                                 </div>';
                             }
                             if($elements['id'] == 6){
@@ -3642,7 +3665,7 @@ class Client_functions extends common_function {
                                     <div class="globo-form-input">
                                         <input type="text" data-type="phone" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" default-country-code="us" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                     </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 7){
@@ -3676,7 +3699,7 @@ class Client_functions extends common_function {
                                                     <div class="globo-form-input">
                                                         <input type="number" data-type="number" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                                     </div>
-                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                                    <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                                 </div>';
                             }                            
                             if($elements['id'] == 8){
@@ -3713,7 +3736,7 @@ class Client_functions extends common_function {
                                     <div class="globo-form-input">
                                         <input type="password" data-type="password" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$placeholder_text.'" maxlength="'.$limitcharacter_value.'" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                     </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$description_text.'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.($description_text !== '0' ? $description_text : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 9){
@@ -3745,7 +3768,7 @@ class Client_functions extends common_function {
                                         <div class="globo-form-input datepicker">
                                             <input type="date" id="dateInput" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" class="'.$elementtitle.''.$form_data_id.'__placeholder" data-formdataid="'.$form_data_id.'"'.$element_design_style.$readonly_attr.'>
                                         </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 10){
@@ -3793,7 +3816,7 @@ class Client_functions extends common_function {
                                                 <div class="img-container" id="imgContainer-'.$form_data_id.'"></div>
                                             </div>
                                         </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[5].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[5]) && $unserialize_elementdata[5] !== '0') ? $unserialize_elementdata[5] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 11){
@@ -3842,7 +3865,7 @@ class Client_functions extends common_function {
                                 }  
                                      
                                 $form_html .= '</ul>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[3].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] !== '0') ? $unserialize_elementdata[3] : '').'</small>
                                         </div>';
                             }
                             if($elements['id'] == 12){
@@ -3856,7 +3879,7 @@ class Client_functions extends common_function {
                                                 <input id="terms_condition" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'[]" value="1" '.$defaultselect_checked.'>
                                                 <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label" for="terms_condition">'.$unserialize_elementdata[0].'</label>
                                             </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 13){
@@ -3902,7 +3925,7 @@ class Client_functions extends common_function {
                                                 </li>';
                                 }          
                                 $form_html .= '</ul>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[3].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] !== '0') ? $unserialize_elementdata[3] : '').'</small>
                                 </div>';
                             }
                             if($elements['id'] == 14){
@@ -3941,7 +3964,7 @@ class Client_functions extends common_function {
                                                     }     
                                 $form_html .= '     </select>
                                                 </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[4].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[4]) && $unserialize_elementdata[4] !== '0') ? $unserialize_elementdata[4] : '').'</small>
                                     </div>';
                             }
                             if($elements['id'] == 15){
@@ -4007,7 +4030,7 @@ class Client_functions extends common_function {
 
                                             $form_html .= '</select>
                                             </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                     </div>';
                             }
                             if($elements['id'] == 16){
@@ -4055,7 +4078,7 @@ class Client_functions extends common_function {
                                                         <input type="radio" data-type="rating-star" data-formdataid="'.$form_data_id.'" id="'.$form_data_id.'-rating-star-1-1-star" name="'.htmlspecialchars($rating_field_name, ENT_QUOTES, 'UTF-8').'" value="1"><label for="'.$form_data_id.'-rating-star-1-1-star" title="1 Star">1 star</label>
                                                     </fieldset>
                                                 </div>
-                                                <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[1].'</small>
+                                                <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[1]) && $unserialize_elementdata[1] !== '0') ? $unserialize_elementdata[1] : '').'</small>
                                     </div>';
                             }
                             if($elements['id'] == 19){
@@ -4092,7 +4115,7 @@ class Client_functions extends common_function {
                                         <div class="globo-form-input">
                                             <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                         </div>
-                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                        <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                     </div>';
                             }
                             if($elements['id'] == 21){
@@ -4124,7 +4147,7 @@ class Client_functions extends common_function {
                                             <div class="globo-form-input">
                                                 <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
                                             </div>
-                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.$unserialize_elementdata[2].'</small>
+                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                         </div>';
                             }
                         }  
@@ -5199,7 +5222,9 @@ class Client_functions extends common_function {
         }
         
         // Default values - ensure color is preserved if set
-        $fontSize = isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16;
+        $labelFontSize = isset($saved_settings['labelFontSize']) ? intval($saved_settings['labelFontSize']) : (isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16);
+        $inputFontSize = isset($saved_settings['inputFontSize']) ? intval($saved_settings['inputFontSize']) : (isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16);
+        $fontSize = $labelFontSize; // For backward compatibility in some places if needed
         $fontWeight = isset($saved_settings['fontWeight']) ? $saved_settings['fontWeight'] : '400';
         // Preserve color value - don't default to #000000 if it was explicitly set
         // Check if color exists and is not empty string, null, or false
@@ -5245,19 +5270,43 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             
-                            <!-- Font Size -->
+                            <!-- Label Font Size -->
                             <div class="form-control">
                                 <div class="textfield-wrapper">
                                     <div class="">
                                         <div class="Polaris-Labelled__LabelWrapper">
                                             <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Font Size</label>
+                                                <label class="Polaris-Label__Text">Label Font Size</label>
                                             </div>
                                         </div>
                                         <div class="Polaris-Connected">
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_font_size" class="Polaris-TextField__Input element-design-font-size" data-formdataid="'.$form_data_id.'" value="'.$fontSize.'" min="8" max="72" step="1" placeholder="16">
+                                                    <input type="number" name="element_design_label_font_size" class="Polaris-TextField__Input element-design-label-font-size" data-formdataid="'.$form_data_id.'" value="'.$labelFontSize.'" min="8" max="72" step="1" placeholder="16">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input/Placeholder Font Size -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label">
+                                                <label class="Polaris-Label__Text">Input/Placeholder Font Size</label>
+                                            </div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField">
+                                                    <input type="number" name="element_design_input_font_size" class="Polaris-TextField__Input element-design-input-font-size" data-formdataid="'.$form_data_id.'" value="'.$inputFontSize.'" min="8" max="72" step="1" placeholder="16">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -5463,11 +5512,12 @@ class Client_functions extends common_function {
                     }
                     
                     $design_settings[$design_settings_key] = array(
-                        'fontSize' => isset($formData[10]) ? intval($formData[10]) : 16,
-                        'fontWeight' => isset($formData[11]) ? $formData[11] : '400',
-                        'color' => isset($formData[12]) && $formData[12] !== '' ? $formData[12] : '#000000',
-                        'borderRadius' => $element_border_radius,
-                        'bgColor' => isset($formData[14]) && $formData[14] !== '' ? $formData[14] : ''
+                        'inputFontSize' => (isset($formData[30]) && $formData[30] !== '') ? intval($formData[30]) : (isset($formData[10]) && intval($formData[10]) > 9 ? intval($formData[10]) : 16),
+                        'labelFontSize' => (isset($formData[35]) && $formData[35] !== '') ? intval($formData[35]) : (isset($formData[15]) && intval($formData[15]) > 9 ? intval($formData[15]) : 16),
+                        'fontWeight' => isset($formData[31]) ? $formData[31] : (isset($formData[11]) ? $formData[11] : '400'),
+                        'color' => isset($formData[32]) && $formData[32] !== '' ? $formData[32] : (isset($formData[12]) ? $formData[12] : '#000000'),
+                        'borderRadius' => isset($formData[33]) ? intval($formData[33]) : (isset($formData[13]) ? intval($formData[13]) : 4),
+                        'bgColor' => isset($formData[34]) && $formData[34] !== '' ? $formData[34] : (isset($formData[14]) ? $formData[14] : '')
                     );
                     error_log("form_element_data_html: Using fallback design settings from element_data for element_$form_data_id. borderRadius from formData[13]: " . (isset($formData[13]) ? var_export($formData[13], true) : 'not set') . ", intval: " . $element_border_radius . ", final: " . $design_settings[$design_settings_key]['borderRadius']);
                 } else {
@@ -7142,129 +7192,7 @@ class Client_functions extends common_function {
                         </div>
                         
                         <!-- Design Customization Section -->
-                        <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                            <div style="margin-bottom: 16px;">
-                                <div class="Polaris-Label">
-                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
-                                </div>
-                            </div>
-                            
-                            <!-- Font Size -->
-                            <div class="form-control">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Font Size</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_font_size" class="Polaris-TextField__Input element-design-font-size" data-formdataid="'.$form_data_id.'" value="16" min="8" max="72" step="1" placeholder="16">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item" style="width: 45px;">
-                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Font Weight -->
-                            <div class="form-control">
-                                <div class="">
-                                    <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Font Weight</label></div>
-                                    </div>
-                                    <div class="Polaris-Select">
-                                        <select name="element_design_font_weight" class="Polaris-Select__Input element-design-font-weight" data-formdataid="'.$form_data_id.'">
-                                            <option value="300">Light (300)</option>
-                                            <option value="400" selected>Normal (400)</option>
-                                            <option value="500">Medium (500)</option>
-                                            <option value="600">Semi Bold (600)</option>
-                                            <option value="700">Bold (700)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Text Color -->
-                            <div class="form-control">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Text Color</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                <input type="color" name="element_design_color" class="element-design-color" data-formdataid="'.$form_data_id.'" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
-                                            </div>
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="text" name="element_design_color_text" class="Polaris-TextField__Input element-design-color-text" data-formdataid="'.$form_data_id.'" value="#000000" placeholder="#000000">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Border Radius (for input/text elements) -->
-                            <div class="form-control element-design-border-radius-group">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Border Radius</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_border_radius" class="Polaris-TextField__Input element-design-border-radius" data-formdataid="'.$form_data_id.'" value="4" min="0" max="50" step="1" placeholder="4">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item" style="width: 45px;">
-                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Background Color (for buttons) -->
-                            <div class="form-control element-design-bg-color-group" style="display: none;">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Background Color</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                <input type="color" name="element_design_bg_color" class="element-design-bg-color" data-formdataid="'.$form_data_id.'" value="#007bff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
-                                            </div>
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="text" name="element_design_bg_color_text" class="Polaris-TextField__Input element-design-bg-color-text" data-formdataid="'.$form_data_id.'" value="#007bff" placeholder="#007bff">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Save Design button removed - use main Save button in header to save all changes -->
-                        </div>
+                        '.$this->get_design_customizer_html($form_data_id, $elementid, $formid, null, $design_settings).'
                         
                             <div class="form-control">
                                 <button class="Polaris-Button Polaris-Button--destructive  Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button">
@@ -8856,11 +8784,13 @@ class Client_functions extends common_function {
                     }
                     
                     // Update design settings in element_data (backup/fallback)
-                    $element_data[10] = isset($settings['fontSize']) ? intval($settings['fontSize']) : 16;
-                    $element_data[11] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
-                    $element_data[12] = isset($settings['color']) ? $settings['color'] : '#000000';
-                    $element_data[13] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
-                    $element_data[14] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
+                    // Update design settings in element_data (backup/fallback) using indices 30-35
+                    $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                    $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
+                    $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                    $element_data[33] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
+                    $element_data[34] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
+                    $element_data[35] = isset($settings['labelFontSize']) ? intval($settings['labelFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
                     
                     $element_data_serialized = serialize($element_data);
                     
@@ -8919,6 +8849,8 @@ class Client_functions extends common_function {
                         // If not JSON, try to reconstruct from POST array keys
                         $settings = array(
                             'fontSize' => isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16,
+                            'labelFontSize' => isset($_POST['settings']['labelFontSize']) ? intval($_POST['settings']['labelFontSize']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
+                            'inputFontSize' => isset($_POST['settings']['inputFontSize']) ? intval($_POST['settings']['inputFontSize']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
                             'fontWeight' => isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400',
                             'color' => isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000',
                             'borderRadius' => isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4,
@@ -8932,6 +8864,8 @@ class Client_functions extends common_function {
             if ($settings === null && (isset($_POST['settings[fontSize]']) || isset($_POST['settings']['fontSize']))) {
                 $settings = array(
                     'fontSize' => isset($_POST['settings[fontSize]']) ? intval($_POST['settings[fontSize]']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
+                    'labelFontSize' => isset($_POST['settings[labelFontSize]']) ? intval($_POST['settings[labelFontSize]']) : (isset($_POST['settings']['labelFontSize']) ? intval($_POST['settings']['labelFontSize']) : 16),
+                    'inputFontSize' => isset($_POST['settings[inputFontSize]']) ? intval($_POST['settings[inputFontSize]']) : (isset($_POST['settings']['inputFontSize']) ? intval($_POST['settings']['inputFontSize']) : 16),
                     'fontWeight' => isset($_POST['settings[fontWeight]']) ? $_POST['settings[fontWeight]'] : (isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400'),
                     'color' => isset($_POST['settings[color]']) ? $_POST['settings[color]'] : (isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000'),
                     'borderRadius' => isset($_POST['settings[borderRadius]']) ? intval($_POST['settings[borderRadius]']) : (isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4),
@@ -8972,6 +8906,24 @@ class Client_functions extends common_function {
                 $update_data = array('design_settings' => serialize($design_settings));
                 $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
                 $update_result = $this->put_data(TABLE_FORMS, $update_data, $update_where);
+
+                // For consistency, also update TABLE_FORM_DATA (index 10-15) as a fallback
+                $where_element = array(["", "id", "=", "$formdata_id"], ["AND", "form_id", "=", "$form_id"]);
+                $element_result = $this->select_result(TABLE_FORM_DATA, 'element_data', $where_element, ['single' => true]);
+                if ($element_result['status'] == 1 && !empty($element_result['data'])) {
+                    $element_data = unserialize($element_result['data']['element_data']);
+                    if (is_array($element_data)) {
+                        $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                        $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
+                        $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                        $element_data[33] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
+                        $element_data[34] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
+                        $element_data[35] = isset($settings['labelFontSize']) ? intval($settings['labelFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                        
+                        $update_element_data = array('element_data' => serialize($element_data));
+                        $this->put_data(TABLE_FORM_DATA, $update_element_data, $where_element);
+                    }
+                }
                 
                 // put_data returns JSON string, decode it
                 $update_result_decoded = json_decode($update_result, true);
@@ -9220,34 +9172,59 @@ class Client_functions extends common_function {
             $element_type13 = array("19");
             $element_type14 = array("14");
             // $element_type14 = array("20","21","22","23");
-            $element_data = "";
+            $element_data_array = array();
             if(in_array($elementid,$element_type)){
-                $element_data = serialize(array($label, $placeholder, $description, $limitcharacter, $limitcharactervalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data_array = array($label, $placeholder, $description, $limitcharacter, $limitcharactervalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth);
             }else if(in_array($elementid,$element_type3)){
-                $element_data = serialize(array($label, $placeholder, $description, $limitcharacter, $limitcharactervalue, $validate, $validateregexrule, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $confirmpassword, $storepassword, $confirmpasswordlabel, $confirmpasswordplaceholder, $confirmpassworddescription, $columnwidth));
+                $element_data_array = array($label, $placeholder, $description, $limitcharacter, $limitcharactervalue, $validate, $validateregexrule, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $confirmpassword, $storepassword, $confirmpasswordlabel, $confirmpasswordplaceholder, $confirmpassworddescription, $columnwidth);
             }else if(in_array($elementid,$element_type4)){
-                $element_data = serialize(array($label, $placeholder, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $formate, $otherlanguage, $dateformat, $timefor, $limitdatepicker, $columnwidth));
+                $element_data_array = array($label, $placeholder, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $formate, $otherlanguage, $dateformat, $timefor, $limitdatepicker, $columnwidth);
             }else if(in_array($elementid,$element_type5)){
-                $element_data = serialize(array($label, $buttontext, $placeholder, $allowmultiple, $allowextention, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data_array = array($label, $buttontext, $placeholder, $allowmultiple, $allowextention, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth);
             }else if(in_array($elementid,$element_type6)){
-                $element_data = serialize(array($label, $checkboxoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
+                $element_data_array = array($label, $checkboxoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth);
             }else if(in_array($elementid,$element_type7)){
-                $element_data = serialize(array($label, $defaultselect, $description, $required, $columnwidth));
+                $element_data_array = array($label, $defaultselect, $description, $required, $columnwidth);
             }else if(in_array($elementid,$element_type8)){
-                $element_data = serialize(array($label, $radiooption, $defaultselect, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth));
+                $element_data_array = array($label, $radiooption, $defaultselect, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $noperline, $columnwidth);
             }else if(in_array($elementid,$element_type9)){
-                $element_data = serialize(array($label, $placeholder, $description, $selectdefualtvalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data_array = array($label, $placeholder, $description, $selectdefualtvalue, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth);
             }else if(in_array($elementid,$element_type10)){
-                $element_data = serialize(array($label, $description, $columnwidth));
+                $element_data_array = array($label, $description, $columnwidth);
             }else if(in_array($elementid,$element_type11)){
-                $element_data = serialize(array($content, $columnwidth));
+                $element_data_array = array($content, $columnwidth);
             }else if(in_array($elementid,$element_type12)){
-                $element_data = serialize(array($label, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data_array = array($label, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth);
             }else if(in_array($elementid,$element_type13)){
-                $element_data = serialize(array($htmlcode, $columnwidth));
+                $element_data_array = array($htmlcode, $columnwidth);
             }else if(in_array($elementid,$element_type14)){
-                $element_data = serialize(array($label, $placeholder, $dropoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth));
+                $element_data_array = array($label, $placeholder, $dropoption, $defaultvalue, $description, $hidelabel, $keeppossitionlabel, $required, $required__hidelabel, $columnwidth);
             }
+
+            // Persistence Fix: Merge with existing design settings (indices 30-35)
+            $where_existing = array(["", "id", "=", "$form_data_id"], ["AND", "form_id", "=", "$form_id"]);
+            $existing_res = $this->select_result(TABLE_FORM_DATA, 'element_data', $where_existing, ['single' => true]);
+            if ($existing_res['status'] == 1 && !empty($existing_res['data']['element_data'])) {
+                $existing_array = @unserialize($existing_res['data']['element_data']);
+                if (is_array($existing_array)) {
+                    // Preserve indices 30-35 (design settings)
+                    for ($i = 30; $i <= 35; $i++) {
+                        if (isset($existing_array[$i]) && !isset($element_data_array[$i])) {
+                            $element_data_array[$i] = $existing_array[$i];
+                        }
+                    }
+                    // Also attempt to migrate indices 10-15 if they seem to be design settings 
+                    // (heuristic: > 9 for font-size, or string starting with # for color)
+                    if (!isset($element_data_array[30]) && isset($existing_array[10]) && intval($existing_array[10]) > 9) {
+                        $element_data_array[30] = $existing_array[10];
+                    }
+                    if (!isset($element_data_array[33]) && isset($existing_array[13]) && intval($existing_array[13]) >= 0) {
+                        $element_data_array[33] = $existing_array[13];
+                    }
+                }
+            }
+            
+            $element_data = serialize($element_data_array);
 
             $fields = array(
                 '`element_data`' => $element_data,
@@ -11058,3 +11035,4 @@ class Client_functions extends common_function {
     }
    
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
