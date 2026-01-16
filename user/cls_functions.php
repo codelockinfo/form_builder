@@ -10194,6 +10194,12 @@ class Client_functions extends common_function {
             $form_id = isset($_POST['form_id']) ? intval($_POST['form_id']) : 0;
             $color_scheme_id = isset($_POST['color_scheme_id']) ? intval($_POST['color_scheme_id']) : null;
             
+            // Get actual color values from POST
+            $bg_color = isset($_POST['bg_color']) ? $_POST['bg_color'] : '';
+            $text_color = isset($_POST['text_color']) ? $_POST['text_color'] : '';
+            $swatch1 = isset($_POST['swatch1']) ? $_POST['swatch1'] : '';
+            $swatch2 = isset($_POST['swatch2']) ? $_POST['swatch2'] : '';
+            
             if ($form_id <= 0) {
                 return array('result' => 'fail', 'msg' => 'Invalid form ID');
             }
@@ -10215,8 +10221,21 @@ class Client_functions extends common_function {
                     }
                 }
                 
-                // Save color scheme ID
+                // Save color scheme ID for reference
                 $design_settings['color_scheme_id'] = $color_scheme_id;
+                
+                // Save actual color values to form_container for CSS generation
+                if (!isset($design_settings['form_container'])) {
+                    $design_settings['form_container'] = array();
+                }
+                
+                // Only update colors if they are provided
+                if (!empty($bg_color)) {
+                    $design_settings['form_container']['background_color'] = $bg_color;
+                }
+                if (!empty($text_color)) {
+                    $design_settings['form_container']['text_color'] = $text_color;
+                }
                 
                 // Save to database
                 $update_data = array('design_settings' => serialize($design_settings));

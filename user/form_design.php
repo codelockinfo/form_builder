@@ -8226,16 +8226,27 @@ if ($form_id > 0) {
                 return;
             }
             
+            // Prepare data with actual color values
+            var ajaxData = {
+                routine_name: 'save_form_color_scheme',
+                store: store,
+                form_id: formId,
+                color_scheme_id: window.selectedColorSchemeId
+            };
+            
+            // Add actual color values if scheme is selected
+            if (window.selectedColorScheme) {
+                ajaxData.bg_color = window.selectedColorScheme.bg || window.selectedColorScheme.background || '';
+                ajaxData.text_color = window.selectedColorScheme.text || '';
+                ajaxData.swatch1 = window.selectedColorScheme.swatch1 || window.selectedColorScheme.accent1 || '';
+                ajaxData.swatch2 = window.selectedColorScheme.swatch2 || window.selectedColorScheme.accent2 || '';
+            }
+            
             $.ajax({
                 url: "ajax_call.php",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    routine_name: 'save_form_color_scheme',
-                    store: store,
-                    form_id: formId,
-                    color_scheme_id: window.selectedColorSchemeId
-                },
+                data: ajaxData,
                 success: function(response) {
                 },
                 error: function(xhr, status, error) {
