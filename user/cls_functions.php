@@ -2829,7 +2829,7 @@ class Client_functions extends common_function {
                             // Fixed: Added distinct Label and Button Text
                             // Format: Label, Button Text, Description, Multi-select, ...
                             // Fixed: Set Index 10 to "2" for Layout (50%), will be ignored as font-size by new check
-                            $element_data = serialize(array("Upload Video Proof", "Select File", "Upload a video (max 20MB)", "0", "", "", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Upload Video Proof", "Select File", "Upload a video (max 20MB)", "0", "", "", "0", "0", "1", "0", "1"));
                         }else if($counter == 12 && $elementid == 12){
                             // Agree to Refund Policy & Terms (Checkbox)
                             $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "2"));
