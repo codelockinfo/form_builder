@@ -87,25 +87,7 @@ if (!empty($comeback_settings_arr)) {
                                                     <div role="group" class="Polaris-FormLayout--condensed">
                                                         <div class="Polaris-FormLayout__Items">
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="pt_font_size" class="Polaris-Label__Text">Font Size</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="pt_font_size" name="pt_font_size" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_pt_font_size; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Font Size', 'pt_font_size', $shopify_pt_font_size, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'pt_font_size')); ?>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
                                                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -140,25 +122,7 @@ if (!empty($comeback_settings_arr)) {
                                                     <div role="group" class="Polaris-FormLayout--condensed">
                                                         <div class="Polaris-FormLayout__Items">
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="ori_charge_font_size" class="Polaris-Label__Text">Font Size</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="ori_charge_font_size" name="ori_charge_font_size" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_ori_charge_font_size; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Font Size', 'ori_charge_font_size', $shopify_ori_charge_font_size, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'ori_charge_font_size')); ?>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
                                                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -194,25 +158,7 @@ if (!empty($comeback_settings_arr)) {
                                                     <div role="group" class="Polaris-FormLayout--condensed">
                                                         <div class="Polaris-FormLayout__Items">
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="dis_charge_font_size" class="Polaris-Label__Text">Font Size</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="dis_charge_font_size" name="dis_charge_font_size" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_dis_charge_font_size; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Font Size', 'dis_charge_font_size', $shopify_dis_charge_font_size, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'dis_charge_font_size')); ?>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
                                                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -248,46 +194,10 @@ if (!empty($comeback_settings_arr)) {
                                                     <div role="group" class="Polaris-FormLayout--condensed">
                                                         <div class="Polaris-FormLayout__Items">
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="image_width" class="Polaris-Label__Text">Image Width</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="image_width" name="image_width" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_image_width; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Image Width', 'image_width', $shopify_image_width, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'image_width')); ?>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="image_height" class="Polaris-Label__Text">Image Height</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="image_height" name="image_height" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_image_height; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Image Height', 'image_height', $shopify_image_height, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'image_height')); ?>
                                                             </div>
                                                         </div>                                                                                            
                                                     </div>
@@ -310,25 +220,7 @@ if (!empty($comeback_settings_arr)) {
                                                                 </div>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
-                                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                                    <div class="Polaris-Label"><label for="none_of_font_size" class="Polaris-Label__Text">Font Size</label></div>
-                                                                </div>
-                                                                <div class="Polaris-Connected">
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                                        <div class="Polaris-TextField">
-                                                                            <input id="none_of_font_size" name="none_of_font_size" class="Polaris-TextField__Input" aria-labelledby="TextField3Label" aria-invalid="false" placeholder="Enter font size e.g 1,2 etc." value="<?php echo $shopify_none_of_font_size; ?>">
-                                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--connection">
-                                                                        <div class="Polaris-Labelled--hidden">
-                                                                            <div class="Polaris-Select Polaris-Select">
-                                                                                <select class="Polaris-Select__Input" disabled="" aria-invalid="false"><option value="px">Px</option></select>
-                                                                                <div class="Polaris-Select__Backdrop"></div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                <?php echo $cls_functions->generate_input_with_affix('Font Size', 'none_of_font_size', $shopify_none_of_font_size, 'px', 'suffix', 'Enter font size e.g 1,2 etc.', 'text', array('id'=>'none_of_font_size')); ?>
                                                             </div>
                                                             <div class="Polaris-FormLayout__Item">
                                                                 <div class="Polaris-Labelled__LabelWrapper">

@@ -543,6 +543,51 @@ include_once('cls_header.php');
             </div>
         </form>
     </div>
+    <div id="deleteConfirmationModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="Polaris-Modal-Dialog__Modal" style="height: auto !important;">
+                <div class="Polaris-Box" style="--pc-box-border-color: var(--p-color-border-subdued); --pc-box-border-style: solid; --pc-box-border-block-end-width: var(--p-border-width-1); --pc-box-padding-block-end-xs: var(--p-space-4); --pc-box-padding-block-start-xs: var(--p-space-4); --pc-box-padding-inline-start-xs: var(--p-space-5); --pc-box-padding-inline-end-xs: var(--p-space-5);">
+                    <div class="Polaris-HorizontalGrid" style="--pc-horizontal-grid-grid-template-columns-xs: 1fr auto; --pc-horizontal-grid-gap-xs: var(--p-space-4);">
+                        <div class="Polaris-HorizontalStack" style="--pc-horizontal-stack-block-align: center; --pc-horizontal-stack-wrap: wrap; --pc-horizontal-stack-gap-xs: var(--p-space-4);">
+                            <h2 class="Polaris-Text--root Polaris-Text--headingLg Polaris-Text--break">Delete form?</h2>
+                        </div>
+                        <button class="Polaris-Modal-CloseButton close-delete-modal" aria-label="Close">
+                            <span class="Polaris-Icon Polaris-Icon--colorBase Polaris-Icon--applyColor">
+                                <span class="Polaris-Text--root Polaris-Text--visuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path d="m11.414 10 6.293-6.293a1 1 0 1 0-1.414-1.414l-6.293 6.293-6.293-6.293a1 1 0 0 0-1.414 1.414l6.293 6.293-6.293 6.293a1 1 0 1 0 1.414 1.414l6.293-6.293 6.293 6.293a.998.998 0 0 0 1.707-.707.999.999 0 0 0-.293-.707l-6.293-6.293z"></path>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="Polaris-Modal__Body Polaris-Scrollable Polaris-Scrollable--vertical Polaris-Scrollable--horizontal" data-polaris-scrollable="true">
+                    <div class="Polaris-Modal-Section">
+                        <section class="Polaris-Box" style="--pc-box-padding-block-end-xs: var(--p-space-5); --pc-box-padding-block-start-xs: var(--p-space-5); --pc-box-padding-inline-start-xs: var(--p-space-5); --pc-box-padding-inline-end-xs: var(--p-space-5);">
+                            <div class="Polaris-TextContainer">
+                                <p id="deleteModalMessage">Are you sure you want to delete the selected form(s)? This action cannot be undone.</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="Polaris-HorizontalStack" style="--pc-horizontal-stack-block-align: center; --pc-horizontal-stack-wrap: wrap; --pc-horizontal-stack-gap-xs: var(--p-space-4);">
+                    <div class="Polaris-Box" style="--pc-box-border-color: var(--p-color-border-subdued); --pc-box-border-style: solid; --pc-box-border-block-start-width: var(--p-border-width-1); --pc-box-padding-block-end-xs: var(--p-space-4); --pc-box-padding-block-start-xs: var(--p-space-4); --pc-box-padding-inline-start-xs: var(--p-space-5); --pc-box-padding-inline-end-xs: var(--p-space-5); --pc-box-width: 100%;">
+                        <div class="Polaris-HorizontalStack" style="--pc-horizontal-stack-align: space-between; --pc-horizontal-stack-block-align: center; --pc-horizontal-stack-wrap: wrap; --pc-horizontal-stack-gap-xs: var(--p-space-4);">
+                            <div class="Polaris-Box"></div>
+                            <div class="Polaris-HorizontalStack" style="--pc-horizontal-stack-wrap: wrap; --pc-horizontal-stack-gap-xs: var(--p-space-2);">
+                                <button class="Polaris-Button close-delete-modal" type="button">
+                                    <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Cancel</span></span>
+                                </button>
+                                <button class="Polaris-Button Polaris-Button--primary Polaris-Button--toneCritical" type="button" id="confirmDeleteBtn">
+                                    <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Delete</span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         //  const ctx = document.getElementById('chart').getContext('2d');
         //  const chart = new Chart(ctx, {
@@ -741,6 +786,8 @@ include_once('cls_header.php');
             });
             
             // Delete selected forms handler
+            var formsToDelete = [];
+            
             $(document).on('click', '.delete-selected-forms', function() {
                 var selectedIds = [];
                 $('.selectedCheck:checked').each(function() {
@@ -751,87 +798,101 @@ include_once('cls_header.php');
                 });
                 
                 if (selectedIds.length === 0) {
-                   
                     return;
                 }
                 
-                if (confirm('Are you sure you want to delete ' + selectedIds.length + ' form(s)? This action cannot be undone.')) {
-                    $('#moreActionsPopover').hide();
-                    
-                    // Show loading state
-                    var deleteCount = 0;
-                    var totalCount = selectedIds.length;
-                    
-                    // Delete each form
-                    selectedIds.forEach(function(formId, index) {
-                        $.ajax({
-                            url: "ajax_call.php",
-                            type: "post",
-                            dataType: "json",
-                            data: { 
-                                'routine_name': 'deleteFormFunction', 
-                                'form_id': formId,
-                                store: store 
-                            },
-                            success: function (response) {
-                            
-                                
-                                // Parse response if it's a string
-                                if (typeof response === 'string') {
-                                    try {
-                                        response = JSON.parse(response);
-                                    } catch(e) {
-                                      
-                                    }
-                                }
-                                
-                                deleteCount++;
-                                
-                                // Check if deletion was successful
-                                if (response && response.result === 'success') {
-                                 
-                                } else {
+                formsToDelete = selectedIds;
+                $('#deleteModalMessage').text('Are you sure you want to delete ' + selectedIds.length + ' form(s)? This action cannot be undone.');
+                $('#moreActionsPopover').hide();
+                $('#deleteConfirmationModal').show();
+            });
+            
+            // Confirm delete handler
+            $(document).on('click', '#confirmDeleteBtn', function() {
+                var selectedIds = formsToDelete;
+                if (selectedIds.length === 0) return;
+                
+                $('#deleteConfirmationModal').hide();
+                
+                // Show loading state
+                var deleteCount = 0;
+                var totalCount = selectedIds.length;
+                
+                // Delete each form
+                selectedIds.forEach(function(formId, index) {
+                    $.ajax({
+                        url: "ajax_call.php",
+                        type: "post",
+                        dataType: "json",
+                        data: { 
+                            'routine_name': 'deleteFormFunction', 
+                            'form_id': formId,
+                            store: store 
+                        },
+                        success: function (response) {
+                        
+                            // Parse response if it's a string
+                            if (typeof response === 'string') {
+                                try {
+                                    response = JSON.parse(response);
+                                } catch(e) {
                                   
                                 }
-                                
-                                // When all deletions are complete, reload the form list
-                                if (deleteCount === totalCount) {
-                                    // Reload the form list
-                                    getAllForm();
-                                    
-                                    // Uncheck all checkboxes
-                                    $('.selectedCheck').prop('checked', false);
-                                    
-                                    // Show success message using Polaris-style banner
-                                    var successBanner = '<div class="Polaris-Banner Polaris-Banner--statusSuccess" style="margin: 20px 0;">' +
-                                        '<div class="Polaris-Banner__Ribbon"><span class="Polaris-Icon Polaris-Icon--colorSuccess">' +
-                                        '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">' +
-                                        '<path d="M0 10c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10-10-4.486-10-10zm15.696-2.804l-6.5 6.5c-.196.196-.512.196-.707 0l-3.5-3.5c-.196-.196-.196-.512 0-.707l.707-.707c.195-.195.511-.195.707 0l2.439 2.44 5.439-5.44c.195-.195.511-.195.707 0l.707.707c.196.196.196.512.001.707z"></path>' +
-                                        '</svg></span></div>' +
-                                        '<div class="Polaris-Banner__ContentWrapper">' +
-                                        '<div class="Polaris-Banner__Content"><p>' + totalCount + ' form(s) deleted successfully</p></div>' +
-                                        '</div></div>';
-                                    
-                                    $('.set_all_form').prepend(successBanner);
-                                    
-                                    // Remove banner after 3 seconds
-                                    setTimeout(function() {
-                                        $('.Polaris-Banner--statusSuccess').fadeOut(400, function() {
-                                            $(this).remove();
-                                        });
-                                    }, 3000);
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                            
-                                deleteCount++;
-                                if (deleteCount === totalCount) {
-                                    flashNotice('Some forms could not be deleted. Check console for details.', 'inline-flash--error');
-                                    getAllForm();
-                                }
                             }
-                        });
+                            
+                            deleteCount++;
+                            
+                            // Check if deletion was successful
+                            if (response && response.result === 'success') {
+                             
+                            } else {
+                              
+                            }
+                            
+                            // When all deletions are complete, reload the form list
+                            if (deleteCount === totalCount) {
+                                // Reload the form list
+                                getAllForm();
+                                
+                                // Uncheck all checkboxes
+                                $('.selectedCheck').prop('checked', false);
+                                
+                                // Show success message using Polaris-style banner
+                                var successBanner = '<div class="Polaris-Banner Polaris-Banner--statusSuccess" style="margin: 20px 0;">' +
+                                    '<div class="Polaris-Banner__Ribbon"><span class="Polaris-Icon Polaris-Icon--colorSuccess">' +
+                                    '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">' +
+                                    '<path d="M0 10c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10-10-4.486-10-10zm15.696-2.804l-6.5 6.5c-.196.196-.512.196-.707 0l-3.5-3.5c-.196-.196-.196-.512 0-.707l.707-.707c.195-.195.511-.195.707 0l2.439 2.44 5.439-5.44c.195-.195.511-.195.707 0l.707.707c.196.196.196.512.001.707z"></path>' +
+                                    '</svg></span></div>' +
+                                    '<div class="Polaris-Banner__ContentWrapper">' +
+                                    '<div class="Polaris-Banner__Content"><p>' + totalCount + ' form(s) deleted successfully</p></div>' +
+                                    '</div></div>';
+                                
+                                $('.set_all_form').prepend(successBanner);
+                                
+                                // Remove banner after 3 seconds
+                                setTimeout(function() {
+                                    $('.Polaris-Banner--statusSuccess').fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                        
+                            deleteCount++;
+                            if (deleteCount === totalCount) {
+                                flashNotice('Some forms could not be deleted. Check console for details.', 'inline-flash--error');
+                                getAllForm();
+                            }
+                        }
                     });
+                });
+            });
+
+            // Close modal handler
+            $(document).on('click', '.close-delete-modal, #deleteConfirmationModal', function(e) {
+                if (e.target === this || $(this).hasClass('close-delete-modal')) {
+                    $('#deleteConfirmationModal').hide();
                 }
             });
         });

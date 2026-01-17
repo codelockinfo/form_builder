@@ -5167,6 +5167,78 @@ class Client_functions extends common_function {
             return $response;
     }
     
+    /**
+     * Generate a Polaris-style input with prefix or suffix
+     * @param string $label Label text
+     * @param string $name Input name attribute
+     * @param string $value Current value
+     * @param string $affixText Text to show (e.g. "px")
+     * @param string $affixType "prefix" or "suffix"
+     * @param string $placeholder Input placeholder
+     * @param string $inputType "text", "number", etc.
+     * @param array $additionalProps key-value pairs for other attributes (min, max, step, id, class, etc.)
+     * @return string HTML output
+     */
+    function generate_input_with_affix($label, $name, $value, $affixText = 'px', $affixType = 'suffix', $placeholder = '', $inputType = 'text', $additionalProps = array()) {
+        $class = 'Polaris-TextField__Input';
+        if (isset($additionalProps['class'])) {
+            $class .= ' ' . $additionalProps['class'];
+            unset($additionalProps['class']);
+        }
+
+        $affixHtml = '';
+        $inputPaddingStyle = '';
+        
+        if ($affixText !== '') {
+            if ($affixType === 'prefix') {
+                 $affixHtml = '<div class="Polaris-TextField__Prefix" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #6d7175; z-index: 20; pointer-events: none;">' . $affixText . '</div>';
+                 $inputPaddingStyle = 'padding-left: 35px;';
+            } else {
+                 // Suffix default
+                 $affixHtml = '<div class="Polaris-TextField__Suffix" style="position: absolute; top: 50%; right: 12px; transform: translateY(-50%); color: #6d7175; z-index: 20; pointer-events: none;">' . $affixText . '</div>';
+                 $inputPaddingStyle = 'padding-right: 35px;';
+            }
+        }
+        
+        // Merge styles
+        if (isset($additionalProps['style'])) {
+             $inputPaddingStyle .= ' ' . $additionalProps['style'];
+             unset($additionalProps['style']);
+        }
+        $propsString = '';
+        if ($inputPaddingStyle !== '') {
+            $propsString .= ' style="' . $inputPaddingStyle . '"';
+        }
+
+        foreach ($additionalProps as $key => $val) {
+            $propsString .= ' ' . $key . '="' . htmlspecialchars($val) . '"';
+        }
+        
+        $inputHtml = '
+            <div class="Polaris-TextField" style="position: relative;">
+                ' . ($affixType === 'prefix' ? $affixHtml : '') . '
+                <input type="' . $inputType . '" name="' . $name . '" value="' . htmlspecialchars($value) . '" class="' . $class . '" placeholder="' . htmlspecialchars($placeholder) . '"' . $propsString . '>
+                ' . ($affixType === 'suffix' ? $affixHtml : '') . '
+                <div class="Polaris-TextField__Backdrop"></div>
+            </div>';
+        
+        $html = '
+        <div class="form-control">
+            <div class="textfield-wrapper">
+                <div class="">
+                    <div class="Polaris-Labelled__LabelWrapper">
+                        <div class="Polaris-Label">
+                            <label class="Polaris-Label__Text">' . $label . '</label>
+                        </div>
+                    </div>
+                    ' . $inputHtml . '
+                </div>
+            </div>
+        </div>';
+        
+        return $html;
+    }
+
     // Helper function to generate design customization controls HTML
     function get_design_customizer_html($form_data_id, $elementid, $form_id = 0, $saved_settings = null, $design_settings_array = null) {
         // Load saved settings from database if not provided
@@ -5271,52 +5343,10 @@ class Client_functions extends common_function {
                             </div>
                             
                             <!-- Label Font Size -->
-                            <div class="form-control">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Label Font Size</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_label_font_size" class="Polaris-TextField__Input element-design-label-font-size" data-formdataid="'.$form_data_id.'" value="'.$labelFontSize.'" min="8" max="72" step="1" placeholder="16">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item" style="width: 45px;">
-                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            ' . $this->generate_input_with_affix('Label Font Size', 'element_design_label_font_size', $labelFontSize, 'px', 'suffix', '16', 'number', array('class'=>'element-design-label-font-size', 'data-formdataid'=>$form_data_id, 'min'=>'8', 'max'=>'72', 'step'=>'1')) . '
 
                             <!-- Input/Placeholder Font Size -->
-                            <div class="form-control">
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Input/Placeholder Font Size</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_input_font_size" class="Polaris-TextField__Input element-design-input-font-size" data-formdataid="'.$form_data_id.'" value="'.$inputFontSize.'" min="8" max="72" step="1" placeholder="16">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item" style="width: 45px;">
-                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            ' . $this->generate_input_with_affix('Input/Placeholder Font Size', 'element_design_input_font_size', $inputFontSize, 'px', 'suffix', '16', 'number', array('class'=>'element-design-input-font-size', 'data-formdataid'=>$form_data_id, 'min'=>'8', 'max'=>'72', 'step'=>'1')) . '
                             
                             <!-- Font Weight -->
                             <div class="form-control">
@@ -5357,31 +5387,11 @@ class Client_functions extends common_function {
                             </div>
                             
                             <!-- Border Radius (for input/text elements - show for most elements except button which has its own) -->
-                            <div class="form-control element-design-border-radius-group">';
+                            <div class="element-design-border-radius-group">';
         
         // Hide border radius for button element (elementid 12 or 13 typically)
         if ($elementid != 12 && $elementid != 13) {
-            $html .= '
-                                <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label">
-                                                <label class="Polaris-Label__Text">Border Radius</label>
-                                            </div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField">
-                                                    <input type="number" name="element_design_border_radius" class="Polaris-TextField__Input element-design-border-radius" data-formdataid="'.$form_data_id.'" value="'.$borderRadius.'" min="0" max="50" step="1" placeholder="4">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
-                                            </div>
-                                            <div class="Polaris-Connected__Item" style="width: 45px;">
-                                                <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>';
+            $html .= $this->generate_input_with_affix('Border Radius', 'element_design_border_radius', $borderRadius, 'px', 'suffix', '4', 'number', array('class'=>'element-design-border-radius', 'data-formdataid'=>$form_data_id, 'min'=>'0', 'max'=>'50', 'step'=>'1'));
         }
         
         $html .= '
