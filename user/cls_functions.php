@@ -5448,7 +5448,13 @@ class Client_functions extends common_function {
                 $formdata = (isset($formData['data']) && $formData['data'] !== '') ? $formData['data'] : '';
                 $form_data_id = (isset($formdata) && $formdata !== "" ) ? $formdata['id'] : "";
 
-                $formData = unserialize($formData['data']['element_data']);
+                $raw_element_data = (isset($formData['data']['element_data'])) ? $formData['data']['element_data'] : null;
+                $formData = @unserialize($raw_element_data);
+                
+                // Fallback for corrupted serialized data (common quote escaping issue)
+                if ($formData === false && $raw_element_data) {
+                    $formData = @unserialize(stripslashes($raw_element_data));
+                }
                 $elementtitle = strtolower($comebackdata['element_title']);
                 $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
                 
