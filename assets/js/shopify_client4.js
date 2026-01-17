@@ -1605,34 +1605,37 @@ function saveAllElementProperties() {
     allFormdataids.forEach(function (formdataid) {
         var elementData = null;
 
-        // First, try to get from tracker (saved changes)
-        if (elementChangesTracker.elements[formdataid]) {
-            elementData = elementChangesTracker.elements[formdataid];
-        } else {
-            // If not in tracker, try to get from current DOM form
-            var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
-            if ($form.length) {
-                var elementFormData = new FormData($form[0]);
-                elementData = {};
+        // FIX: Prioritize DOM (Active Element) over Tracker to ensure manual inputs are captured
+        var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
+        if ($form.length) {
+            // If form exists in DOM, always use it as source of truth
+            var elementFormData = new FormData($form[0]);
+            elementData = {};
 
-                for (var pair of elementFormData.entries()) {
-                    var key = pair[0];
-                    var value = pair[1];
-                    if (key.endsWith('[]')) {
-                        key = key.replace('[]', '');
-                        if (!elementData[key]) {
-                            elementData[key] = [];
-                        }
-                        elementData[key].push(value);
-                    } else {
-                        elementData[key] = value;
+            for (var pair of elementFormData.entries()) {
+                var key = pair[0];
+                var value = pair[1];
+                if (key.endsWith('[]')) {
+                    key = key.replace('[]', '');
+                    if (!elementData[key]) {
+                        elementData[key] = [];
                     }
+                    elementData[key].push(value);
+                } else {
+                    elementData[key] = value;
                 }
-
-                var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
-                // Always set allowextention, even if empty array or null (to allow clearing from database)
-                elementData['allowextention'] = val || [];
             }
+
+            // Capture select2 value specifically if needed
+            var val = $form.closest('.form-control, .header, .Polaris-Card__Section, .Polaris-Card').find('.selectFile').select2('val');
+            elementData['allowextention'] = val || [];
+
+            // If tracker has extra data not in DOM (unlikely for active form), maybe merge? 
+            // But DOM should be complete.
+        }
+        // Fallback to tracker if form not in DOM
+        else if (elementChangesTracker.elements[formdataid]) {
+            elementData = elementChangesTracker.elements[formdataid];
         }
 
         if (elementData && elementData['formdata_id'] && elementData['element_id']) {
@@ -2319,9 +2322,6 @@ $(document).on("click", ".saveForm", function (e) {
     if (typeof saveAllElementDesignSettings === 'function') saveAllElementDesignSettings();
     if (typeof saveposition === 'function') saveposition();
 
-    // Call our brute-force saver to ensure everything is caught
-    forceSaveAllForms();
-
     // Since save functions are async and don't return promises in this codebase,
     // we set a timeout to hide the loader. Ideally this should be callback-based.
     setTimeout(function () {
@@ -2329,32 +2329,3 @@ $(document).on("click", ".saveForm", function (e) {
         flashNotice("Form saved successfully!");
     }, 1500);
 });
-
-// FIX: Brute-force save all visible config forms
-function forceSaveAllForms() {
-    var $forms = $("form.add_elementdata");
-
-    $forms.each(function () {
-        var $form = $(this);
-        var formData = new FormData($form[0]);
-
-        // Ensure store and routine are set
-        // Use a safe check/append if variables are available
-        if (typeof store !== 'undefined') {
-            if (!formData.has('store')) formData.append('store', store);
-        }
-        formData.append('routine_name', 'saveform');
-
-        $.ajax({
-            url: "ajax_call.php",
-            type: "POST",
-            dataType: "json",
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: function (response) {
-                // Silent success
-            }
-        });
-    });
-}
