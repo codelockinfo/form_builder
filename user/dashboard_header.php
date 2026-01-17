@@ -43,7 +43,7 @@ if(isset($_GET['shop']) && $_GET['shop'] != ''){
             <div style="display: flex; gap: 10px;">
                 <?php
             $current_page = basename($_SERVER['PHP_SELF']);
-            $is_dashboard = ($current_page == 'dashboard.php' && isset($_GET['view']) && $_GET['view'] == 'submissions') || $current_page == 'dashboard_submissions.php';
+            $is_dashboard = ($current_page == 'dashboard.php' && isset($_GET['view']) && $_GET['view'] == 'submissions') || $current_page == 'dashboard_submissions.php' || $current_page == 'submissions.php';
             $is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' && (!isset($_GET['view']) || $_GET['view'] != 'submissions'));
             ?>
             

@@ -487,13 +487,14 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
         </div>
         
         <!-- Tab Navigation -->
+        <?php $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'reports'; ?>
         <div class="dashboard-tabs">
-            <button class="dashboard-tab active" data-tab="submissions">Submissions</button>
-            <button class="dashboard-tab" data-tab="reports">Reports</button>
+            <button class="dashboard-tab <?php echo $active_tab == 'reports' ? 'active' : ''; ?>" data-tab="reports">Reports</button>
+            <button class="dashboard-tab <?php echo $active_tab == 'submissions' ? 'active' : ''; ?>" data-tab="submissions">Submissions</button>
         </div>
         
         <!-- Submissions Tab -->
-        <div class="dashboard-tab-content active" id="submissions-tab">
+        <div class="dashboard-tab-content <?php echo $active_tab == 'submissions' ? 'active' : ''; ?>" id="submissions-tab">
             <div class="form-list-container">
                 <div class="form-list-header">
                     <div class="Polaris-ResourceList__CheckableButtonWrapper">
@@ -508,7 +509,7 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
         </div>
         
         <!-- Reports Tab -->
-        <div class="dashboard-tab-content" id="reports-tab">
+        <div class="dashboard-tab-content <?php echo $active_tab == 'reports' ? 'active' : ''; ?>" id="reports-tab">
             <div class="analytics-dashboard">
                 <div class="analytics-header">
                     <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: #202223;">Analytics Overview</h2>
@@ -611,7 +612,8 @@ s0.parentNode.insertBefore(s1,s0);
              store = urlParams.get('shop');
         }
        
-        
+        var activeTab = '<?php echo $active_tab; ?>';
+
         // Tab switching
         $('.dashboard-tab').on('click', function() {
             var tabName = $(this).data('tab');
@@ -624,9 +626,11 @@ s0.parentNode.insertBefore(s1,s0);
             $('.dashboard-tab-content').removeClass('active');
             $('#' + tabName + '-tab').addClass('active');
             
-            // Load analytics if Reports tab is selected
+            // Load content based on tab
             if (tabName === 'reports') {
                 loadAnalytics();
+            } else if (tabName === 'submissions') {
+                loadSubmissionsIfNeeded();
             }
         });
         
@@ -655,9 +659,23 @@ s0.parentNode.insertBefore(s1,s0);
         // Load forms for filter dropdown
         loadFormsForFilter();
         
+        // Initial load based on active tab
+        if(activeTab === 'reports') {
+            loadAnalytics();
+        } else {
+            loadSubmissionsIfNeeded();
+        }
+        
+    });
+    
+    var submissionsLoaded = false;
+    function loadSubmissionsIfNeeded() {
+        if(submissionsLoaded) return;
+        
         // Load forms for submissions tab
         if (typeof getAllFormSubmissions === 'function') {
             getAllFormSubmissions();
+            submissionsLoaded = true;
         } else {
             // Fallback if function doesn't exist
             $.ajax({
@@ -676,6 +694,7 @@ s0.parentNode.insertBefore(s1,s0);
                         $(".set_all_form_submissions").html(comeback['outcome'] || '<div class="form-list-loading">No forms found</div>');
                         // Initialize view button handlers after forms are loaded
                         initViewFormButtons();
+                        submissionsLoaded = true;
                     }
                 },
                 error: function(xhr, status, error) {
@@ -683,8 +702,7 @@ s0.parentNode.insertBefore(s1,s0);
                 }
             });
         }
-        
-    });
+    }
     
     function loadFormsForFilter() {
         $.ajax({

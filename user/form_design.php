@@ -192,13 +192,6 @@ if ($form_id > 0) {
                                     <span class="Polaris-Tabs__Title">Settings</span>
                                 </button>
                             </li>
-                            <li class="Polaris-Tabs__TabContainer" role="presentation" data-tab="3">
-                                <button id="publish" role="tab" type="button" tabindex="-1"
-                                    class="Polaris-Tabs__Tab settingsbtn" aria-selected="false"
-                                    aria-controls="publishs-fitted-content">
-                                    <span class="Polaris-Tabs__Title">Publish</span>
-                                </button>
-                            </li>
                             <li class="Polaris-Tabs__DisclosureTab" role="presentation">
                                 <div>
                                     <button type="button" class="Polaris-Tabs__DisclosureActivator"
@@ -5381,7 +5374,10 @@ if ($form_id > 0) {
                                                                 <h4 style="margin: 0; font-size: 15px; font-weight: 600;">How to Add section?</h4>
                                                             </div>
                                                             <div style="margin-left: 40px; margin-top: 10px;">
-                                                                <img src="<?php echo main_url('assets/images/ADD_SECTION.png'); ?>" alt="How to Add Section" style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                                <video controls autoplay muted loop style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                                                    <source src="<?php echo main_url('assets/images/guidline.mp4'); ?>" type="video/mp4">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
                                                             </div>
                                                         </div>
                                                         
