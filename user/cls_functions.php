@@ -8967,7 +8967,7 @@ class Client_functions extends common_function {
             foreach ($_POST as $key => $value) {
                 $post_data = explode('__', $key);
                 if (count($post_data) > 1) {
-                    $newKey = $post_data[1];
+                    $newKey = end($post_data);
                     // Preserve array values (like allowextention[])
                     // If the key ends with [], remove it as PHP automatically handles arrays
                     if (substr($newKey, -2) === '[]') {
