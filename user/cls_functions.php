@@ -2816,8 +2816,8 @@ class Client_functions extends common_function {
                             $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "2"));
                         }else if($counter == 8 && $elementid == 13){
                             // Refund Type (Radio buttons) - element_id 13 is Radio
-                            // Changed index 8 to "2" (alignment), and index 4 to "0" (Show Label)
-                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "2", "2"));
+                            // Changed index 8 to "1" for 1 option per line (vertical layout)
+                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "2"));
                         }else if($counter == 9 && $elementid == 1){
                             // UPI ID / Bank Account No (Text input)
                             $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
@@ -3917,10 +3917,10 @@ class Client_functions extends common_function {
                                     if($unserialize_elementdata[2] == $option){
                                         $radio_option_checked = "Checked";
                                     }
-                                    $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
-                                                    <div class="radio-wrapper ">
-                                                        <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.'>
-                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '">'.$option.'</label>
+                                    $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column" style="padding: 4px 0; margin: 0; display: flex; align-items: flex-start;">
+                                                    <div class="radio-wrapper" style="display: flex; align-items: center; gap: 6px; width: 100%;">
+                                                        <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.' style="width: 18px; height: 18px; margin: 2px 0 0 0; flex-shrink: 0;">
+                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '" style="text-align: left !important; margin: 0; flex: 1; cursor: pointer; line-height: 1.4; white-space: nowrap;">'.$option.'</label>
                                                     </div>
                                                 </li>';
                                 }          
@@ -7616,8 +7616,6 @@ class Client_functions extends common_function {
                                         </div>
                                     </div>
                                     
-                                    '.$this->get_design_customizer_html($form_data_id, $elementid, $formid, null, $design_settings).'
-                                    
                                     <div class="form-control hidden">
                                         <label class="Polaris-Choice" for="PolarisCheckbox54">
                                             <span class="Polaris-Choice__Control">
@@ -10325,7 +10323,7 @@ class Client_functions extends common_function {
             switch ($element_type) {
                 case 'form_container':
                 case 'form':
-                    $selector = $form_scope . ' .contact-form, ' . $form_scope . ' .get_selected_elements, ' . $form_scope . ' .form-builder-wrapper';
+                    $selector = $form_scope . ' .code-form-app, ' . $form_scope . ' .contact-form, ' . $form_scope . ' .get_selected_elements, ' . $form_scope . ' .form-builder-wrapper';
                     break;
                 case 'header':
                     $selector = $form_scope . ' .formHeader, ' . $form_scope . ' .formHeader .title, ' . $form_scope . ' .formHeader .description';

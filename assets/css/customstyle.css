@@ -1366,3 +1366,63 @@ ul {
     display: none !important;
     visibility: hidden !important;
 }
+
+/* Fix for Radio Button Alignment */
+.code-form-control .radio-wrapper .radio-input {
+    display: none !important;
+}
+
+.code-form-control .radio-wrapper .radio-label {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    line-height: 24px;
+    display: inline-block;
+    min-height: 24px;
+}
+
+/* Outer circle (Background) */
+.code-form-control .radio-wrapper .radio-input ~ .radio-label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 50%;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    z-index: 1;
+    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+}
+
+/* Checked State - Outer Circle */
+.code-form-control .radio-wrapper .radio-input:checked ~ .radio-label:before {
+    background-color: #EB1256;
+    border-color: #EB1256;
+}
+
+/* Inner Dot */
+.code-form-control .radio-wrapper .radio-input ~ .radio-label:after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    z-index: 2;
+    opacity: 0;
+}
+
+/* Checked State - Inner Dot */
+.code-form-control .radio-wrapper .radio-input:checked ~ .radio-label:after {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
