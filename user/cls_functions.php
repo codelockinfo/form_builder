@@ -5455,6 +5455,19 @@ class Client_functions extends common_function {
                 if ($formData === false && $raw_element_data) {
                     $formData = @unserialize(stripslashes($raw_element_data));
                 }
+                
+                // Fallback for Newline issues (Linux/Windows serialization mismatch)
+                if ($formData === false && $raw_element_data) {
+                     // Try converting LF to CRLF (Fixes length mismatch if DB stripped \r)
+                     $rawDataFixed = preg_replace('~(?<!\r)\n~', "\r\n", $raw_element_data);
+                     $formData = @unserialize($rawDataFixed);
+                     
+                     if ($formData === false) {
+                         // Try converting CRLF to LF
+                         $rawDataFixed = str_replace("\r\n", "\n", $raw_element_data);
+                         $formData = @unserialize($rawDataFixed);
+                     }
+                }
                 $elementtitle = strtolower($comebackdata['element_title']);
                 $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
                 
