@@ -3920,7 +3920,7 @@ class Client_functions extends common_function {
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column" style="padding: 4px 0; margin: 0; display: flex; align-items: flex-start;">
                                                     <div class="radio-wrapper" style="display: flex; align-items: center; gap: 6px; width: 100%;">
                                                         <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.' style="width: 18px; height: 18px; margin: 2px 0 0 0; flex-shrink: 0;">
-                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '" style="text-align: left !important; margin: 0; flex: 1; cursor: pointer; line-height: 1.4; white-space: nowrap;">'.$option.'</label>
+                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '" style="text-align: left !important; margin: 0; flex: 1; cursor: pointer; line-height: 1.4;">'.$option.'</label>
                                                     </div>
                                                 </li>';
                                 }          
