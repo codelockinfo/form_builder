@@ -76,6 +76,7 @@ if($verified == true){
 }
 else {
     generate_log('uninstall-webhook', json_encode($verified) . "  not verified"); 
+    http_response_code(401);
     echo "Access Denied main ";
 }
 
