@@ -40,8 +40,7 @@ if ($verified) {
         http_response_code(200);
         exit();
     }else{
-        echo
-        http_response_code(400);
+        http_response_code(200);
         exit();
     }
 } else {
