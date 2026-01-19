@@ -1847,11 +1847,7 @@ if ($form_id > 0) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control"><label class="Polaris-Choice"
-                                                for="PolarisCheckbox7"><span class="Polaris-Choice__Control"><span
+                                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox7"><span class="Polaris-Choice__Control"><span
                                                         class="Polaris-Checkbox"><input name="fullwidth" id="PolarisCheckbox7"
                                                             type="checkbox" class="Polaris-Checkbox__Input fullFooterButton"
                                                             aria-invalid="false" role="checkbox" aria-checked="false"
@@ -1865,19 +1861,104 @@ if ($form_id > 0) {
                                                                     <path
                                                                         d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
                                                                     </path>
-                                                                </svg></span></span></span></span><span
-                                                    class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
-                                        <div class="form-control alignment" >
-                                            <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
-                                            <div class="chooseInput">
-                                                <div class="label">Alignment</div>
-                                                <div class="chooseItems">
-                                                    <div class="chooseItem-align active" data-value="align-left">Left</div>
-                                                    <div class="chooseItem-align" data-value="align-center">Center</div>
-                                                    <div class="chooseItem-align" data-value="align-right">Right</div>
+                                                                </svg></span></span></span></span><span class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
+                                                    <div class="form-control alignment" >
+                                                        <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
+                                                        <div class="chooseInput">
+                                                            <div class="label">Alignment</div>
+                                                            <div class="chooseItems">
+                                                                <div class="chooseItem-align active" data-value="align-left">Left</div>
+                                                                <div class="chooseItem-align" data-value="align-center">Center</div>
+                                                                <div class="chooseItem-align" data-value="align-right">Right</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Reset Button Design Customization -->
+                                        <div class="form-control hidden reset design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                            <div style="margin-bottom: 16px;">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px; color: #000000;">Reset Button Design Customization</label>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Reset Button Text Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Reset Button Text Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_reset_button_text_color" class="footer-design-reset-button-text-color" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_reset_button_text_color_text" class="Polaris-TextField__Input footer-design-reset-button-text-color-text" value="#ffffff" placeholder="#ffffff">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Reset Button Background Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Reset Button Background Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_reset_button_bg_color" class="footer-design-reset-button-bg-color" value="#EB1256" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_reset_button_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-bg-color-text" value="#EB1256" placeholder="#EB1256">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Reset Button Hover Background Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Reset Button Hover Background Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="footer_reset_button_hover_bg_color" class="footer-design-reset-button-hover-bg-color" value="#292929" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="footer_reset_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-hover-bg-color-text" value="#292929" placeholder="#292929">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        
                                         
                                         <!-- Button Design Customization -->
                                         <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
@@ -6539,7 +6620,7 @@ if ($form_id > 0) {
             var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75)); // 75% of font size, minimum 8px
             var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5)); // 150% of font size, minimum 16px
             
-            // Apply to submit button
+            // Apply to submit button ONLY
             $('.footer .action.submit.classic-button').css({
                 'font-size': buttonTextSize + 'px',
                 'color': buttonTextColor,
@@ -6550,16 +6631,8 @@ if ($form_id > 0) {
                 'line-height': '1.2'
             }).attr('data-hover-bg', buttonHoverBgColor);
             
-            // Apply to reset button
-            $('.footer .action.reset.classic-button').css({
-                'font-size': buttonTextSize + 'px',
-                'color': buttonTextColor,
-                'background-color': buttonBgColor,
-                'border-color': buttonBgColor,
-                'border-radius': borderRadius + 'px',
-                'padding': verticalPadding + 'px ' + horizontalPadding + 'px',
-                'line-height': '1.2'
-            }).attr('data-hover-bg', buttonHoverBgColor);
+            // REMOVED: Applying to reset button here caused the issue
+            // Reset button is now handled by its own listeners in shopify_client4.js
         };
         
         // Real-time preview updates for footer button design controls
@@ -6623,8 +6696,17 @@ if ($form_id > 0) {
             }
         });
         
-        $(document).on('mouseleave', '.footer .action.submit.classic-button, .footer .action.reset.classic-button', function() {
+        $(document).on('mouseleave', '.footer .action.submit.classic-button', function() {
             var bgColor = $('.footer-design-button-bg-color-text').val() || $('.footer-design-button-bg-color').val() || '#EB1256';
+            $(this).css({
+                'background-color': bgColor,
+                'border-color': bgColor
+            });
+        });
+
+        $(document).on('mouseleave', '.footer .action.reset.classic-button', function() {
+            // Read RESET button color, not submit button color
+            var bgColor = $('.footer-design-reset-button-bg-color-text').val() || $('.footer-design-reset-button-bg-color').val() || '#EB1256';
             $(this).css({
                 'background-color': bgColor,
                 'border-color': bgColor
@@ -8395,7 +8477,7 @@ if ($form_id > 0) {
                                 'background-color': bgColor,
                                 'border-color': swatch1
                             });
-                            $('.code-form-app button, .contact-form button, .code-form-app .file_button, .contact-form .file_button').css({
+                            $('.code-form-app button, .contact-form button, .code-form-app .file_button, .contact-form .file_button').not('.reset, .action.reset').css({
                                 'background-color': swatch1,
                                 'color': bgColor,
                                 'border-color': swatch1

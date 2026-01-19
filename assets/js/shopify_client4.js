@@ -768,9 +768,10 @@ function get_selected_elements(form_id, callback) {
                         $(".forFooterAlign").removeClass("align-left align-center align-right").addClass(footerAlignment);
                     }, 100);
 
-                    // Load button design settings (new format with 11 elements, or fallback to defaults)
+                    // Load button design settings (new format with 14 elements for reset button colors, or fallback to defaults)
                     var footerDataLength = response['form_footer_data'] ? response['form_footer_data'].length : 0;
                     if (footerDataLength >= 11) {
+                        // Submit button settings
                         var buttonTextSize = (response['form_footer_data'] && response['form_footer_data']['6']) ? parseInt(response['form_footer_data']['6']) : 16;
                         var buttonTextColor = (response['form_footer_data'] && response['form_footer_data']['7']) ? response['form_footer_data']['7'] : '#ffffff';
                         var buttonBgColor = (response['form_footer_data'] && response['form_footer_data']['8']) ? response['form_footer_data']['8'] : '#EB1256';
@@ -785,8 +786,30 @@ function get_selected_elements(form_id, callback) {
                         $('.footer-design-button-hover-bg-color').val(buttonHoverBgColor);
                         $('.footer-design-button-hover-bg-color-text').val(buttonHoverBgColor);
                         $('.footer-design-button-border-radius').val(borderRadius);
+
+                        // Reset button settings (if available)
+                        if (footerDataLength >= 14) {
+                            var resetButtonTextColor = (response['form_footer_data'] && response['form_footer_data']['11']) ? response['form_footer_data']['11'] : '#ffffff';
+                            var resetButtonBgColor = (response['form_footer_data'] && response['form_footer_data']['12']) ? response['form_footer_data']['12'] : '#EB1256';
+                            var resetButtonHoverBgColor = (response['form_footer_data'] && response['form_footer_data']['13']) ? response['form_footer_data']['13'] : '#292929';
+
+                            $('.footer-design-reset-button-text-color').val(resetButtonTextColor);
+                            $('.footer-design-reset-button-text-color-text').val(resetButtonTextColor);
+                            $('.footer-design-reset-button-bg-color').val(resetButtonBgColor);
+                            $('.footer-design-reset-button-bg-color-text').val(resetButtonBgColor);
+                            $('.footer-design-reset-button-hover-bg-color').val(resetButtonHoverBgColor);
+                            $('.footer-design-reset-button-hover-bg-color-text').val(resetButtonHoverBgColor);
+                        } else {
+                            // Use defaults for reset button
+                            $('.footer-design-reset-button-text-color').val('#ffffff');
+                            $('.footer-design-reset-button-text-color-text').val('#ffffff');
+                            $('.footer-design-reset-button-bg-color').val('#EB1256');
+                            $('.footer-design-reset-button-bg-color-text').val('#EB1256');
+                            $('.footer-design-reset-button-hover-bg-color').val('#292929');
+                            $('.footer-design-reset-button-hover-bg-color-text').val('#292929');
+                        }
                     } else {
-                        // Old format: use defaults
+                        // Old format: use defaults for both submit and reset buttons
                         $('.footer-design-button-text-size').val(16);
                         $('.footer-design-button-text-color').val('#ffffff');
                         $('.footer-design-button-text-color-text').val('#ffffff');
@@ -795,6 +818,13 @@ function get_selected_elements(form_id, callback) {
                         $('.footer-design-button-hover-bg-color').val('#C8104A');
                         $('.footer-design-button-hover-bg-color-text').val('#C8104A');
                         $('.footer-design-button-border-radius').val(4);
+
+                        $('.footer-design-reset-button-text-color').val('#ffffff');
+                        $('.footer-design-reset-button-text-color-text').val('#ffffff');
+                        $('.footer-design-reset-button-bg-color').val('#EB1256');
+                        $('.footer-design-reset-button-bg-color-text').val('#EB1256');
+                        $('.footer-design-reset-button-hover-bg-color').val('#292929');
+                        $('.footer-design-reset-button-hover-bg-color-text').val('#292929');
                     }
 
                     // Apply to preview (function defined in form_design.php)
@@ -2328,4 +2358,97 @@ $(document).on("click", ".saveForm", function (e) {
         loading_hide('.save_loader_show', 'Save');
         flashNotice("Form saved successfully!");
     }, 1500);
+});
+
+// Reset Button Live Preview Logic
+$(document).on('change keyup input', '.footer-design-reset-button-text-color, .footer-design-reset-button-text-color-text, .footer-design-reset-button-bg-color, .footer-design-reset-button-bg-color-text, .footer-design-reset-button-hover-bg-color, .footer-design-reset-button-hover-bg-color-text', function () {
+    var textColor = $('.footer-design-reset-button-text-color').val();
+    var bgColor = $('.footer-design-reset-button-bg-color').val();
+    var hoverBgColor = $('.footer-design-reset-button-hover-bg-color').val();
+
+    // Sync Text/color inputs
+    if ($(this).hasClass('footer-design-reset-button-text-color')) $('.footer-design-reset-button-text-color-text').val(textColor);
+    if ($(this).hasClass('footer-design-reset-button-text-color-text')) {
+        $('.footer-design-reset-button-text-color').val($(this).val());
+        textColor = $(this).val();
+    }
+
+    if ($(this).hasClass('footer-design-reset-button-bg-color')) $('.footer-design-reset-button-bg-color-text').val(bgColor);
+    if ($(this).hasClass('footer-design-reset-button-bg-color-text')) {
+        $('.footer-design-reset-button-bg-color').val($(this).val());
+        bgColor = $(this).val();
+    }
+
+    if ($(this).hasClass('footer-design-reset-button-hover-bg-color')) $('.footer-design-reset-button-hover-bg-color-text').val(hoverBgColor);
+    if ($(this).hasClass('footer-design-reset-button-hover-bg-color-text')) {
+        $('.footer-design-reset-button-hover-bg-color').val($(this).val());
+        hoverBgColor = $(this).val();
+    }
+
+    // Apply to Preview Element
+    var $resetBtn = $('.action.reset');
+    if ($resetBtn.length) {
+        $resetBtn.css({
+            'color': textColor,
+            'background-color': bgColor,
+            'border-color': bgColor
+        });
+
+
+        // Update both standard data attribute and any other potential hooks
+        $resetBtn.attr('data-hover-bg', hoverBgColor);
+    }
+});
+
+// Submit Button Live Preview Logic (with safeguard for Reset Button)
+$(document).on('change keyup input', '.footer-design-button-text-color, .footer-design-button-text-color-text, .footer-design-button-bg-color, .footer-design-button-bg-color-text, .footer-design-button-hover-bg-color, .footer-design-button-hover-bg-color-text', function () {
+    var textColor = $('.footer-design-button-text-color').val();
+    var bgColor = $('.footer-design-button-bg-color').val();
+    var hoverBgColor = $('.footer-design-button-hover-bg-color').val();
+
+    // Sync Text/color inputs
+    if ($(this).hasClass('footer-design-button-text-color')) $('.footer-design-button-text-color-text').val(textColor);
+    if ($(this).hasClass('footer-design-button-text-color-text')) {
+        $('.footer-design-button-text-color').val($(this).val());
+        textColor = $(this).val();
+    }
+
+    if ($(this).hasClass('footer-design-button-bg-color')) $('.footer-design-button-bg-color-text').val(bgColor);
+    if ($(this).hasClass('footer-design-button-bg-color-text')) {
+        $('.footer-design-button-bg-color').val($(this).val());
+        bgColor = $(this).val();
+    }
+
+    if ($(this).hasClass('footer-design-button-hover-bg-color')) $('.footer-design-button-hover-bg-color-text').val(hoverBgColor);
+    if ($(this).hasClass('footer-design-button-hover-bg-color-text')) {
+        $('.footer-design-button-hover-bg-color').val($(this).val());
+        hoverBgColor = $(this).val();
+    }
+
+    // Apply to Submit Button ONLY
+    var $submitBtn = $('.action.submit');
+    if ($submitBtn.length) {
+        $submitBtn.css({
+            'color': textColor,
+            'background-color': bgColor,
+            'border-color': bgColor
+        });
+
+        $submitBtn.attr('data-hover-bg', hoverBgColor);
+    }
+
+    // SAFEGUARD: Re-apply Reset Button styles to ensure they weren't overwritten
+    var resetTextColor = $('.footer-design-reset-button-text-color').val();
+    var resetBgColor = $('.footer-design-reset-button-bg-color').val();
+    var resetHoverBgColor = $('.footer-design-reset-button-hover-bg-color').val();
+
+    var $resetBtn = $('.action.reset');
+    if ($resetBtn.length) {
+        $resetBtn.css({
+            'color': resetTextColor,
+            'background-color': resetBgColor,
+            'border-color': resetBgColor
+        });
+        $resetBtn.attr('data-hover-bg', resetHoverBgColor);
+    }
 });

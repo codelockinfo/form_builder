@@ -4185,12 +4185,22 @@ class Client_functions extends common_function {
                         
                         // Button design settings (new format with 11 elements, or fallback to defaults)
                         $footer_data_length = count($form_footer_data);
+                        
+                        // Debug logging for retrieval
+                        error_log("get_selected_elements_fun DEBUG: Retrieved footer data length: " . $footer_data_length);
+                        if ($footer_data_length >= 13) error_log("get_selected_elements_fun DEBUG: Index 12 (Reset BG): " . $form_footer_data[12]);
+
                         if ($footer_data_length >= 11) {
                             $button_text_size = isset($form_footer_data[6]) ? intval($form_footer_data[6]) : 16;
                             $button_text_color = isset($form_footer_data[7]) ? $form_footer_data[7] : '#ffffff';
                             $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#EB1256';
                             $button_hover_bg_color = isset($form_footer_data[9]) ? $form_footer_data[9] : '#C8104A';
                             $border_radius = isset($form_footer_data[10]) ? intval($form_footer_data[10]) : 4;
+                            
+                            // Reset button settings (if available)
+                            $reset_button_text_color = isset($form_footer_data[11]) ? $form_footer_data[11] : '#ffffff';
+                            $reset_button_bg_color = isset($form_footer_data[12]) ? $form_footer_data[12] : '#EB1256';
+                            $reset_button_hover_bg_color = isset($form_footer_data[13]) ? $form_footer_data[13] : '#292929';
                         } else {
                             // Old format: use defaults
                             $button_text_size = 16;
@@ -4198,6 +4208,11 @@ class Client_functions extends common_function {
                             $button_bg_color = '#EB1256';
                             $button_hover_bg_color = '#C8104A';
                             $border_radius = 4;
+                            
+                            // Defaults for reset button
+                            $reset_button_text_color = '#ffffff';
+                            $reset_button_bg_color = '#EB1256';
+                            $reset_button_hover_bg_color = '#292929';
                         }
                         
                         // Validate colors
@@ -4211,6 +4226,17 @@ class Client_functions extends common_function {
                             $button_hover_bg_color = '#C8104A';
                         }
                         
+                        // Validate reset button colors
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $reset_button_text_color)) {
+                            $reset_button_text_color = '#ffffff';
+                        }
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $reset_button_bg_color)) {
+                            $reset_button_bg_color = '#EB1256';
+                        }
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $reset_button_hover_bg_color)) {
+                            $reset_button_hover_bg_color = '#292929';
+                        }
+                        
                         // Calculate padding based on font size for dynamic button sizing
                         // Padding should scale proportionally: larger font = more padding
                         // Base padding ratio: for 16px font, use ~12px vertical and ~24px horizontal
@@ -4219,13 +4245,17 @@ class Client_functions extends common_function {
                         $button_style = 'style="font-size: '.$button_text_size.'px; color: '.$button_text_color.'; background-color: '.$button_bg_color.'; border-radius: '.$border_radius.'px; border-color: '.$button_bg_color.'; padding: '.$vertical_padding.'px '.$horizontal_padding.'px; line-height: 1.2;"';
                         $button_hover_style = 'data-hover-bg="'.$button_hover_bg_color.'"';
                         
+                        // Reset button style
+                        $reset_button_style = 'style="font-size: '.$button_text_size.'px; color: '.$reset_button_text_color.'; background-color: '.$reset_button_bg_color.'; border-radius: '.$border_radius.'px; border-color: '.$reset_button_bg_color.'; padding: '.$vertical_padding.'px '.$horizontal_padding.'px; line-height: 1.2;"';
+                        $reset_button_hover_style = 'data-hover-bg="'.$reset_button_hover_bg_color.'"';
+                        
                         $form_html .= '<div class="footer forFooterAlign '.$footer_align.'">
                                 <div class="messages footer-data__footerdescription">'.(isset($form_footer_data[0]) ? $form_footer_data[0] : '').'</div>
                                 <button class="action submit classic-button footer-data__submittext '.$fullwidth_button.'" '.$button_style.' '.$button_hover_style.'>
                                     <span class="spinner"></span>
                                     '.(isset($form_footer_data[1]) ? $form_footer_data[1] : 'Submit').'
                                 </button>
-                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button" '.$button_style.' '.$button_hover_style.'>'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
+                                <button class="action reset classic-button footer-data__resetbuttontext '.$reset_button.' '.$fullwidth_button.'" type="button" '.$reset_button_style.' '.$reset_button_hover_style.'>'.(isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset').'</button>
                             </div>';
                     }
                     // Close the code-form-app wrapper only if we opened it (storefront mode)
@@ -4396,6 +4426,18 @@ class Client_functions extends common_function {
 }';
                         $all_css .= "\n" . $floating_form_css;
                     }
+                    
+
+                    // Force left alignment for field descriptions as requested
+                    $all_css .= '
+                    .code-form-app .code-form-control small.messages,
+                    .contact-form .code-form-control small.messages,
+                    .code-form-app .messages, 
+                    .contact-form .messages {
+                        text-align: left !important;
+                        display: block;
+                        width: 100%;
+                    }';
                     
                     $all_css .= '</style>';
                     
@@ -4979,6 +5021,46 @@ class Client_functions extends common_function {
         setTimeout(attachToAllButtons, 500);
         setTimeout(attachToAllButtons, 2000);
         setTimeout(attachToAllButtons, 5000);
+        
+        // Handle hover effects for buttons with data-hover-bg
+        function initHoverEffects() {
+            // Select all elements with data-hover-bg
+            var hoverElements = document.querySelectorAll("[data-hover-bg]");
+            for (var i = 0; i < hoverElements.length; i++) {
+                (function(el) {
+                    // Avoid attaching multiple listeners
+                    if (el.getAttribute("data-hover-init") === "true") return;
+                    el.setAttribute("data-hover-init", "true");
+                    
+                    var originalBg = el.style.backgroundColor;
+                    // For border color, we might need computed style if not inline
+                    var computedStyle = window.getComputedStyle(el);
+                    var originalBorder = el.style.borderColor || computedStyle.borderColor;
+                    var hoverBg = el.getAttribute("data-hover-bg");
+                    
+                    // If originalBg is empty, use computed style
+                    if (!originalBg) {
+                        originalBg = computedStyle.backgroundColor;
+                    }
+
+                    el.addEventListener("mouseenter", function() {
+                        this.style.backgroundColor = hoverBg;
+                        this.style.borderColor = hoverBg;
+                    });
+                    
+                    el.addEventListener("mouseleave", function() {
+                        this.style.backgroundColor = originalBg;
+                        this.style.borderColor = originalBorder;
+                    });
+                })(hoverElements[i]);
+            }
+        }
+        
+        // Initialize hover effects
+        initHoverEffects();
+        setTimeout(initHoverEffects, 500);
+        setTimeout(initHoverEffects, 2000);
+        setTimeout(initHoverEffects, 5000);
 })();
 }catch(e){}
 })(); // Close the outer IIFE that prevents multiple executions
@@ -9343,14 +9425,19 @@ class Client_functions extends common_function {
                 $alignment = 'align-left';
             }
             
-            // Button design settings
+            // Button design settings (Submit button)
             $button_text_size = isset($_POST['footer_button_text_size']) ? intval($_POST['footer_button_text_size']) : 16;
             $button_text_color = isset($_POST['footer_button_text_color_text']) ? $_POST['footer_button_text_color_text'] : (isset($_POST['footer_button_text_color']) ? $_POST['footer_button_text_color'] : '#ffffff');
             $button_bg_color = isset($_POST['footer_button_bg_color_text']) ? $_POST['footer_button_bg_color_text'] : (isset($_POST['footer_button_bg_color']) ? $_POST['footer_button_bg_color'] : '#EB1256');
             $button_hover_bg_color = isset($_POST['footer_button_hover_bg_color_text']) ? $_POST['footer_button_hover_bg_color_text'] : (isset($_POST['footer_button_hover_bg_color']) ? $_POST['footer_button_hover_bg_color'] : '#C8104A');
             $border_radius = isset($_POST['footer_button_border_radius']) ? intval($_POST['footer_button_border_radius']) : 4;
             
-            // Validate color formats
+            // Reset button design settings
+            $reset_button_text_color = isset($_POST['footer_reset_button_text_color_text']) ? $_POST['footer_reset_button_text_color_text'] : (isset($_POST['footer_reset_button_text_color']) ? $_POST['footer_reset_button_text_color'] : '#ffffff');
+            $reset_button_bg_color = isset($_POST['footer_reset_button_bg_color_text']) ? $_POST['footer_reset_button_bg_color_text'] : (isset($_POST['footer_reset_button_bg_color']) ? $_POST['footer_reset_button_bg_color'] : '#EB1256');
+            $reset_button_hover_bg_color = isset($_POST['footer_reset_button_hover_bg_color_text']) ? $_POST['footer_reset_button_hover_bg_color_text'] : (isset($_POST['footer_reset_button_hover_bg_color']) ? $_POST['footer_reset_button_hover_bg_color'] : '#292929');
+            
+            // Validate color formats (Submit button)
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $button_text_color)) {
                 $button_text_color = '#ffffff';
             }
@@ -9360,13 +9447,33 @@ class Client_functions extends common_function {
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $button_hover_bg_color)) {
                 $button_hover_bg_color = '#C8104A';
             }
+            
+            // Validate color formats (Reset button)
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $reset_button_text_color)) {
+                $reset_button_text_color = '#ffffff';
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $reset_button_bg_color)) {
+                $reset_button_bg_color = '#EB1256';
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $reset_button_hover_bg_color)) {
+                $reset_button_hover_bg_color = '#292929';
+            }
 
-            // form_footer_data array: [0]=content, [1]=submittext, [2]=resetbutton, [3]=resetbuttontext, [4]=fullwidth, [5]=alignment, [6]=button_text_size, [7]=button_text_color, [8]=button_bg_color, [9]=button_hover_bg_color, [10]=border_radius
-            $form_footer_data = serialize(array($content, $submittext, $resetbutton, $resetbuttontext, $fullwidth, $alignment, $button_text_size, $button_text_color, $button_bg_color, $button_hover_bg_color, $border_radius));
+            // form_footer_data array: [0]=content, [1]=submittext, [2]=resetbutton, [3]=resetbuttontext, [4]=fullwidth, [5]=alignment, [6]=button_text_size, [7]=button_text_color, [8]=button_bg_color, [9]=button_hover_bg_color, [10]=border_radius, [11]=reset_button_text_color, [12]=reset_button_bg_color, [13]=reset_button_hover_bg_color
+            $footer_data_array = array($content, $submittext, $resetbutton, $resetbuttontext, $fullwidth, $alignment, $button_text_size, $button_text_color, $button_bg_color, $button_hover_bg_color, $border_radius, $reset_button_text_color, $reset_button_bg_color, $reset_button_hover_bg_color);
+            
+            // Debug logging
+            error_log("savefooterform DEBUG: POST reset_bg=" . (isset($_POST['footer_reset_button_bg_color_text']) ? $_POST['footer_reset_button_bg_color_text'] : 'NOT SET'));
+            error_log("savefooterform DEBUG: Saving array with " . count($footer_data_array) . " elements");
+            error_log("savefooterform DEBUG: Reset BG Color Index 12: " . $footer_data_array[12]);
+            
+            $form_footer_data = serialize($footer_data_array);
 
             $fields = array(
                 '`form_footer_data`' => $form_footer_data,
             );
+            
+            error_log("savefooterform DEBUG: Serialized length: " . strlen($form_footer_data));
 
             $where_query = array(["", "id", "=", "$form_id"]);
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
