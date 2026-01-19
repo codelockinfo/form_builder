@@ -10,18 +10,15 @@ $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
 $topic_header = $_SERVER['HTTP_X_SHOPIFY_TOPIC'];
 $cls_functions = new Client_functions($shop);
 
-function verify_webhook($data, $hmac_header, $cls_functions)
+function verify_webhook($data, $hmac_header)
 {
-	$where_query = array(["", "status", "=", "1"]);
-	$comeback= $cls_functions->select_result(CLS_TABLE_THIRDPARTY_APIKEY, '*',$where_query);
-	$SHOPIFY_SECRET = (isset($comeback['data'][2]['thirdparty_apikey']) && $comeback['data'][2]['thirdparty_apikey'] !== '') ? $comeback['data'][2]['thirdparty_apikey'] : '';
-  	$calculated_hmac = base64_encode(hash_hmac('sha256', $data, $SHOPIFY_SECRET, true));
-  	return hash_equals($hmac_header, $calculated_hmac);
+	$calculated_hmac = base64_encode(hash_hmac('sha256', $data, SHOPIFY_SECRET, true));
+	return hash_equals($hmac_header, $calculated_hmac);
 }
 
 $data = file_get_contents('php://input');
 $customer = json_decode($data);
-$verified = verify_webhook($data, $hmac_header, $cls_functions);
+$verified = verify_webhook($data, $hmac_header);
 
 if($verified == true){
     if( $topic_header == "customers/create" ) {
