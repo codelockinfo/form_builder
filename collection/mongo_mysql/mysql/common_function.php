@@ -309,7 +309,7 @@ if (!function_exists('generate_log')) {
             $sql = str_replace(array("'NULL'", "'null'"), 'NULL', $sql);
             $query = $this->db_connection->prepare($sql);
             $query->execute();
-            $return_data['affected_rows'] = $query->num_rows();
+            $return_data['affected_rows'] = $this->db_connection->affected_rows;
             $return_data['query_status'] = 1;
         } catch (Exception $error) {
             $status = '0';
@@ -327,7 +327,7 @@ if (!function_exists('generate_log')) {
         $sql = "DELETE FROM $tbl_name $where_query";
         $query = $this->db_connection->prepare($sql);
         $query->execute();
-        $return_data['affected_rows'] = $query->num_rows();
+        $return_data['affected_rows'] = $this->db_connection->affected_rows;
         $return_data['query_status'] = 1;
         return json_encode(array('status' => $status, 'data' => $return_data));
     }

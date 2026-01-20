@@ -492,7 +492,7 @@ include_once('cls_header.php');
                                             <p class="text_image_list">Application form</p>
                                         </div>
                                         <div class="main_list_" data-val="7">
-                                            <img src="../assets/images/form_img/application_form.jpg" alt="" />
+                                            <img src="../assets/images/form_img/refund.jpg" alt="" />
                                             <p class="text_image_list">Refund Form</p>
                                         </div>
                                   

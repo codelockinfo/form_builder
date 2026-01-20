@@ -7,6 +7,8 @@ require_once '../cls_shopifyapps/config.php';
 $shop = $_SERVER['HTTP_X_SHOPIFY_SHOP_DOMAIN'];
 $hmac_header = $_SERVER['HTTP_X_SHOPIFY_HMAC_SHA256'];
 $user_obj = new Client_functions($shop);
+$cls_functions = new Client_functions($shop);
+generate_log('shop-redact-webhook' , "STEP1");
 
 function verify_webhook($data, $hmac_header, $cls_functions)
 {

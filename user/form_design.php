@@ -6402,6 +6402,46 @@ if ($form_id > 0) {
                 updateElementDesignPreview(formdataid);
             }
         });
+
+        // Option Color Sync
+        $(document).on('change', '.element-design-option-color', function() {
+            var $picker = $(this);
+            var formdataid = $picker.data('formdataid');
+            var $textInput = $('.element-design-option-color-text[data-formdataid="' + formdataid + '"]');
+            $textInput.val($picker.val());
+            updateElementDesignPreview(formdataid);
+        });
+        
+        $(document).on('input', '.element-design-option-color-text', function() {
+            var $textInput = $(this);
+            var color = $textInput.val();
+            var formdataid = $textInput.data('formdataid');
+            if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                var $picker = $('.element-design-option-color[data-formdataid="' + formdataid + '"]');
+                $picker.val(color);
+                updateElementDesignPreview(formdataid);
+            }
+        });
+
+        // Checkmark Color Sync
+        $(document).on('change', '.element-design-checkmark-color', function() {
+            var $picker = $(this);
+            var formdataid = $picker.data('formdataid');
+            var $textInput = $('.element-design-checkmark-color-text[data-formdataid="' + formdataid + '"]');
+            $textInput.val($picker.val());
+            updateElementDesignPreview(formdataid);
+        });
+        
+        $(document).on('input', '.element-design-checkmark-color-text', function() {
+            var $textInput = $(this);
+            var color = $textInput.val();
+            var formdataid = $textInput.data('formdataid');
+            if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                var $picker = $('.element-design-checkmark-color[data-formdataid="' + formdataid + '"]');
+                $picker.val(color);
+                updateElementDesignPreview(formdataid);
+            }
+        });
         
         // Update preview on design control changes (real-time preview)
         // Function to update element design preview in real-time (global function)
@@ -6426,6 +6466,9 @@ if ($form_id > 0) {
         if (isNaN(borderRadius) || borderRadius < 0) {
             borderRadius = 4;
         }
+
+        var optionColor = $('.element-design-option-color-text[data-formdataid="' + formdataid + '"]').val() || null;
+        var checkmarkColor = $('.element-design-checkmark-color-text[data-formdataid="' + formdataid + '"]').val() || null;
         
         // Apply to input, textarea, select elements (Input Font Size)
         $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').css({
@@ -6442,6 +6485,31 @@ if ($form_id > 0) {
             'font-weight': fontWeight,
             'color': color
         });
+
+        // Specific fix for Accept Terms (Element 12) label color in preview
+        // Use generic selector to be safe
+        var $targets = $('[data-formdataid="' + formdataid + '"] .checkbox-label, [data-formdataid="' + formdataid + '"] label, [data-formdataid="' + formdataid + '"] .Polaris-Choice__Label, [data-formdataid="' + formdataid + '"] .checkbox-wrapper label');
+        
+        // Debug Log
+        console.log('Preview Update: ID=' + formdataid + ' Color=' + color + ' Targets Found=' + $targets.length);
+
+        $targets.each(function() {
+            var elem = $(this)[0];
+            // Force the color using multiple methods
+            elem.style.setProperty('color', color, 'important');
+            elem.setAttribute('style', elem.getAttribute('style') + '; color: ' + color + ' !important;');
+            
+            // Also apply to any child text nodes
+            $(this).find('*').each(function() {
+                this.style.setProperty('color', color, 'important');
+            });
+        });
+        
+        // Log computed style to verify
+        if ($targets.length > 0) {
+            var computedColor = window.getComputedStyle($targets[0]).color;
+            console.log('Preview Update: Computed color after update=' + computedColor);
+        }
             
             // Also apply border-radius directly to select elements with !important to override browser defaults
             // Target select elements that have data-formdataid directly
@@ -6579,9 +6647,106 @@ if ($form_id > 0) {
                     'border-radius': borderRadius + 'px'
                 });
             }
+
+            // Apply Option Color (for Checkboxes)
+            if (optionColor) {
+                // Original Polaris selectors
+                var $polarisLabels = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Choice__Label, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Choice__Label');
+                
+                // Custom selectors from user snippet
+                // Selector 1: Container based
+                var $customLabels1 = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .checkbox-label, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .checkbox-label');
+                // Selector 2: Direct class targeting (chekboxesID__checkbox)
+                var $customLabels2 = $('.chekboxes' + formdataid + '__checkbox.checkbox-label');
+                // Selector 3: Label for specific input ID (common pattern)
+                var $customLabels3 = $('label[for*="' + formdataid + '-checkbox"]');
+
+                $polarisLabels.each(function() { this.style.setProperty('color', optionColor, 'important'); });
+                $customLabels1.each(function() { this.style.setProperty('color', optionColor, 'important'); });
+                $customLabels2.each(function() { this.style.setProperty('color', optionColor, 'important'); });
+                $customLabels3.each(function() { this.style.setProperty('color', optionColor, 'important'); });
+            }
+
+            // Apply Checkmark Color (for Checkboxes)
+            if (checkmarkColor) {
+                // Polaris selectors
+                $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon svg path, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon svg path').each(function() {
+                    this.style.setProperty('fill', checkmarkColor, 'important');
+                });
+                
+                $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon svg, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon svg').each(function() {
+                    this.style.setProperty('fill', checkmarkColor, 'important');
+                });
+
+                $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .Polaris-Checkbox__Icon').each(function() {
+                     this.style.setProperty('color', checkmarkColor, 'important');
+                });
+                
+                // Custom selectors
+                // Selector 1: Container based inputs
+                var $customInputs1 = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .checkbox-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .checkbox-input');
+                // Selector 2: Direct data attribute targeting
+                var $customInputs2 = $('.checkbox-input[data-formdataid="' + formdataid + '"]');
+                // Selector 3: Class based
+                var $customInputs3 = $('.chekboxes' + formdataid + '__checkbox.checkbox-input');
+
+                var applyCustomInputStyles = function() {
+                    this.style.setProperty('accent-color', checkmarkColor, 'important');
+                    this.style.setProperty('border-color', checkmarkColor, 'important');
+                    this.style.setProperty('color', checkmarkColor, 'important');
+                    // Force background for checked state if possible, though mostly handled by accent-color
+                    this.style.setProperty('background-color', checkmarkColor, 'important');
+                };
+
+                $customInputs1.each(applyCustomInputStyles);
+                $customInputs2.each(applyCustomInputStyles);
+                $customInputs3.each(applyCustomInputStyles);
+                
+                // Inject generic style for accent-color as a fallback
+                // Also specifically target the custom checkbox structure verified in user image
+                // The structure is: input.checkbox-input + label.checkbox-label
+                var checkmarkStyleId = 'checkmark-style-' + formdataid;
+                $('#' + checkmarkStyleId).remove();
+                
+                var checkmarkCss = `
+                    <style id="${checkmarkStyleId}">
+                        /* Force accent color on the input itself */
+                        .code-form-app .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"],
+                        .contact-form .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"],
+                        input[type="checkbox"][data-formdataid="${formdataid}"] {
+                            accent-color: ${checkmarkColor} !important;
+                            color: ${checkmarkColor} !important;
+                        }
+                        
+                        /* Target potential pseudo-elements on the label if custom checkbox is used */
+                        .code-form-app .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"]:checked + label::before,
+                        .code-form-app .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"]:checked + label::after,
+                        input[type="checkbox"][data-formdataid="${formdataid}"]:checked + label::before,
+                        input[type="checkbox"][data-formdataid="${formdataid}"]:checked + label::after {
+                            background-color: ${checkmarkColor} !important;
+                            border-color: ${checkmarkColor} !important;
+                            color: #fff !important; /* Assuming checkmark is white */
+                            border-radius: ${borderRadius}px !important;
+                        }
+
+                        /* Also apply border radius to the input itself (if visible) and its unchecked state via pseudo-elements */
+                        .code-form-app .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"],
+                        input[type="checkbox"][data-formdataid="${formdataid}"] {
+                            border-radius: ${borderRadius}px !important;
+                        }
+                        
+                        /* Unchecked state border radius for pseudo-elements */
+                         .code-form-app .code-form-control[data-formdataid="${formdataid}"] input[type="checkbox"] + label::before,
+                         input[type="checkbox"][data-formdataid="${formdataid}"] + label::before {
+                             border-radius: ${borderRadius}px !important;
+                         }
+                    </style>
+                `;
+                $('head').append(checkmarkCss);
+            }
         };
         
-        $(document).on('input change keyup', '.element-design-label-font-size, .element-design-input-font-size, .element-design-font-size, .element-design-font-weight, .element-design-color-text, .element-design-border-radius', function() {
+        $(document).on('input change keyup', '.element-design-label-font-size, .element-design-input-font-size, .element-design-font-size, .element-design-font-weight, .element-design-color-text, .element-design-border-radius, .element-design-option-color-text, .element-design-checkmark-color-text', function() {
             var $control = $(this);
             var formdataid = $control.data('formdataid');
             if (formdataid) {
@@ -8602,6 +8767,24 @@ if ($form_id > 0) {
             }
         });
     });
+    
+    // Initialize design previews after a short delay to ensure DOM is ready
+    setTimeout(function() {
+        // iterate over all color inputs including option and checkmark colors
+        $('.element-design-color-text, .element-design-option-color-text, .element-design-checkmark-color-text').each(function() {
+            var formdataid = $(this).data('formdataid');
+            if (formdataid && typeof updateElementDesignPreview === 'function') {
+                updateElementDesignPreview(formdataid);
+            }
+        });
+        
+        // Also trigger footer button preview updates
+        if (typeof updateFooterButtonPreview === 'function') {
+            updateFooterButtonPreview();
+        }
+        if (typeof updateFooterResetButtonPreview === 'function') {
+            updateFooterResetButtonPreview();
+        }
+    }, 1500); // 1.5s delay to allow other scripts to run
 
-</script>
 </script>
