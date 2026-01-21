@@ -3086,6 +3086,9 @@ class Client_functions extends common_function {
                         $form_header_data_raw = isset($formData['form_header_data']) ? $formData['form_header_data'] : '';
                         $form_footer_data_raw = isset($formData['form_footer_data']) ? $formData['form_footer_data'] : '';
                         $publishdata_raw = isset($formData['publishdata']) ? $formData['publishdata'] : '';
+                        $custom_code = isset($formData['custom_code']) ? $formData['custom_code'] : '';
+                        
+                        error_log("Loading form data - custom_code length: " . strlen($custom_code));
                         
                         // Unserialize with error handling
                         $form_header_data = !empty($form_header_data_raw) ? @unserialize($form_header_data_raw) : array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
@@ -3552,7 +3555,7 @@ class Client_functions extends common_function {
                             }
                             error_log("HTML appended for element " . $elements['id'] . " (form_data_id: $form_data_id). HTML length now: $html_after");
                             
-                            if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5){ 
+                            if($elements['id'] == 1 || $elements['id'] == 3 || $elements['id'] == 5 || $elements['id'] == 21){ 
                                 $is_hiderequire = $is_hidelabel = $is_keepossition_label =  "";
                                
                                 if($unserialize_elementdata[7] == "1"){
@@ -3874,6 +3877,16 @@ class Client_functions extends common_function {
                                         <label class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Checkbox" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
                                         </label>
                                         <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__checkboxoption">';
+                                // START: Retrieve design data BEFORE the loop to use values inline
+                                $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
+                                if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
+                                    $design_data = $design_settings['element_' . $form_data_id];
+                                }
+                                $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                $borderRadius_val = isset($design_data['borderRadius']) ? $design_data['borderRadius'] : 4;
+                                // END: Retrieve design data
+
                                 foreach ($checkbox_options as $index => $option) {
                                     $option = trim($option);
                                     $checkbox_option_checked = "";
@@ -3881,65 +3894,27 @@ class Client_functions extends common_function {
                                         $checkbox_option_checked = "Checked";
                                     }
                                     $checkbox_id = $form_data_id . '-checkbox-' . ($index + 1) . '-' . preg_replace('/[^a-zA-Z0-9]/', '-', $option);
+                                    
+                                    // Prepare inline styles
+                                    $input_style = 'opacity: 1 !important; appearance: auto !important; -webkit-appearance: auto !important; z-index: 10; position: relative; cursor: pointer; pointer-events: auto !important;';
+                                    if ($checkmarkColor_val) {
+                                        $input_style .= ' accent-color: ' . $checkmarkColor_val . ' !important;';
+                                    }
+                                    if ($borderRadius_val !== '') {
+                                        $input_style .= ' border-radius: ' . $borderRadius_val . 'px !important;';
+                                    }
+
+                                    $label_style = 'text-align: left !important; cursor: pointer;';
+                                    if ($optionColor_val) {
+                                        $label_style .= ' color: ' . $optionColor_val . ' !important;';
+                                    }
+
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
-                                                    <div class="checkbox-wrapper  checkbox-option">
-                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="' . $checkbox_id . '" type="checkbox" data-type="checkbox" data-formdataid="' . $form_data_id . '" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.'>
-                                                        <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="' . $checkbox_id . '">' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '</label>
+                                                    <div class="checkbox-wrapper  checkbox-option" style="position: relative;">
+                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="' . $checkbox_id . '" type="checkbox" data-type="checkbox" data-formdataid="' . $form_data_id . '" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '. $checkbox_option_checked.' style="' . $input_style . '">
+                                                        <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="' . $checkbox_id . '" style="' . $label_style . '">' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '</label>
                                                     </div>
                                                     </li>';
-                                }  
-                                     
-                                // START: Server-side style injection for Checkbox (Color & Border Radius)
-                                // Use $templates because that holds the user-specific form details/settings
-                                $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
-                                
-                                // Fallback to global design settings if empty (since save_all_element_design_settings saves there)
-                                if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
-                                    $design_data = $design_settings['element_' . $form_data_id];
-                                }
-
-                                // DEBUG: Log the raw design data to verify keys
-                                error_log("DEBUG Checkbox design_data for ID " . $form_data_id . ": " . print_r($design_data, true));
-                                
-                                    $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
-                                    $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
-                                    $borderRadius_val = isset($design_data['borderRadius']) ? $design_data['borderRadius'] : '';
-
-                                error_log("DEBUG Extracted: Option=" . $optionColor_val . ", Checkmark=" . $checkmarkColor_val);
-
-                                if ($optionColor_val || $checkmarkColor_val || $borderRadius_val) {
-                                    $form_html .= '<style>';
-                                    
-                                    // Option Color
-                                    if ($optionColor_val) {
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] .checkbox-label { color: '.$optionColor_val.' !important; }';
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] .Polaris-Choice__Label { color: '.$optionColor_val.' !important; }';
-                                    }
-                                    
-                                    // Checkmark Color & Border Radius
-                                    if ($checkmarkColor_val) {
-                                        // For native checkmark (accent-color)
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"] { accent-color: '.$checkmarkColor_val.' !important; }';
-                                        
-                                        // For Custom Checkbox Pseudo-elements (::before / ::after)
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"]:checked + label::before, ';
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"]:checked + label::after { ';
-                                        $form_html .= 'background-color: '.$checkmarkColor_val.' !important; ';
-                                        $form_html .= 'border-color: '.$checkmarkColor_val.' !important; ';
-                                        $form_html .= 'color: #fff !important; '; 
-                                        $form_html .= '}';
-                                    }
-
-                                    // Border Radius
-                                    if ($borderRadius_val !== '') {
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"] { border-radius: '.$borderRadius_val.'px !important; }';
-                                        
-                                        // Apply to pseudo-elements (common in custom checkboxes)
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"] + label::before { border-radius: '.$borderRadius_val.'px !important; }';
-                                        $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"]:checked + label::before { border-radius: '.$borderRadius_val.'px !important; }';
-                                    }
-
-                                    $form_html .= '</style>';
                                 }
                                 // END: Server-side style injection
 
@@ -3953,45 +3928,31 @@ class Client_functions extends common_function {
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
                                 
                                 $defaultselect_checked = (isset($unserialize_elementdata[1]) && $unserialize_elementdata[1] == '1') ? "checked" : '';
+                                // START: Retrieve design data explicitly for Element 12
+                                $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
+                                if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
+                                    $design_data = $design_settings['element_' . $form_data_id];
+                                }
+                                $color_val = isset($design_data['color']) ? $design_data['color'] : '';
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                // END: Retrieve design data
+
+                                // Prepare inline styles
+                                $input_style = 'opacity: 1 !important; appearance: auto !important; -webkit-appearance: auto !important; z-index: 10; position: relative; cursor: pointer; pointer-events: auto !important;';
+                                if ($checkmarkColor_val) {
+                                    $input_style .= ' accent-color: ' . $checkmarkColor_val . ' !important;';
+                                }
+
+                                $label_style = 'cursor: pointer;';
+                                if ($color_val) {
+                                    $label_style .= ' color: ' . $color_val . ' !important;';
+                                }
+
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[4].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
-                                            <div class="checkbox-wrapper">
-                                                <input id="terms_condition" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'[]" value="1" '.$defaultselect_checked.'>
-                                                <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label" for="terms_condition">'.$unserialize_elementdata[0].'</label>
+                                            <div class="checkbox-wrapper" style="display: flex; align-items: center; position: relative;">
+                                                <input id="terms_condition_'.$form_data_id.'" class="checkbox-input '.$elementtitle.''.$form_data_id.'__acceptterms"  type="checkbox" data-type="acceptTerms"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'[]" value="1" '.$defaultselect_checked.' style="' . $input_style . '">
+                                                <label class="checkbox-label globo-option '.$elementtitle.''.$form_data_id.'__label" for="terms_condition_'.$form_data_id.'" style="' . $label_style . '">'.$unserialize_elementdata[0].'</label>
                                             </div>';
-
-                                    // START: Server-side style injection for Accept Terms (Color)
-                                    $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
-                                    
-                                    // Fallback to global design settings logic
-                                    if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
-                                        $design_data = $design_settings['element_' . $form_data_id];
-                                    }
-                                    $color_val = isset($design_data['color']) ? $design_data['color'] : '';
-                                    $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
-
-                                    if ($color_val || $checkmarkColor_val) {
-                                        $form_html .= '<style>';
-                                        
-                                        // Text Color (Label)
-                                        if ($color_val) {
-                                            $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] .checkbox-label { color: '.$color_val.' !important; }';
-                                            $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] .Polaris-Choice__Label { color: '.$color_val.' !important; }';
-                                        }
-                                        
-                                        // Checkmark Color (Accent Color)
-                                        if ($checkmarkColor_val) {
-                                            $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"] { accent-color: '.$checkmarkColor_val.' !important; }';
-                                            
-                                            // Pseudo-elements if custom
-                                            $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"]:checked + label::before, ';
-                                            $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="checkbox"]:checked + label::after { ';
-                                            $form_html .= 'background-color: '.$checkmarkColor_val.' !important; ';
-                                            $form_html .= 'border-color: '.$checkmarkColor_val.' !important; ';
-                                            $form_html .= '}';
-                                        }
-
-                                        $form_html .= '</style>';
-                                    }
                                     // END: Server-side style injection
 
                                 $form_html .= '<small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
@@ -4021,34 +3982,49 @@ class Client_functions extends common_function {
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
                                 
                                 $radio_options = explode(",", $unserialize_elementdata[1]);
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
+                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'" data-formdataid="'.$form_data_id.'">
                                         <label class="classic-label globo-label '.$is_keepossition_label.'"><span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="radio" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span>
                                         </label>
                                         <ul class="flex-wrap '.$elementtitle.''.$form_data_id.'__radiooption">';
                                         
+                                // START: Retrieve design data BEFORE the loop to use values inline
+                                $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
+                                // Fallback to global design settings logic
+                                if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
+                                    $design_data = $design_settings['element_' . $form_data_id];
+                                }
+                                $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                // END: Retrieve design data
+
                                 foreach ($radio_options as $index => $option) {
                                     $option = trim($option);
                                     $radio_option_checked = "";
                                     if($unserialize_elementdata[2] == $option){
                                         $radio_option_checked = "Checked";
                                     }
+                                    // Generate unique ID using form_data_id and index
+                                    $radio_id = 'radio-' . $form_data_id . '-' . $index;
+
+                                    // Prepare inline styles
+                                    $input_style = 'width: 18px; height: 18px; margin: 2px 0 0 0; flex-shrink: 0; opacity: 1 !important; appearance: auto !important; -webkit-appearance: auto !important; z-index: 10; position: relative; cursor: pointer; pointer-events: auto !important;';
+                                    if ($checkmarkColor_val) {
+                                        $input_style .= ' accent-color: ' . $checkmarkColor_val . ' !important;';
+                                    }
+
+                                    $label_style = 'text-align: left !important; margin: 0; flex: 1; cursor: pointer; line-height: 1.4;';
+                                    if ($optionColor_val) {
+                                        $label_style .= ' color: ' . $optionColor_val . ' !important;';
+                                    }
+                                    
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column" style="padding: 4px 0; margin: 0; display: flex; align-items: flex-start;">
-                                                    <div class="radio-wrapper" style="display: flex; align-items: center; gap: 6px; width: 100%;">
-                                                        <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="false-radio-1-' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.' style="width: 18px; height: 18px; margin: 2px 0 0 0; flex-shrink: 0;">
-                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="false-radio-1-' . $option . '" style="text-align: left !important; margin: 0; flex: 1; cursor: pointer; line-height: 1.4;">'.$option.'</label>
+                                                    <div class="radio-wrapper" style="display: flex; align-items: center; gap: 6px; width: 100%; position: relative;">
+                                                        <input class="radio-input  new-radio-option '.$elementtitle.''.$form_data_id.'__radio" id="' . $radio_id . '" type="radio" data-type="radio" name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" '.$radio_option_checked.' style="' . $input_style . '">
+                                                        <label class="radio-label globo-option '.$elementtitle.''.$form_data_id.'__radio" for="' . $radio_id . '" style="' . $label_style . '">'.$option.'</label>
                                                     </div>
                                                 </li>';
                                 }          
-                                    // START: Server-side style injection for Radio Button (Color)
-                                    // Use $templates because that holds the user-specific form details/settings
-                                    $design_data = isset($templates['design_data']) && !empty($templates['design_data']) ? json_decode($templates['design_data'], true) : array();
-                                    
-                                    // Fallback to global design settings logic
-                                    if (empty($design_data) && isset($design_settings['element_' . $form_data_id])) {
-                                        $design_data = $design_settings['element_' . $form_data_id];
-                                    }
-                                    $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
-                                    $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+
 
                                     if ($optionColor_val || $checkmarkColor_val) {
                                         $form_html .= '<style>';
@@ -4069,6 +4045,7 @@ class Client_functions extends common_function {
                                             $form_html .= '.code-form-control[data-formdataid="'.$form_data_id.'"] input[type="radio"]:checked + label::after { ';
                                             $form_html .= 'background-color: '.$checkmarkColor_val.' !important; ';
                                             $form_html .= 'border-color: '.$checkmarkColor_val.' !important; ';
+                                            $form_html .= 'color: #fff !important; ';
                                             $form_html .= '}';
                                         }
 
@@ -4234,8 +4211,11 @@ class Client_functions extends common_function {
                                     </div>';
                             }
                             if($elements['id'] == 19){
+                                // Prioritize custom_code (Global Data) over instance data if available
+                                $html_content = (isset($formData['custom_code']) && !empty($formData['custom_code'])) ? $formData['custom_code'] : $unserialize_elementdata[0];
+                                
                                 $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[1].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                                <div id="htmlbox" class="classic-input '.$elementtitle.''.$form_data_id.'__html-code">'.$unserialize_elementdata[0].'</div>
+                                                <div id="htmlbox" class="classic-input '.$elementtitle.''.$form_data_id.'__html-code">'.$html_content.'</div>
                                     </div>';
                             }
                             if($elements['id'] == 20){
@@ -4270,38 +4250,31 @@ class Client_functions extends common_function {
                                         <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
                                     </div>';
                             }
+/*
+                            // DISABLED: User indicated ID 21 is "Last Name" element.
+                            // This block was incorrectly rendering it as Custom Code.
                             if($elements['id'] == 21){
-                                $is_hiderequire = $is_hidelabel = $is_keepossition_label =  "";
-                               
-                                if($unserialize_elementdata[7] == "1"){
-                                    if($unserialize_elementdata[5] == "1"){
-                                        if($unserialize_elementdata[8] == "0"){
-                                            $is_hiderequire = "hidden";
-                                        }
-                                    }
-                                }else{
-                                    $is_hiderequire = "hidden";
-                                }
-                                if($unserialize_elementdata[5] == "1"){
-                                    $is_hidelabel = "hidden";
-                                }
-                                if($unserialize_elementdata[6] == "1"){
-                                    $is_keepossition_label = "position--label";
-                                }
-                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
-                                // Generate field name from label
-                                $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
-                                $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                // Element 21 is the HTML/Custom Code element
+                                // Display the custom code from the custom_code column at this position
+                                $custom_code = isset($formData['custom_code']) ? $formData['custom_code'] : '';
                                 
-                                $form_html .= ' <div class="code-form-control layout-'.$unserialize_elementdata[9].'-column container_'.$elementtitle.''.$form_data_id.'" data-id="element'.$elements['id'].'">
-                                            <label for="false-text'.$elements['id'].'" class="classic-label globo-label '.$is_keepossition_label.'">
-                                            <span class="label-content '.$elementtitle.''.$form_data_id.'__label '.$is_hidelabel.'" data-label="Last Name" data-formdataid="'.$form_data_id.'"'.$label_design_style.'>'.$unserialize_elementdata[0].'</span><span class="text-danger text-smaller '.$is_hiderequire.'"> *</span></label>
-                                            <div class="globo-form-input">
-                                                <input type="text" data-type="text" class="classic-input '.$elementtitle.''.$form_data_id.'__placeholder"  name="'.htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8').'" placeholder="'.$unserialize_elementdata[1].'" value="" maxlength="'.$limitcharacter_value.'">
-                                            </div>
-                                            <small class="messages '.$elementtitle.''.$form_data_id.'__description">'.((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '').'</small>
-                                        </div>';
+                                error_log("Rendering element21 at position - custom_code length: " . strlen($custom_code));
+                                
+                                if (!empty($custom_code)) {
+                                    // Display custom code at this position
+                                    $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column custom-code-section" data-id="element'.$elements['id'].'">';
+                                    $form_html .= $custom_code;
+                                    $form_html .= '</div>';
+                                    error_log("Custom code rendered at element21 position");
+                                } else {
+                                    // No custom code, show placeholder
+                                    $form_html .= '<div class="code-form-control layout-'.$unserialize_elementdata[9].'-column custom-code-section" data-id="element'.$elements['id'].'">';
+                                    $form_html .= '<p style="color: #999; font-style: italic;">Custom code will appear here (element21)</p>';
+                                    $form_html .= '</div>';
+                                    error_log("No custom code - showing placeholder at element21 position");
+                                }
                             }
+*/
                         }  
                     
                             $i++;             
@@ -4312,6 +4285,10 @@ class Client_functions extends common_function {
                     } else {
                         error_log("=== No elements to process - element_data_array is empty ===");
                     }
+                    
+                    // Custom code is now rendered at element21's position in the loop above
+                    // No need to add it at the bottom
+                    
                     $form_html .= '</div>';
                     if(!empty($element_data_array)) {
                         $form_html .='</form>';
@@ -5266,6 +5243,7 @@ class Client_functions extends common_function {
                         'form_header_data' => $form_header_data,
                         'form_footer_data' => $form_footer_data,
                         'publishdata' => $publishdata,
+                        'custom_code' => isset($custom_code) ? $custom_code : '',
                         'form_name' => isset($form_name) ? $form_name : 'Blank Form',
                         'design_settings' => $design_settings,
                         'debug' => array(
@@ -5776,17 +5754,101 @@ class Client_functions extends common_function {
                          $formData = @unserialize($rawDataFixed);
                      }
                 }
-                $elementtitle = strtolower($comebackdata['element_title']);
-                $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
                 
-                // First, try to get design settings from forms table (design_settings column)
-                // This is the primary source and takes precedence
-                $shopinfo = $this->current_store_obj;
-                $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
-                
-                $where_query = array(["", "id", "=", "$formid"], ["AND", "store_client_id", "=", "$store_user_id"]);
-                $resource_array = array('single' => true);
-                $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
+                // FORCE: Load Custom Code for Element 19 (HTML Element) from Forms Table
+                // This ensures the sidebar shows the global custom code even in the standard loading flow
+                if ($elementid == 19) {
+                     $parent_form_id = $formid;
+                     $cc_where = array(array("", "id", "=", "$parent_form_id"));
+                     $cc_res_l = $this->select_result(TABLE_FORMS, 'custom_code', $cc_where, array('single' => true));
+                     if (isset($cc_res_l['data']['custom_code'])) {
+                         $formData[0] = $cc_res_l['data']['custom_code'];
+                     }
+                }
+            // This only runs if the initial Type Lookup failed ($comebackdata is empty)
+            if (empty($comebackdata) && isset($elementid)) {
+                 $check_query = array(array("", "id", "=", $elementid));
+                 $check_res = $this->select_result(TABLE_FORM_DATA, '*', $check_query, array('single' => true));
+                 
+                 if (isset($check_res['data']['element_id'])) {
+                     $inst_data = $check_res['data'];
+                     $type_id = $inst_data['element_id'];
+                     $check_title = isset($inst_data['element_title']) ? strtolower($inst_data['element_title']) : '';
+                     
+                     // Helper to fetch valid store info
+                     $shop_info_local = $this->current_store_obj;
+                     $s_uid = is_object($shop_info_local) ? (isset($shop_info_local->store_user_id) ? $shop_info_local->store_user_id : '') : (isset($shop_info_local['store_user_id']) ? $shop_info_local['store_user_id'] : '');
+                     
+                     // CASE 1: Custom Code (Type 19 Only) - Exclude Header/Footer
+                     // User confirmed Type 21 is Last Name, so we must NOT treat it as Custom Code
+                     if ($type_id == 19 && strpos($check_title, 'header') === false && strpos($check_title, 'footer') === false) {
+                         $elementid = 19; // Force Type 19 (HTML Code)
+                         $form_data_id = $inst_data['id'];
+                         $formdata = $inst_data;
+                         
+                         // Fetch Type Def
+                         $td_res = $this->select_result(TABLE_ELEMENTS, '*', array(array("", "id", "=", 19)), array('single' => true));
+                         $comebackdata = $td_res['data'];
+                         
+                         // Fetch Custom Code Content
+                         // Robustness: Use the form_id linked to this element instance
+                         $parent_form_id = isset($inst_data['form_id']) ? $inst_data['form_id'] : $formid;
+                         
+                         $cc_where = array(array("", "id", "=", "$parent_form_id"));
+                         $cc_res_l = $this->select_result(TABLE_FORMS, 'custom_code', $cc_where, array('single' => true));
+                         
+                         $formData = array();
+                         $debug_status = "not_found";
+                         $debug_len = 0;
+                         if (isset($cc_res_l['data']['custom_code'])) {
+                             $formData[0] = $cc_res_l['data']['custom_code'];
+                             $debug_status = "fetched";
+                             $debug_len = strlen($formData[0]);
+                         }
+                         
+                         // Inject Client-Side Debugging
+
+                     }
+                     // CASE 2: Header Or Footer
+                     else if (strpos($check_title, 'header') !== false || strpos($check_title, 'footer') !== false) {
+                         $elementid = $type_id;
+                         $form_data_id = $inst_data['id'];
+                         $formdata = $inst_data;
+                         
+                         $td_res = $this->select_result(TABLE_ELEMENTS, '*', array(array("", "id", "=", $type_id)), array('single' => true));
+                         if (isset($td_res['data'])) $comebackdata = $td_res['data'];
+                         else $comebackdata = $inst_data; // Fallback
+                         
+                         // Fetch Header/Footer Content
+                         $cols = (strpos($check_title, 'header') !== false) ? 'header_title, header_description' : 'footer_title, footer_description';
+                         $hf_where = array(array("", "id", "=", "$formid"), array("AND", "store_client_id", "=", "$s_uid"));
+                         $hf_res_l = $this->select_result(TABLE_FORMS, $cols, $hf_where, array('single' => true));
+                         
+                         $formData = array();
+                         if (isset($hf_res_l['data'])) {
+                             if (strpos($check_title, 'header') !== false) {
+                                 $formData[0] = $hf_res_l['data']['header_title'];
+                                 $formData[1] = $hf_res_l['data']['header_description'];
+                             } else {
+                                 $formData[0] = $hf_res_l['data']['footer_title'];
+                                 $formData[1] = $hf_res_l['data']['footer_description'];
+                             }
+                         }
+                     }
+                 }
+            }
+            
+            $elementtitle = strtolower($comebackdata['element_title']);
+            $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
+            
+            // First, try to get design settings from forms table (design_settings column)
+            // This is the primary source and takes precedence
+            $shopinfo = $this->current_store_obj;
+            $store_user_id = is_object($shopinfo) ? (isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '') : (isset($shopinfo['store_user_id']) ? $shopinfo['store_user_id'] : '');
+            
+            $where_query = array(["", "id", "=", "$formid"], ["AND", "store_client_id", "=", "$store_user_id"]);
+            $resource_array = array('single' => true);
+            $form_result = $this->select_result(TABLE_FORMS, 'design_settings', $where_query, $resource_array);
                 
                 $design_settings = array();
                 $design_settings_key = 'element_' . $form_data_id;
@@ -8975,8 +9037,9 @@ class Client_functions extends common_function {
                     }else if($formData[1] == "3"){
                         $datavalue3 = "active";
                     }
+
                     $comeback .= '  <div class="">
-                        <div class="container tabContent container_'.$elementtitle.''.$form_data_id.'">
+                        <div class="container custom-code tabContent container_'.$elementtitle.''.$form_data_id.'">
                             <div>
                                 <div class="">
                                     <div class="form-control">
@@ -8988,7 +9051,7 @@ class Client_functions extends common_function {
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField Polaris-TextField--hasValue Polaris-TextField--multiline">
-                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__html-code" id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="4"  aria-invalid="false" aria-multiline="true" style="height: 108px;">'.$formData[0].'</textarea>
+                                                    <textarea name="'.$elementtitle.''.$form_data_id.'__html-code" id="enterCode" placeholder="" class="Polaris-TextField__Input" type="text" rows="10"  aria-invalid="false" aria-multiline="true" style="resize: vertical !important; min-height: 150px; height: auto;">'.$formData[0].'</textarea>
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                     <div aria-hidden="true" class="Polaris-TextField__Resizer">
                                                         <div class="Polaris-TextField__DummyInput">'.$formData[0].'<br></div>
@@ -9014,7 +9077,7 @@ class Client_functions extends common_function {
                                 </div>
                             </div>
                             
-                            '.$this->get_design_customizer_html($form_data_id, $elementid, $formid, null, $design_settings).'
+                            <!-- Design Customizer Removed for HTML Element -->
                             
                             <div class="form-control"><button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
                             </div>
@@ -9057,12 +9120,43 @@ class Client_functions extends common_function {
     }
 
     function save_all_element_design_settings() {
+        error_log("ENTRY: save_all_element_design_settings called via AJAX. POST keys: " . implode(',', array_keys($_POST)));
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         $shopinfo = (object)$this->current_store_obj;
         
         if (isset($_POST['store']) && $_POST['store'] != '' && isset($_POST['form_id']) && isset($_POST['all_settings'])) {
             $form_id = intval($_POST['form_id']);
-            $store_user_id = $shopinfo->store_user_id;
+            $store_user_id = isset($shopinfo->store_user_id) ? $shopinfo->store_user_id : '';
+            $original_form_id = $form_id;
+            
+            error_log("save_all_element_design_settings: Setup - Input form_id: $form_id, store_user_id: $store_user_id");
+
+            // Resolve Real Form ID (Primary Key)
+            // 1. Check if it's already the Primary Key
+            $where_pk = array(
+                ["", "id", "=", "$form_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
+            );
+            $pk_check = $this->select_result(TABLE_FORMS, 'id', $where_pk, ['single' => true]);
+            
+            if ($pk_check['status'] != 1 || empty($pk_check['data'])) {
+                // 2. If not PK, check if it's the Public ID
+                $where_pub = array(
+                    ["", "public_id", "=", "$original_form_id"],
+                    ["AND", "store_client_id", "=", "$store_user_id"]
+                );
+                $pub_check = $this->select_result(TABLE_FORMS, 'id', $where_pub, ['single' => true]);
+                
+                if ($pub_check['status'] == 1 && !empty($pub_check['data'])) {
+                    $form_id = intval($pub_check['data']['id']);
+                    error_log("save_all_element_design_settings: Resolved Public ID $original_form_id to Internal ID $form_id");
+
+                } else {
+                    error_log("save_all_element_design_settings: Form not found (Input: $original_form_id)");
+                    // If strictly not found, we continue but likely fail later.
+                }
+            }
+
             $all_settings = json_decode($_POST['all_settings'], true);
             
             if (!is_array($all_settings)) {
@@ -9073,7 +9167,7 @@ class Client_functions extends common_function {
             $saved_count = 0;
             $errors = array();
             
-            // Get existing design_settings from forms table
+            // Get existing design_settings from forms table (Using Resolved ID)
             $where_form = array(
                 ["", "id", "=", "$form_id"],
                 ["AND", "store_client_id", "=", "$store_user_id"]
@@ -9098,15 +9192,29 @@ class Client_functions extends common_function {
                 }
                 
                 // Verify formdata belongs to this form and store
+                // Relaxed check: Find by ID first, then verify form_id in PHP (better for debugging)
                 $where_check = array(
-                    ["", "id", "=", "$formdata_id"],
-                    ["AND", "form_id", "=", "$form_id"]
+                    ["", "id", "=", "$formdata_id"]
                 );
-                $formdata_check = $this->select_result(TABLE_FORM_DATA, 'id, element_id', $where_check, ['single' => true]);
+                $formdata_check = $this->select_result(TABLE_FORM_DATA, 'id, element_id, form_id', $where_check, ['single' => true]);
                 
+
+
                 if ($formdata_check['status'] != 1 || empty($formdata_check['data'])) {
-                    $errors[] = "Form data ID $formdata_id not found";
+                    $errors[] = "Form data ID $formdata_id not found in DB";
+
                     continue;
+                }
+                
+                // Validate Form ID match
+                $db_form_id = intval($formdata_check['data']['form_id']);
+                if ($db_form_id !== $form_id) {
+                     // Log mismatch but don't fail immediately if it's a minor type issue (though intval handles that)
+
+                     
+                     // Strict check failure
+                     $errors[] = "Form ID mismatch for element $formdata_id (Req: $form_id, DB: $db_form_id)";
+                     continue;
                 }
                 
                 // If element_id was missing from payload, use the one from DB
@@ -9116,7 +9224,12 @@ class Client_functions extends common_function {
                 
                 // Update design_settings in forms table (used for loading)
                 $key = 'element_' . $formdata_id;
-                $design_settings[$key] = $settings;
+                // Merge with existing settings to prevent data loss on partial updates
+                if (isset($design_settings[$key]) && is_array($design_settings[$key])) {
+                     $design_settings[$key] = array_merge($design_settings[$key], $settings);
+                } else {
+                     $design_settings[$key] = $settings;
+                }
                 
                 // Get existing element data
                 $where_query = array(
@@ -9133,10 +9246,44 @@ class Client_functions extends common_function {
                     }
                     
                     // Update design settings in element_data (backup/fallback)
-                    // Update design settings in element_data (backup/fallback) using indices 30-35
-                    $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                    // SPECIAL HANDLING: For Radio (13) and Checkbox (11), map custom colors
+                    if (in_array($element_id, [11, 13, 12])) { // 13=Radio, 11=Checkbox, 12=Terms
+                        // Option Color (Index 30) - Preserve existing if not in settings
+                        if (isset($settings['optionColor'])) {
+                            $element_data[30] = $settings['optionColor'];
+                        } elseif (isset($settings['color'])) {
+                             $element_data[30] = $settings['color'];
+                        } elseif (!isset($element_data[30])) {
+                             $element_data[30] = '#000000';
+                        }
+                        
+                        // Checkmark Color (Index 32) - Preserve existing if not in settings
+                        if (isset($settings['checkmarkColor'])) {
+                            $element_data[32] = $settings['checkmarkColor'];
+                        } elseif (!isset($element_data[32])) {
+                            $element_data[32] = '#000000';
+                        }
+                    } else {
+                        // Standard elements
+                        // Font Size (Index 30)
+                        if (isset($settings['inputFontSize'])) {
+                             $element_data[30] = intval($settings['inputFontSize']);
+                        } elseif (isset($settings['fontSize'])) {
+                             $element_data[30] = intval($settings['fontSize']);
+                        } elseif (!isset($element_data[30])) {
+                             $element_data[30] = 16;
+                        }
+
+                        // Color (Index 32)
+                        if (isset($settings['color'])) {
+                            $element_data[32] = $settings['color'];
+                        } elseif (!isset($element_data[32])) {
+                            $element_data[32] = '#000000';
+                        }
+                    }
+                    
                     $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
-                    $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                    // Index 32 handled above
                     $element_data[33] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
                     $element_data[34] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
                     $element_data[35] = isset($settings['labelFontSize']) ? intval($settings['labelFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
@@ -9161,7 +9308,50 @@ class Client_functions extends common_function {
                 }
             }
             
-            // Save design_settings to forms table
+            // START: NEW - Save consolidated design_settings to forms table
+            if (!empty($design_settings)) {
+                $serialized_settings = serialize($design_settings);
+                
+
+
+                // DIRECT PREPARED STATEMENT to ensure reliable saving
+                // This bypasses any issues with put_data escaping/quoting
+                if ($this->db) {
+                    $store_user_id_int = intval($store_user_id); // Cast to int for safety
+                    
+                    if ($store_user_id_int <= 0) {
+
+                         error_log("save_all_element_design_settings: Invalid store_user_id: $store_user_id");
+                    } else {
+                        $sql_update = "UPDATE " . TABLE_FORMS . " SET design_settings = ? WHERE id = ? AND store_client_id = ?";
+                        
+                        $stmt = $this->db->prepare($sql_update);
+                        if ($stmt) {
+                            // Changed "sis" (string, int, string) to "sii" (string, int, int)
+                            $stmt->bind_param("sii", $serialized_settings, $form_id, $store_user_id_int);
+                            $exec_result = $stmt->execute();
+                            if ($exec_result) {
+                                $affected = $stmt->affected_rows;
+                                $affected = $stmt->affected_rows;
+                                error_log("SUCCESS: Saved global design_settings for form $form_id. Rows matched: " . $affected);
+                            } else {
+
+                                error_log("ERROR: Failed to execute prepared statement for form $form_id: " . $stmt->error);
+                            }
+                            $stmt->close();
+                        } else {
+
+                            error_log("ERROR: Failed to prepare statement for form $form_id: " . $this->db->error);
+                        }
+                    }
+                } else {
+                     error_log("ERROR: Database connection missing for form $form_id");
+                }
+            }
+            // END: NEW
+            
+            // Save design_settings to forms table - REDUNDANT / REMOVED to avoid conflict with Prepared Statement above
+            /*
             if ($saved_count > 0) {
                 $update_design_settings = array('design_settings' => serialize($design_settings));
                 $update_where_form = array(
@@ -9170,6 +9360,7 @@ class Client_functions extends common_function {
                 );
                 $this->put_data(TABLE_FORMS, $update_design_settings, $update_where_form);
             }
+            */
             
             if ($saved_count > 0) {
                 $response_data = array('result' => 'success', 'msg' => "Saved $saved_count element design setting(s)", 'saved_count' => $saved_count);
@@ -9248,33 +9439,88 @@ class Client_functions extends common_function {
                 }
                 
                 // Update or remove settings for this element (using formdata_id as key)
+                // Update settings for this element (using formdata_id as key)
                 $key = 'element_' . $formdata_id;
-                if ($settings === null || empty($settings)) {
-                    unset($design_settings[$key]);
-                } else {
-                    $design_settings[$key] = $settings;
+                
+                // DATA PRESERVATION FIX:
+                // Do not unset/remove data if settings are empty. 
+                // Merge with existing settings to support partial updates.
+                if (isset($design_settings[$key]) && is_array($design_settings[$key]) && is_array($settings)) {
+                     $design_settings[$key] = array_merge($design_settings[$key], $settings);
+                } elseif (!empty($settings)) {
+                     $design_settings[$key] = $settings;
+                }
+                // If settings is empty, we do NOTHING (retain existing data), rather than unset it.
+                
+                // Save to database using direct prepared statement for reliability
+                $serialized_settings = serialize($design_settings);
+                
+                if ($this->db) {
+                    $sql_update = "UPDATE " . TABLE_FORMS . " SET design_settings = ? WHERE id = ? AND store_client_id = ?";
+                    $stmt = $this->db->prepare($sql_update);
+                    if ($stmt) {
+                        $stmt->bind_param("sis", $serialized_settings, $form_id, $store_user_id);
+                        $exec_result = $stmt->execute();
+                        if ($exec_result) {
+                             // Success
+                             error_log("SUCCESS: Single element design_settings saved for form $form_id");
+                        } else {
+                            error_log("ERROR: Single element prepared statement failed: " . $stmt->error);
+                        }
+                        $stmt->close();
+                    } else {
+                         error_log("ERROR: Single element prepare failed: " . $this->db->error);
+                    }
                 }
                 
-                // Save to database using put_data
-                $update_data = array('design_settings' => serialize($design_settings));
-                $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
-                $update_result = $this->put_data(TABLE_FORMS, $update_data, $update_where);
+                // Keep the update_result variable for existing logic flow below (faking success if query worked)
+                $update_result = isset($exec_result) && $exec_result ? json_encode(['status' => 1]) : json_encode(['status' => 0]);
 
                 // For consistency, also update TABLE_FORM_DATA (index 10-15) as a fallback
                 $where_element = array(["", "id", "=", "$formdata_id"], ["AND", "form_id", "=", "$form_id"]);
-                $element_result = $this->select_result(TABLE_FORM_DATA, 'element_data', $where_element, ['single' => true]);
+                $element_result = $this->select_result(TABLE_FORM_DATA, 'element_data, element_id', $where_element, ['single' => true]); // Added element_id to select
                 if ($element_result['status'] == 1 && !empty($element_result['data'])) {
                     $element_data = unserialize($element_result['data']['element_data']);
+                    $current_element_id = isset($element_result['data']['element_id']) ? intval($element_result['data']['element_id']) : $element_id;
+                    
                     if (is_array($element_data)) {
-                        $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                        // SPECIAL HANDLING: For Radio (13) and Checkbox (11), map custom colors
+                        if (in_array($current_element_id, [11, 13, 12])) { // 13=Radio, 11=Checkbox, 12=Terms
+                            $element_data[30] = isset($settings['optionColor']) ? $settings['optionColor'] : (isset($settings['color']) ? $settings['color'] : '#000000'); // Use index 30 for Option Color
+                            $element_data[32] = isset($settings['checkmarkColor']) ? $settings['checkmarkColor'] : '#000000'; // Use index 32 for Checkmark Color
+                        } else {
+                            $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
+                            $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                        }
+                        
                         $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
-                        $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                        // Index 32 handled above
                         $element_data[33] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
                         $element_data[34] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
                         $element_data[35] = isset($settings['labelFontSize']) ? intval($settings['labelFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
                         
                         $update_element_data = array('element_data' => serialize($element_data));
-                        $this->put_data(TABLE_FORM_DATA, $update_element_data, $where_element);
+                        // REMOVED put_data call
+                        
+                        // NEW: Update both element_data AND design_data using Prepared Statement
+                        $json_settings = json_encode($settings);
+                        $serialized_element_data = serialize($element_data);
+                        
+                        if ($this->db) {
+                            $sql_elem_update = "UPDATE " . TABLE_FORM_DATA . " SET element_data = ?, design_data = ? WHERE id = ? AND form_id = ?";
+                            $stmt_elem = $this->db->prepare($sql_elem_update);
+                            if ($stmt_elem) {
+                                $stmt_elem->bind_param("ssii", $serialized_element_data, $json_settings, $formdata_id, $form_id);
+                                if ($stmt_elem->execute()) {
+                                     error_log("SUCCESS: Updated element_data and design_data for form_data ID $formdata_id");
+                                } else {
+                                     error_log("ERROR: Failed to update element_data/design_data: " . $stmt_elem->error);
+                                }
+                                $stmt_elem->close();
+                            } else {
+                                error_log("ERROR: Prepare failed for element data update: " . $this->db->error);
+                            }
+                        }
                     }
                 }
                 
@@ -9755,11 +10001,20 @@ class Client_functions extends common_function {
     }
 
     function savepublishdata(){
+        error_log("=== savepublishdata CALLED ===");
+        error_log("POST data: " . print_r($_POST, true));
+        
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $form_id = isset($_POST['formid']) ?  $_POST['formid'] : '' ;
             $require_login = isset($_POST['require_login']) ?  $_POST['require_login'] : '' ;
             $login_message = isset($_POST['login_message']) ?  $_POST['login_message'] : '' ;
+            $custom_code = isset($_POST['custom_code']) ?  $_POST['custom_code'] : '' ;
+            
+            // Log the received custom code for debugging
+            error_log("savepublishdata: Form ID: " . $form_id);
+            error_log("savepublishdata: Received custom_code length: " . strlen($custom_code));
+            error_log("savepublishdata: Custom code preview: " . substr($custom_code, 0, 100));
 
             if($form_id != ""){
                 $where_query = array(["", "id", "=", $form_id]);
@@ -9771,13 +10026,23 @@ class Client_functions extends common_function {
                 if ($dataArray !== false) {
                     $dataArray[0] = $require_login;
                     $dataArray[1] = $login_message;
-                    $dataArray[2] = $dataArray[2];
+                    $dataArray[2] = isset($dataArray[2]) ? $dataArray[2] : md5(uniqid(rand(), true));
+                    
+                    // Properly escape custom_code to prevent SQL errors
+                    $custom_code_escaped = mysqli_real_escape_string($GLOBALS['conn'], $custom_code);
+                    
+                    error_log("savepublishdata: Storing custom_code in dedicated column");
+                    error_log("savepublishdata: Custom code length before escape: " . strlen($custom_code));
+                    error_log("savepublishdata: Custom code length after escape: " . strlen($custom_code_escaped));
                 
                     $updatedSerializedData = serialize($dataArray);
                     $fields = array(
                         '`publishdata`' => $updatedSerializedData,
+                        '`custom_code`' => $custom_code_escaped  // Store escaped code in dedicated column
                     );
                     $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+                    
+                    error_log("savepublishdata: Save result - " . json_encode($comeback));
                     $response_data = array('data' => 'success', 'msg' => 'Update successfully','outcome' => $comeback); 
                 } 
             }

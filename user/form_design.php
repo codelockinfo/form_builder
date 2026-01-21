@@ -526,6 +526,37 @@ if ($form_id > 0) {
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Custom Code Field - SIMPLE and EDITABLE -->
+                                    <div class="form-control" style="margin-top: 20px; margin-bottom: 20px;">
+                                        <div style="margin-bottom: 10px;">
+                                            <label style="font-weight: 600; font-size: 14px; display: block; margin-bottom: 8px;">
+                                                Custom HTML/CSS/JavaScript Code (element21)
+                                            </label>
+                                            <p style="color: #666; font-size: 13px; margin-bottom: 10px;">
+                                                This code will be displayed in your published form where element21 (HTML element) is positioned. You can use HTML, CSS, and JavaScript.
+                                            </p>
+                                        </div>
+                                        <textarea 
+                                            name="custom_code" 
+                                            id="custom_code_textarea"
+                                            class="custom-code-textarea" 
+                                            rows="15"
+                                            style="width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"
+                                            placeholder="Enter your custom HTML, CSS, or JavaScript code here...
+
+Example:
+<p style=&quot;color:red&quot;>Hello</p>
+
+<style>
+.my-class { background: #f0f0f0; }
+</style>
+
+<script>
+console.log('Custom code loaded');
+</script>"></textarea>
+                                    </div>
+                                    
                                     <div class="form-control hidden">
                                         <div class="">
                                             <div class="Polaris-Labelled__LabelWrapper">
@@ -985,6 +1016,34 @@ if ($form_id > 0) {
                                                         </div>
                                                         <div class="Polaris-TextField__Backdrop"></div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Custom Code Field for element21 -->
+                                    <div class="form-control">
+                                        <div class="textarea-wrapper">
+                                            <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label class="Polaris-Label__Text">Custom HTML Code (element21)</label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--multiline">
+                                                            <textarea 
+                                                                name="custom_code" 
+                                                                class="Polaris-TextField__Input custom-code-textarea" 
+                                                                rows="10" 
+                                                                placeholder="Enter your custom HTML, CSS, or JavaScript code here...&#10;&#10;Example:&#10;<p style=&quot;color:red&quot;>Hello</p>&#10;&#10;<style>&#10;.my-class { background: #f0f0f0; }&#10;</style>"></textarea>
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Labelled__HelpText">
+                                                    This code will be displayed in your published form as element21. You can use HTML, CSS, and JavaScript.
                                                 </div>
                                             </div>
                                         </div>
@@ -6797,7 +6856,7 @@ if ($form_id > 0) {
             }).attr('data-hover-bg', buttonHoverBgColor);
             
             // REMOVED: Applying to reset button here caused the issue
-            // Reset button is now handled by its own listeners in shopify_client4.js
+            // Reset button is now handled by its own listeners in shopify_client5.js
         };
         
         // Real-time preview updates for footer button design controls

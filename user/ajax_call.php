@@ -12,6 +12,7 @@ include_once ABS_PATH . '/user/cls_functions.php';
 $is_bad_shop = 0;
 $comeback = array('result' => 'fail', 'message' => 'Opps! Bad request call!');
 if (isset($_POST['routine_name']) && $_POST['routine_name'] != '' && isset($_POST['store']) && $_POST['store'] != '') {
+    error_log("AJAX CALL: " . $_POST['routine_name'] . " for store " . $_POST['store']);
     $obj_Client_functions = new Client_functions($_POST['store']);
     $current_user = $obj_Client_functions->get_store_detail_obj();
 

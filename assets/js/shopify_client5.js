@@ -58,23 +58,47 @@ function saveElementFormToTracker(formdataid) {
     elementChangesTracker.elements[formdataid] = elementData;
 
     // Also save design settings to tracker
-    var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
-    var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
-    if (isNaN(borderRadius) || borderRadius < 0) {
-        borderRadius = 4;
+    // Also save design settings to tracker - ONLY if inputs exist
+    var designSettings = {};
+    
+    var $labelFontSize = $('.element-design-label-font-size[data-formdataid="' + formdataid + '"]');
+    if ($labelFontSize.length) designSettings.labelFontSize = parseInt($labelFontSize.val()) || 16;
+    
+    var $inputFontSize = $('.element-design-input-font-size[data-formdataid="' + formdataid + '"]');
+    if ($inputFontSize.length) designSettings.inputFontSize = parseInt($inputFontSize.val()) || 16;
+    
+    var $fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]');
+    if ($fontWeight.length) designSettings.fontWeight = $fontWeight.val() || '400';
+    
+    var $color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]');
+    if ($color.length) designSettings.color = $color.val() || '#000000';
+    
+    var $borderRadius = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]');
+    if ($borderRadius.length) {
+         var brVal = $borderRadius.val();
+         var brInt = (brVal !== '' && brVal !== null && brVal !== undefined) ? parseInt(brVal) : 4;
+         if (isNaN(brInt) || brInt < 0) brInt = 4;
+         designSettings.borderRadius = brInt;
     }
-    var designSettings = {
-        fontSize: 16,
-        labelFontSize: parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
-        inputFontSize: parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
-        fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
-        color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
-        borderRadius: borderRadius,
-        bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || '',
-        optionColor: $('.element-design-option-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
-        checkmarkColor: $('.element-design-checkmark-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000'
-    };
-    elementChangesTracker.designSettings[formdataid] = designSettings;
+    
+    var $bgColor = $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]');
+    if ($bgColor.length) designSettings.bgColor = $bgColor.val() || '';
+    
+    var $optionColor = $('.element-design-option-color-text[data-formdataid="' + formdataid + '"]');
+    if ($optionColor.length) designSettings.optionColor = $optionColor.val() || '#000000';
+    
+    var $checkmarkColor = $('.element-design-checkmark-color-text[data-formdataid="' + formdataid + '"]');
+    if ($checkmarkColor.length) designSettings.checkmarkColor = $checkmarkColor.val() || '#000000';
+
+    // Only update tracker if we found settings, OR if we want to ensure preservation
+    if (Object.keys(designSettings).length > 0) {
+        // Merge with existing tracker data to avoid losing keys not present in this specific form view
+        if (elementChangesTracker.designSettings[formdataid]) {
+            $.extend(elementChangesTracker.designSettings[formdataid], designSettings);
+        } else {
+            elementChangesTracker.designSettings[formdataid] = designSettings;
+        }
+    }
 }
 
 // Fix for "store is not defined" error
@@ -845,6 +869,51 @@ function get_selected_elements(form_id, callback) {
                     $('.login_message').html(response['publishdata']['1'] || '');
                     $('.embed_code').val('<div data-formid="' + (response['publishdata']['2'] || '') + '"></div>');
                 }
+                
+                // Populate custom code into element21's HTML code field
+                if (response['custom_code']) {
+
+                    
+                    // Store in global variable for use when element21 properties panel opens
+                    window.formCustomCode = response['custom_code'];
+                    
+                    // Function to load custom code with retries
+                    var loadCustomCode = function(customCode, attempt) {
+                        attempt = attempt || 1;
+                        
+                         // Find element21 OR element19 in the form
+                        var $elementtarget = $('.selected_element_set .element-item[data-id="element21"], .selected_element_set .element-item[data-id="element19"]').first();
+                        
+                        if ($elementtarget.length > 0) {
+                            var formDataId = $elementtarget.attr('data-formdataid');
+                            if (formDataId) {
+                                // Find the HTML code textarea for this element
+                                var $htmlCodeTextarea = $('textarea[name="html' + formDataId + '__html-code"]');
+                                if ($htmlCodeTextarea.length > 0) {
+                                    $htmlCodeTextarea.val(customCode);
+
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                        // If not found and we haven't tried 5 times yet, try again
+                        if (attempt < 5) {
+
+                            setTimeout(function() {
+                                loadCustomCode(customCode, attempt + 1);
+                            }, attempt * 200);
+                        } else {
+
+                        }
+                        return false;
+                    };
+                    
+                    // Try to load immediately
+                    loadCustomCode(response['custom_code']);
+                } else {
+                    window.formCustomCode = '';
+                }
                 $(".selected_element_set").sortable({
                     opacity: 0.6,
                     cursor: 'move',
@@ -894,20 +963,28 @@ function get_selected_elements(form_id, callback) {
                         var $headerEditor = $('.headerData textarea[name="contentheader"]');
                         var headerContent = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
 
+
                         if ($headerEditor.length > 0 && !CKEDITOR.instances['contentheader']) {
                             // Set the textarea value first
                             $headerEditor.val(headerContent);
                             initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
 
-                            // Wait for CKEditor to be ready, then set the data
-                            setTimeout(function () {
-                                if (CKEDITOR.instances['contentheader']) {
-                                    CKEDITOR.instances['contentheader'].setData(headerContent);
+                            // Wait for CKEditor to be fully ready using instanceReady event
+                            CKEDITOR.on('instanceReady', function(evt) {
+                                if (evt.editor.name === 'contentheader') {
+                                    evt.editor.setData(headerContent);
                                 }
-                            }, 500);
+                            });
                         } else if (CKEDITOR.instances['contentheader']) {
-                            // If already exists, set the data
-                            CKEDITOR.instances['contentheader'].setData(headerContent);
+                            // If already exists, check if it's ready before setting data
+                            var headerInstance = CKEDITOR.instances['contentheader'];
+                            if (headerInstance.status === 'ready') {
+                                headerInstance.setData(headerContent);
+                            } else {
+                                headerInstance.on('instanceReady', function() {
+                                    this.setData(headerContent);
+                                });
+                            }
                         }
 
                         // Initialize footer description editor
@@ -919,15 +996,22 @@ function get_selected_elements(form_id, callback) {
                             $footerEditor.val(footerContent);
                             initializeCKEditor('contentfooter', '.footer .footer-data__footerdescription');
 
-                            // Wait for CKEditor to be ready, then set the data
-                            setTimeout(function () {
-                                if (CKEDITOR.instances['contentfooter']) {
-                                    CKEDITOR.instances['contentfooter'].setData(footerContent);
+                            // Wait for CKEditor to be fully ready using instanceReady event
+                            CKEDITOR.on('instanceReady', function(evt) {
+                                if (evt.editor.name === 'contentfooter') {
+                                    evt.editor.setData(footerContent);
                                 }
-                            }, 500);
+                            });
                         } else if (CKEDITOR.instances['contentfooter']) {
-                            // If already exists, set the data
-                            CKEDITOR.instances['contentfooter'].setData(footerContent);
+                            // If already exists, check if it's ready before setting data
+                            var footerInstance = CKEDITOR.instances['contentfooter'];
+                            if (footerInstance.status === 'ready') {
+                                footerInstance.setData(footerContent);
+                            } else {
+                                footerInstance.on('instanceReady', function() {
+                                    this.setData(footerContent);
+                                });
+                            }
                         }
                     }, 300);
                 }
@@ -1166,6 +1250,15 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
                 if (comeback['code'] != undefined && comeback['code'] == '403') {
                 } else {
                     $(".elementAppend").html(comeback.outcome);
+                
+                
+                
+                    // If this is element21 or element19, load custom code from database (Client-side sync as backup)
+                    if ((elementId == 21 || elementId == 19) && typeof window.formCustomCode !== 'undefined' && window.formCustomCode) {
+                         // Update cache for save persistence
+                         // Note: Textarea population is now handled by PHP server-side
+                    }
+                    
                     initializeCKEditor('contentparagraph', '');
 
                     // Initialize Select2 for file extensions dropdown (without placeholder)
@@ -1655,7 +1748,7 @@ function saveAllElementProperties(onComplete) {
         }
     });
 
-    console.log("saveAllElementProperties: IDs to save: ", allFormdataids);
+
 
     allFormdataids.forEach(function (formdataid) {
         var elementData = null;
@@ -1737,7 +1830,7 @@ function saveAllElementProperties(onComplete) {
         }
     });
 
-    console.log("saveAllElementProperties: Final allElementsData to be sent:", allElementsData);
+
 
     // Save each element
     if (allElementsData.length > 0) {
@@ -1769,7 +1862,7 @@ function saveAllElementProperties(onComplete) {
                 processData: false,
                 data: formData,
                 success: function (response) {
-                    console.log("saveAllElementProperties: Success response for element " + elementData['formdata_id'] + ":", response);
+
                     saveCount++;
                     if (saveCount === totalCount && typeof onComplete === 'function') {
                         onComplete();
@@ -1924,59 +2017,49 @@ function saveAllElementDesignSettings(onComplete) {
     var formId = $('#form_id').val() || $('input[name="form_id"]').val() || $('.formid').val();
 
     if (!formId || !storeName) {
-        console.warn("saveAllElementDesignSettings: Skipped due to missing formId or storeName");
+
         if (typeof onComplete === 'function') onComplete();
         return;
     }
 
     var allDesignData = [];
-    console.log("saveAllElementDesignSettings: Starting save...", elementChangesTracker.designSettings);
 
-    $('.builder-item-wrapper[data-formdataid]').each(function () {
-        var $wrapper = $(this);
-        var formdataid = $wrapper.attr('data-formdataid');
-        var resId = $wrapper.attr('data-id');
 
-        // Debug: log all data-id attributes in this wrapper
-        var allDataIds = [];
-        $wrapper.find('[data-id]').each(function () {
-            allDataIds.push($(this).attr('data-id'));
-        });
-        console.log("DEBUG: Wrapper " + formdataid + " contains data-ids:", allDataIds);
+    // Fix: Iterate over the actual active elements in the form, not builder wrappers
+    // Fix: Iterate over the tracker data directly to ensure captured changes are sent
+    // This avoids dependency on brittle DOM selectors (.selected_element_set > li) matching exactly
+    var trackedIds = Object.keys(elementChangesTracker.designSettings);
 
-        // Try multiple ways to get element_id
+
+    trackedIds.forEach(function (formdataid) {
+        var settings = elementChangesTracker.designSettings[formdataid];
         var elementid = '';
-        if (resId) {
-            elementid = resId.replace('element', '');
+
+        // 1. Try to get element_id from the elements tracker
+        if (elementChangesTracker.elements[formdataid] && elementChangesTracker.elements[formdataid]['element_id']) {
+            elementid = elementChangesTracker.elements[formdataid]['element_id'];
         }
 
-        // Fallback: look for data-id on the .code-form-control inside
+        // 2. If missing, look up in DOM (robust generic attribute search)
         if (!elementid) {
-            var $formControl = $wrapper.find('.code-form-control[data-id]').first();
-            if ($formControl.length) {
-                var dataId = $formControl.attr('data-id');
-                if (dataId) {
-                    elementid = dataId.replace('element', '');
+            var $el = $('[data-formdataid="' + formdataid + '"]').first();
+            if ($el.length) {
+                // Try data-id on the element itself or children
+                var dataId = $el.attr('data-id');
+                if (!dataId) {
+                     var $child = $el.find('[data-id^="element"]').first();
+                     if ($child.length) dataId = $child.attr('data-id');
                 }
-            }
-        }
-
-        // Another fallback: look for any element with data-id inside
-        if (!elementid) {
-            var $anyDataId = $wrapper.find('[data-id]').first();
-            if ($anyDataId.length) {
-                var dataId = $anyDataId.attr('data-id');
+                
                 if (dataId && dataId.indexOf('element') === 0) {
                     elementid = dataId.replace('element', '');
                 }
             }
         }
 
-        console.log("saveAllElementDesignSettings: Processing " + formdataid + ", wrapper data-id=" + resId + ", extracted element_id=" + elementid);
 
-        if (elementChangesTracker.designSettings[formdataid]) {
-            var settings = elementChangesTracker.designSettings[formdataid];
-            console.log("saveAllElementDesignSettings: Found settings for " + formdataid, settings);
+
+        if (settings) {
             allDesignData.push({
                 formdata_id: formdataid,
                 element_id: elementid,
@@ -1985,7 +2068,7 @@ function saveAllElementDesignSettings(onComplete) {
         }
     });
 
-    console.log("saveAllElementDesignSettings: Final payload to send:", allDesignData);
+
 
     if (allDesignData.length === 0) {
         if (typeof onComplete === 'function') onComplete();
@@ -2002,6 +2085,7 @@ function saveAllElementDesignSettings(onComplete) {
             all_settings: JSON.stringify(allDesignData)
         },
         success: function (response) {
+
             if (typeof onComplete === 'function') onComplete();
         },
         error: function () {
@@ -2012,10 +2096,81 @@ function saveAllElementDesignSettings(onComplete) {
 
 function savepublishdata() {
     var storeName = $('#store_name').val() || window.store || "";
+    
+    // Get custom code from element21's saved properties
+    // Init as null to distinguish "found nothing" vs "found empty string"
+    var customCodeValue = null;
+    
+    // Method 1: Check elementChangesTracker (User explicitly saved properties)
+    if (typeof elementChangesTracker !== 'undefined' && elementChangesTracker.properties) {
+        for (var formDataId in elementChangesTracker.properties) {
+            var props = elementChangesTracker.properties[formDataId];
+            if (props.element_id == 21 || props.id == 21) {
+                var htmlCodeKey = 'html' + formDataId + '__html-code';
+                if (props[htmlCodeKey] !== undefined) {
+                    customCodeValue = props[htmlCodeKey];
+
+                    break;
+                }
+                if (props.element_data && Array.isArray(props.element_data) && props.element_data[10] !== undefined) {
+                    customCodeValue = props.element_data[10];
+
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Method 2: Check visible textarea (User concurrently editing)
+    if (customCodeValue === null) {
+        var $htmlTextarea = $(".elementAppend").find('textarea[name$="__html-code"]:visible');
+        if ($htmlTextarea.length === 0) {
+             // Fallback selector
+             $htmlTextarea = $('textarea[name^="html"][name$="__html-code"]:visible').first();
+        }
+        
+        if ($htmlTextarea.length > 0) {
+            customCodeValue = $htmlTextarea.val() || '';
+
+        }
+    }
+    
+    // Method 3: Fallback to cached DB value (Panel closed, no unrelated edits)
+    if (customCodeValue === null) {
+        if (typeof window.formCustomCode !== 'undefined') {
+            customCodeValue = window.formCustomCode;
+
+        }
+    }
+
+    
+    if (customCodeValue === null) {
+        customCodeValue = '';
+
+    }
+    
+    // CRITICAL: Update the local cache so subsequent saves (e.g. if panel closed) use the LATEST value
+    window.formCustomCode = customCodeValue;
+    
+
+    if (customCodeValue.length > 0) {
+
+    } else {
+        console.warn('⚠️ No custom code found - make sure element21 (HTML element) is added to the form');
+    }
+    
     var form_data = $(".add_publishdata")[0];
     var form_data = new FormData(form_data);
+    
+    // Set custom_code
+    form_data.set('custom_code', customCodeValue);
     form_data.append('store', storeName);
     form_data.append('routine_name', 'savepublishdata');
+    
+
+
+
+    
     $.ajax({
         url: "ajax_call.php",
         type: "post",
@@ -2024,7 +2179,17 @@ function savepublishdata() {
         processData: false,
         data: form_data,
         success: function (response) {
-            var response = JSON.parse(response);
+            var parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
+
+            
+            if (parsedResponse.data === 'success') {
+
+            } else {
+                console.error('❌ Save failed:', parsedResponse.msg);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('❌ AJAX Error:', error);
         }
     });
 }
@@ -2419,7 +2584,7 @@ $(document).on('input change', '.element-design-color, .element-design-option-co
                 elementChangesTracker.designSettings[formdataid] = {};
             }
             elementChangesTracker.designSettings[formdataid][settingsKey] = val;
-            console.log("Color Sync: Updated tracker for " + formdataid + " " + settingsKey + " = " + val);
+
         }
     }
 });
