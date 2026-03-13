@@ -34,8 +34,8 @@ if(isset($_GET['shop']) && $_GET['shop'] != ''){
           </div>
         </button>
         <div class="Polaris-TopBar__LogoContainer Polaris-TopBar__LogoDisplayControl" style="width: auto; padding-right: 20px;">
-            <a class="Polaris-TopBar__LogoLink 33333" href="#" data-polaris-unstyled="true">
-                <img alt="Easy form builder shopify app" src="../assets/images/Form Builder.png" class="Polaris-TopBar__Logo 4444" style="width:40px">
+            <a class="Polaris-TopBar__LogoLink" href="#" data-polaris-unstyled="true">
+                <img alt="Easy form builder shopify app" src="../assets/images/Form Builder.png" class="Polaris-TopBar__Logo" style="width:40px">
             </a>
             <span style="font-weight: 600; font-size: 15px; white-space: nowrap; margin-left: 10px;">Easy form builder</span>
         </div>
