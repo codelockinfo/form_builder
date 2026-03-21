@@ -527,10 +527,7 @@ include_once('cls_header.php');
                       --pc-horizontal-stack-wrap: wrap;
                       --pc-horizontal-stack-gap-xs: var(--p-space-2);
                     ">
-                                    <button class="Polaris-Button" type="button">
-                                        <span class="Polaris-Button__Content"><span
-                                                class="Polaris-Button__Text close2_new">Close</span></span>
-                                    </button>
+
                                     <button class="Polaris-Button Polaris-Button--primary btncreate_new" type="submit">
                                         <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Create
                                                 Form</span></span>
