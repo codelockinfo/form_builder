@@ -1094,12 +1094,23 @@ $(document).on("click", ".btnFormSubmit", function (event) {
 });
 
 
-function getAllForm() {
+function getAllForm(sort_by) {
+    var data = { 'routine_name': 'getAllFormFunction', store: store };
+    
+    // Get sort_by from dropdown if not passed
+    if (!sort_by) {
+        sort_by = $("#PolarisSelect9").val();
+    }
+    
+    if (sort_by) {
+        data.sort_by = sort_by;
+    }
+
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
-        data: { 'routine_name': 'getAllFormFunction', store: store },
+        data: data,
         success: function (comeback) {
             var comeback = JSON.parse(comeback);
             if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -1114,6 +1125,15 @@ function getAllForm() {
         }
     });
 }
+
+// Handle sorting for form list
+$(document).on('change', '#PolarisSelect9', function() {
+    var sort_by = $(this).val();
+    var selected_text = $(this).find('option:selected').text();
+    // Update the Polaris UI selected option text
+    $(this).closest('.Polaris-Select').find('.Polaris-Select__SelectedOption').text(selected_text);
+    getAllForm(sort_by);
+});
 
 function getAllFormSubmissions() {
     $.ajax({
