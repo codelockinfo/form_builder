@@ -12,6 +12,8 @@
             });
                   // code for create new form end
            $(".main_list_").click(function () {
+                $(".main_list_").removeClass("active_form");
+                $(this).addClass("active_form");
                 $(".first_txt_image").removeClass("first_txt_image");
                 $(this).find(".text_image_list").addClass("first_txt_image");
                 var getval = $(this).data("val");

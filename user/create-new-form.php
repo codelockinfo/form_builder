@@ -467,7 +467,7 @@ include_once('cls_header.php');
                   ">
                                 <div class="Polaris-TextContainer">
                                     <div class="d-flex-b">
-                                        <div class="main_list_" data-val="1">
+                                        <div class="main_list_ active_form" data-val="1">
                                             <img src="../assets/images/form_img/build_from_scratch.jpg" alt="" />
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
