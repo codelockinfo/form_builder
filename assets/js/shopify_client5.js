@@ -151,8 +151,17 @@ function getCookie(cname) {
 }
 function flashNotice($message, $class) {
     $class = ($class != undefined) ? $class : '';
+    
+    var animationClass = 'bounceInUp';
+    var wrapperPositionClass = '';
+    
+    // If it's a success message, show at the top with a different animation
+    if ($class === 'success' || $class === 'inline-flash--success') {
+        animationClass = 'bounceInDown';
+        wrapperPositionClass = 'flash-top';
+    }
 
-    var flashmessageHtml = '<div class="inline-flash-wrapper animated bounceInUp inline-flash-wrapper--is-visible ourFlashmessage"><div class="inline-flash ' + $class + '  "><p class="inline-flash__message">' + $message + '</p></div></div>';
+    var flashmessageHtml = '<div class="inline-flash-wrapper animated ' + animationClass + ' inline-flash-wrapper--is-visible ourFlashmessage ' + wrapperPositionClass + '"><div class="inline-flash ' + $class + '  "><p class="inline-flash__message">' + $message + '</p></div></div>';
 
     if ($('.ourFlashmessage').length) {
         $('.ourFlashmessage').remove();
@@ -1524,13 +1533,27 @@ $(document).on("change", ".switch input[name='checkbox']", function () {
     if (!ischecked) {
         var ischecked_value = 0;
     }
+    var _this = $(this);
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
         data: { 'routine_name': 'change_form_status', store: store, "formid": formId, "ischecked_value": ischecked_value },
         success: function (comeback) {
-            var comeback = JSON.parse(comeback);
+            var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
+            if (response.result === 'success') {
+                var msg = (ischecked_value == 1) ? 'Form successfully activated' : 'Form deactivated';
+                
+                // Show message in the specific row container
+                var $msgBox = _this.closest(".Polaris-ResourceList__HeaderWrapper").find(".form_status_msg_show");
+                $msgBox.text(msg).css('display', 'inline-block').fadeIn();
+                
+                setTimeout(function() {
+                    $msgBox.fadeOut();
+                }, 3000);
+            } else {
+                flashNotice('Something went wrong', 'error');
+            }
         }
     });
 
