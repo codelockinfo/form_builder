@@ -151,6 +151,15 @@ function getCookie(cname) {
 }
 function flashNotice($message, $class) {
     $class = ($class != undefined) ? $class : '';
+    
+    var animationClass = 'bounceInUp';
+    var wrapperPositionClass = '';
+    
+    // If it's a success message, show at the top with a different animation
+    if ($class === 'success' || $class === 'inline-flash--success') {
+        animationClass = 'bounceInDown';
+        wrapperPositionClass = 'flash-top';
+    }
 
     var flashmessageHtml = '<div class="inline-flash-wrapper animated bounceInLeft inline-flash-wrapper--is-visible ourFlashmessage" style="top: 1.6rem; bottom: auto; justify-content: flex-start; padding-left: 20px; z-index: 99999;"><div class="inline-flash ' + $class + '  "><p class="inline-flash__message">' + $message + '</p></div></div>';
 
@@ -1234,12 +1243,23 @@ $(document).on("click", ".btnFormSubmit", function (event) {
 });
 
 
-function getAllForm() {
+function getAllForm(sort_by) {
+    var data = { 'routine_name': 'getAllFormFunction', store: store };
+    
+    // Get sort_by from dropdown if not passed
+    if (!sort_by) {
+        sort_by = $("#PolarisSelect9").val();
+    }
+    
+    if (sort_by) {
+        data.sort_by = sort_by;
+    }
+
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
-        data: { 'routine_name': 'getAllFormFunction', store: store },
+        data: data,
         success: function (comeback) {
             var comeback = JSON.parse(comeback);
             if (comeback['code'] != undefined && comeback['code'] == '403') {
@@ -1254,6 +1274,15 @@ function getAllForm() {
         }
     });
 }
+
+// Handle sorting for form list
+$(document).on('change', '#PolarisSelect9', function() {
+    var sort_by = $(this).val();
+    var selected_text = $(this).find('option:selected').text();
+    // Update the Polaris UI selected option text
+    $(this).closest('.Polaris-Select').find('.Polaris-Select__SelectedOption').text(selected_text);
+    getAllForm(sort_by);
+});
 
 function getAllFormSubmissions() {
     $.ajax({
@@ -1673,13 +1702,27 @@ $(document).on("change", ".switch input[name='checkbox']", function () {
     if (!ischecked) {
         var ischecked_value = 0;
     }
+    var _this = $(this);
     $.ajax({
         url: "ajax_call.php",
         type: "post",
         dataType: "json",
         data: { 'routine_name': 'change_form_status', store: store, "formid": formId, "ischecked_value": ischecked_value },
         success: function (comeback) {
-            var comeback = JSON.parse(comeback);
+            var response = (typeof comeback === 'string') ? JSON.parse(comeback) : comeback;
+            if (response.result === 'success') {
+                var msg = (ischecked_value == 1) ? 'Form successfully activated' : 'Form deactivated';
+                
+                // Show message in the specific row container
+                var $msgBox = _this.closest(".Polaris-ResourceList__HeaderWrapper").find(".form_status_msg_show");
+                $msgBox.text(msg).css('display', 'inline-block').fadeIn();
+                
+                setTimeout(function() {
+                    $msgBox.fadeOut();
+                }, 3000);
+            } else {
+                flashNotice('Something went wrong', 'error');
+            }
         }
     });
 

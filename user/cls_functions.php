@@ -2498,6 +2498,19 @@ class Client_functions extends common_function
 
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $where_query = array(["", "store_client_id", "=", "$shopinfo->store_user_id"]);
+            
+            // Handle sorting
+            if (isset($_POST['sort_by']) && $_POST['sort_by'] != '') {
+                if ($_POST['sort_by'] == 'DATE_CREATED_DESC') {
+                    $where_query[] = ["id", "ORDER BY", "DESC"];
+                } elseif ($_POST['sort_by'] == 'DATE_CREATED_ASC') {
+                    $where_query[] = ["id", "ORDER BY", "ASC"];
+                }
+            } else {
+                // Default fallback sort
+                $where_query[] = ["id", "ORDER BY", "DESC"];
+            }
+
             // Select public_id field to display 6-digit ID
             $comeback_client = $this->select_result(TABLE_FORMS, 'id, form_name, status, store_client_id, public_id', $where_query);
             $html = "";
@@ -2543,8 +2556,8 @@ class Client_functions extends common_function
                                             </div>
                                         </div>
                                     </div>
-                    
-                                    <div class="Polaris-ResourceList__AlternateToolWrapper main_right_" style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 300px; padding-right: 2px;">
+                                    <div class="form_status_msg_show" style="display:none; background: #008060; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin: 0 15px; position: absolute; right: 31%; top: 0%;"></div>
+                                    <div class="111 Polaris-ResourceList__AlternateToolWrapper main_right_">
                                         ';
                     if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {
                         $html .= '<div class="svgicon" style="width: 60px; display: flex; justify-content: center;">

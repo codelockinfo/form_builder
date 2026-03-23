@@ -498,7 +498,7 @@ include_once('cls_header.php');
                   ">
                                 <div class="Polaris-TextContainer">
                                     <div class="d-flex-b">
-                                        <div class="main_list_" data-val="1">
+                                        <div class="main_list_ active_form" data-val="1">
                                             <img src="../assets/images/form_img/build_from_scratch.jpg" alt="" />
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
@@ -558,10 +558,7 @@ include_once('cls_header.php');
                       --pc-horizontal-stack-wrap: wrap;
                       --pc-horizontal-stack-gap-xs: var(--p-space-2);
                     ">
-                                    <button class="Polaris-Button" type="button">
-                                        <span class="Polaris-Button__Content"><span
-                                                class="Polaris-Button__Text close2_new">Close</span></span>
-                                    </button>
+
                                     <button class="Polaris-Button Polaris-Button--primary btncreate_new" type="submit">
                                         <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Create
                                                 Form</span></span>

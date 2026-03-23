@@ -337,10 +337,15 @@ input:checked+.slider:before {
 .main_list_ {
   cursor: pointer;
 }
+.active_form {
+  border: 4px solid #008060 !important;
+  padding: 10px !important;
+  box-shadow: 0 0 10px rgba(0, 128, 96, 0.4) !important;
+}
 
 .first_txt_image {
   color: #fff;
-  background-color: #737373;
+  background-color: #008060 !important;
 }
 
 .disp_flex_input {
