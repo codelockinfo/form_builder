@@ -1,6 +1,4 @@
-body {
-  padding: 5px;
-}
+
 /* cls015 start */
 .code-form-app.boxed-layout {
   padding: 30px;
@@ -485,3 +483,17 @@ input:focus-visible {
   border-radius: 3px;
   background: linear-gradient(180deg, #fff, #f9fafb);
 }
+
+/* Mobile actions for list buttons */
+@media (max-width: 768px) {
+  .btn-action-mobile .btn-text {
+    display: none !important;
+  }
+  .btn-action-mobile .btn-icon {
+    display: inline-block !important;
+    vertical-align: middle;
+  }
+  .btn-action-mobile {
+    padding: 6px 12px !important;
+  }
+}

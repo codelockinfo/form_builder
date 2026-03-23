@@ -19,13 +19,13 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
-        <link rel="shortcut icon" type="image/webp" href="<?php echo main_url('assets/images/logo.webp'); ?>">
-        <link rel="apple-touch-icon" href="<?php echo main_url('assets/images/logo.webp'); ?>">
+        <link rel="icon" type="image/png" href="<?php echo main_url('assets/images/app_logo.png'); ?>">
+        <link rel="shortcut icon" type="image/png" href="<?php echo main_url('assets/images/app_logo.png'); ?>">
+        <link rel="apple-touch-icon" href="<?php echo main_url('assets/images/app_logo.png'); ?>">
 
         <title><?php echo CLS_SITE_NAME; ?></title>
         <link rel="stylesheet" href="<?php echo main_url('assets/css/polaris_style.css'); ?>" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/customstyle.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/customstyle.css?v='.time()); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/style.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" rel="stylesheet">
@@ -44,6 +44,6 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <script src="<?php echo main_url('assets/js/owl.carousel.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/owl.carousel.min.js'); ?>"></script>
         <script src="<?php echo main_url('assets/js/style2.js'); ?>"></script>
-        <script src="<?php echo main_url('assets/js/shopify_client4.js'); ?>"></script>
+        <script src="<?php echo main_url('assets/js/shopify_client5.js?v='.time()); ?>"></script>
   
    

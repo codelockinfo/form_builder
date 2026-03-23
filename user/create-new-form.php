@@ -17,10 +17,42 @@
     <script src="../assets/js/owl.carousel.min.js" type="text/javascript"></script>
     <script src="../assets/js/ckeditor.js" type="text/javascript"></script>
 </head> -->
-<?php 
-include_once('cls_header.php'); 
+<?php
+
+include_once('cls_header.php');
 
 ?>
+<style>
+/* Override Polaris checked checkbox color to match the primary button (#008060) */
+.Polaris-Checkbox, 
+.Polaris-Checkbox *,
+.Polaris-ResourceList__CheckableButtonWrapper {
+    --p-color-bg-interactive: #008060 !important;
+    --p-color-bg-interactive-active: #008060 !important;
+    --p-color-border-interactive: #008060 !important;
+    --p-color-border-interactive-focus: #008060 !important;
+    --p-interactive-active: #008060 !important;
+}
+
+/* Fallbacks for older Polaris versions that don't just use CSS variables */
+.Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop,
+.Polaris-Checkbox__Input:indeterminate + .Polaris-Checkbox__Backdrop,
+html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop {
+    border-color: #008060 !important;
+    background-color: transparent !important; /* Let ::before cover it */
+}
+.Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop::before,
+.Polaris-Checkbox__Input:indeterminate + .Polaris-Checkbox__Backdrop::before,
+html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop::before {
+    background-color: #008060 !important;
+    border-color: #008060 !important;
+}
+
+/* For the native header checkbox */
+#headerCheckAllOuter[type=checkbox] {
+    accent-color: #008060 !important;
+}
+</style>
 
 <div class="Polaris-Page">
         <div class="Polaris-Page-Header Polaris-Page-Header--hasActionMenu Polaris-Page-Header--noBreadcrumbs Polaris-Page-Header--mediumTitle">
@@ -61,212 +93,56 @@ include_once('cls_header.php');
                     </div>
                 </div>
             </div>
-            <div class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
-                <div class="Polaris-ResourceList__HeaderContentWrapper">
-                    <!-- <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div> -->
-                    <div class="Polaris-ResourceList__CheckableButtonWrapper">
-                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain selectedshow">
-                            <label class="Polaris-Choice">
-                                <span class="Polaris-Choice__Control">
-                                  <span class="Polaris-Checkbox">
-                                    <input name="chekbox1" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
-                                    <span class="Polaris-Checkbox__Backdrop">
-                                    </span>
-                                    <span class="Polaris-Checkbox__Icon">
-                                      <span class="Polaris-Icon">
-                                        <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
-                                        </span>
-                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                          <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                          </path>
-                                        </svg>
-                                      </span>
-                                    </span>
-                                  </span>
-                                </span>
-                              </label>
-                            <span class="Polaris-CheckableButton__Label dataAdded"></span>
-                           
-                        </div>
-                        <div class="bultActionss">
-                                <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented" data-buttongroup-segmented="true">
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--selectMode Polaris-CheckableButton__CheckableButton--selected">
-                                              
-                                                <div class="Polaris-CheckableButton__Checkbox">
-                                                <label class="Polaris-Choice">
-                                                    <span class="Polaris-Choice__Control">
-                                                    <span class="Polaris-Checkbox">
-                                                        <input name="chekbox1" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="" id="checkAll">
-                                                        <span class="Polaris-Checkbox__Backdrop">
-                                                        </span>
-                                                        <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                            <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
-                                                            </span>
-                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                            </path>
-                                                            </svg>
-                                                        </span>
-                                                        </span>
-                                                    </span>
-                                                    </span>
-                                                    <span class="Polaris-Choice__Label Deselectcount"></span>
-                                                </label>
-                                                    <!-- <label class="Polaris-Choice Polaris-Choice--labelHidden" for="PolarisCheckbox2">
-                                                        <span class="Polaris-Choice__Control">
-                                                            <span class="Polaris-Checkbox">
-                                                                <input id="checkAll" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value="" >
-                                                                <span class="Polaris-Checkbox__Backdrop"></span>
-                                                                <span class="Polaris-Checkbox__Icon">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </span>
-                                                            </span>
-                                                        </span>
-                                                    
-                                                    </label> -->
-                                                </div>
-                                                <!-- <span class="Polaris-CheckableButton__Label">4 selected</span> -->
-                                            </div>
-                                   
-                                    </div>
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div class="Polaris-BulkActions__BulkActionButton">
-                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
-                                                <span class="Polaris-Button__Content">
-                                                    <span class="Polaris-Button__Text">Duplicate selected form(s)</span>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div>
-                                            <div>
-                                                <div class="Polaris-BulkActions__BulkActionButton">
-                                                    <button class="Polaris-Button" type="button" tabindex="0" aria-controls="Polarispopover1" aria-owns="Polarispopover1" aria-expanded="false">
-                                                        <span class="Polaris-Button__Content">
-                                                            <span class="Polaris-Button__Text">More actions</span>
-                                                            <span class="Polaris-Button__Icon">
-                                                                <div class="">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                            <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </div>
-                                                            </span>
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                    <div class="Polaris-ResourceList__AlternateToolWrapper">
-                        <div style="display: flex;">
-                            <div class="Polaris-Labelled--hidden">
-                                <div class="Polaris-Labelled__LabelWrapper">
-                                    <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Sort by</label></div>
-                                </div>
-                                <div class="Polaris-Select">
-                                    <select id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
-                                        <option value="DATE_CREATED_DESC">Newest</option>
-                                        <option value="DATE_CREATED_ASC">Oldest</option>
-                                    </select>
-                                    <div class="Polaris-Select__Content" aria-hidden="true">
-                                        <span class="Polaris-Select__InlineLabel">Sort by</span><span class="Polaris-Select__SelectedOption">Newest</span>
-                                        <span class="Polaris-Select__Icon">
-                                            <span class="Polaris-Icon">
-                                                <span class="Polaris-VisuallyHidden"></span>
-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                    <path
-                                                        d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"
-                                                    ></path>
-                                                </svg>
-                                            </span>
-                                        </span>
-                                    </div>
-                                    <div class="Polaris-Select__Backdrop"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="custom-form-tabs" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5; padding: 12px 20px; background: #fff; border-radius: 8px 8px 0 0; margin-top: 20px;">
+                <div class="form-tabs" style="display: flex; gap: 20px;">
+                    <button class="form-tab-btn active" data-tab="all" style="background:none; border:none; font-weight:bold; color:#202223; padding: 6px 12px; border-radius: 6px; background-color: #f1f2f3; cursor:pointer;">All</button>
+                    <button class="form-tab-btn" data-tab="active" style="background:none; border:none; font-weight:normal; color:#6d7175; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Active</button>
+                    <button class="form-tab-btn" data-tab="draft" style="background:none; border:none; font-weight:normal; color:#6d7175; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Draft</button>
                 </div>
-                <div class="Polaris-ResourceList__BulkActionsWrapper">
-                    <div>
-                        <div class="Polaris-BulkActions__Group Polaris-BulkActions__Group--largeScreen Polaris-BulkActions__Group--exited">
-                            <div class="Polaris-BulkActions__ButtonGroupWrapper">
-                                <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented" data-buttongroup-segmented="true">
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div class="Polaris-CheckableButton">
-                                            <label class="Polaris-Choice">
-                                                <span class="Polaris-Choice__Control">
-                                                  <span class="Polaris-Checkbox">
-                                                    <input name="chekbox2" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
-                                                    <span class="Polaris-Checkbox__Backdrop">
-                                                    </span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                      <span class="Polaris-Icon">
-                                                        <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
-                                                        </span>
-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                          <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                          </path>
-                                                        </svg>
-                                                      </span>
-                                                    </span>
-                                                  </span>
-                                                </span>
-                                              </label>
-                                            <span class="Polaris-CheckableButton__Label">0 selected</span>
-                                        </div>
-                                    </div>
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div class="Polaris-BulkActions__BulkActionButton">
-                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
-                                                <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Duplicate selected form(s)</span></span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="Polaris-ButtonGroup__Item">
-                                        <div>
-                                            <div>
-                                                <div class="Polaris-BulkActions__BulkActionButton">
-                                                    <button class="Polaris-Button" type="button" aria-controls="Polarispopover21" aria-owns="Polarispopover21" aria-expanded="false">
-                                                        <span class="Polaris-Button__Content">
-                                                            <span class="Polaris-Button__Text">More actions</span>
-                                                            <span class="Polaris-Button__Icon">
-                                                                <div class="">
-                                                                    <span class="Polaris-Icon">
-                                                                        <span class="Polaris-VisuallyHidden"></span>
-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                                            <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
-                                                                        </svg>
-                                                                    </span>
-                                                                </div>
-                                                            </span>
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-sort" style="position: relative; display: flex; gap: 10px;">
+                    <button id="customSortForms" type="button" value="Newest" title="Toggle Sort Order" style="background: #fff; border: 1px solid #c9cccf; border-radius: 4px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 1px 0 rgba(0,0,0,0.05);">
+                        <svg viewBox="0 0 20 20" style="width: 16px; height: 16px; fill: #5c5f62;">
+                            <path d="M7 4.293V14a1 1 0 1 1-2 0V4.293L3.707 5.586a1 1 0 0 1-1.414-1.414l3-3a1 1 0 0 1 1.414 0l3 3a1 1 0 0 1-1.414 1.414L7 4.293zm8 11.414V6a1 1 0 1 1 2 0v9.707l1.293-1.293a1 1 0 1 1 1.414 1.414l-3 3a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L15 15.707z"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <div class="set_all_form"></div>
+<div id="dynamicBulkActionsWrapper" class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky" style="border-radius: 8px 8px 0 0; display: none; padding: 12px 20px; border-bottom: 1px solid #c9cccf; background: #fff; margin-top: 20px; flex-direction: row; justify-content: space-between; align-items: center; box-shadow: 0 -1px 0 rgba(0,0,0,0.05) inset; width: 100%; box-sizing: border-box;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="checkAllBtnInner" style="background: #008060; border: none; border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
+            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg check-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: none;"><path d="m8.315 13.859-3.182-3.417a.506.506 0 0 1 0-.684l.643-.683a.437.437 0 0 1 .642 0l2.22 2.393 4.942-5.327a.437.437 0 0 1 .643 0l.643.684a.504.504 0 0 1 0 .683l-5.91 6.35a.437.437 0 0 1-.641 0z"></path></svg>
+            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg minus-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: block;"><path d="M15 9H5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2z"></path></svg>
+        </button>
+        <span class="Deselectcount" style="font-weight: 500; font-size: 14px; color: #202223;">0 selected</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+        <button class="Polaris-Button set-active-forms" type="button" style="padding: 5px 12px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Set as active</span></span></button>
+        <button class="Polaris-Button set-draft-forms" type="button" style="padding: 5px 12px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Set as draft</span></span></button>
+        <button class="Polaris-Button more-actions-btn" type="button" aria-controls="Polarispopover1" aria-owns="Polarispopover1" aria-expanded="false" style="padding: 5px 8px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;">
+            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width: 16px; height: 16px; fill: #5c5f62;"><path d="M6 10a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm5.5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm5.5 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"></path></svg>
+        </button>
+    </div>
+</div>
+            
+            <div class="forms-list-responsive-wrapper">
+                <div class="forms-list-container">
+                    <div class="list-column-headers" id="listColumnHeaders" style="display: flex; padding: 12px 20px; font-weight: 600; color: #6d7175; font-size: 13px; border-bottom: 1px solid #e1e3e5; background: #fafbfc; justify-content: space-between;">
+                        <div style="display: flex; gap: 15px; flex: 1; align-items: center;">
+                            <div style="width: 32px;text-align:center;">
+                                <input type="checkbox" id="headerCheckAllOuter" style="cursor: pointer; width: 16px; height: 16px; margin: 0; outline: none; border: 1px solid #c9cccf; border-radius: 4px;">
+                            </div>
+                            <div style="width: 80px;text-align:center;">Id</div>
+                            <div style="width: 300px;text-align:center;">Title</div>
+                        </div>
+                        <div style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 300px;">
+                            <div style="width: 60px; text-align: center;">Status</div>
+                            <div style="width: 150px; text-align: center;">Action</div>
+                        </div>
+                    </div>
+
+                    <div class="set_all_form"></div>
+                </div>
+            </div>
 <!--             
             <div class="DataRange">
   <div class="Polaris-Labelled__LabelWrapper">
@@ -467,7 +343,7 @@ include_once('cls_header.php');
                   ">
                                 <div class="Polaris-TextContainer">
                                     <div class="d-flex-b">
-                                        <div class="main_list_" data-val="1">
+                                        <div class="main_list_ active_form" data-val="1">
                                             <img src="../assets/images/form_img/build_from_scratch.jpg" alt="" />
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
@@ -527,10 +403,7 @@ include_once('cls_header.php');
                       --pc-horizontal-stack-wrap: wrap;
                       --pc-horizontal-stack-gap-xs: var(--p-space-2);
                     ">
-                                    <button class="Polaris-Button" type="button">
-                                        <span class="Polaris-Button__Content"><span
-                                                class="Polaris-Button__Text close2_new">Close</span></span>
-                                    </button>
+
                                     <button class="Polaris-Button Polaris-Button--primary btncreate_new" type="submit">
                                         <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Create
                                                 Form</span></span>
@@ -675,10 +548,15 @@ include_once('cls_header.php');
                 var popover = $('#moreActionsPopover');
                 if (popover.length === 0) {
                     // Create popover if it doesn't exist
-                    var popoverHtml = '<div id="moreActionsPopover" style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 150px; z-index: 1000; display: none;">' +
+                    var popoverHtml = '<div id="moreActionsPopover" style="position: fixed; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 220px; z-index: 99999; display: none;">' +
                         '<div style="padding: 8px 0;">' +
-                        '<button type="button" class="delete-selected-forms" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; color: #bf0711;">' +
-                        '<span>Delete forms</span>' +
+                        '<button type="button" class="duplicate-selected-forms" style="width: 100%; text-align: left; padding: 10px 16px; border: none; background: none; cursor: pointer; color: #202223; display: flex; align-items: center; gap: 8px;">' +
+                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M7 3a2 2 0 0 0-2 2v9a.999.999 0 0 0 1 1h.5v1.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-10a1.5 1.5 0 0 0-1.5-1.5h-1.5v-.5a2 2 0 0 0-2-2h-3zm6.5 4h-5a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5h-2zm-2-2v2h-4.5v-5a1 1 0 0 1 1-1h3zm-3 6h4v1.5h-4v-1.5zm0 3h2v1.5h-2v-1.5z"></path></svg>' +
+                        '<span>Duplicate selected form(s)</span>' +
+                        '</button>' +
+                        '<button type="button" class="delete-selected-forms" style="width: 100%; text-align: left; padding: 10px 16px; border: none; background: none; cursor: pointer; color: #d82c0d; display: flex; align-items: center; gap: 8px; border-top: 1px solid #e1e3e5; margin-top: 4px; padding-top: 12px;">' +
+                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M14 4h-2.5l-1-1h-1l-1 1h-2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1zm-6.5 2v9a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-9h-7z"></path></svg>' +
+                        '<span>Delete selected form(s)</span>' +
                         '</button>' +
                         '</div>' +
                         '</div>';
@@ -686,11 +564,25 @@ include_once('cls_header.php');
                     popover = $('#moreActionsPopover');
                 }
                 
-                // Position and toggle popover
+                // Position and toggle popover - right-align with button, clamp within viewport
                 var buttonOffset = $(this).offset();
+                var buttonRight = buttonOffset.left + $(this).outerWidth();
+                var popoverWidth = 220;
+                var viewportWidth = $(window).width();
+                var scrollTop = $(window).scrollTop();
+                
+                // Right-align popover to button's right edge
+                var popoverLeft = buttonRight - popoverWidth;
+                
+                // Clamp: don't go off left or right edge (8px margin)
+                if (popoverLeft < 8) popoverLeft = 8;
+                if (popoverLeft + popoverWidth > viewportWidth - 8) {
+                    popoverLeft = viewportWidth - popoverWidth - 8;
+                }
+                
                 popover.css({
-                    top: buttonOffset.top + $(this).outerHeight() + 5,
-                    left: buttonOffset.left
+                    top: buttonOffset.top - scrollTop + $(this).outerHeight() + 5,
+                    left: popoverLeft
                 });
                 popover.toggle();
                 $(this).attr('aria-expanded', popover.is(':visible'));
@@ -805,6 +697,7 @@ include_once('cls_header.php');
                 $('#deleteModalMessage').text('Are you sure you want to delete ' + selectedIds.length + ' form(s)? This action cannot be undone.');
                 $('#moreActionsPopover').hide();
                 $('#deleteConfirmationModal').show();
+                if (window.centerModal) window.centerModal('deleteConfirmationModal');
             });
             
             // Confirm delete handler
@@ -895,5 +788,243 @@ include_once('cls_header.php');
                     $('#deleteConfirmationModal').hide();
                 }
             });
+
+            // Filter and Sort logic
+            function updateFormListDisplay() {
+                var activeTab = $('.form-tab-btn.active').data('tab');
+                var sortVal = $('#customSortForms').val();
+                
+                var $forms = $('.set_all_form > .Polaris-ResourceList__HeaderWrapper');
+                
+                // First filter
+                $forms.each(function() {
+                    var isActive = $(this).find('input[type="checkbox"][name="checkbox"]').is(':checked');
+                    if (activeTab === 'all') {
+                        $(this).show();
+                    } else if (activeTab === 'active' && isActive) {
+                        $(this).show();
+                    } else if (activeTab === 'draft' && !isActive) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                
+                // Then sort
+                var formsArr = $forms.get();
+                var sortKey = $('input[name="sortKey"]:checked').val() || 'created';
+                
+                formsArr.sort(function(a, b) {
+                    if (sortKey === 'title') {
+                        var titleA = $(a).find('.sp-font-size').text().trim().toLowerCase();
+                        var titleB = $(b).find('.sp-font-size').text().trim().toLowerCase();
+                        if (sortVal === 'Oldest') { // Ascending
+                            return titleA.localeCompare(titleB);
+                        } else { // Descending
+                            return titleB.localeCompare(titleA);
+                        }
+                    } else {
+                        var idA = parseInt($(a).find('.form_id_main').val()) || 0;
+                        var idB = parseInt($(b).find('.form_id_main').val()) || 0;
+                        if (sortVal === 'Oldest') {
+                            return idA - idB; 
+                        } else {
+                            return idB - idA;
+                        }
+                    }
+                });
+                $('.set_all_form').append(formsArr);
+            }
+
+            $('.form-tab-btn').click(function() {
+                $('.form-tab-btn').removeClass('active').css({
+                    'font-weight': 'normal', 
+                    'color': '#6d7175', 
+                    'background-color': 'transparent'
+                });
+                $(this).addClass('active').css({
+                    'font-weight': 'bold', 
+                    'color': '#202223', 
+                    'background-color': '#f1f2f3'
+                });
+                updateFormListDisplay();
+            });
+
+            $('#customSortForms').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var popover = $('#sortformsPopover');
+                if (popover.length === 0) {
+                    var popoverHtml = '<div id="sortformsPopover" style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 200px; z-index: 1000; display: none;">' +
+                        '<div style="padding: 8px 0;">' +
+                        '<button type="button" class="sort-direction-btn" data-val="Oldest" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; color: #202223; display: flex; align-items: center; gap: 8px; font-size: 14px;">' +
+                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M10 4.293V16a1 1 0 1 1-2 0V4.293L4.707 7.586a1 1 0 0 1-1.414-1.414l5-5a1 1 0 0 1 1.414 0l5 5a1 1 0 1 1-1.414 1.414L10 4.293z"></path></svg>' +
+                        '<span>Oldest to newest</span>' +
+                        '</button>' +
+                        '<button type="button" class="sort-direction-btn active-sort" data-val="Newest" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: #008060; cursor: pointer; color: #ffffff; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">' +
+                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M10 15.707V4a1 1 0 1 1 2 0v11.707l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L10 15.707z"></path></svg>' +
+                        '<span>Newest to oldest</span>' +
+                        '</button>' +
+                        '</div>' +
+                        '</div>';
+                    $('body').append(popoverHtml);
+                    popover = $('#sortformsPopover');
+
+                    $(document).on('click', '.sort-direction-btn', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $('.sort-direction-btn').css({'background': 'none', 'font-weight': 'normal', 'color': '#202223'}).removeClass('active-sort');
+                        $(this).css({'background': '#008060', 'font-weight': '500', 'color': '#ffffff'}).addClass('active-sort');
+                        $('#customSortForms').val($(this).data('val'));
+                        updateFormListDisplay();
+                        popover.hide();
+                    });
+
+                    $(document).on('change', 'input[name="sortKey"]', function(e) {
+                        e.stopPropagation();
+                        updateFormListDisplay();
+                    });
+                }
+                
+                var buttonOffset = $(this).offset();
+                popover.css({
+                    top: buttonOffset.top + $(this).outerHeight() + 5,
+                    left: buttonOffset.left - popover.outerWidth() + $(this).outerWidth()
+                });
+                
+                // Hide other popovers
+                $('#moreActionsPopover').hide();
+                popover.toggle();
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#customSortForms').length && !$(e.target).closest('#sortformsPopover').length) {
+                    $('#sortformsPopover').hide();
+                }
+            });
+
+            $(document).on('change', 'input[type="checkbox"][name="checkbox"]', function() {
+                var activeTab = $('.form-tab-btn.active').data('tab');
+                if (activeTab !== 'all') {
+                    // Update display slightly delayed to let users see the toggle animation
+                    setTimeout(updateFormListDisplay, 400);
+                }
+            });
+
+            function updateBulkActionsUI() {
+                var checkedCount = $('.selectedCheck:checked').length;
+                var totalCount = $('.selectedCheck').length;
+                
+                if (checkedCount > 0) {
+                    $('.Deselectcount').text(checkedCount + ' selected');
+                    $('#dynamicBulkActionsWrapper').css('display', 'flex');
+                    $('#listColumnHeaders').hide();
+                    
+                    if (checkedCount === totalCount && totalCount > 0) {
+                        $('#headerCheckAllOuter').prop('checked', true);
+                        $('#checkAllBtnInner .check-icon-svg').show();
+                        $('#checkAllBtnInner .minus-icon-svg').hide();
+                    } else {
+                        $('#headerCheckAllOuter').prop('checked', false);
+                        $('#checkAllBtnInner .check-icon-svg').hide();
+                        $('#checkAllBtnInner .minus-icon-svg').show();
+                    }
+                } else {
+                    $('#dynamicBulkActionsWrapper').hide();
+                    $('#listColumnHeaders').show();
+                    $('#headerCheckAllOuter').prop('checked', false);
+                }
+            }
+
+            $(document).on('change', '.selectedCheck', function() {
+                updateBulkActionsUI();
+            });
+
+            $(document).on('change', '#headerCheckAllOuter', function() {
+                var isChecked = $(this).prop('checked');
+                $('.selectedCheck').prop('checked', isChecked);
+                updateBulkActionsUI();
+            });
+
+            $(document).on('click', '#checkAllBtnInner', function(e) {
+                e.preventDefault();
+                $('.selectedCheck').prop('checked', false);
+                updateBulkActionsUI();
+            });
+
+            function bulkUpdateStatus(isActive) {
+                var selectedIds = [];
+                $('.selectedCheck:checked').each(function() {
+                    var formId = $(this).closest('.Polaris-ResourceList__HeaderWrapper').find('.form_id_main').val();
+                    if (formId) selectedIds.push(formId);
+                });
+                
+                if (selectedIds.length === 0) return;
+                
+                var totalCount = selectedIds.length;
+                var processedCount = 0;
+                var ischecked_value = isActive ? 1 : 0;
+                var actionText = isActive ? 'activated' : 'set to draft';
+                
+                selectedIds.forEach(function(formId) {
+                    $.ajax({
+                        url: "ajax_call.php",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            'routine_name': 'change_form_status', 
+                            store: window.store || store, 
+                            "formid": formId, 
+                            "ischecked_value": ischecked_value 
+                        },
+                        success: function(response) {
+                            processedCount++;
+                            if (processedCount === totalCount) {
+                                getAllForm();
+                                $('.selectedCheck').prop('checked', false);
+                                var successBanner = '<div class="Polaris-Banner Polaris-Banner--statusSuccess" style="margin: 20px 0;">' +
+                                    '<div class="Polaris-Banner__Ribbon"><span class="Polaris-Icon Polaris-Icon--colorSuccess">' +
+                                    '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">' +
+                                    '<path d="M0 10c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10-10-4.486-10-10zm15.696-2.804l-6.5 6.5c-.196.196-.512.196-.707 0l-3.5-3.5c-.196-.196-.196-.512 0-.707l.707-.707c.195-.195.511-.195.707 0l2.439 2.44 5.439-5.44c.195-.195.511-.195.707 0l.707.707c.196.196.196.512.001.707z"></path>' +
+                                    '</svg></span></div>' +
+                                    '<div class="Polaris-Banner__ContentWrapper">' +
+                                    '<div class="Polaris-Banner__Content"><p>' + totalCount + ' form(s) successfully ' + actionText + '</p></div>' +
+                                    '</div></div>';
+                                
+                                $('.set_all_form').prepend(successBanner);
+                                setTimeout(function() {
+                                    $('.Polaris-Banner--statusSuccess').fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            processedCount++;
+                            if (processedCount === totalCount) {
+                                getAllForm();
+                                $('.selectedCheck').prop('checked', false);
+                            }
+                        }
+                    });
+                });
+            }
+
+            $(document).on('click', '.set-active-forms', function() {
+                bulkUpdateStatus(true);
+            });
+
+            $(document).on('click', '.set-draft-forms', function() {
+                bulkUpdateStatus(false);
+            });
+
+            $(document).ajaxComplete(function(event, xhr, settings) {
+                if (settings.url && settings.url.indexOf('ajax_call.php') !== -1 && settings.data && settings.data.indexOf('routine_name=getAllFormFunction') !== -1) {
+                    updateFormListDisplay();
+                    updateBulkActionsUI();
+                }
+            });
+
         });
     </script>
