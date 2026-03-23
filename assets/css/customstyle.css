@@ -16,8 +16,9 @@
 
 .form_header .brand {
     align-items: center;
-    background: #f9fafb;
-    border-left: 1px solid #dfe3e8;
+    background: #007a5c;
+    color: #fff;
+    border-left: 1px solid #006048;
     box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
     box-sizing: border-box;
     display: flex;
@@ -42,7 +43,7 @@
 }
 
 .logo {
-    background: #43467f;
+    background: transparent;
     box-sizing: border-box;
     flex: 0 1 auto;
     height: 100%;
@@ -265,6 +266,63 @@ button.settingsbtn {
     margin-right: 0.8rem;
     min-width: 40px;
     width: 40px;
+}
+
+.list-item .duplicate,
+.list-item .softable,
+.list-item .element_delete_btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    margin-left: 4px;
+}
+
+.list-item .element_delete_btn:hover .Polaris-Icon__Svg {
+    fill: #d72c0d;
+}
+
+.list-item .duplicate.duplicate-loading {
+    pointer-events: none;
+}
+
+/* Delete confirm modal - centered popup */
+.delete-confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10010;
+}
+
+.delete-confirm-modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    min-width: 320px;
+    max-width: 90%;
+}
+
+.delete-confirm-content {
+    padding: 24px;
+}
+
+.delete-confirm-message {
+    margin: 0 0 24px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #202223;
+}
+
+.delete-confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
 .Polaris-Tabs__Panel--hidden {
@@ -593,8 +651,122 @@ select:focus-visible {
     font-weight: 500;
 }
 
+/* Mobile: make "Forms list" rows readable */
+@media (max-width: 0px) {
+    /* Disabled */
+
+    /* Each form row: stack title/ID above actions */
+    .set_all_form .Polaris-ResourceList__HeaderWrapper {
+        padding: 12px 12px !important;
+    }
+
+
+
+    .set_all_form .Polaris-ResourceList__CheckableButtonWrapper {
+        width: 100%;
+    }
+
+    .set_all_form .clsmain_form .sp-font-size {
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.35;
+    }
+
+    .set_all_form .form-id-display {
+        margin-left: 0 !important;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .set_all_form .main_right_ {
+        width: 65%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* Toggle + buttons stay aligned and don’t overlap */
+    .set_all_form .indexButton {
+        padding-right: 0 !important;
+        white-space: normal !important;
+        display: flex;
+        gap: 8px;
+    }
+
+    .set_all_form .indexButton button {
+        min-height: 34px;
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+}
+
+/* Responsive Table Wrapper */
+.forms-list-responsive-wrapper {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .forms-list-responsive-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        background: #fff;
+        margin-bottom: 20px;
+        border: 1px solid #e1e3e5;
+    }
+
+    .forms-list-container {
+        min-width: 720px;
+        /* Preserve columns layout on mobile */
+    }
+}
+
+.forms-list-container .Polaris-ResourceList__HeaderWrapper {
+    padding: 12px 20px !important;
+    border-bottom: 1px solid #e1e3e5;
+}
+
+.forms-list-container .Polaris-ResourceList__HeaderWrapper:last-child {
+    border-bottom: none;
+}
+
 .bultActionss {
     display: none;
+}
+
+/* Premium Button Styling for mobile */
+.btn-action-mobile {
+    padding: 6px 12px;
+    font-size: 13px;
+    border: 1px solid #c9cccf;
+    border-radius: 4px;
+    background: #ffffff;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    color: #202223;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-action-mobile:hover {
+    background: #f6f6f7;
+    border-color: #babec3;
+    color: #1a1c1d;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-mobile a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .Polaris-ResourceList__HeaderWrapper.border-radi-botom-unset.Polaris-ResourceList__HeaderWrapper--hasAlternateTool.Polaris-ResourceList__HeaderWrapper--hasSelect.Polaris-ResourceList__HeaderWrapper--isSticky {
@@ -1591,4 +1763,176 @@ input[id^="fileimage-"] {
 .code-form-control .radio-wrapper .radio-input:checked~.radio-label:after {
     opacity: 1;
     transform: translateY(-50%) scale(1);
+}
+
+/* Flash message top positioning and animation */
+.inline-flash-wrapper {
+    position: fixed;
+    z-index: 99999;
+    top: 1.6rem !important;
+    bottom: auto !important;
+    display: none;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    width: 100%;
+    pointer-events: none;
+}
+
+.inline-flash-wrapper--is-visible {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.inline-flash {
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 0 1.6rem;
+    background: #007a5c;
+    -webkit-box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
+    box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
+    border-radius: 3px;
+    color: #fff;
+    cursor: default;
+    pointer-events: auto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 2.4rem;
+}
+
+.inline-flash__message {
+    padding: 12px 18px;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.inline-flash-wrapper.animated {
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+@-webkit-keyframes bounceInDown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-2000px);
+        transform: translateY(-2000px)
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: translateY(30px);
+        transform: translateY(30px)
+    }
+
+    80% {
+        -webkit-transform: translateY(-10px);
+        transform: translateY(-10px)
+    }
+
+    100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+}
+
+@keyframes bounceInDown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-2000px);
+        -ms-transform: translateY(-2000px);
+        transform: translateY(-2000px)
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: translateY(30px);
+        -ms-transform: translateY(30px);
+        transform: translateY(30px)
+    }
+
+    80% {
+        -webkit-transform: translateY(-10px);
+        -ms-transform: translateY(-10px);
+        transform: translateY(-10px)
+    }
+
+    100% {
+        -webkit-transform: translateY(0);
+        -ms-transform: translateY(0);
+        transform: translateY(0)
+    }
+}
+
+.inline-flash-wrapper.bounceInDown {
+    -webkit-animation-name: bounceInDown;
+    animation-name: bounceInDown;
+}
+
+@-webkit-keyframes bounceInLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(-2000px);
+        transform: translateX(-2000px);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(30px);
+        transform: translateX(30px);
+    }
+
+    80% {
+        -webkit-transform: translateX(-10px);
+        transform: translateX(-10px);
+    }
+
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceInLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateX(-2000px);
+        -ms-transform: translateX(-2000px);
+        transform: translateX(-2000px);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: translateX(30px);
+        -ms-transform: translateX(30px);
+        transform: translateX(30px);
+    }
+
+    80% {
+        -webkit-transform: translateX(-10px);
+        -ms-transform: translateX(-10px);
+        transform: translateX(-10px);
+    }
+
+    100% {
+        -webkit-transform: translateX(0);
+        -ms-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+
+.inline-flash-wrapper.bounceInLeft {
+    -webkit-animation-name: bounceInLeft;
+    animation-name: bounceInLeft;
 }

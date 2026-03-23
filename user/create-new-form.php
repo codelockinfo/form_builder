@@ -17,8 +17,10 @@
     <script src="../assets/js/owl.carousel.min.js" type="text/javascript"></script>
     <script src="../assets/js/ckeditor.js" type="text/javascript"></script>
 </head> -->
-<?php 
-include_once('cls_header.php'); 
+<?php
+
+include_once('cls_header.php');
+
 
 ?>
 
@@ -61,11 +63,23 @@ include_once('cls_header.php');
                     </div>
                 </div>
             </div>
-            <div class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky">
+            <div class="custom-form-tabs" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e1e3e5; padding: 12px 20px; background: #fff; border-radius: 8px 8px 0 0; margin-top: 20px;">
+                <div class="form-tabs" style="display: flex; gap: 20px;">
+                    <button class="form-tab-btn active" data-tab="all" style="background:none; border:none; font-weight:bold; color:#202223; padding: 6px 12px; border-radius: 6px; background-color: #f1f2f3; cursor:pointer;">All</button>
+                    <button class="form-tab-btn" data-tab="active" style="background:none; border:none; font-weight:normal; color:#6d7175; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Active</button>
+                    <button class="form-tab-btn" data-tab="draft" style="background:none; border:none; font-weight:normal; color:#6d7175; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Draft</button>
+                </div>
+                <div class="form-sort" style="position: relative; display: flex; gap: 10px;">
+                    <select id="customSortForms" style="padding: 6px 28px 6px 12px; border: 1px solid #c9cccf; border-radius: 4px; background-color: #fff; appearance: none; cursor: pointer; font-size: 14px; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 20 20\'><path d=\'M5.293 7.293a.999.999 0 0 1 1.414 0L10 10.586l3.293-3.293a.999.999 0 1 1 1.414 1.414l-4 4a.999.999 0 0 1-1.414 0l-4-4a.999.999 0 0 1 0-1.414z\'/></svg>'); background-repeat: no-repeat; background-position: right 8px center; outline: none; box-shadow: 0 1px 0 rgba(0,0,0,.05);">
+                        <option value="Newest">Sort by Newest</option>
+                        <option value="Oldest">Sort by Oldest</option>
+                    </select>
+                </div>
+            </div>
+            <div id="dynamicBulkActionsWrapper" class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky" style="border-radius: 0; display: none; padding: 12px 20px; border-bottom: none; background: #fff;">
                 <div class="Polaris-ResourceList__HeaderContentWrapper">
-                    <!-- <div class="Polaris-ResourceList__HeaderTitleWrapper">Showing 3 form</div> -->
                     <div class="Polaris-ResourceList__CheckableButtonWrapper">
-                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain selectedshow">
+                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain selectedshow" style="display: none !important;">
                             <label class="Polaris-Choice">
                                 <span class="Polaris-Choice__Control">
                                   <span class="Polaris-Checkbox">
@@ -85,7 +99,7 @@ include_once('cls_header.php');
                                   </span>
                                 </span>
                               </label>
-                            <span class="Polaris-CheckableButton__Label dataAdded"></span>
+                            <span class="Polaris-CheckableButton__Label dataAdded" style="display: none !important;"></span>
                            
                         </div>
                         <div class="bultActionss">
@@ -171,7 +185,7 @@ include_once('cls_header.php');
                                 </div>
                             </div>
                     </div>
-                    <div class="Polaris-ResourceList__AlternateToolWrapper">
+                    <!-- <div class="Polaris-ResourceList__AlternateToolWrapper">
                         <div style="display: flex;">
                             <div class="Polaris-Labelled--hidden">
                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -199,7 +213,7 @@ include_once('cls_header.php');
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="Polaris-ResourceList__BulkActionsWrapper">
                     <div>
@@ -266,7 +280,24 @@ include_once('cls_header.php');
                     </div>
                 </div>
             </div>
-            <div class="set_all_form"></div>
+            
+            <div class="forms-list-responsive-wrapper">
+                <div class="forms-list-container">
+                    <div class="list-column-headers" style="display: flex; padding: 12px 20px; font-weight: 600; color: #6d7175; font-size: 13px; border-bottom: 1px solid #e1e3e5; background: #fafbfc; justify-content: space-between;">
+                        <div style="display: flex; gap: 15px; flex: 1; align-items: center;">
+                            <div style="width: 32px;text-align:center;"></div>
+                            <div style="width: 80px;text-align:center;">Id</div>
+                            <div style="width: 300px;text-align:center;">Title</div>
+                        </div>
+                        <div style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 300px;">
+                            <div style="width: 60px; text-align: center;">Status</div>
+                            <div style="width: 150px; text-align: center;">Action</div>
+                        </div>
+                    </div>
+
+                    <div class="set_all_form"></div>
+                </div>
+            </div>
 <!--             
             <div class="DataRange">
   <div class="Polaris-Labelled__LabelWrapper">
@@ -895,5 +926,85 @@ include_once('cls_header.php');
                     $('#deleteConfirmationModal').hide();
                 }
             });
+
+            // Filter and Sort logic
+            function updateFormListDisplay() {
+                var activeTab = $('.form-tab-btn.active').data('tab');
+                var sortVal = $('#customSortForms').val();
+                
+                var $forms = $('.set_all_form > .Polaris-ResourceList__HeaderWrapper');
+                
+                // First filter
+                $forms.each(function() {
+                    var isActive = $(this).find('input[type="checkbox"][name="checkbox"]').is(':checked');
+                    if (activeTab === 'all') {
+                        $(this).show();
+                    } else if (activeTab === 'active' && isActive) {
+                        $(this).show();
+                    } else if (activeTab === 'draft' && !isActive) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                
+                // Then sort
+                var formsArr = $forms.get();
+                formsArr.sort(function(a, b) {
+                    var idA = parseInt($(a).find('.form_id_main').val()) || 0;
+                    var idB = parseInt($(b).find('.form_id_main').val()) || 0;
+                    if (sortVal === 'Oldest') {
+                        return idA - idB; 
+                    } else {
+                        return idB - idA;
+                    }
+                });
+                $('.set_all_form').append(formsArr);
+            }
+
+            $('.form-tab-btn').click(function() {
+                $('.form-tab-btn').removeClass('active').css({
+                    'font-weight': 'normal', 
+                    'color': '#6d7175', 
+                    'background-color': 'transparent'
+                });
+                $(this).addClass('active').css({
+                    'font-weight': 'bold', 
+                    'color': '#202223', 
+                    'background-color': '#f1f2f3'
+                });
+                updateFormListDisplay();
+            });
+
+            $('#customSortForms').change(function() {
+                updateFormListDisplay();
+            });
+
+            $(document).on('change', 'input[type="checkbox"][name="checkbox"]', function() {
+                var activeTab = $('.form-tab-btn.active').data('tab');
+                if (activeTab !== 'all') {
+                    // Update display slightly delayed to let users see the toggle animation
+                    setTimeout(updateFormListDisplay, 400);
+                }
+            });
+
+            // Dynamically show the bulk actions wrapper if items are checked
+            $(document).on('change', '.selectedCheck, #checkAll', function() {
+                setTimeout(function() {
+                    var anyChecked = $('.selectedCheck:checked').length > 0;
+                    if (anyChecked) {
+                        $('#dynamicBulkActionsWrapper').show();
+                    } else {
+                        $('#dynamicBulkActionsWrapper').hide();
+                    }
+                }, 100);
+            });
+
+            $(document).ajaxComplete(function(event, xhr, settings) {
+                if (settings.url && settings.url.indexOf('ajax_call.php') !== -1 && settings.data && settings.data.indexOf('routine_name=getAllFormFunction') !== -1) {
+                    updateFormListDisplay();
+                }
+            });
+
         });
     </script>

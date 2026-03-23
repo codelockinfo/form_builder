@@ -1,10 +1,14 @@
-<?php 
-include_once('cls_header.php'); 
+<?php
+
+include_once('cls_header.php');
+
 
 if (isset($_GET['shop']) && $_GET['shop'] != '') {
     include_once('dashboard_header.php');
-} else {
-    echo "Store not found";die;
+}
+else {
+    echo "Store not found";
+    die;
 }
 ?>
 
@@ -24,7 +28,7 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
 .dashboard-submissions-page .Polaris-Page-Header {
     background: #ffffff;
     border-radius: 8px 8px 0 0;
-    padding: 20px 24px;
+    padding: 20px 24px 0px 24px;
     margin-bottom: 0;
     border-bottom: 1px solid #e1e3e5;
 }
@@ -53,21 +57,60 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
     color: #6d7175;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
     border: none;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.dashboard-tab:hover {
-    color: #202223;
-    background: #f6f6f7;
+.dashboard-tab .tab-icon {
+    display: none; /* Hidden on desktop by default, as requested for mobile view */
+}
+.dashboard-tab svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        padding: 0;
+        width: 100%;
+        display: flex;
+    }
+    .dashboard-tab {
+        flex: 1;
+        padding: 5px 0;
+        text-align: center;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 13px;
+    }
+    .dashboard-tab .tab-icon {
+        display: block;
+    }
+}
+
+.dashboard-tab:hover svg {
+    opacity: 1;
 }
 
 .dashboard-tab.active {
-    color: #008060;
+    color: white;
     border-bottom-color: #008060;
     font-weight: 600;
+ background-color: #008060
+ ;
+}
+
+.dashboard-tab.active svg {
+    opacity: 1;
 }
 
 .dashboard-tab-content {
@@ -137,7 +180,6 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     flex: 1;
     gap: 20px;
     min-width: 0;
@@ -155,7 +197,7 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
 
 .set_all_form_submissions .clsmain_form {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 0px;
     margin: 0;
 }
@@ -164,17 +206,12 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
     font-size: 15px;
     font-weight: 500;
     color: #202223;
-    line-height: 1.5;
-    margin: 0;
-    letter-spacing: -0.01em;
 }
 
 .set_all_form_submissions .form-id-display {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 0;
-    margin-top: 4px;
 }
 
 .set_all_form_submissions .form-id-display span:first-child {
@@ -267,7 +304,6 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     height: 100%;
 }
 
@@ -442,11 +478,7 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
 
 @media (max-width: 768px) {
     .dashboard-submissions-page {
-        padding: 12px;
-    }
-    
-    .dashboard-submissions-page .Polaris-Page-Header {
-        padding: 16px;
+        padding: 0px;
     }
     
     .dashboard-submissions-page .Polaris-Header-Title {
@@ -457,13 +489,8 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
         flex-direction: column;
         gap: 12px;
     }
-    
-    .set_all_form_submissions .indexButton {
-        width: 100%;
-    }
-    
-    .set_all_form_submissions .indexButton button {
-        flex: 1;
+    .set_all_form_submissions .indexButton{
+        padding-right: 0;
     }
     
     .analytics-charts {
@@ -476,7 +503,7 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
 }
 </style>
 
-<div class="dashboard-submissions-page">
+<div class="1323 dashboard-submissions-page">
     <div class="Polaris-Page">
         <div class="Polaris-Page-Header Polaris-Page-Header--hasActionMenu Polaris-Page-Header--noBreadcrumbs Polaris-Page-Header--mediumTitle">
             <div class="Polaris-Page-Header__Row padding_all_">
@@ -489,8 +516,14 @@ if (isset($_GET['shop']) && $_GET['shop'] != '') {
         <!-- Tab Navigation -->
         <?php $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'reports'; ?>
         <div class="dashboard-tabs">
-            <button class="dashboard-tab <?php echo $active_tab == 'reports' ? 'active' : ''; ?>" data-tab="reports">Reports</button>
-            <button class="dashboard-tab <?php echo $active_tab == 'submissions' ? 'active' : ''; ?>" data-tab="submissions">Submissions</button>
+            <button class="dashboard-tab <?php echo $active_tab == 'reports' ? 'active' : ''; ?>" data-tab="reports">
+                <span class="tab-icon"><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true"><path d="M16 16v-6a1 1 0 00-2 0v6h-3v-9a1 1 0 00-2 0v9h-3v-4a1 1 0 00-2 0v4h-1a1 1 0 100 2h14a1 1 0 100-2h-1z"/></svg></span>
+                <span class="tab-text">Reports</span>
+            </button>
+            <button class="dashboard-tab <?php echo $active_tab == 'submissions' ? 'active' : ''; ?>" data-tab="submissions">
+                <span class="tab-icon"><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true"><path fill-rule="evenodd" d="M16 3H4a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1zm-1 12H5V5h10v10z"/><path d="M7 8h6v1.5H7V8zM7 11h6v1.5H7V11z"/></svg></span>
+                <span class="tab-text">Submissions</span>
+            </button>
         </div>
         
         <!-- Submissions Tab -->

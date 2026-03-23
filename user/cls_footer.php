@@ -1,11 +1,14 @@
-<?php 
+<?php
+
 $current_user = (!is_object($current_user)) ? $current_user : (array)$current_user;
-if(isset($current_user['store_idea'])  != 'staff' && isset($current_user['store_idea']) != 'staff_business') { ?>
-<?php } ?>
+if (isset($current_user['store_idea']) != 'staff' && isset($current_user['store_idea']) != 'staff_business') { ?>
+<?php
+}?>
 </div>
 <?php if (MODE == 'live') { ?>
     <?php include('../../appstation/slider/footer_slider.php'); ?>
-<?php } ?>
+<?php
+}?>
 <div class="inline-flash-wrapper animated bounceInUp"><div class="inline-flash"><p class="inline-flash__message"></p></div></div>
 <?php if (MODE == 'live' && $current_user['store_idea'] != 'staff' && $current_user['store_idea'] != 'staff_business') { ?>
     <script type="text/javascript">
@@ -19,11 +22,13 @@ if(isset($current_user['store_idea'])  != 'staff' && isset($current_user['store_
             s0.parentNode.insertBefore(s1, s0);
         })();
         Tawk_API.visitor = {
-            name: '<?php  echo $current_user['store_name']; ?>',            
+            name: '<?php echo $current_user['store_name']; ?>',            
             email: '<?php echo $current_user['email']; ?>'
         };
     </script>
-<?php } elseif (MODE == 'live') { ?>
+<?php
+}
+elseif (MODE == 'live') { ?>
     <script type='text/javascript'>
         (function () {
             var widget_id = 'f3znHLGH3h';
@@ -48,7 +53,8 @@ if(isset($current_user['store_idea'])  != 'staff' && isset($current_user['store_
             }
         })();
     </script>
-<?php }
+<?php
+}
 ?>
 <script>
     $('.openChatBox').click(function () {
