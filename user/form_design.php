@@ -103,7 +103,7 @@ if ($form_id > 0) {
                                 </button>
                             </div>
                             <div class="Polaris-ButtonGroup__Item">
-                                <button class="Polaris-Button" type="button">
+                                <button class="Polaris-Button" type="button" onclick="window.location.href='index.php?shop=<?php echo $store; ?>'">
                                     <span class="Polaris-Button__Content">
                                         <span class="Polaris-Button__Text">
                                             <span>Cancel</span>
@@ -142,6 +142,9 @@ if ($form_id > 0) {
                         </button>
                     </a>
                 </div>
+                <div class="dynamic-header-title" style="flex: 1; padding: 0 15px; font-weight: 500; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    Form Settings
+                </div>
                 <!-- <div class="title">
                     <button type="button" class="Polaris-Link">
                         <span>Back to list</span>
@@ -176,7 +179,7 @@ if ($form_id > 0) {
         <div class="element_start">
             <div class="owl-carousel">
                 <div class="">
-                    <div class="Polaris-Tabs__Wrapper">
+                    <div class="Polaris-Tabs__Wrapper" style="display: none;">
                         <ul role="tablist" class="Polaris-Tabs Polaris-Tabs--fitted settingselect">
                             <li class="Polaris-Tabs__TabContainer" role="presentation" data-tab="1">
                                 <button id="elements" role="tab" type="button" tabindex="0"
