@@ -320,7 +320,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                                     Explore pre-built forms
                                 </h2>
                             </div>
-                            <button class="Polaris-Modal-CloseButton" aria-label="Close">
+                            <button class="Polaris-Modal-CloseButton" aria-label="Close" type="button">
                                 <span class="Polaris-Icon Polaris-Icon--colorBase Polaris-Icon--applyColor"><span
                                         class="Polaris-Text--root Polaris-Text--visuallyHidden"></span><svg
                                         viewBox="0 0 20 20" class="Polaris-Icon__Svg close_new" focusable="false"
@@ -424,7 +424,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                         <div class="Polaris-HorizontalStack" style="--pc-horizontal-stack-block-align: center; --pc-horizontal-stack-wrap: wrap; --pc-horizontal-stack-gap-xs: var(--p-space-4);">
                             <h2 class="Polaris-Text--root Polaris-Text--headingLg Polaris-Text--break">Delete form?</h2>
                         </div>
-                        <button class="Polaris-Modal-CloseButton close-delete-modal" aria-label="Close">
+                        <button class="Polaris-Modal-CloseButton close-delete-modal" aria-label="Close" type="button">
                             <span class="Polaris-Icon Polaris-Icon--colorBase Polaris-Icon--applyColor">
                                 <span class="Polaris-Text--root Polaris-Text--visuallyHidden"></span>
                                 <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
@@ -784,6 +784,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
 
             // Close modal handler
             $(document).on('click', '.close-delete-modal, #deleteConfirmationModal', function(e) {
+                e.preventDefault();
                 if (e.target === this || $(this).hasClass('close-delete-modal')) {
                     $('#deleteConfirmationModal').hide();
                 }

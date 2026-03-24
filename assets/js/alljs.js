@@ -37,10 +37,12 @@ $(document).ready(function () {
         $("#myModal_new").css("display", "block");
         window.centerModal('myModal_new');
     });
-    $(".close_new").click(function () {
+    $(".close_new").click(function (e) {
+        e.preventDefault();
         $("#myModal_new").css("display", "none");
     });
-    $(".close2_new").click(function () {
+    $(".close2_new").click(function (e) {
+        e.preventDefault();
         $("#myModal_new").css("display", "none");
     });
     // code for create new form end
