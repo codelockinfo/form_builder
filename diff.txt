@@ -1,0 +1,324 @@
+diff --git a/user/create-new-form.php b/user/create-new-form.php
+index 510a334..a9ae42f 100644
+--- a/user/create-new-form.php
++++ b/user/create-new-form.php
+@@ -76,216 +76,30 @@ include_once('cls_header.php');
+                     </select>
+                 </div>
+             </div>
+-            <div id="dynamicBulkActionsWrapper" class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky" style="border-radius: 0; display: none; padding: 12px 20px; border-bottom: none; background: #fff;">
+-                <div class="Polaris-ResourceList__HeaderContentWrapper">
+-                    <div class="Polaris-ResourceList__CheckableButtonWrapper">
+-                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--plain selectedshow" style="display: none !important;">
+-                            <label class="Polaris-Choice">
+-                                <span class="Polaris-Choice__Control">
+-                                  <span class="Polaris-Checkbox">
+-                                    <input name="chekbox1" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
+-                                    <span class="Polaris-Checkbox__Backdrop">
+-                                    </span>
+-                                    <span class="Polaris-Checkbox__Icon">
+-                                      <span class="Polaris-Icon">
+-                                        <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+-                                        </span>
+-                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                          <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+-                                          </path>
+-                                        </svg>
+-                                      </span>
+-                                    </span>
+-                                  </span>
+-                                </span>
+-                              </label>
+-                            <span class="Polaris-CheckableButton__Label dataAdded" style="display: none !important;"></span>
+-                           
+-                        </div>
+-                        <div class="bultActionss">
+-                                <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented" data-buttongroup-segmented="true">
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div class="Polaris-CheckableButton Polaris-CheckableButton__CheckableButton--selectMode Polaris-CheckableButton__CheckableButton--selected">
+-                                              
+-                                                <div class="Polaris-CheckableButton__Checkbox">
+-                                                <label class="Polaris-Choice">
+-                                                    <span class="Polaris-Choice__Control">
+-                                                    <span class="Polaris-Checkbox">
+-                                                        <input name="chekbox1" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="" id="checkAll">
+-                                                        <span class="Polaris-Checkbox__Backdrop">
+-                                                        </span>
+-                                                        <span class="Polaris-Checkbox__Icon">
+-                                                        <span class="Polaris-Icon">
+-                                                            <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+-                                                            </span>
+-                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+-                                                            </path>
+-                                                            </svg>
+-                                                        </span>
+-                                                        </span>
+-                                                    </span>
+-                                                    </span>
+-                                                    <span class="Polaris-Choice__Label Deselectcount"></span>
+-                                                </label>
+-                                                    <!-- <label class="Polaris-Choice Polaris-Choice--labelHidden" for="PolarisCheckbox2">
+-                                                        <span class="Polaris-Choice__Control">
+-                                                            <span class="Polaris-Checkbox">
+-                                                                <input id="checkAll" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="true" value="" >
+-                                                                <span class="Polaris-Checkbox__Backdrop"></span>
+-                                                                <span class="Polaris-Checkbox__Icon">
+-                                                                    <span class="Polaris-Icon">
+-                                                                        <span class="Polaris-VisuallyHidden"></span>
+-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+-                                                                        </svg>
+-                                                                    </span>
+-                                                                </span>
+-                                                            </span>
+-                                                        </span>
+-                                                    
+-                                                    </label> -->
+-                                                </div>
+-                                                <!-- <span class="Polaris-CheckableButton__Label">4 selected</span> -->
+-                                            </div>
+-                                   
+-                                    </div>
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div class="Polaris-BulkActions__BulkActionButton">
+-                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
+-                                                <span class="Polaris-Button__Content">
+-                                                    <span class="Polaris-Button__Text">Duplicate selected form(s)</span>
+-                                                </span>
+-                                            </button>
+-                                        </div>
+-                                    </div>
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div>
+-                                            <div>
+-                                                <div class="Polaris-BulkActions__BulkActionButton">
+-                                                    <button class="Polaris-Button" type="button" tabindex="0" aria-controls="Polarispopover1" aria-owns="Polarispopover1" aria-expanded="false">
+-                                                        <span class="Polaris-Button__Content">
+-                                                            <span class="Polaris-Button__Text">More actions</span>
+-                                                            <span class="Polaris-Button__Icon">
+-                                                                <div class="">
+-                                                                    <span class="Polaris-Icon">
+-                                                                        <span class="Polaris-VisuallyHidden"></span>
+-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                                            <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
+-                                                                        </svg>
+-                                                                    </span>
+-                                                                </div>
+-                                                            </span>
+-                                                        </span>
+-                                                    </button>
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    </div>
+-                                </div>
+-                            </div>
+-                    </div>
+-                    <!-- <div class="Polaris-ResourceList__AlternateToolWrapper">
+-                        <div style="display: flex;">
+-                            <div class="Polaris-Labelled--hidden">
+-                                <div class="Polaris-Labelled__LabelWrapper">
+-                                    <div class="Polaris-Label"><label id="PolarisSelect9Label" for="PolarisSelect9" class="Polaris-Label__Text">Sort by</label></div>
+-                                </div>
+-                                <div class="Polaris-Select">
+-                                    <select id="PolarisSelect9" class="Polaris-Select__Input" aria-invalid="false">
+-                                        <option value="DATE_CREATED_DESC">Newest</option>
+-                                        <option value="DATE_CREATED_ASC">Oldest</option>
+-                                    </select>
+-                                    <div class="Polaris-Select__Content" aria-hidden="true">
+-                                        <span class="Polaris-Select__InlineLabel">Sort by</span><span class="Polaris-Select__SelectedOption">Newest</span>
+-                                        <span class="Polaris-Select__Icon">
+-                                            <span class="Polaris-Icon">
+-                                                <span class="Polaris-VisuallyHidden"></span>
+-                                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                    <path
+-                                                        d="M7.676 9h4.648c.563 0 .879-.603.53-1.014l-2.323-2.746a.708.708 0 0 0-1.062 0l-2.324 2.746c-.347.411-.032 1.014.531 1.014Zm4.648 2h-4.648c-.563 0-.878.603-.53 1.014l2.323 2.746c.27.32.792.32 1.062 0l2.323-2.746c.349-.411.033-1.014-.53-1.014Z"
+-                                                    ></path>
+-                                                </svg>
+-                                            </span>
+-                                        </span>
+-                                    </div>
+-                                    <div class="Polaris-Select__Backdrop"></div>
+-                                </div>
+-                            </div>
+-                        </div>
+-                    </div> -->
+-                </div>
+-                <div class="Polaris-ResourceList__BulkActionsWrapper">
+-                    <div>
+-                        <div class="Polaris-BulkActions__Group Polaris-BulkActions__Group--largeScreen Polaris-BulkActions__Group--exited">
+-                            <div class="Polaris-BulkActions__ButtonGroupWrapper">
+-                                <div class="Polaris-ButtonGroup Polaris-ButtonGroup--segmented" data-buttongroup-segmented="true">
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div class="Polaris-CheckableButton">
+-                                            <label class="Polaris-Choice">
+-                                                <span class="Polaris-Choice__Control">
+-                                                  <span class="Polaris-Checkbox">
+-                                                    <input name="chekbox2" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="">
+-                                                    <span class="Polaris-Checkbox__Backdrop">
+-                                                    </span>
+-                                                    <span class="Polaris-Checkbox__Icon">
+-                                                      <span class="Polaris-Icon">
+-                                                        <span class="Polaris-Text--root Polaris-Text--visuallyHidden">
+-                                                        </span>
+-                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                          <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+-                                                          </path>
+-                                                        </svg>
+-                                                      </span>
+-                                                    </span>
+-                                                  </span>
+-                                                </span>
+-                                              </label>
+-                                            <span class="Polaris-CheckableButton__Label">0 selected</span>
+-                                        </div>
+-                                    </div>
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div class="Polaris-BulkActions__BulkActionButton">
+-                                            <button class="Polaris-Button duplicate-selected-forms" type="button">
+-                                                <span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Duplicate selected form(s)</span></span>
+-                                            </button>
+-                                        </div>
+-                                    </div>
+-                                    <div class="Polaris-ButtonGroup__Item">
+-                                        <div>
+-                                            <div>
+-                                                <div class="Polaris-BulkActions__BulkActionButton">
+-                                                    <button class="Polaris-Button" type="button" aria-controls="Polarispopover21" aria-owns="Polarispopover21" aria-expanded="false">
+-                                                        <span class="Polaris-Button__Content">
+-                                                            <span class="Polaris-Button__Text">More actions</span>
+-                                                            <span class="Polaris-Button__Icon">
+-                                                                <div class="">
+-                                                                    <span class="Polaris-Icon">
+-                                                                        <span class="Polaris-VisuallyHidden"></span>
+-                                                                        <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+-                                                                            <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
+-                                                                        </svg>
+-                                                                    </span>
+-                                                                </div>
+-                                                            </span>
+-                                                        </span>
+-                                                    </button>
+-                                                </div>
+-                                            </div>
+-                                        </div>
+-                                    </div>
+-                                </div>
+-                            </div>
+-                        </div>
+-                    </div>
+-                </div>
+-            </div>
++<div id="dynamicBulkActionsWrapper" class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky" style="border-radius: 8px 8px 0 0; display: none; padding: 12px 20px; border-bottom: 1px solid #c9cccf; background: #fff; margin-top: 20px; flex-direction: row; justify-content: space-between; align-items: center; box-shadow: 0 -1px 0 rgba(0,0,0,0.05) inset; width: 100%; box-sizing: border-box;">
++    <div style="display: flex; align-items: center; gap: 12px;">
++        <button id="checkAllBtnInner" style="background: #202223; border: none; border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
++            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg check-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: none;"><path d="m8.315 13.859-3.182-3.417a.506.506 0 0 1 0-.684l.643-.683a.437.437 0 0 1 .642 0l2.22 2.393 4.942-5.327a.437.437 0 0 1 .643 0l.643.684a.504.504 0 0 1 0 .683l-5.91 6.35a.437.437 0 0 1-.641 0z"></path></svg>
++            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg minus-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: block;"><path d="M15 9H5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2z"></path></svg>
++        </button>
++        <span class="Deselectcount" style="font-weight: 500; font-size: 14px; color: #202223;">0 selected</span>
++    </div>
++    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
++        <button class="Polaris-Button set-active-forms" type="button" style="padding: 5px 12px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Set as active</span></span></button>
++        <button class="Polaris-Button set-draft-forms" type="button" style="padding: 5px 12px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Set as draft</span></span></button>
++        <button class="Polaris-Button more-actions-btn" type="button" aria-controls="Polarispopover1" aria-owns="Polarispopover1" aria-expanded="false" style="padding: 5px 8px; border-radius: 4px; box-shadow: 0 1px 0 rgba(0,0,0,0.05); min-height: 28px;">
++            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width: 16px; height: 16px; fill: #5c5f62;"><path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path></svg>
++        </button>
++    </div>
++</div>
+             
+             <div class="forms-list-responsive-wrapper">
+                 <div class="forms-list-container">
+-                    <div class="list-column-headers" style="display: flex; padding: 12px 20px; font-weight: 600; color: #6d7175; font-size: 13px; border-bottom: 1px solid #e1e3e5; background: #fafbfc; justify-content: space-between;">
++                    <div class="list-column-headers" id="listColumnHeaders" style="display: flex; padding: 12px 20px; font-weight: 600; color: #6d7175; font-size: 13px; border-bottom: 1px solid #e1e3e5; background: #fafbfc; justify-content: space-between;">
+                         <div style="display: flex; gap: 15px; flex: 1; align-items: center;">
+-                            <div style="width: 32px;text-align:center;"></div>
++                            <div style="width: 32px;text-align:center;">
++                                <input type="checkbox" id="headerCheckAllOuter" style="cursor: pointer; width: 16px; height: 16px; margin: 0; outline: none; border: 1px solid #c9cccf; border-radius: 4px;">
++                            </div>
+                             <div style="width: 80px;text-align:center;">Id</div>
+                             <div style="width: 300px;text-align:center;">Title</div>
+                         </div>
+@@ -703,10 +517,19 @@ include_once('cls_header.php');
+                 var popover = $('#moreActionsPopover');
+                 if (popover.length === 0) {
+                     // Create popover if it doesn't exist
+-                    var popoverHtml = '<div id="moreActionsPopover" style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); min-width: 150px; z-index: 1000; display: none;">' +
++                    var popoverHtml = '<div id="moreActionsPopover" style="position: absolute; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 220px; z-index: 1000; display: none;">' +
+                         '<div style="padding: 8px 0;">' +
+-                        '<button type="button" class="delete-selected-forms" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; color: #bf0711;">' +
+-                        '<span>Delete forms</span>' +
++                        '<button type="button" class="duplicate-selected-forms" style="width: 100%; text-align: left; padding: 10px 16px; border: none; background: none; cursor: pointer; color: #202223; display: flex; align-items: center; gap: 8px;">' +
++                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M7 3a2 2 0 0 0-2 2v9a.999.999 0 0 0 1 1h.5v1.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-10a1.5 1.5 0 0 0-1.5-1.5h-1.5v-.5a2 2 0 0 0-2-2h-3zm6.5 4h-5a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-10a.5.5 0 0 0-.5-.5h-2zm-2-2v2h-4.5v-5a1 1 0 0 1 1-1h3zm-3 6h4v1.5h-4v-1.5zm0 3h2v1.5h-2v-1.5z"></path></svg>' +
++                        '<span>Duplicate selected form(s)</span>' +
++                        '</button>' +
++                        '<button type="button" class="export-selected-forms" style="width: 100%; text-align: left; padding: 10px 16px; border: none; background: none; cursor: pointer; color: #202223; display: flex; align-items: center; gap: 8px;">' +
++                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M10.707 2.293a.999.999 0 0 0-1.414 0l-3 3a.999.999 0 1 0 1.414 1.414l1.293-1.293v7.586a1 1 0 1 0 2 0v-7.586l1.293 1.293a.999.999 0 1 0 1.414-1.414l-3-3zM2 16a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2h-16z"></path></svg>' +
++                        '<span>Export selected form(s)</span>' +
++                        '</button>' +
++                        '<button type="button" class="delete-selected-forms" style="width: 100%; text-align: left; padding: 10px 16px; border: none; background: none; cursor: pointer; color: #d82c0d; display: flex; align-items: center; gap: 8px; border-top: 1px solid #e1e3e5; margin-top: 4px; padding-top: 12px;">' +
++                        '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M14 4h-2.5l-1-1h-1l-1 1h-2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1zm-6.5 2v9a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-9h-7z"></path></svg>' +
++                        '<span>Delete selected form(s)</span>' +
+                         '</button>' +
+                         '</div>' +
+                         '</div>';
+@@ -985,21 +808,51 @@ include_once('cls_header.php');
+                 }
+             });
+ 
+-            // Dynamically show the bulk actions wrapper if items are checked
+-            $(document).on('change', '.selectedCheck, #checkAll', function() {
+-                setTimeout(function() {
+-                    var anyChecked = $('.selectedCheck:checked').length > 0;
+-                    if (anyChecked) {
+-                        $('#dynamicBulkActionsWrapper').show();
++            function updateBulkActionsUI() {
++                var checkedCount = $('.selectedCheck:checked').length;
++                var totalCount = $('.selectedCheck').length;
++                
++                if (checkedCount > 0) {
++                    $('.Deselectcount').text(checkedCount + ' selected');
++                    $('#dynamicBulkActionsWrapper').css('display', 'flex');
++                    $('#listColumnHeaders').hide();
++                    
++                    if (checkedCount === totalCount && totalCount > 0) {
++                        $('#headerCheckAllOuter').prop('checked', true);
++                        $('#checkAllBtnInner .check-icon-svg').show();
++                        $('#checkAllBtnInner .minus-icon-svg').hide();
+                     } else {
+-                        $('#dynamicBulkActionsWrapper').hide();
++                        $('#headerCheckAllOuter').prop('checked', false);
++                        $('#checkAllBtnInner .check-icon-svg').hide();
++                        $('#checkAllBtnInner .minus-icon-svg').show();
+                     }
+-                }, 100);
++                } else {
++                    $('#dynamicBulkActionsWrapper').hide();
++                    $('#listColumnHeaders').show();
++                    $('#headerCheckAllOuter').prop('checked', false);
++                }
++            }
++
++            $(document).on('change', '.selectedCheck', function() {
++                updateBulkActionsUI();
++            });
++
++            $(document).on('change', '#headerCheckAllOuter', function() {
++                var isChecked = $(this).prop('checked');
++                $('.selectedCheck').prop('checked', isChecked);
++                updateBulkActionsUI();
++            });
++
++            $(document).on('click', '#checkAllBtnInner', function(e) {
++                e.preventDefault();
++                $('.selectedCheck').prop('checked', false);
++                updateBulkActionsUI();
+             });
+ 
+             $(document).ajaxComplete(function(event, xhr, settings) {
+                 if (settings.url && settings.url.indexOf('ajax_call.php') !== -1 && settings.data && settings.data.indexOf('routine_name=getAllFormFunction') !== -1) {
+                     updateFormListDisplay();
++                    updateBulkActionsUI();
+                 }
+             });
+ 

@@ -2556,7 +2556,7 @@ class Client_functions extends common_function
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form_status_msg_show" style="display:none; background: #008060; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin: 0 15px; position: absolute; right: 31%; top: 0%;"></div>
+                                    <div class="form_status_msg_show" style="display:none; background: #008060; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin: 0 15px; position: absolute; right: 37%; top: 0%;"></div>
                                     <div class="111 Polaris-ResourceList__AlternateToolWrapper main_right_">
                                         ';
                     if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {

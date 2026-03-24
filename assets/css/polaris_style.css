@@ -2423,10 +2423,10 @@ html[class*="Polaris-Summer-Editions-2023"] .Polaris-Button {
   fill: var(--p-color-icon);
 }
 
-.Polaris-Button:hover {
+/* .Polaris-Button:hover {
   background: var(--p-color-bg-hover);
   outline: var(--p-border-width-1) solid transparent;
-}
+} */
 
 .Polaris-Button:focus-visible {
   box-shadow: var(--p-shadow-sm);
@@ -4062,7 +4062,6 @@ html[class*="Polaris-Summer-Editions-2023"] .Polaris-ActionMenu-SecondaryAction.
   --pc-button-group-item: 10;
   --pc-button-group-focused: 20;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   margin-top: calc(var(--p-space-2)*-1);
   margin-left: calc(var(--p-space-2)*-1);

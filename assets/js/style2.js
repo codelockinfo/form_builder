@@ -2,6 +2,7 @@ $(document).ready(function () {
     // code for create new form start
     $("#myBtn_new").click(function () {
         $("#myModal_new").css("display", "block");
+        if (window.centerModal) window.centerModal('myModal_new');
     });
     $(".close_new").click(function () {
         $("#myModal_new").css("display", "none");
