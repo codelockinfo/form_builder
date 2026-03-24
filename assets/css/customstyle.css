@@ -152,6 +152,14 @@
     width: 100%;
 }
 
+/* Force single column for list options in mobile preview */
+.preview-box.mobile .globo-list-control.option-2-column,
+.preview-box.mobile .globo-list-control.option-3-column,
+.preview-box.mobile .globo-list-control.option-4-column,
+.preview-box.mobile .globo-list-control.option-5-column {
+    width: 100% !important;
+}
+
 .element_start {
     background: #f9fafb;
     border-right: 1px solid #dfe3e8;

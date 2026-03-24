@@ -246,6 +246,13 @@ button.action.reset.classic-button {
 .preview-box.iframe-wrapper.mobile {
   width: 320px;
 }
+/* Force single field per row in mobile preview */
+.preview-box.mobile .layout-2-column,
+.preview-box.mobile .layout-3-column,
+.preview-box.mobile .code-form-control.layout-2-column,
+.preview-box.mobile .code-form-control.layout-3-column {
+  width: 100% !important;
+}
  .form-control .picker .pickerbox.empty {
   align-items: center;
   display: flex;
@@ -489,6 +496,9 @@ input:focus-visible {
   .btn-action-mobile .btn-text {
     display: none !important;
   }
+        .code-form-app {
+          margin: 0px !important;
+        }
   .btn-action-mobile .btn-icon {
     display: inline-block !important;
     vertical-align: middle;
@@ -496,4 +506,4 @@ input:focus-visible {
   .btn-action-mobile {
     padding: 6px 12px !important;
   }
-}
+}
