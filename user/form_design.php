@@ -5210,19 +5210,7 @@ console.log('Custom code loaded');
             border-color: #c9cccf;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .color-scheme-box.add-scheme {
-            border: 2px dashed #008060;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 160px;
-        }
-        .color-scheme-box.add-scheme:hover {
-            border-color: #006e52;
-            background: #f6fbf9;
-        }
+
         .color-scheme-preview {
             width: 100%;
             height: 120px;
@@ -5266,17 +5254,7 @@ console.log('Custom code loaded');
             color: #202223;
             text-align: center;
         }
-        .add-scheme-icon {
-            width: 24px;
-            height: 24px;
-            color: #008060;
-            margin-bottom: 8px;
-        }
-        .add-scheme-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #008060;
-        }
+
         
         /* Form Design Customizer Styles */
         .form-design-customizer {
@@ -6171,13 +6149,6 @@ console.log('Custom code loaded');
                     colorsHtml += '<div class="color-scheme-label">Scheme ' + scheme.id + '</div>';
                         colorsHtml += '</div>';
                     });
-                // Add Scheme button (only show if we have schemes)
-                colorsHtml += '<div class="color-scheme-box add-scheme">';
-                colorsHtml += '<svg class="add-scheme-icon" viewBox="0 0 20 20" fill="currentColor">';
-                colorsHtml += '<path d="M10 4a1 1 0 011 1v4h4a1 1 0 110 2h-4v4a1 1 0 11-2 0v-4H5a1 1 0 110-2h4V5a1 1 0 011-1z"></path>';
-                colorsHtml += '</svg>';
-                colorsHtml += '<div class="add-scheme-label">Add Scheme</div>';
-                colorsHtml += '</div>';
             }
             
             $('#colorSchemaContainer').html(colorsHtml);
@@ -8730,10 +8701,7 @@ console.log('Custom code loaded');
             saveColorScheme();
         });
         
-        // Handle add scheme button click
-        $(document).on('click', '.color-scheme-box.add-scheme', function() {
-            // Here you would typically open a modal or form to create a new color scheme
-        });
+
         
         // Select page
         $(document).on('click', '.selectPageBtn', function(e) {
