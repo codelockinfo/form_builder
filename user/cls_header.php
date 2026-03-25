@@ -30,7 +30,7 @@ $view = (isset($_GET["view"]) && $_GET["view"]) ? $_GET["view"] : FALSE;
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.carousel.min.css'); ?>" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo main_url('assets/css/owl.theme.default.min.css'); ?>" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo main_url('assets/css/style_create-new-for1.css'); ?>" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo main_url('assets/css/style_create-new-for2.css'); ?>" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
         <script> var store = "<?php echo $store; ?>"; </script>
