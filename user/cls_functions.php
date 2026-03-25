@@ -2548,9 +2548,9 @@ class Client_functions extends common_function
                     $html .= '
                                             <div class="main_left_ clsmain_form" style="display: flex; gap: 15px; flex: 1; align-items: center;">
                                             <input type="hidden" class="form_id_main" name="form_id_main" value=' . $templates['id'] . '>
-                                                <div class="form-id-display" style="width: 80px;text-align:center; font-size: 13px; color: #6b7280;">
+                                                <div class="form-id-display" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b7280; min-width: 100px;">
                                                     ' . ((isset($templates['public_id']) && !empty($templates['public_id'])) ? '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['public_id'] . '\', this)" title="Click to copy Form ID">' . $templates['public_id'] . '</span>' : '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['id'] . '\', this)" title="Click to copy Form ID">' . $templates['id'] . '</span>') . '
-                                                    <span class="copy-success" style="margin-left: 6px; color: #10b981; display: none; font-size: 11px;">✓ Copied!</span>
+                                                    <span class="copy-success" style="color: #10b981; display: none; font-size: 11px; white-space: nowrap;">✓ Copied!</span>
                                                 </div>
                                                 <div class="sp-font-size" style="width:300px;text-align:center; font-weight: 500;">' . $templates['form_name'] . '</div>
                                             </div>
