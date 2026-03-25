@@ -188,7 +188,14 @@ function changeTab(evt, id) {
     evt.currentTarget.className += " Polaris-Tabs__Tab--selected";
 }
 function loading_show($selector) {
-    $($selector).addClass("Polaris-Button--loading").html('<span class="Polaris-Button__Content"><span class="Polaris-Button__Spinner">' + CLS_LOADER + '</span><span>Loading</span></span>').fadeIn('fast').attr('disabled', 'disabled');
+    var $btn = $($selector);
+    if ($btn.length > 0) {
+        var width = $btn.outerWidth();
+        $btn.css('min-width', width + 'px');
+        $btn.addClass("Polaris-Button--loading")
+            .html('<span class="Polaris-Button__Content"><span class="Polaris-Button__Spinner">' + CLS_LOADER + '</span></span>')
+            .attr('disabled', 'disabled');
+    }
 }
 function loading_hide($selector, $buttonName, $buttonIcon) {
     if ($buttonIcon != undefined) {
@@ -196,7 +203,10 @@ function loading_hide($selector, $buttonName, $buttonIcon) {
     } else {
         $buttonIcon = '';
     }
-    $($selector).removeClass("Polaris-Button--loading").html('<span class="Polaris-Button__Content">' + $buttonIcon + '<span>' + $buttonName + '</span></span>').removeAttr("disabled");
+    $($selector).removeClass("Polaris-Button--loading")
+        .css('min-width', '')
+        .html('<span class="Polaris-Button__Content">' + $buttonIcon + '<span>' + $buttonName + '</span></span>')
+        .removeAttr("disabled");
 }
 function table_loader(selector, colSpan) {
     $(selector).html('<tr><td colspan="' + colSpan + '" style="text-align:center;"><div class="loader-spinner"><svg viewBox="0 0 44 44" class="Polaris-Spinner Polaris-Spinner--colorTeal Polaris-Spinner--sizeLarge" role="status"><path d="M15.542 1.487A21.507 21.507 0 0 0 .5 22c0 11.874 9.626 21.5 21.5 21.5 9.847 0 18.364-6.675 20.809-16.072a1.5 1.5 0 0 0-2.904-.756C37.803 34.755 30.473 40.5 22 40.5 11.783 40.5 3.5 32.217 3.5 22c0-8.137 5.3-15.247 12.942-17.65a1.5 1.5 0 1 0-.9-2.863z"></path></svg></div></td></tr>')
@@ -1863,23 +1873,21 @@ $(document).on("click", ".saveForm", function (event) {
         // Now save everything sequentially to prevent race conditions
         saveposition();
 
-        // Chain the saves: Properties -> Design -> Others
+        // Chain the saves: Properties -> Design -> Others in a controlled sequence
         saveAllElementProperties(function () {
-            saveAllElementDesignSettings();
-            saveheaderform();
-            savefooterform();
-            savepublishdata();
-
-            // Show success message only when all AJAX calls complete
-            var savePoller = setInterval(function() {
-                if ($.active === 0) {
-                    clearInterval(savePoller);
-                    if (typeof flashNotice === 'function') {
-                        flashNotice('All changes saved successfully!', 'inline-flash--success');
-                        loading_hide('.save_loader_show', 'Save');
-                    }
-                }
-            }, 100);
+            saveAllElementDesignSettings(function() {
+                saveheaderform(function() {
+                    savefooterform(function() {
+                        savepublishdata(function() {
+                            // Final cleanup and notification
+                            if (typeof flashNotice === 'function') {
+                                flashNotice('All changes saved successfully!', 'inline-flash--success');
+                            }
+                            loading_hide('.save_loader_show', 'Save');
+                        });
+                    });
+                });
+            });
         });
     } catch (error) {
         loading_hide('.save_loader_show', 'Save');
@@ -2125,7 +2133,7 @@ function saveform() {
     });
 }
 
-function saveheaderform() {
+function saveheaderform(onComplete) {
     // Save header data to tracker
     var $headerForm = $(".add_headerdata");
     if ($headerForm.length) {
@@ -2164,12 +2172,15 @@ function saveheaderform() {
         processData: false,
         data: formDataObj,
         success: function (response) {
-            var response = JSON.parse(response);
+            if (typeof onComplete === 'function') onComplete();
+        },
+        error: function() {
+            if (typeof onComplete === 'function') onComplete();
         }
     });
 }
 
-function savefooterform() {
+function savefooterform(onComplete) {
     // Save footer data to tracker
     var $footerForm = $(".add_footerdata");
     if ($footerForm.length) {
@@ -2208,7 +2219,10 @@ function savefooterform() {
         processData: false,
         data: formDataObj,
         success: function (response) {
-            var response = JSON.parse(response);
+            if (typeof onComplete === 'function') onComplete();
+        },
+        error: function() {
+            if (typeof onComplete === 'function') onComplete();
         }
     });
 }
@@ -2295,7 +2309,7 @@ function saveAllElementDesignSettings(onComplete) {
     });
 }
 
-function savepublishdata() {
+function savepublishdata(onComplete) {
     var storeName = $('#store_name').val() || window.store || "";
 
     // Get custom code from element21's saved properties
@@ -2381,16 +2395,15 @@ function savepublishdata() {
         data: form_data,
         success: function (response) {
             var parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-
-
             if (parsedResponse.data === 'success') {
-
             } else {
                 console.error('❌ Save failed:', parsedResponse.msg);
             }
+            if (typeof onComplete === 'function') onComplete();
         },
         error: function (xhr, status, error) {
             console.error('❌ AJAX Error:', error);
+            if (typeof onComplete === 'function') onComplete();
         }
     });
 }
