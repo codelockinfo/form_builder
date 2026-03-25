@@ -64,7 +64,7 @@ $is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' &
             </div>
         </div>
         <div class="Polaris-TopBar__Contents polaris-topbar-secondary-links">
-          <div class="Polaris-TopBar__SearchField text-end">
+          <div class="Polaris-TopBar__SearchField text-end" style="display: none;">
             <!-- <button class="Polaris-Button Polaris-Button--primary" type="button">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Shopify Admin</span>
