@@ -424,7 +424,7 @@ $(document).on("click", ".btn_add_element", function (event) {
                 window.navigateToSlide(6); // data-owl="6" for Add element
             } else {
                 try {
-                    $carousel.trigger('to.owl.carousel', [6, 40, true]);
+                    $carousel.trigger('to.owl.carousel', [6, 0]);
                 } catch (e) {
                 }
             }
@@ -1416,7 +1416,7 @@ $(document).on("click", ".Polaris-Tabs__Panel .list-item", function () {
         saveElementFormToTracker(currentFormdataid);
     }
 
-    $('.owl-carousel').trigger('to.owl.carousel', [slideTo, 40, true]);
+    $('.owl-carousel').trigger('to.owl.carousel', [slideTo, 0]);
     if (elementId != undefined) {
         $.ajax({
             url: "ajax_call.php",

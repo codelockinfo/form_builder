@@ -435,9 +435,7 @@ $(document).ready(function () {
 
     $(document).on("click", ".settingselect .Polaris-Tabs__TabContainer,.Polaris-Tabs__Panel .list-item", function () {
         var slideTo = $(this).data("owl");
-        if (slideTo !== undefined && slideTo !== null) {
-            $('.owl-carousel').trigger('to.owl.carousel', [slideTo, 40, true]);
-        }
+            $('.owl-carousel').trigger('to.owl.carousel', [slideTo, 0]);
     });
 
     // Function to detect slide type by content and create mapping
@@ -666,7 +664,7 @@ $(document).ready(function () {
                         var newItemCount = newInstance.items().length;
                         if (newItemCount > 1) {
                             try {
-                                $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                                $carousel.trigger('to.owl.carousel', [slideTo, 0]);
                             } catch (e) {
 
                             }
@@ -686,7 +684,7 @@ $(document).ready(function () {
                     try {
                         var newInstance = $carousel.data('owl.carousel');
                         if (newInstance) {
-                            $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                            $carousel.trigger('to.owl.carousel', [slideTo, 0]);
                         } else {
                         }
                     } catch (e) {
@@ -695,7 +693,7 @@ $(document).ready(function () {
             } else {
                 // Carousel is already initialized, navigate immediately
                 try {
-                    $carousel.trigger('to.owl.carousel', [slideTo, 40, true]);
+                    $carousel.trigger('to.owl.carousel', [slideTo, 0]);
                 } catch (e) {
                 }
             }
@@ -787,7 +785,7 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".backBtn", function () {
-        $('.owl-carousel').trigger('to.owl.carousel', [0, 40, true]);
+        $('.owl-carousel').trigger('to.owl.carousel', [0, 0]);
     });
 
     //footer submit button text change
