@@ -5290,11 +5290,11 @@ console.log('Custom code loaded');
             background: #fff;
         }
         .design-element-item:hover {
-            border-color: #008060;
+            border-color: #2f89c7;
             background: #f6fbf9;
         }
         .design-element-item.active {
-            border-color: #008060;
+            border-color: #2f89c7;
             background: #e6f7f2;
         }
         .design-element-item .element-icon {
@@ -5514,7 +5514,7 @@ console.log('Custom code loaded');
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .color-scheme-box.selected {
-            border-color: #008060;
+            border-color: #2f89c7;
             border-width: 2px;
             box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.1);
         }

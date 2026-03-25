@@ -16,9 +16,9 @@
 
 .form_header .brand {
     align-items: center;
-    background: #007a5c;
+    background: #297eb0;
     color: #fff;
-    border-left: 1px solid #006048;
+    border-left: 1px solid #297eb0;
     box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
     box-sizing: border-box;
     display: flex;
@@ -201,7 +201,7 @@ button.settingsbtn {
 }
 
 .Polaris-Tabs__Tab--selected {
-    box-shadow: inset 0 -4px 0 0 #008060;
+    box-shadow: inset 0 -4px 0 0 #297eb0;
 }
 
 .settingsbtn {
@@ -1806,7 +1806,7 @@ input[id^="fileimage-"] {
     display: -ms-flexbox;
     display: flex;
     margin: 0 1.6rem;
-    background: #007a5c;
+    background: #297eb0;
     -webkit-box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
     box-shadow: 0 0 0 1px rgba(63, 63, 68, .05), 0 1px 3px 0 rgba(63, 63, 68, .15);
     border-radius: 3px;
@@ -1944,3 +1944,29 @@ input[id^="fileimage-"] {
     -webkit-animation-name: bounceInLeft;
     animation-name: bounceInLeft;
 }
+
+/* Branding Overrides */
+.Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop::before,
+.Polaris-Checkbox__Input.Polaris-Checkbox__Input--indeterminate + .Polaris-Checkbox__Backdrop::before,
+.Polaris-Checkbox__Input:active:not(:disabled) + .Polaris-Checkbox__Backdrop::before {
+    background-color: #297eb0 !important;
+}
+
+.Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop,
+.Polaris-Checkbox__Input.Polaris-Checkbox__Input--indeterminate + .Polaris-Checkbox__Backdrop,
+.Polaris-Checkbox__Input:active:not(:disabled) + .Polaris-Checkbox__Backdrop {
+    border-color: #297eb0 !important;
+}
+
+.Polaris-Toggle__Input:checked + .Polaris-Toggle__Backdrop {
+    background-color: #297eb0 !important;
+}
+
+.Polaris-Button--primary {
+    background: #297eb0 !important;
+    border-color: #297eb0 !important;
+}
+
+.Polaris-Spinner svg {
+    fill: #297eb0 !important;
+}

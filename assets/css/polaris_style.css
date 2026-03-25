@@ -116,9 +116,9 @@ button::-moz-focus-inner,
   --p-color-bg-subdued: rgba(249, 250, 251, 1);
   --p-color-bg-input: rgba(255, 255, 255, 1);
   --p-color-bg: rgba(255, 255, 255, 1);
-  --p-color-bg-primary-active: rgba(12, 59, 47, 1);
-  --p-color-bg-primary-hover: rgba(18, 84, 67, 1);
-  --p-color-bg-primary: rgba(0, 122, 92, 1);
+  --p-color-bg-primary-active: rgba(21, 65, 97, 1);
+  --p-color-bg-primary-hover: rgba(30, 93, 138, 1);
+  --p-color-bg-primary: rgba(41, 126, 176, 1);
   --p-color-bg-success-strong: rgba(22, 166, 121, 1);
   --p-color-bg-success: rgba(161, 237, 208, 1);
   --p-color-bg-primary-subdued-active: rgba(192, 242, 221, 1);
@@ -170,7 +170,7 @@ button::-moz-focus-inner,
   --p-color-border-disabled: rgba(221, 224, 228, 1);
   --p-color-border-subdued: rgba(221, 224, 228, 1);
   --p-color-border-interactive-disabled: rgba(221, 224, 228, 1);
-  --p-color-border-primary: rgba(0, 122, 92, 1);
+  --p-color-border-primary: rgba(41, 126, 176, 1);
   --p-color-border-success: rgba(22, 166, 121, 1);
   --p-color-border-success-subdued: rgba(80, 220, 169, 1);
   --p-color-border-critical-active: rgba(67, 14, 4, 1);
@@ -196,7 +196,7 @@ button::-moz-focus-inner,
   --p-color-icon-interactive-disabled: rgba(171, 177, 186, 1);
   --p-color-icon-inverse: rgba(221, 224, 228, 1);
   --p-color-icon-on-color: rgba(255, 255, 255, 1);
-  --p-color-icon-primary: rgba(0, 122, 92, 1);
+  --p-color-icon-primary: rgba(41, 126, 176, 1);
   --p-color-icon-success: rgba(22, 166, 121, 1);
   --p-color-icon-critical: rgba(197, 40, 12, 1);
   --p-color-icon-caution: rgba(183, 126, 11, 1);
@@ -215,8 +215,8 @@ button::-moz-focus-inner,
   --p-color-text-inverse: rgba(241, 242, 244, 1);
   --p-color-text-on-color: rgba(255, 255, 255, 1);
   --p-color-text-success-strong: rgba(12, 59, 47, 1);
-  --p-color-text-success: rgba(0, 122, 92, 1);
-  --p-color-text-primary: rgba(0, 122, 92, 1);
+  --p-color-text-success: rgba(41, 126, 176, 1);
+  --p-color-text-primary: rgba(41, 126, 176, 1);
   --p-color-text-primary-hover: rgba(18, 84, 67, 1);
   --p-color-text-critical-strong: rgba(67, 14, 4, 1);
   --p-color-text-critical-active: rgba(115, 24, 7, 1);

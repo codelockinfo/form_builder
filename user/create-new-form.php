@@ -27,30 +27,30 @@ include_once('cls_header.php');
 .Polaris-Checkbox, 
 .Polaris-Checkbox *,
 .Polaris-ResourceList__CheckableButtonWrapper {
-    --p-color-bg-interactive: #008060 !important;
-    --p-color-bg-interactive-active: #008060 !important;
-    --p-color-border-interactive: #008060 !important;
-    --p-color-border-interactive-focus: #008060 !important;
-    --p-interactive-active: #008060 !important;
+    --p-color-bg-interactive: #297eb0 !important;
+    --p-color-bg-interactive-active: #297eb0 !important;
+    --p-color-border-interactive: #297eb0 !important;
+    --p-color-border-interactive-focus: #297eb0 !important;
+    --p-interactive-active: #297eb0 !important;
 }
 
 /* Fallbacks for older Polaris versions that don't just use CSS variables */
 .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop,
 .Polaris-Checkbox__Input:indeterminate + .Polaris-Checkbox__Backdrop,
 html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop {
-    border-color: #008060 !important;
+    border-color: #297eb0 !important;
     background-color: transparent !important; /* Let ::before cover it */
 }
 .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop::before,
 .Polaris-Checkbox__Input:indeterminate + .Polaris-Checkbox__Backdrop::before,
 html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Backdrop::before {
-    background-color: #008060 !important;
-    border-color: #008060 !important;
+    background-color: #297eb0 !important;
+    border-color:  #297eb0 !important;
 }
 
 /* For the native header checkbox */
 #headerCheckAllOuter[type=checkbox] {
-    accent-color: #008060 !important;
+    accent-color: #297eb0 !important;
 }
 </style>
 
@@ -109,8 +109,8 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
             </div>
 <div id="dynamicBulkActionsWrapper" class="Polaris-ResourceList__HeaderWrapper border-radi-botom-unset Polaris-ResourceList__HeaderWrapper--hasAlternateTool Polaris-ResourceList__HeaderWrapper--hasSelect Polaris-ResourceList__HeaderWrapper--isSticky" style="border-radius: 8px 8px 0 0; display: none; padding: 12px 20px; border-bottom: 1px solid #c9cccf; background: #fff; margin-top: 20px; flex-direction: row; justify-content: space-between; align-items: center; box-shadow: 0 -1px 0 rgba(0,0,0,0.05) inset; width: 100%; box-sizing: border-box;">
     <div style="display: flex; align-items: center; gap: 12px;">
-        <button id="checkAllBtnInner" style="background: #008060; border: none; border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
-            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg check-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: none;"><path d="m8.315 13.859-3.182-3.417a.506.506 0 0 1 0-.684l.643-.683a.437.437 0 0 1 .642 0l2.22 2.393 4.942-5.327a.437.437 0 0 1 .643 0l.643.684a.504.504 0 0 1 0 .683l-5.91 6.35a.437.437 0 0 1-.641 0z"></path></svg>
+        <button id="checkAllBtnInner" style="background: #297eb0; border: none; border-radius: 4px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
+            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg check-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 24px; height: 24px; display: none;"><path d="m8.315 13.859-3.182-3.417a.506.506 0 0 1 0-.684l.643-.683a.437.437 0 0 1 .642 0l2.22 2.393 4.942-5.327a.437.437 0 0 1 .643 0l.643.684a.504.504 0 0 1 0 .683l-5.91 6.35a.437.437 0 0 1-.641 0z"></path></svg>
             <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg minus-icon-svg" focusable="false" aria-hidden="true" style="fill: white; width: 12px; height: 12px; display: block;"><path d="M15 9H5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2z"></path></svg>
         </button>
         <span class="Deselectcount" style="font-weight: 500; font-size: 14px; color: #202223;">0 selected</span>
@@ -863,7 +863,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                         '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M10 4.293V16a1 1 0 1 1-2 0V4.293L4.707 7.586a1 1 0 0 1-1.414-1.414l5-5a1 1 0 0 1 1.414 0l5 5a1 1 0 1 1-1.414 1.414L10 4.293z"></path></svg>' +
                         '<span>Oldest to newest</span>' +
                         '</button>' +
-                        '<button type="button" class="sort-direction-btn active-sort" data-val="Newest" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: #008060; cursor: pointer; color: #ffffff; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">' +
+                        '<button type="button" class="sort-direction-btn active-sort" data-val="Newest" style="width: 100%; text-align: left; padding: 8px 16px; border: none; background: #2f89c7; cursor: pointer; color: #ffffff; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">' +
                         '<svg style="width: 16px; height: 16px; fill: currentcolor;" viewBox="0 0 20 20"><path d="M10 15.707V4a1 1 0 1 1 2 0v11.707l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-1.414 0l-5-5a1 1 0 1 1 1.414-1.414L10 15.707z"></path></svg>' +
                         '<span>Newest to oldest</span>' +
                         '</button>' +
@@ -876,7 +876,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                         e.preventDefault();
                         e.stopPropagation();
                         $('.sort-direction-btn').css({'background': 'none', 'font-weight': 'normal', 'color': '#202223'}).removeClass('active-sort');
-                        $(this).css({'background': '#008060', 'font-weight': '500', 'color': '#ffffff'}).addClass('active-sort');
+                        $(this).css({'background': '#2f89c7', 'font-weight': '500', 'color': '#ffffff'}).addClass('active-sort');
                         $('#customSortForms').val($(this).data('val'));
                         updateFormListDisplay();
                         popover.hide();

@@ -250,7 +250,7 @@ $is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' &
 }
 
 .mobile-sidebar__link.is-active {
-    background: #008060;
+    background: #297eb0;
     color: #ffffff;
 }
 
@@ -261,7 +261,7 @@ $is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' &
 }
 
 .mobile-sidebar__link.is-active:hover {
-    background: #006e52;
+    background: #1e5d8a;
     color: #ffffff;
 }
 

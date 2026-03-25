@@ -702,3 +702,20 @@
     }
 
 }
+
+/* Blue Branding Overrides */
+.Polaris-Button--primary {
+    background: #297eb0 !important;
+    border-color: #297eb0 !important;
+    box-shadow: none !important;
+}
+.Polaris-Button--primary:hover {
+    background: #1e5d8a !important;
+    border-color: #1e5d8a !important;
+}
+.Polaris-Spinner--colorTeal {
+    color: #297eb0 !important;
+}
+.Polaris-Spinner--colorTeal path {
+    fill: #297eb0 !important;
+}

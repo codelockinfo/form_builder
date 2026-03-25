@@ -2550,13 +2550,13 @@ class Client_functions extends common_function
                                             <input type="hidden" class="form_id_main" name="form_id_main" value=' . $templates['id'] . '>
                                                 <div class="form-id-display" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6b7280; min-width: 100px;">
                                                     ' . ((isset($templates['public_id']) && !empty($templates['public_id'])) ? '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['public_id'] . '\', this)" title="Click to copy Form ID">' . $templates['public_id'] . '</span>' : '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['id'] . '\', this)" title="Click to copy Form ID">' . $templates['id'] . '</span>') . '
-                                                    <span class="copy-success" style="color: #10b981; display: none; font-size: 11px; white-space: nowrap;">✓ Copied!</span>
+                                                    <span class="copy-success" style="color: #297eb0; display: none; font-size: 11px; white-space: nowrap;">✓ Copied!</span>
                                                 </div>
                                                 <div class="sp-font-size" style="width:300px;text-align:center; font-weight: 500;">' . $templates['form_name'] . '</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form_status_msg_show" style="display:none; background: #008060; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin: 0 15px; position: absolute; right: 37%; top: 0%;"></div>
+                                    <div class="form_status_msg_show" style="display:none; background: #297eb0; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 500; margin: 0 15px; position: absolute; right: 37%; top: 0%;"></div>
                                     <div class="111 Polaris-ResourceList__AlternateToolWrapper main_right_">
                                         ';
                     if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {

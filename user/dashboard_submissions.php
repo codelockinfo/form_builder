@@ -103,9 +103,9 @@ else {
 
 .dashboard-tab.active {
     color: white;
-    border-bottom-color: #008060;
+    border-bottom-color: #297eb0;
     font-weight: 600;
- background-color: #008060
+ background-color: #297eb0
  ;
 }
 
@@ -367,8 +367,8 @@ else {
 
 .filter-select:focus {
     outline: none;
-    border-color: #008060;
-    box-shadow: 0 0 0 1px #008060;
+    border-color: #2f89c7;
+    box-shadow: 0 0 0 1px #2f89c7;
 }
 
 .analytics-stats {
@@ -408,11 +408,11 @@ else {
 }
 
 .stat-card.views {
-    border-left: 4px solid #008060;
+    border-left: 4px solid #2f89c7;
 }
 
 .stat-card.fills {
-    border-left: 4px solid #006fbb;
+    border-left: 4px solid #2f89c7;
 }
 
 .stat-card.submits {
@@ -852,7 +852,7 @@ s0.parentNode.insertBefore(s1,s0);
                     {
                         label: 'Views',
                         data: viewsData,
-                        borderColor: '#008060',
+                        borderColor: '#2f89c7',
                         backgroundColor: 'rgba(0, 128, 96, 0.1)',
                         tension: 0.4,
                         fill: true
@@ -928,12 +928,12 @@ s0.parentNode.insertBefore(s1,s0);
                     {
                         label: 'Views',
                         data: viewsData,
-                        backgroundColor: '#008060',
+                        backgroundColor: '#2f89c7',
                     },
                     {
                         label: 'Fills',
                         data: fillsData,
-                        backgroundColor: '#006fbb',
+                        backgroundColor: '#2f89c7',
                     },
                     {
                         label: 'Submissions',
