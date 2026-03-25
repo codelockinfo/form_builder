@@ -11653,7 +11653,6 @@ class Client_functions extends common_function
 .code-form-app {
     max-width: 600px;
     background-color: #FFF;
-    margin: 30px auto;
     padding: 30px;
     position: relative;
     transition: box-shadow .25s;
