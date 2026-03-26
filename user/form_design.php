@@ -2138,7 +2138,7 @@ console.log('Custom code loaded');
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input type="number" name="footer_button_border_radius" id="footerButtonBorderRadius" class="Polaris-TextField__Input footer-design-button-border-radius" value="4" min="0" max="50" step="1" placeholder="4">
+                                                                    <input type="number" name="footer_button_border_radius" id="footerButtonBorderRadius" class="Polaris-TextField__Input footer-design-button-border-radius" value="4" min="0" max="500" step="1" placeholder="4">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>

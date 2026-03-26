@@ -6026,7 +6026,7 @@ class Client_functions extends common_function
 
         // Hide border radius for button element (elementid 12 or 13 typically)
         if ($elementid != 12 && $elementid != 13) {
-            $html .= $this->generate_input_with_affix('Border Radius', 'element_design_border_radius', $borderRadius, 'px', 'suffix', '4', 'number', array('class' => 'element-design-border-radius', 'data-formdataid' => $form_data_id, 'min' => '0', 'max' => '50', 'step' => '1'));
+            $html .= $this->generate_input_with_affix('Border Radius', 'element_design_border_radius', $borderRadius, 'px', 'suffix', '4', 'number', array('class' => 'element-design-border-radius', 'data-formdataid' => $form_data_id, 'min' => '0', 'max' => '500', 'step' => '1'));
         }
 
         $html .= '
