@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../assets/css/polaris_style.css" type="text/css">
+    <link rel="stylesheet" href="../assets/css/polaris_style1.css" type="text/css">
     <link rel="stylesheet" href="../assets/css/customstyle.css" type="text/css">
     <link rel="stylesheet" href="../assets/css/owl.carousel.css" type="text/css">
     <link rel="stylesheet" href="../assets/css/owl.carousel.min.css" type="text/css">

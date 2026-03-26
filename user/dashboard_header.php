@@ -14,7 +14,7 @@ else {
 </head>
     <body>
 <div style="height:60px">
-  <div class="333  Polaris-Frame Polaris-Frame--hasTopBar" data-polaris-layer="true">
+  <div class="Polaris-Frame Polaris-Frame--hasTopBar" data-polaris-layer="true">
     <div class="Polaris-Frame__Skip">
       <a href="#AppFrameMain">Skip to content</a>
     </div>
