@@ -609,7 +609,7 @@ function showDeleteConfirmModal(message, onConfirm) {
         '<div class="delete-confirm-content">' +
         '<p class="delete-confirm-message">' + (message || "Are you sure you want to remove this field?") + '</p>' +
         '<div class="delete-confirm-buttons">' +
-        '<button type="button" class="Polaris-Button Polaris-Button--primary delete-confirm-ok"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">OK</span></span></button>' +
+        '<button type="button" class="Polaris-Button Polaris-Button--primary delete-confirm-ok"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Yes</span></span></button>' +
         '<button type="button" class="Polaris-Button delete-confirm-cancel"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text">Cancel</span></span></button>' +
         '</div></div></div>');
     $overlay.append($modal);
