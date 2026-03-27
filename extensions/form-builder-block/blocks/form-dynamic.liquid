@@ -1,10 +1,25 @@
 <div id="easy-form-{{ block.id }}" class="form-builder-container color-{{ block.settings.color_scheme }} gradient" data-form-id="{{ block.settings.form_id }}"><div class="form-loading">Loading form...</div></div>
 {%- style -%}
   #easy-form-{{ block.id }} .globo-heading {
-    color: {{ block.settings.color_scheme.settings.headings }} !important;
+    {% if block.settings.heading_color != blank and block.settings.heading_color != 'rgba(0,0,0,0)' %}
+      color: {{ block.settings.heading_color }} !important;
+    {% else %}
+      color: {{ block.settings.color_scheme.settings.headings }} !important;
+    {% endif %}
   }
   #easy-form-{{ block.id }} .globo-description {
-    color: {{ block.settings.color_scheme.settings.text }} !important;
+    {% if block.settings.description_color != blank and block.settings.description_color != 'rgba(0,0,0,0)' %}
+      color: {{ block.settings.description_color }} !important;
+    {% else %}
+      color: {{ block.settings.color_scheme.settings.text }} !important;
+    {% endif %}
+  }
+  #easy-form-{{ block.id }} .globo-label {
+    {% if block.settings.label_color != blank and block.settings.label_color != 'rgba(0,0,0,0)' %}
+      color: {{ block.settings.label_color }} !important;
+    {% else %}
+      color: {{ block.settings.color_scheme.settings.text }} !important;
+    {% endif %}
   }
 {%- endstyle -%}
 <script>
@@ -1672,6 +1687,24 @@
           // Insert HTML FIRST (before scripts) so form is visible
           try {
             blockContainer.innerHTML = tempDiv.innerHTML;
+            
+            // Apply text overrides from block settings
+            const headingText = "{{ block.settings.heading_text }}";
+            if (headingText && headingText.trim() !== "") {
+              const headingElem = blockContainer.querySelector('.globo-heading');
+              if (headingElem) {
+                headingElem.textContent = headingText;
+              }
+            }
+            
+            const descriptionText = `{{ block.settings.description_text }}`;
+            if (descriptionText && descriptionText.trim() !== "") {
+              const descElem = blockContainer.querySelector('.globo-description');
+              if (descElem) {
+                descElem.innerHTML = descriptionText;
+              }
+            }
+            
             // Clear loading message
             const loadingDiv = blockContainer.querySelector('.form-loading');
             if (loadingDiv) {
@@ -2541,6 +2574,45 @@
       "label": "Form ID",
       "info": "Enter the Form ID of the form you created in the Easy Form Builder app. You can find this ID in your app dashboard.",
       "default": "0"
+    },
+    {
+      "type": "header",
+      "content": "Heading Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading Text",
+      "info": "Leave blank to use the default heading from the app."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "header",
+      "content": "Description Settings"
+    },
+    {
+      "type": "richtext",
+      "id": "description_text",
+      "label": "Description Text",
+      "info": "Leave blank to use the default description from the app."
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Color"
+    },
+    {
+      "type": "header",
+      "content": "Label Settings"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label Color"
     }
   ]
 }

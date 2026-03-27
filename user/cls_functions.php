@@ -3492,8 +3492,10 @@ class Client_functions extends common_function
                             }
                             if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
                                 $subheading_text_color = $design_settings['form_container']['text_color'];
+                                error_log("DEBUGLOG: Using theme text_color for description: " . $subheading_text_color);
                             }
                         }
+
 
 
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
@@ -3631,7 +3633,16 @@ class Client_functions extends common_function
                         if (isset($design_settings[$key]) && is_array($design_settings[$key])) {
                             $element_design = $design_settings[$key];
                         }
+                        
+                        // Fallback to theme global text color for descriptions and inputs if not explicitly set
+                        if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
+                            if ($element_design === null) $element_design = array();
+                            if (!isset($element_design['color']) || empty($element_design['color']) || $element_design['color'] == '#000000' || $element_design['color'] == '#333333') {
+                                $element_design['color'] = $design_settings['form_container']['text_color'];
+                            }
+                        }
                     }
+
 
                     // If not found, try to get from element_data array (indices 10-14)
                     if ($element_design === null && is_array($element_data_array)) {
@@ -3723,12 +3734,21 @@ class Client_functions extends common_function
                     }
 
                     // 2. If not fully set, try to get from $design_settings array (Global/Legacy Form Settings)
-                    if (empty($element_design) && !empty($design_settings) && is_array($design_settings)) {
+                    if (!empty($design_settings) && is_array($design_settings)) {
                         $key = 'element_' . $form_data_id;
-                        if (isset($design_settings[$key]) && is_array($design_settings[$key])) {
+                        if (empty($element_design) && isset($design_settings[$key]) && is_array($design_settings[$key])) {
                             $element_design = $design_settings[$key];
                         }
+                        
+                        // Fallback to theme global text color if no color was set by user
+                        if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
+                            if ($element_design === null) $element_design = array();
+                            if (!isset($element_design['color']) || empty($element_design['color']) || $element_design['color'] == '#000000' || $element_design['color'] == '#333333') {
+                                $element_design['color'] = $design_settings['form_container']['text_color'];
+                            }
+                        }
                     }
+
 
                     // 3. If still not found, try to get from element_data array (indices 10-14 - Legacy Positional)
                     if (empty($element_design) && is_array($element_data_array)) {
@@ -11606,8 +11626,17 @@ class Client_functions extends common_function
 
             // Text color
             if (isset($settings['text_color']) && !empty($settings['text_color'])) {
-                $css_properties[] = 'color: ' . $this->sanitize_css_value($settings['text_color']) . ';';
+                $text_color = $this->sanitize_css_value($settings['text_color']);
+                $css_properties[] = 'color: ' . $text_color . ';';
+                
+                // Also apply explicitly to labels and descriptions for better specificity
+                if ($element_type == 'form_container' || $element_type == 'form') {
+                    $text_selector = $form_scope . ' label, ' . $form_scope . ' .label-content, ' . $form_scope . ' .globo-description, ' . $form_scope . ' .description, ' . $form_scope . ' .messages, ' . $form_scope . ' .code-form-control small';
+                    $css_rules[] = $text_selector . ' { color: ' . $text_color . ' !important; }';
+                }
+
             }
+
 
             // Heading color (added for theme color schemes)
             if (($element_type == 'form_container' || $element_type == 'form') && isset($settings['heading_color']) && !empty($settings['heading_color'])) {

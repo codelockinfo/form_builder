@@ -8064,12 +8064,13 @@ console.log('Custom code loaded');
                     });
                 }
                 
-                // Apply to labels
-                $('.code-form-app label, .contact-form label, .code-form-app .label-content, .contact-form .label-content').each(function() {
-                    var $label = $(this);
-                    // Only apply if not already customized
-                    if (!$label.data('custom-color')) {
-                        $label.css('color', textColor);
+                // Apply text color to labels and descriptions
+                var $targetElements = $('.code-form-app label, .contact-form label, .code-form-app .label-content, .contact-form .label-content, .code-form-app .messages, .contact-form .messages, .code-form-app small, .contact-form small');
+                $targetElements.each(function() {
+                    var $el = $(this);
+                    // Only apply if not already customized (e.g. manual color picker used)
+                    if (!$el.data('custom-color')) {
+                        $el.css('color', textColor);
                     }
                 });
                 
