@@ -795,17 +795,27 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                 var activeTab = $('.form-tab-btn.active').data('tab');
                 var sortVal = $('#customSortForms').val();
                 
+                // Remove existing no-forms message if any
+                $('.no-forms-message').remove();
+                
                 var $forms = $('.set_all_form > .Polaris-ResourceList__HeaderWrapper');
+                var visibleCount = 0;
                 
                 // First filter
                 $forms.each(function() {
                     var isActive = $(this).find('input[type="checkbox"][name="checkbox"]').is(':checked');
+                    var shouldShow = false;
                     if (activeTab === 'all') {
-                        $(this).show();
+                        shouldShow = true;
                     } else if (activeTab === 'active' && isActive) {
-                        $(this).show();
+                        shouldShow = true;
                     } else if (activeTab === 'draft' && !isActive) {
+                        shouldShow = true;
+                    }
+                    
+                    if (shouldShow) {
                         $(this).show();
+                        visibleCount++;
                     } else {
                         $(this).hide();
                     }
@@ -835,6 +845,17 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                     }
                 });
                 $('.set_all_form').append(formsArr);
+
+                // Show message if visibleCount is 0
+                if (visibleCount === 0) {
+                    var message = "No forms found.";
+                    if (activeTab === 'draft') {
+                        message = "No form in the draft!";
+                    } else if (activeTab === 'active') {
+                        message = "No active forms found!.";
+                    }
+                    $('.set_all_form').append('<div class="no-forms-message" style="padding: 80px 40px; text-align: center; color: #202223; font-size: 16px; font-weight: bold; background:white; border-radius: 0 0 8px 8px; border: 1px solid #e1e3e5; border-top: none; margin-top: -1px;">' + message + '</div>');
+                }
             }
 
             $('.form-tab-btn').click(function() {
