@@ -6121,6 +6121,7 @@ console.log('Custom code loaded');
                         id: scheme.id || (index + 1),
                         bg: scheme.bg || '#ffffff',
                         text: scheme.text || '#000000',
+                        heading: scheme.heading || scheme.text || '#000000',
                         swatch1: scheme.swatch1 || scheme.text || '#000000',
                         swatch2: scheme.swatch2 || scheme.bg || '#ffffff'
                     };
@@ -7993,6 +7994,7 @@ console.log('Custom code loaded');
             if (window.selectedColorScheme) {
                 ajaxData.bg_color = window.selectedColorScheme.bg || window.selectedColorScheme.background || '';
                 ajaxData.text_color = window.selectedColorScheme.text || '';
+                ajaxData.heading_color = window.selectedColorScheme.heading || '';
                 ajaxData.swatch1 = window.selectedColorScheme.swatch1 || window.selectedColorScheme.accent1 || '';
                 ajaxData.swatch2 = window.selectedColorScheme.swatch2 || window.selectedColorScheme.accent2 || '';
             }
@@ -8015,6 +8017,7 @@ console.log('Custom code loaded');
             
             var bgColor = colorScheme.bg || colorScheme.background || '#ffffff';
             var textColor = colorScheme.text || '#000000';
+            var headingColor = colorScheme.heading || textColor;
             var swatch1 = colorScheme.swatch1 || colorScheme.accent1 || textColor;
             var swatch2 = colorScheme.swatch2 || colorScheme.accent2 || bgColor;
             
@@ -8051,6 +8054,14 @@ console.log('Custom code loaded');
                     
                     // Also ensure .contact-form wrapper doesn't get the background
                     $('.contact-form').not($formContainer).css('background-color', 'transparent');
+
+                    // Apply heading color to headings
+                    $formContainer.find('h1, h2, h3, .globo-heading').each(function() {
+                        var $heading = $(this);
+                        if (!$heading.data('custom-color')) {
+                            $heading.css('color', headingColor);
+                        }
+                    });
                 }
                 
                 // Apply to labels

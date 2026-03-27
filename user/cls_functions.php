@@ -1045,9 +1045,22 @@ class Client_functions extends common_function
                                 $text_color = $scheme_colors['foreground_label'];
                             }
 
-                            // Get all other color values (excluding background and text)
+                            // Extract heading color - prioritize 'heading' then 'headings'
+                            $heading_color = $text_color; // Default to text color
+                            if (isset($scheme_colors['heading'])) {
+                                $heading_color = $scheme_colors['heading'];
+                            }
+                            elseif (isset($scheme_colors['headings'])) {
+                                $heading_color = $scheme_colors['headings'];
+                            }
+                            elseif (isset($scheme_colors['heading_label'])) {
+                                $heading_color = $scheme_colors['heading_label'];
+                            }
+
+
+                            // Get all other color values (excluding background, text, and heading)
                             $other_colors = array();
-                            $excluded_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label');
+                            $excluded_keys = array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'text_label', 'heading', 'headings', 'heading_label');
 
                             foreach ($scheme_colors as $color_key => $color_value) {
                                 if (!in_array($color_key, $excluded_keys) && is_string($color_value) && !empty($color_value)) {
@@ -1070,6 +1083,7 @@ class Client_functions extends common_function
                                 'key' => $scheme_key,
                                 'bg' => $bg_color,
                                 'text' => $text_color,
+                                'heading' => $heading_color,
                                 'swatch1' => $accent1,
                                 'swatch2' => $accent2
                             );
@@ -1142,11 +1156,12 @@ class Client_functions extends common_function
 
                                         $bg_color = isset($scheme_colors['background']) ? $scheme_colors['background'] : (isset($scheme_colors['background_label']) ? $scheme_colors['background_label'] : '#ffffff');
                                         $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#000000'));
+                                        $heading_color = isset($scheme_colors['heading']) ? $scheme_colors['heading'] : (isset($scheme_colors['headings']) ? $scheme_colors['headings'] : $text_color);
 
                                         // Get all other colors
                                         $other_colors = array();
                                         foreach ($scheme_colors as $ck => $cv) {
-                                            if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label')) && is_string($cv) && !empty($cv)) {
+                                            if (!in_array($ck, array('background', 'background_label', 'text', 'foreground', 'foreground_label', 'heading', 'headings')) && is_string($cv) && !empty($cv)) {
                                                 if (preg_match('/^#[0-9A-Fa-f]{3,6}$/i', $cv) || preg_match('/^rgba?\(/', $cv)) {
                                                     $other_colors[] = $cv;
                                                 }
@@ -1161,6 +1176,7 @@ class Client_functions extends common_function
                                             'key' => 'scheme_' . $fallback_index,
                                             'bg' => $bg_color,
                                             'text' => $text_color,
+                                            'heading' => $heading_color,
                                             'swatch1' => $accent1,
                                             'swatch2' => $accent2
                                         );
@@ -3468,9 +3484,20 @@ class Client_functions extends common_function
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $subheading_text_color)) {
                             $subheading_text_color = '#000000';
                         }
+                        
+                        // Override with theme color scheme settings if they exist
+                        if (isset($design_settings['form_container'])) {
+                            if (isset($design_settings['form_container']['heading_color']) && !empty($design_settings['form_container']['heading_color'])) {
+                                $heading_text_color = $design_settings['form_container']['heading_color'];
+                            }
+                            if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
+                                $subheading_text_color = $design_settings['form_container']['text_color'];
+                            }
+                        }
+
 
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
-                                <h3 class="title globo-heading" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ';">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
+                                <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ';">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
                                 <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ';">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
                     }
@@ -3484,10 +3511,23 @@ class Client_functions extends common_function
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $header_text_color)) {
                             $header_text_color = '#000000';
                         }
+                        
+                        $header_desc_color = $header_text_color;
+                        
+                        // Override with theme color scheme settings if they exist
+                        if (isset($design_settings['form_container'])) {
+                            if (isset($design_settings['form_container']['heading_color']) && !empty($design_settings['form_container']['heading_color'])) {
+                                $header_text_color = $design_settings['form_container']['heading_color'];
+                            }
+                            if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
+                                $header_desc_color = $design_settings['form_container']['text_color'];
+                            }
+                        }
+
 
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
                                 <h3 class="title globo-heading" style="font-size: ' . $header_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $header_text_color . ';">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
-                                <div class="description globo-description" style="text-align: ' . $header_text_align . '; color: ' . $header_text_color . ';">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
+                                <div class="description globo-description" style="text-align: ' . $header_text_align . '; color: ' . $header_desc_color . ';">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
                     }
                 }
@@ -11387,6 +11427,7 @@ class Client_functions extends common_function
             // Get actual color values from POST
             $bg_color = isset($_POST['bg_color']) ? $_POST['bg_color'] : '';
             $text_color = isset($_POST['text_color']) ? $_POST['text_color'] : '';
+            $heading_color = isset($_POST['heading_color']) ? $_POST['heading_color'] : '';
             $swatch1 = isset($_POST['swatch1']) ? $_POST['swatch1'] : '';
             $swatch2 = isset($_POST['swatch2']) ? $_POST['swatch2'] : '';
 
@@ -11425,6 +11466,9 @@ class Client_functions extends common_function
                 }
                 if (!empty($text_color)) {
                     $design_settings['form_container']['text_color'] = $text_color;
+                }
+                if (!empty($heading_color)) {
+                    $design_settings['form_container']['heading_color'] = $heading_color;
                 }
 
                 // Save to database
@@ -11564,6 +11608,14 @@ class Client_functions extends common_function
             if (isset($settings['text_color']) && !empty($settings['text_color'])) {
                 $css_properties[] = 'color: ' . $this->sanitize_css_value($settings['text_color']) . ';';
             }
+
+            // Heading color (added for theme color schemes)
+            if (($element_type == 'form_container' || $element_type == 'form') && isset($settings['heading_color']) && !empty($settings['heading_color'])) {
+                // Use a separate rule for headings to override theme defaults
+                $heading_selector = $form_scope . ' h1, ' . $form_scope . ' h2, ' . $form_scope . ' h3, ' . $form_scope . ' .globo-heading';
+                $css_rules[] = $heading_selector . ' { color: ' . $this->sanitize_css_value($settings['heading_color']) . ' !important; }';
+            }
+
 
             // Font size
             if (isset($settings['font_size']) && !empty($settings['font_size'])) {
