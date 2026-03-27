@@ -14,10 +14,24 @@
   #easy-form-{{ block.id }} select {
     color: {{ block.settings.color_scheme.settings.text }} !important;
   }
-  #easy-form-{{ block.id }} .action.submit.classic-button {
-    background-color: {{ block.settings.color_scheme.settings.buttons }} !important;
-    color: {{ block.settings.color_scheme.settings.buttons_label }} !important;
-    border-color: {{ block.settings.color_scheme.settings.buttons }} !important;
+  #easy-form-{{ block.id }} .action.submit.classic-button,
+  #easy-form-{{ block.id }} .action.submit,
+  #easy-form-{{ block.id }} button.submit,
+  #easy-form-{{ block.id }} .submit.action,
+  #easy-form-{{ block.id }} button[type="submit"] {
+    background-color: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+    background: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+    color: {{ block.settings.color_scheme.settings.buttons_label | default: block.settings.color_scheme.settings.primary_button_text | default: '#ffffff' }} !important;
+    border-color: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+  }
+  #easy-form-{{ block.id }} .action.reset.classic-button,
+  #easy-form-{{ block.id }} .action.reset,
+  #easy-form-{{ block.id }} button.reset,
+  #easy-form-{{ block.id }} .reset.action {
+    background-color: {{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }} !important;
+    background: {{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }} !important;
+    color: {{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }} !important;
+    border: 1px solid {{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }} !important;
   }
 {%- endstyle -%}
 <script>
@@ -1721,6 +1735,42 @@
                   submitBtn.innerHTML = customButtonLabel;
                 }
               }
+            }
+
+            // Enforce theme button background color via JS as a fallback for CSS specificity issues
+            const themeButtonBg = "{{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }}";
+            const themeButtonText = "{{ block.settings.color_scheme.settings.buttons_label | default: block.settings.color_scheme.settings.primary_button_text | default: '#ffffff' }}";
+            
+            if (themeButtonBg && themeButtonBg !== "") {
+              const allSubmitButtons = blockContainer.querySelectorAll('.action.submit, button.submit, .submit.action, button[type="submit"]');
+              allSubmitButtons.forEach(btn => {
+                btn.style.setProperty('background-color', themeButtonBg, 'important');
+                btn.style.setProperty('background', themeButtonBg, 'important');
+                btn.style.setProperty('color', themeButtonText, 'important');
+                if (btn.style.borderColor) btn.style.setProperty('border-color', themeButtonBg, 'important');
+                
+                // Also update stored original colors for hover logic
+                btn.setAttribute('data-original-bg', themeButtonBg);
+                btn.setAttribute('data-original-border', themeButtonBg);
+              });
+            }
+
+            // Enforce theme secondary button style for reset button
+            const themeResetBg = "{{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }}";
+            const themeResetText = "{{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }}";
+            
+            if (themeResetText && themeResetText !== "") {
+              const allResetButtons = blockContainer.querySelectorAll('.action.reset, button.reset, .reset.action');
+              allResetButtons.forEach(btn => {
+                btn.style.setProperty('background-color', themeResetBg, 'important');
+                btn.style.setProperty('background', themeResetBg, 'important');
+                btn.style.setProperty('color', themeResetText, 'important');
+                btn.style.setProperty('border', '1px solid ' + themeResetText, 'important');
+                
+                // Also update stored original colors for hover logic
+                btn.setAttribute('data-original-bg', themeResetBg);
+                btn.setAttribute('data-original-border', themeResetText);
+              });
             }
           } catch(insertError) {
             // If insertion fails, try to insert a cleaned version
