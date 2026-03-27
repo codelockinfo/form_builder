@@ -3,8 +3,21 @@
   #easy-form-{{ block.id }} .globo-heading {
     color: {{ block.settings.color_scheme.settings.headings }} !important;
   }
-  #easy-form-{{ block.id }} .globo-description {
+  #easy-form-{{ block.id }} .globo-description,
+  #easy-form-{{ block.id }} .globo-description-label {
     color: {{ block.settings.color_scheme.settings.text }} !important;
+  }
+  #easy-form-{{ block.id }} .globo-label,
+  #easy-form-{{ block.id }} .globo-option,
+  #easy-form-{{ block.id }} input,
+  #easy-form-{{ block.id }} textarea,
+  #easy-form-{{ block.id }} select {
+    color: {{ block.settings.color_scheme.settings.text }} !important;
+  }
+  #easy-form-{{ block.id }} .action.submit.classic-button {
+    background-color: {{ block.settings.color_scheme.settings.buttons }} !important;
+    color: {{ block.settings.color_scheme.settings.buttons_label }} !important;
+    border-color: {{ block.settings.color_scheme.settings.buttons }} !important;
   }
 {%- endstyle -%}
 <script>
@@ -1677,6 +1690,38 @@
             if (loadingDiv) {
               loadingDiv.remove();
             }
+
+            // Override Heading, Description and Button Label from block settings
+            const customHeading = "{{ block.settings.form_heading | escape }}";
+            const customDescription = "{{ block.settings.form_description | escape }}";
+            const customButtonLabel = "{{ block.settings.submit_button_label | escape }}";
+
+            if (customHeading && customHeading.trim() !== "") {
+              const headingElem = blockContainer.querySelector('.globo-heading');
+              if (headingElem) {
+                headingElem.innerHTML = customHeading;
+              }
+            }
+
+            if (customDescription && customDescription.trim() !== "") {
+              const descElem = blockContainer.querySelector('.globo-description');
+              if (descElem) {
+                descElem.innerHTML = customDescription;
+              }
+            }
+
+            if (customButtonLabel && customButtonLabel.trim() !== "") {
+              const submitBtn = blockContainer.querySelector('.action.submit.classic-button, button.submit, .submit.action, button[type="submit"]');
+              if (submitBtn) {
+                // If button has a span inside it (often used for layout), update the span
+                const innerSpan = submitBtn.querySelector('span');
+                if (innerSpan) {
+                  innerSpan.innerHTML = customButtonLabel;
+                } else {
+                  submitBtn.innerHTML = customButtonLabel;
+                }
+              }
+            }
           } catch(insertError) {
             // If insertion fails, try to insert a cleaned version
             const cleanedHtml = tempDiv.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -2541,6 +2586,28 @@
       "label": "Form ID",
       "info": "Enter the Form ID of the form you created in the Easy Form Builder app. You can find this ID in your app dashboard.",
       "default": "0"
+    },
+    {
+      "type": "header",
+      "content": "Custom Text Overrides"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form Heading Override",
+      "info": "Leave empty to use the heading from the app settings."
+    },
+    {
+      "type": "textarea",
+      "id": "form_description",
+      "label": "Form Description Override",
+      "info": "Leave empty to use the description from the app settings."
+    },
+    {
+      "type": "text",
+      "id": "submit_button_label",
+      "label": "Submit Button Label Override",
+      "info": "Leave empty to use the label from the app settings."
     }
   ]
 }
