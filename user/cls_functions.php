@@ -10420,11 +10420,11 @@ class Client_functions extends common_function
 
             // Heading (title) settings
             $heading_font_size = isset($_POST['header_heading_font_size']) ? intval($_POST['header_heading_font_size']) : 24;
-            $heading_text_color = isset($_POST['header_heading_text_color_text']) ? $_POST['header_heading_text_color_text'] : (isset($_POST['header_heading_text_color']) ? $_POST['header_heading_text_color'] : '#000000');
+            $heading_text_color = isset($_POST['header_heading_text_color_text']) ? $_POST['header_heading_text_color_text'] : (isset($_POST['header_heading_text_color']) ? $_POST['header_heading_text_color'] : (isset($_POST['theme_heading_color']) ? $_POST['theme_heading_color'] : '#000000'));
 
             // Sub-heading (description) settings
             $subheading_font_size = isset($_POST['header_subheading_font_size']) ? intval($_POST['header_subheading_font_size']) : 16;
-            $subheading_text_color = isset($_POST['header_subheading_text_color_text']) ? $_POST['header_subheading_text_color_text'] : (isset($_POST['header_subheading_text_color']) ? $_POST['header_subheading_text_color'] : '#000000');
+            $subheading_text_color = isset($_POST['header_subheading_text_color_text']) ? $_POST['header_subheading_text_color_text'] : (isset($_POST['header_subheading_text_color']) ? $_POST['header_subheading_text_color'] : (isset($_POST['theme_text_color']) ? $_POST['theme_text_color'] : '#000000'));
 
             // Alignment (applies to both)
             $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
@@ -10491,9 +10491,9 @@ class Client_functions extends common_function
 
             // Button design settings (Submit button)
             $button_text_size = isset($_POST['footer_button_text_size']) ? intval($_POST['footer_button_text_size']) : 16;
-            $button_text_color = isset($_POST['footer_button_text_color_text']) ? $_POST['footer_button_text_color_text'] : (isset($_POST['footer_button_text_color']) ? $_POST['footer_button_text_color'] : '#ffffff');
-            $button_bg_color = isset($_POST['footer_button_bg_color_text']) ? $_POST['footer_button_bg_color_text'] : (isset($_POST['footer_button_bg_color']) ? $_POST['footer_button_bg_color'] : '#EB1256');
-            $button_hover_bg_color = isset($_POST['footer_button_hover_bg_color_text']) ? $_POST['footer_button_hover_bg_color_text'] : (isset($_POST['footer_button_hover_bg_color']) ? $_POST['footer_button_hover_bg_color'] : '#C8104A');
+            $button_text_color = isset($_POST['footer_button_text_color_text']) ? $_POST['footer_button_text_color_text'] : (isset($_POST['footer_button_text_color']) ? $_POST['footer_button_text_color'] : (isset($_POST['theme_button_text_color']) ? $_POST['theme_button_text_color'] : '#ffffff'));
+            $button_bg_color = isset($_POST['footer_button_bg_color_text']) ? $_POST['footer_button_bg_color_text'] : (isset($_POST['footer_button_bg_color']) ? $_POST['footer_button_bg_color'] : (isset($_POST['theme_button_background']) ? $_POST['theme_button_background'] : '#EB1256'));
+            $button_hover_bg_color = isset($_POST['footer_button_hover_bg_color_text']) ? $_POST['footer_button_hover_bg_color_text'] : (isset($_POST['footer_button_hover_bg_color']) ? $_POST['footer_button_hover_bg_color'] : (isset($_POST['theme_button_hover_background']) ? $_POST['theme_button_hover_background'] : '#C8104A'));
             $border_radius = isset($_POST['footer_button_border_radius']) ? intval($_POST['footer_button_border_radius']) : 4;
 
             // Reset button design settings
@@ -11450,6 +11450,8 @@ class Client_functions extends common_function
             $heading_color = isset($_POST['heading_color']) ? $_POST['heading_color'] : '';
             $swatch1 = isset($_POST['swatch1']) ? $_POST['swatch1'] : '';
             $swatch2 = isset($_POST['swatch2']) ? $_POST['swatch2'] : '';
+            $button_bg = isset($_POST['button_bg']) ? $_POST['button_bg'] : '';
+            $button_text = isset($_POST['button_text']) ? $_POST['button_text'] : '';
 
             if ($form_id <= 0) {
                 return array('result' => 'fail', 'msg' => 'Invalid form ID');
@@ -11489,6 +11491,34 @@ class Client_functions extends common_function
                 }
                 if (!empty($heading_color)) {
                     $design_settings['form_container']['heading_color'] = $heading_color;
+                }
+                if (!empty($swatch1)) {
+                    $design_settings['form_container']['swatch1'] = $swatch1;
+                }
+                if (!empty($swatch2)) {
+                    $design_settings['form_container']['swatch2'] = $swatch2;
+                }
+
+                // Save button colors from theme for preview/fallback
+                if (!isset($design_settings['footer_design'])) {
+                    $design_settings['footer_design'] = array();
+                }
+                if (!empty($button_bg)) {
+                    $design_settings['footer_design']['button_bg_color'] = $button_bg;
+                }
+                if (!empty($button_text)) {
+                    $design_settings['footer_design']['button_text_color'] = $button_text;
+                }
+
+                // Also update header colors in their specific design sections if provided
+                if (!isset($design_settings['header_design'])) {
+                    $design_settings['header_design'] = array();
+                }
+                if ($heading_color !== '') {
+                    $design_settings['header_design']['heading_text_color'] = $heading_color;
+                }
+                if ($text_color !== '') {
+                    $design_settings['header_design']['subheading_text_color'] = $text_color;
                 }
 
                 // Save to database

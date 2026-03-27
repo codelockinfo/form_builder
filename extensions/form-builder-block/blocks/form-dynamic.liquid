@@ -7,7 +7,8 @@
       color: {{ block.settings.color_scheme.settings.headings }} !important;
     {% endif %}
   }
-  #easy-form-{{ block.id }} .globo-description {
+  #easy-form-{{ block.id }} .globo-description,
+  #easy-form-{{ block.id }} .globo-description-label {
     {% if block.settings.description_color != blank and block.settings.description_color != 'rgba(0,0,0,0)' %}
       color: {{ block.settings.description_color }} !important;
     {% else %}
@@ -20,6 +21,32 @@
     {% else %}
       color: {{ block.settings.color_scheme.settings.text }} !important;
     {% endif %}
+  }
+  #easy-form-{{ block.id }} .globo-label,
+  #easy-form-{{ block.id }} .globo-option,
+  #easy-form-{{ block.id }} input,
+  #easy-form-{{ block.id }} textarea,
+  #easy-form-{{ block.id }} select {
+    color: {{ block.settings.color_scheme.settings.text }} !important;
+  }
+  #easy-form-{{ block.id }} .action.submit.classic-button,
+  #easy-form-{{ block.id }} .action.submit,
+  #easy-form-{{ block.id }} button.submit,
+  #easy-form-{{ block.id }} .submit.action,
+  #easy-form-{{ block.id }} button[type="submit"] {
+    background-color: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+    background: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+    color: {{ block.settings.color_scheme.settings.buttons_label | default: block.settings.color_scheme.settings.primary_button_text | default: '#ffffff' }} !important;
+    border-color: {{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }} !important;
+  }
+  #easy-form-{{ block.id }} .action.reset.classic-button,
+  #easy-form-{{ block.id }} .action.reset,
+  #easy-form-{{ block.id }} button.reset,
+  #easy-form-{{ block.id }} .reset.action {
+    background-color: {{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }} !important;
+    background: {{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }} !important;
+    color: {{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }} !important;
+    border: 1px solid {{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }} !important;
   }
 {%- endstyle -%}
 <script>
@@ -1710,6 +1737,74 @@
             if (loadingDiv) {
               loadingDiv.remove();
             }
+
+            // Override Heading, Description and Button Label from block settings
+            const customHeading = "{{ block.settings.form_heading | escape }}";
+            const customDescription = "{{ block.settings.form_description | escape }}";
+            const customButtonLabel = "{{ block.settings.submit_button_label | escape }}";
+
+            if (customHeading && customHeading.trim() !== "") {
+              const headingElem = blockContainer.querySelector('.globo-heading');
+              if (headingElem) {
+                headingElem.innerHTML = customHeading;
+              }
+            }
+
+            if (customDescription && customDescription.trim() !== "") {
+              const descElem = blockContainer.querySelector('.globo-description');
+              if (descElem) {
+                descElem.innerHTML = customDescription;
+              }
+            }
+
+            if (customButtonLabel && customButtonLabel.trim() !== "") {
+              const submitBtn = blockContainer.querySelector('.action.submit.classic-button, button.submit, .submit.action, button[type="submit"]');
+              if (submitBtn) {
+                // If button has a span inside it (often used for layout), update the span
+                const innerSpan = submitBtn.querySelector('span');
+                if (innerSpan) {
+                  innerSpan.innerHTML = customButtonLabel;
+                } else {
+                  submitBtn.innerHTML = customButtonLabel;
+                }
+              }
+            }
+
+            // Enforce theme button background color via JS as a fallback for CSS specificity issues
+            const themeButtonBg = "{{ block.settings.color_scheme.settings.buttons | default: block.settings.color_scheme.settings.primary_button_background | default: block.settings.color_scheme.settings.accent_1 }}";
+            const themeButtonText = "{{ block.settings.color_scheme.settings.buttons_label | default: block.settings.color_scheme.settings.primary_button_text | default: '#ffffff' }}";
+            
+            if (themeButtonBg && themeButtonBg !== "") {
+              const allSubmitButtons = blockContainer.querySelectorAll('.action.submit, button.submit, .submit.action, button[type="submit"]');
+              allSubmitButtons.forEach(btn => {
+                btn.style.setProperty('background-color', themeButtonBg, 'important');
+                btn.style.setProperty('background', themeButtonBg, 'important');
+                btn.style.setProperty('color', themeButtonText, 'important');
+                if (btn.style.borderColor) btn.style.setProperty('border-color', themeButtonBg, 'important');
+                
+                // Also update stored original colors for hover logic
+                btn.setAttribute('data-original-bg', themeButtonBg);
+                btn.setAttribute('data-original-border', themeButtonBg);
+              });
+            }
+
+            // Enforce theme secondary button style for reset button
+            const themeResetBg = "{{ block.settings.color_scheme.settings.secondary_buttons | default: 'transparent' }}";
+            const themeResetText = "{{ block.settings.color_scheme.settings.secondary_buttons_label | default: block.settings.color_scheme.settings.text }}";
+            
+            if (themeResetText && themeResetText !== "") {
+              const allResetButtons = blockContainer.querySelectorAll('.action.reset, button.reset, .reset.action');
+              allResetButtons.forEach(btn => {
+                btn.style.setProperty('background-color', themeResetBg, 'important');
+                btn.style.setProperty('background', themeResetBg, 'important');
+                btn.style.setProperty('color', themeResetText, 'important');
+                btn.style.setProperty('border', '1px solid ' + themeResetText, 'important');
+                
+                // Also update stored original colors for hover logic
+                btn.setAttribute('data-original-bg', themeResetBg);
+                btn.setAttribute('data-original-border', themeResetText);
+              });
+            }
           } catch(insertError) {
             // If insertion fails, try to insert a cleaned version
             const cleanedHtml = tempDiv.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -2577,6 +2672,7 @@
     },
     {
       "type": "header",
+<<<<<<< HEAD
       "content": "Heading Settings"
     },
     {
@@ -2613,6 +2709,27 @@
       "type": "color",
       "id": "label_color",
       "label": "Label Color"
+=======
+      "content": "Custom Text Overrides"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form Heading Override",
+      "info": "Leave empty to use the heading from the app settings."
+    },
+    {
+      "type": "textarea",
+      "id": "form_description",
+      "label": "Form Description Override",
+      "info": "Leave empty to use the description from the app settings."
+    },
+    {
+      "type": "text",
+      "id": "submit_button_label",
+      "label": "Submit Button Label Override",
+      "info": "Leave empty to use the label from the app settings."
+>>>>>>> 66bdeb7
     }
   ]
 }
