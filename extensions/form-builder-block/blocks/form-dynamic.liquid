@@ -1,4 +1,12 @@
-<div id="easy-form-{{ block.id }}" class="form-builder-container" data-form-id="{{ block.settings.form_id }}"><div class="form-loading">Loading form...</div></div>
+<div id="easy-form-{{ block.id }}" class="form-builder-container color-{{ block.settings.color_scheme }} gradient" data-form-id="{{ block.settings.form_id }}"><div class="form-loading">Loading form...</div></div>
+{%- style -%}
+  #easy-form-{{ block.id }} .globo-heading {
+    color: {{ block.settings.color_scheme.settings.headings }} !important;
+  }
+  #easy-form-{{ block.id }} .globo-description {
+    color: {{ block.settings.color_scheme.settings.text }} !important;
+  }
+{%- endstyle -%}
 <script>
 (function() {
   'use strict';
@@ -2520,6 +2528,12 @@
     {
       "type": "header",
       "content": "Form Settings"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
     },
     {
       "type": "text",
