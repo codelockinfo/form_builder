@@ -4230,7 +4230,7 @@ class Client_functions extends common_function
                                             <div class="upload-area" id="uploadArea-' . $form_data_id . '"' . $element_design_style . '>
                                                 <p class="upload-p ' . $elementtitle . '' . $form_data_id . '__placeholder" id="uploadText-' . $form_data_id . '">' . $unserialize_elementdata[2] . '</p>
                                                 <span class="file_button ' . $elementtitle . '' . $form_data_id . '__buttontext ' . $is_buttonhidden . '"  id="fileButton-' . $form_data_id . '"' . $element_design_style . '>' . $unserialize_elementdata[1] . '</span>
-                                                <input id="fileimage-' . $form_data_id . '" type="file" data-formdataid="' . $form_data_id . '" data-type="file" ' . $is_allowmultiple . ' style="position: absolute; opacity: 0; width: 0; height: 0; overflow: hidden; clip: rect(0, 0, 0, 0); pointer-events: none; visibility: hidden; border: none; padding: 0; margin: 0;">
+                                                <input id="fileimage-' . $form_data_id . '" type="file" data-formdataid="' . $form_data_id . '" data-type="file" ' . $is_allowmultiple . ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; border: none; padding: 0; margin: 0; pointer-events: auto !important; visibility: visible !important;">
                                                 <div class="img-container" id="imgContainer-' . $form_data_id . '"></div>
                                             </div>
                                         </div>
@@ -10123,6 +10123,18 @@ class Client_functions extends common_function
             $elementid = isset($newData['element_id']) ? $newData['element_id'] : (isset($_POST['element_id']) ? $_POST['element_id'] : '');
 
             error_log("saveform: Final IDs resolved - form_id: $form_id, formdata_id: $form_data_id, elementid: $elementid");
+            
+            // Fix unassigned $elementtitle lint
+            $elementtitle = '';
+            if (!empty($elementid)) {
+                $where_e = array(["", "id", "=", "$elementid"]);
+                $e_res = $this->select_result(TABLE_ELEMENTS, 'element_title', $where_e, ['single' => true]);
+                if (isset($e_res['status']) && $e_res['status'] == 1 && !empty($e_res['data'])) {
+                    $elementtitle = strtolower($e_res['data']['element_title']);
+                    $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
+                }
+            }
+
             $label = isset($newData['label']) ? $newData['label'] : '';
             $placeholder = isset($newData['placeholder']) ? $newData['placeholder'] : '';
             $description = isset($newData['description']) ? $newData['description'] : '';
@@ -11363,7 +11375,7 @@ class Client_functions extends common_function
                 // Save to database
                 $update_data = array('design_settings' => serialize($design_settings));
                 $update_where = array(["", "id", "=", "$form_id"], ["AND", "store_client_id", "=", "$store_user_id"]);
-                $update_result = $this->update_table(TABLE_FORMS, $update_data, $update_where);
+                $update_result = $this->put_data(TABLE_FORMS, $update_data, $update_where);
 
                 if ($update_result) {
                     return array('result' => 'success', 'msg' => 'Design settings saved successfully');

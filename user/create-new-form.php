@@ -939,7 +939,11 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                 var totalCount = $('.selectedCheck').length;
                 
                 if (checkedCount > 0) {
-                    $('.Deselectcount').text(checkedCount + ' selected');
+                    if (checkedCount === totalCount && totalCount > 0) {
+                        $('.Deselectcount').text('Select all form');
+                    } else {
+                        $('.Deselectcount').text(checkedCount + ' selected');
+                    }
                     $('#dynamicBulkActionsWrapper').css('display', 'flex');
                     $('#listColumnHeaders').hide();
                     
