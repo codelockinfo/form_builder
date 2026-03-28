@@ -41,9 +41,9 @@
   padding: 0;
 }
 .content .code-form-control .messages {
-  word-break: break-word;
-  overflow-wrap: break-word;
-  display: block;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  display: block !important;
 }
 .content .code-form-control label {
   color: #212b36;
