@@ -91,7 +91,7 @@ $form_id = isset($_GET['form_id']) ? $_GET['form_id'] : 0;
     </style>
     <div style="max-width: 100%; margin: 0 auto; padding: 20px;">
         <div style="margin-bottom: 20px;">
-             <a href="dashboard_submissions.php?shop=<?php echo $store; ?>" class="Polaris-Button" style="margin-bottom: 10px;">
+             <a href="dashboard_submissions.php?shop=<?php echo $store; ?>&tab=submissions" class="Polaris-Button" style="margin-bottom: 10px;">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Back</span>
                 </span>
