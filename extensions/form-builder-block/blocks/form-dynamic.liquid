@@ -2353,7 +2353,24 @@
           
           if (fieldEmpty) {
             isValid = false;
-            showFieldError(element, 'This field is required');
+            
+            // Get field label for a better error message
+            let fieldLabel = '';
+            const controlWrapper = element.closest('.code-form-control');
+            if (controlWrapper) {
+                const labelSpan = controlWrapper.querySelector('.label-content');
+                if (labelSpan) {
+                    fieldLabel = labelSpan.textContent.trim();
+                }
+            }
+            
+            if (!fieldLabel) {
+                fieldLabel = element.getAttribute('placeholder') || 'This field';
+            }
+            
+            // Use dynamic message if label found
+            const errorMessage = fieldLabel + ' is required';
+            showFieldError(element, errorMessage);
             inputToHighlight.classList.add('input-error');
           }
         });
