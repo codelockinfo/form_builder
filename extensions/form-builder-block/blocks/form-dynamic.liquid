@@ -624,6 +624,24 @@
         word-break: break-all !important;
         overflow-wrap: anywhere !important;
       }
+      
+      /* Validation Error Styles */
+      .validation-error {
+        color: #ff0000 !important;
+        font-size: 12px !important;
+        margin-top: 4px !important;
+        display: block !important;
+        font-weight: 400 !important;
+        line-height: 1.2 !important;
+        text-align: left !important;
+      }
+      .input-error {
+        border-color: #ff0000 !important;
+        box-shadow: 0 0 0 1px #ff0000 !important;
+      }
+      .code-form-control {
+        margin-bottom: 5px !important;
+      }
     `;
     document.head.appendChild(styleElement);
   }
@@ -2278,19 +2296,114 @@
         }
       }
       
+      // Function to validate form fields
+      function validateForm(form) {
+        let isValid = true;
+        
+        // Remove existing error messages and classes
+        form.querySelectorAll('.validation-error').forEach(err => err.remove());
+        form.querySelectorAll('.input-error').forEach(input => {
+          input.classList.remove('input-error');
+        });
+        
+        // 1. Validate required fields
+        const requiredElements = form.querySelectorAll('[required], [aria-required="true"], .required-field');
+        
+        requiredElements.forEach(element => {
+          let fieldEmpty = false;
+          let inputToHighlight = element;
+          
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'SELECT') {
+            if (element.type === 'checkbox' || element.type === 'radio') {
+              // Check if any in the group is checked
+              const name = element.getAttribute('name');
+              const group = form.querySelectorAll('input[name="' + name + '"]');
+              const anyChecked = Array.from(group).some(input => input.checked);
+              if (!anyChecked) {
+                fieldEmpty = true;
+                // For radio/checkbox, highlight the container
+                inputToHighlight = element.closest('.code-form-control') || element.closest('ul') || element.parentNode;
+              }
+            } else if (element.type === 'file') {
+              if (!element.files || element.files.length === 0) {
+                fieldEmpty = true;
+                inputToHighlight = element.closest('.upload-area') || element;
+              }
+            } else {
+              if (!element.value || element.value.trim() === '') {
+                fieldEmpty = true;
+              }
+            }
+          }
+          
+          if (fieldEmpty) {
+            isValid = false;
+            showFieldError(element, 'This field is required');
+            inputToHighlight.classList.add('input-error');
+          }
+        });
+        
+        // 2. Validate Email format
+        const emailInputs = form.querySelectorAll('input[type="email"]');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        emailInputs.forEach(input => {
+          if (input.value && input.value.trim() !== '' && !emailRegex.test(input.value)) {
+            isValid = false;
+            showFieldError(input, 'Please enter a valid email address');
+            input.classList.add('input-error');
+          }
+        });
+        
+        return isValid;
+      }
+      
+      // Helper function to show error under the field
+      function showFieldError(element, message) {
+        // Prevent duplicate errors for radio/checkbox groups or file uploads
+        const groupContainer = element.closest('.code-form-control');
+        if (groupContainer && groupContainer.querySelector('.validation-error')) return;
+
+        const errorSpan = document.createElement('span');
+        errorSpan.className = 'validation-error';
+        errorSpan.textContent = message;
+        
+        // Find suitable insertion point
+        let insertionPoint = element;
+        
+        // If it's a file upload, insert after the upload area
+        if (element.type === 'file') {
+          const uploadArea = element.closest('.upload-area');
+          if (uploadArea) insertionPoint = uploadArea;
+        } 
+        // If it's part of a group (radio/checkbox), insert after the container
+        else if (element.type === 'radio' || element.type === 'checkbox') {
+          const container = element.closest('ul') || element.closest('.code-form-control');
+          if (container) insertionPoint = container;
+        }
+        
+        if (insertionPoint && insertionPoint.parentNode) {
+          if (insertionPoint.nextSibling) {
+            insertionPoint.parentNode.insertBefore(errorSpan, insertionPoint.nextSibling);
+          } else {
+            insertionPoint.parentNode.appendChild(errorSpan);
+          }
+        }
+      }
+
       // Form submit handler
       function handleFormSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
         
+        // Run validation first
+        if (!validateForm(form)) {
+          showNotification('Please fix the errors in the form.', 'error');
+          return false;
+        }
+        
         // Log all form inputs BEFORE modifying
         const allInputs = form.querySelectorAll('input, textarea, select');
-        allInputs.forEach(function(input, idx) {
-          const name = input.name || input.getAttribute('name') || 'NO_NAME';
-          const value = input.value || input.getAttribute('value') || '';
-          const type = input.type || input.tagName.toLowerCase();
-          const disabled = input.disabled;
-        });
         
         // Remove readonly/disabled attributes temporarily to ensure values are collected
         const readonlyInputs = form.querySelectorAll('input[readonly], textarea[readonly]');
@@ -2309,31 +2422,6 @@
           disabledStates.push({element: input, name: input.name});
           input.disabled = false;
         });
-        
-        // Check if any values exist
-        let hasAnyValue = false;
-        allInputs.forEach(function(input, idx) {
-          const value = input.value || input.getAttribute('value') || '';
-          if (value.trim().length > 0) {
-            hasAnyValue = true;
-          }
-        });
-        
-        // Warn if no values found
-        if (!hasAnyValue) {
-          // Test if we can set values programmatically
-          allInputs.forEach(function(input, idx) {
-            const testValue = 'TEST_VALUE_' + idx;
-            const oldValue = input.value;
-            input.value = testValue;
-            // Restore old value
-            input.value = oldValue;
-          });
-          
-          // Show error notification
-          showNotification('Error: Form fields appear to be empty. Please fill out the form before submitting.', 'error');
-          return false; // Stop submission
-        }
         
         // Create FormData AFTER removing readonly/disabled
         const formData = new FormData(form);
@@ -2680,7 +2768,6 @@
     },
     {
       "type": "header",
-<<<<<<< HEAD
       "content": "Heading Settings"
     },
     {
