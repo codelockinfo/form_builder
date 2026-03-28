@@ -2306,7 +2306,22 @@
           input.classList.remove('input-error');
         });
         
-        // 1. Validate required fields
+        // 1. Identify and Validate required fields
+        // The app adds a ' *' span with class 'text-danger' for required fields
+        const allControls = form.querySelectorAll('.code-form-control');
+        
+        allControls.forEach(control => {
+          const asterisk = control.querySelector('.text-danger');
+          const isRequiredByAsterisk = asterisk && !asterisk.classList.contains('hidden') && asterisk.textContent.includes('*');
+          
+          if (isRequiredByAsterisk) {
+            const input = control.querySelector('input, textarea, select');
+            if (input && !input.hasAttribute('required') && !input.classList.contains('required-field')) {
+               input.classList.add('required-field');
+            }
+          }
+        });
+
         const requiredElements = form.querySelectorAll('[required], [aria-required="true"], .required-field');
         
         requiredElements.forEach(element => {
