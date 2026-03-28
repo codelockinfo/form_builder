@@ -3113,7 +3113,10 @@ class Client_functions extends common_function
                         else {
                             // Fallback to default
                             if (in_array($elementid, $element_type)) {
-                                $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                                $layout = ($elementid == 4) ? "1" : "2";
+                                $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                                $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                                $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
                             }
                             else if (in_array($elementid, $element_type2)) {
                                 $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
@@ -3162,7 +3165,10 @@ class Client_functions extends common_function
                     else {
                         // Default handling for other form types
                         if (in_array($elementid, $element_type)) {
-                            $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                            $layout = ($elementid == 4) ? "1" : "2";
+                            $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                            $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                            $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
                         }
                         else if (in_array($elementid, $element_type2)) {
                             $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
