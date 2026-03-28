@@ -1333,8 +1333,6 @@ $(document).on("click", ".btncreate_new", function (event) {
             if (response['code'] != undefined && response['code'] == '403') {
                 redirect403();
             } else {
-                $(".text_image_list").removeClass("first_txt_image");
-                $(".firstone_").addClass("first_txt_image");
                 insertDefaultElements(response["data"], selectedType);
                 window.location.href = "form_design.php?form_id=" + response["data"] + "&shop=" + store;
             }
