@@ -1737,55 +1737,47 @@ $(document).on("change", ".switch input[name='checkbox']", function () {
 });
 
 $(document).on("click", "#checkAll", function () {
-
     var checked = $(this).is(":checked");
-    if (checked) {
-        $(".selectedCheck").each(function () {
-            $(this).prop("checked", true);
-        });
-        $(".bultActionss").css("display", "block");
-        $(".selectedshow").css("display", "none");
-        $(".Polaris-Labelled--hidden").css("display", "none");
-        setTimeout(function () {
-            $('.Deselectcount').text('Select all form');
-        }, 100);
-    } else {
-        $(".selectedCheck").each(function () {
-            $(this).prop("checked", false);
-        });
-        $(".bultActionss").css("display", "none");
-        $(".selectedshow,.sortBy").css("display", "block");
-    }
+    $(".selectedCheck").each(function () {
+        $(this).prop("checked", checked);
+    });
+    updateSelectedCount();
 });
 
 $(document).on("click", ".selectedCheck", function () {
     if ($(".selectedCheck").length == $(".selectedCheck:checked").length) {
         $("#checkAll").prop("checked", true);
     } else {
-        // $("#checkall").removeAttr("checked");
         $("#checkAll").prop("checked", false);
     }
+    updateSelectedCount();
 });
 
-$(document).on("click", ".selectedCheck", function () {
-    if ($(this).is(":checked")) {
+function updateSelectedCount() {
+    var checkedCount = $('.selectedCheck:checked').length;
+    var totalCount = $('.selectedCheck').length;
+
+    if (checkedCount > 0) {
         $(".bultActionss").css("display", "block");
         $(".selectedshow").css("display", "none");
         $(".Polaris-Labelled--hidden").css("display", "none");
+
         setTimeout(function () {
-
-            var mychecked = $('.selectedCheck:checked').length;
-            $('.Deselectcount').text('Select all form');
-
-        }, 100);
-    }
-    else {
+            if (checkedCount === totalCount) {
+                $('.Deselectcount').text('Select all form');
+            } else {
+                $('.Deselectcount').text(checkedCount + ' select');
+            }
+        }, 10);
+    } else {
         $(".bultActionss").css("display", "none");
-        $(".selectedshow").css("display", "block");
+        $(".selectedshow, .sortBy").css("display", "block");
         $(".Polaris-Labelled--hidden").css("display", "block");
+        $("#checkAll").prop("checked", false);
     }
+}
 
-});
+// Removed duplicate selectedCheck handler and replaced with unified updateSelectedCount logic above.
 
 $(document).on("click", ".removeElement", function (event) {
     var thisObj = $(this);
