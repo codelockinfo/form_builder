@@ -40,10 +40,13 @@
   margin: 0 -5px;
   padding: 0;
 }
-.content .code-form-control .messages {
+.content .code-form-control .messages,
+.globo-paragraph,
+.heading-caption {
   word-break: break-all !important;
   overflow-wrap: anywhere !important;
   display: block !important;
+  width: 100% !important;
 }
 .content .code-form-control label {
   color: #212b36;
