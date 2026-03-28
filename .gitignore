@@ -1,14 +1,3 @@
 /nbproject/private/
 .env
 error_log
-/logs/
-*.log
-.DS_Store
-package-lock.json
-composer.lock
-vendor/
-node_modules/
-/debug_design_save.txt
-/diff.txt
-/error_log
-/tmp/
