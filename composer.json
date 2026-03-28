@@ -1,0 +1,14 @@
+{
+    "name": "codelockinfo/form_builder",
+    "description": "Custom Form Builder Application for Shopify",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "core/"
+        }
+    }
+}
