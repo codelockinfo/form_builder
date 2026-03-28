@@ -40,6 +40,11 @@
   margin: 0 -5px;
   padding: 0;
 }
+.content .code-form-control .messages {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: block;
+}
 .content .code-form-control label {
   color: #212b36;
   display: block;
@@ -53,6 +58,8 @@
   text-align: left !important;
   pointer-events: none;
   user-select: none;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .content .code-form-control .text-smaller {
   font-size: 12px;
