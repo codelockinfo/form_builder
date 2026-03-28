@@ -11647,6 +11647,9 @@ class Client_functions extends common_function
                 case 'textarea':
                 case 'phone':
                 case 'number':
+                case 'password':
+                case 'tel':
+                case 'url':
                     $selector = $form_scope . ' .classic-input, ' . $form_scope . ' .globo-form-input input, ' . $form_scope . ' .globo-form-input textarea';
                     break;
                 case 'label':

@@ -8080,6 +8080,10 @@ console.log('Custom code loaded');
                 $('.code-form-app input[type="text"], .contact-form input[type="text"], ' +
                   '.code-form-app input[type="email"], .contact-form input[type="email"], ' +
                   '.code-form-app input[type="date"], .contact-form input[type="date"], ' +
+                  '.code-form-app input[type="number"], .contact-form input[type="number"], ' +
+                  '.code-form-app input[type="password"], .contact-form input[type="password"], ' +
+                  '.code-form-app input[type="tel"], .contact-form input[type="tel"], ' +
+                  '.code-form-app input[type="url"], .contact-form input[type="url"], ' +
                   '.code-form-app input[type="datetime-local"], .contact-form input[type="datetime-local"], ' +
                   '.code-form-app textarea, .contact-form textarea, ' +
                   '.code-form-app select, .contact-form select').not('.star-rating input, fieldset input[type="radio"]').each(function() {
