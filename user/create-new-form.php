@@ -134,7 +134,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                             <div style="width: 80px;text-align:center;">Id</div>
                             <div style="width: 300px;text-align:center;">Title</div>
                         </div>
-                        <div style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 300px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 38%;">
                             <div style="width: 60px; text-align: center;">Status</div>
                             <div style="width: 150px; text-align: center;">Action</div>
                         </div>
