@@ -2586,20 +2586,20 @@ class Client_functions extends common_function
                     $form_public_id = (isset($templates['public_id']) && !empty($templates['public_id'])) ? $templates['public_id'] : $templates['id'];
                     $storefront_url = 'https://' . $shopinfo->shop_name . '/';
                     $html .= '<div class="indexButton" style="width: 150px; display: flex; justify-content: flex-end; gap: 8px;">
-                                        <button class="view-form-btn btn-action-mobile" onclick="window.open(\'' . $storefront_url . '\', \'_blank\');" data-form-id="' . $templates['id'] . '" data-form-public-id="' . $form_public_id . '" data-shop="' . $shopinfo->shop_name . '">
-                                            <span class="btn-text">View</span>
+                                        <button class="view-form-btn btn-action-mobile Polaris-Button--primary" onclick="window.open(\'' . $storefront_url . '\', \'_blank\');" data-form-id="' . $templates['id'] . '" data-form-public-id="' . $form_public_id . '" data-shop="' . $shopinfo->shop_name . '">
+                                            <span class="btn-text" style="color: #fff;">View</span>
                                             <span class="btn-icon" style="display:none;">
                                                 <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width:16px;height:16px;fill:currentColor;"><path fill-rule="evenodd" d="M17.928 9.628c-.092-.229-2.317-5.628-7.929-5.628s-7.836 5.399-7.929 5.628a1.017 1.017 0 0 0 0 .744c.092.229 2.317 5.628 7.929 5.628s7.837-5.399 7.929-5.628a1.017 1.017 0 0 0 0-.744zm-7.929 4.372a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"></path></svg>
                                             </span>
                                         </button>
                                         ';
                     if (isset($_POST['view_type']) && $_POST['view_type'] == 'submissions_dashboard') {
-                        $html .= '<button class="btn-action-mobile"><a href="submissions.php?form_id=' . $templates['id'] . '&shop=' . $shopinfo->shop_name . '"><span class="btn-text">Submissions</span><span class="btn-icon" style="display:none;"><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width:16px;height:16px;fill:currentColor;"><path d="M10 0C4.486 0 0 4.486 0 10s4.486 10 10 10 10-4.486 10-10S15.514 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm4-9h-3V5h-2v4H6l4 5 4-5z"/></svg></span></a></button>';
+                        $html .= '<button class="btn-action-mobile Polaris-Button--primary"><a href="submissions.php?form_id=' . $templates['id'] . '&shop=' . $shopinfo->shop_name . '"><span class="btn-text" style="color: #fff;">Submissions</span><span class="btn-icon" style="display:none;"><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width:16px;height:16px;fill:currentColor;"><path d="M10 0C4.486 0 0 4.486 0 10s4.486 10 10 10 10-4.486 10-10S15.514 0 10 0zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm4-9h-3V5h-2v4H6l4 5 4-5z"/></svg></span></a></button>';
                     }
 
                     if (!isset($_POST['view_type']) || $_POST['view_type'] != 'submissions_dashboard') {
-                        $html .= '<button class="btn-action-mobile"><a href="form_design.php?form_id=' . $templates['id'] . '&shop=' . $shopinfo->shop_name . '">
-                                            <span class="btn-text">Customize</span>
+                        $html .= '<button class="btn-action-mobile Polaris-Button--primary"><a href="form_design.php?form_id=' . $templates['id'] . '&shop=' . $shopinfo->shop_name . '">
+                                            <span class="btn-text"style="color: #fff;">Customize</span>
                                             <span class="btn-icon" style="display:none;">
                                                 <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true" style="width:16px;height:16px;fill:currentColor;"><path d="M17.16 2.84a3.176 3.176 0 0 0-4.488 0l-.82.82 4.485 4.485.823-.823a3.181 3.181 0 0 0 0-4.482zm-6.721 2.235L1.87 13.639c-.116.116-.2.259-.244.414l-1.579 5.49a.75.75 0 0 0 .937.938l5.49-1.58c.155-.044.298-.127.414-.243L15.457 10.1l-5.018-5.025z"></path></svg>
                                             </span>

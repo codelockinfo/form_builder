@@ -648,6 +648,7 @@ select:focus-visible {
 
 .indexButton button {
     background: transparent;
+    color: #fff;
     border: 1px solid #808080bd;
     padding: 8px 12px;
     border-radius: 4px;
@@ -1969,4 +1970,4 @@ input[id^="fileimage-"] {
 
 .Polaris-Spinner svg {
     fill: #297eb0 !important;
-}
+}
