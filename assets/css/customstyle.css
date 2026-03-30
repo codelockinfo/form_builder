@@ -1480,7 +1480,8 @@ ul {
 .contact-form .upload-area {
     width: 100%;
     min-height: 150px;
-    border: 1px dashed #eb1256;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1488,8 +1489,6 @@ ul {
     position: relative;
     overflow: hidden;
     padding: 10px;
-    /* Border radius will be set via inline styles from design settings */
-    /* Default border-radius removed to allow inline styles to work */
 }
 
 .upload-p,
@@ -1543,7 +1542,7 @@ input[id^="fileimage-"] {
     width: 150px;
     max-height: 150px;
     object-fit: contain;
-    border: 1px solid #eb1256;
+    border: 1px solid #ddd;
 }
 
 .close-button {
@@ -1554,7 +1553,7 @@ input[id^="fileimage-"] {
     width: 20px;
     text-align: center;
     border: none;
-    background-color: #eb1256;
+    background-color: #333;
     color: #ffffff;
     font-size: 18px;
     line-height: 20px;
@@ -1569,7 +1568,7 @@ input[id^="fileimage-"] {
 .file-name {
     font-size: 14px;
     color: #333;
-    border: 1px solid #eb1256;
+    border: 1px solid #ddd;
     width: 150px;
     text-align: center;
     border-radius: 0 0 5px 5px;

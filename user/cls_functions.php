@@ -3548,6 +3548,24 @@ class Client_functions extends common_function
                     $form_name = 'Blank Form';
                 }
 
+                // Extract primary colors from footer data or design settings for use in elements (e.g. Choose file button)
+                $button_bg_color = '#EB1256';
+                $button_text_color = '#ffffff';
+                
+                $footer_data_len = count($form_footer_data);
+                if ($footer_data_len >= 11) {
+                    $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#EB1256';
+                    $button_text_color = isset($form_footer_data[7]) ? $form_footer_data[7] : '#ffffff';
+                }
+                
+                // Override with design settings if available (more reliable for schema changes)
+                if (isset($design_settings['form_container']['button_bg_color']) && !empty($design_settings['form_container']['button_bg_color'])) {
+                    $button_bg_color = $design_settings['form_container']['button_bg_color'];
+                }
+                if (isset($design_settings['form_container']['button_text_color']) && !empty($design_settings['form_container']['button_text_color'])) {
+                    $button_text_color = $design_settings['form_container']['button_text_color'];
+                }
+
                 // Initialize HTML - use a unique variable name to avoid conflicts
                 $builder_html = '';
                 $html = ''; // Keep for backward compatibility but use $builder_html for building
@@ -4229,7 +4247,7 @@ class Client_functions extends common_function
                                         <div class="globo-form-input" data-formdataid="' . $form_data_id . '">
                                             <div class="upload-area" id="uploadArea-' . $form_data_id . '"' . $element_design_style . '>
                                                 <p class="upload-p ' . $elementtitle . '' . $form_data_id . '__placeholder" id="uploadText-' . $form_data_id . '">' . $unserialize_elementdata[2] . '</p>
-                                                <span class="file_button ' . $elementtitle . '' . $form_data_id . '__buttontext ' . $is_buttonhidden . '"  id="fileButton-' . $form_data_id . '"' . $element_design_style . '>' . $unserialize_elementdata[1] . '</span>
+                                                <span class="file_button ' . $elementtitle . '' . $form_data_id . '__buttontext ' . $is_buttonhidden . '"  id="fileButton-' . $form_data_id . '"' . $file_button_style . '>' . $unserialize_elementdata[1] . '</span>
                                                 <input id="fileimage-' . $form_data_id . '" type="file" data-formdataid="' . $form_data_id . '" data-type="file" ' . $is_allowmultiple . ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; border: none; padding: 0; margin: 0; pointer-events: auto !important; visibility: visible !important;">
                                                 <div class="img-container" id="imgContainer-' . $form_data_id . '"></div>
                                             </div>
