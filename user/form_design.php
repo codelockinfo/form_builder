@@ -8698,7 +8698,7 @@ console.log('Custom code loaded');
                                 'color': bgColor,
                                 'border-color': swatch1
                             });
-                            $('.code-form-app .upload-area, .contact-form .upload-area').css('border-color', swatch1);
+                            $('.code-form-app .upload-area, .contact-form .upload-area').css('border-color', '#ddd');
                         };
                         
                         applyDirect();
