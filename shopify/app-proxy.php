@@ -44,7 +44,6 @@ if (isset($_GET['test']) && $_GET['test'] == '1') {
     while (ob_get_level() > 0) {
         ob_end_clean();
     }
-    echo json_encode(['test' => 'File is executing', 'time' => date('Y-m-d H:i:s'), 'php_version' => phpversion()]);
     exit;
 }
 
@@ -273,6 +272,7 @@ $path_prefix = isset($_GET['path_prefix']) ? trim($_GET['path_prefix'], '/') : '
 // Determine route type
 $is_list_request = false;
 $is_render_request = false;
+$is_ajax_request = false;
 
 // Check full path first (when accessed directly or via index.php)
 if (strpos($path, '/apps/form-builder/list') !== false || 
@@ -287,6 +287,12 @@ if (strpos($path, '/apps/form-builder/render') !== false ||
     strpos($path, 'app-proxy.php/render') !== false) {
     $is_render_request = true;
 }
+if (strpos($path, '/apps/form-builder/ajax') !== false || 
+    strpos($path, '/apps/easy-form-builder/ajax') !== false ||
+    strpos($path, '/ajax') !== false ||
+    strpos($path, 'app-proxy.php/ajax') !== false) {
+    $is_ajax_request = true;
+}
 
 // Check query path (from .htaccess routing: path=list or path=render)
 if (!empty($query_path)) {
@@ -295,6 +301,9 @@ if (!empty($query_path)) {
     }
     if (strpos($query_path, 'render') !== false || $query_path == 'render') {
         $is_render_request = true;
+    }
+    if (strpos($query_path, 'ajax') !== false || $query_path == 'ajax') {
+        $is_ajax_request = true;
     }
 }
 
@@ -306,26 +315,32 @@ if (!empty($path_prefix)) {
     if (strpos($path_prefix, 'render') !== false || $path_prefix == 'render' || $path_prefix == 'apps/easy-form-builder/render') {
         $is_render_request = true;
     }
+    if (strpos($path_prefix, 'ajax') !== false || $path_prefix == 'ajax' || $path_prefix == 'apps/easy-form-builder/ajax') {
+        $is_ajax_request = true;
+    }
 }
 
-// Last resort: check if path ends with /list or /render
-if (!$is_list_request && !$is_render_request) {
-    if (preg_match('#/(list|render)(\?|$)#', $path)) {
+// Last resort: check if path ends with /list or /render or /ajax
+if (!$is_list_request && !$is_render_request && !$is_ajax_request) {
+    if (preg_match('#/(list|render|ajax)(\?|$)#', $path)) {
         if (strpos($path, '/list') !== false) {
             $is_list_request = true;
         }
         if (strpos($path, '/render') !== false) {
             $is_render_request = true;
         }
+        if (strpos($path, '/ajax') !== false) {
+            $is_ajax_request = true;
+        }
     }
 }
 
 // Route handling
 // Debug: Log route detection BEFORE handling
-error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Path Prefix: $path_prefix, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO'));
+error_log("App Proxy Route Detection - Path: $path, Query Path: $query_path, Path Prefix: $path_prefix, Is List: " . ($is_list_request ? 'YES' : 'NO') . ", Is Render: " . ($is_render_request ? 'YES' : 'NO') . ", Is Ajax: " . ($is_ajax_request ? 'YES' : 'NO'));
 
 // If no route detected, output debug info immediately
-if (!$is_list_request && !$is_render_request) {
+if (!$is_list_request && !$is_render_request && !$is_ajax_request) {
     echo json_encode([
         'error' => 'Route not detected',
         'path' => $path,
@@ -562,6 +577,41 @@ if ($is_list_request) {
         echo '<div style="padding: 20px; color: #d32f2f;">Error rendering form: ' . htmlspecialchars($e->getMessage()) . '</div>';
     }
     
+} elseif ($is_ajax_request) {
+    // Handle AJAX request (e.g. form submission)
+    header('Content-Type: application/json; charset=utf-8');
+    
+    // Check for routine_name in POST or GET
+    $routine_name = isset($_POST['routine_name']) ? $_POST['routine_name'] : (isset($_GET['routine_name']) ? $_GET['routine_name'] : '');
+    
+    if (empty($routine_name)) {
+        http_response_code(400);
+        echo json_encode(['result' => 'fail', 'message' => 'routine_name is required']);
+        exit;
+    }
+    
+    try {
+        // Forward the call to Client_functions
+        if (method_exists($cls_functions, $routine_name)) {
+            // Capture any output
+            ob_start();
+            $comeback = call_user_func(array($cls_functions, $routine_name));
+            $output = ob_get_clean();
+            
+            // Return JSON result
+            if (!empty($output)) {
+                error_log("AJAX ROUTE OUTPUT: " . $output);
+            }
+            echo json_encode($comeback);
+        } else {
+            http_response_code(400);
+            echo json_encode(['result' => 'fail', 'message' => "Method $routine_name not found"]);
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['result' => 'fail', 'message' => $e->getMessage()]);
+    }
+    exit;
 } else {
     // Unknown route - provide helpful debug info
     http_response_code(404);

@@ -1,7 +1,6 @@
 (function() {
   'use strict';
   const baseUrl = 'https://codelocksolutions.com/form_builder';
-  const ajaxUrl = `${baseUrl}/user/ajax_call.php`;
 
   function updateStars(input) {
     const fs = input.closest('fieldset'); if (!fs) return;
@@ -42,12 +41,31 @@
 
   function applyDesign(container, id, s) {
     container.querySelectorAll(`[data-formdataid="${id}"]`).forEach(el => {
-      const fs = s.fontSize ? parseInt(s.fontSize) + 'px' : '';
-      if (fs) { el.style.fontSize = fs; el.querySelectorAll('input, textarea, select, .file_button').forEach(i => i.style.fontSize = fs); }
-      if (s.fontWeight) el.style.fontWeight = s.fontWeight;
-      if (s.color) { el.style.color = s.color; el.querySelectorAll('input, textarea, select, label, .upload-p').forEach(i => i.style.color = s.color); }
-      if (s.borderRadius) { const br = parseInt(s.borderRadius) + 'px'; el.querySelectorAll('input, textarea, select, .upload-area, .file_button').forEach(i => i.style.borderRadius = br); }
-      if (s.bgColor) el.querySelectorAll('input, textarea, select, .upload-area').forEach(i => i.style.backgroundColor = s.bgColor);
+      const fs = s.fontSize ? (parseInt(s.fontSize) > 9 ? parseInt(s.fontSize) + 'px' : '') : '';
+      if (fs) { 
+        el.style.fontSize = fs; 
+        el.querySelectorAll('input, textarea, select, label, .upload-p, .file_button').forEach(i => i.style.fontSize = fs); 
+      }
+      if (s.fontWeight) {
+        el.style.fontWeight = s.fontWeight;
+        el.querySelectorAll('label, .upload-p, .file_button').forEach(i => i.style.fontWeight = s.fontWeight);
+      }
+      if (s.color) { 
+        el.style.color = s.color; 
+        el.querySelectorAll('input, textarea, select, label, .upload-p').forEach(i => i.style.color = s.color); 
+      }
+      if (s.borderRadius) { 
+        const br = parseInt(s.borderRadius) + 'px'; 
+        el.querySelectorAll('input, textarea, select, .upload-area, .file_button').forEach(i => i.style.borderRadius = br); 
+      }
+      if (s.bgColor) {
+        // Only apply background color to non-input elements or specific components
+        el.querySelectorAll('.upload-area, .file_button').forEach(i => i.style.backgroundColor = s.bgColor);
+      }
+      if (s.textAlign) {
+        el.style.textAlign = s.textAlign;
+        el.querySelectorAll('.globo-form-input, label, .messages').forEach(i => i.style.textAlign = s.textAlign);
+      }
     });
   }
 
@@ -68,51 +86,82 @@
   }
 
   async function initForm(formId, shop, container) {
-    const renderUrl = `/apps/easy-form-builder/render?form_id=${encodeURIComponent(formId)}&shop=${encodeURIComponent(shop)}`;
-    const res = await fetch(renderUrl, { credentials: 'same-origin' });
-    const html = await res.text();
-    if (!html || !html.trim()) { container.style.display = 'none'; return; }
-    container.innerHTML = html;
+    console.log('EFB: Starting initForm for ID:', formId);
+    if (!container) { console.error('EFB: No container provided'); return; }
     
-    container.querySelectorAll('.file_button').forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); const i = btn.closest('.upload-area')?.querySelector('input[type="file"]'); if (i) i.click(); }));
-    container.addEventListener('change', e => {
-      if (e.target.type === 'file' && e.target.dataset.type === 'file') setupFile(e.target.closest('.upload-area'), e.target);
-      if (e.target.type === 'radio' && e.target.closest('.star-rating')) updateStars(e.target);
-    }, true);
-
-    container.querySelectorAll('.star-rating fieldset').forEach(fs => {
-      Object.assign(fs.style, { display: 'flex', flexDirection: 'row-reverse', justifyContent: 'flex-end' });
-      fs.querySelectorAll('label').forEach(l => {
-        Object.assign(l.style, { width: '1.5em', margin: '0 2px', cursor: 'pointer', fontSize: '200%', color: 'transparent', display: 'block' });
-        l.addEventListener('click', e => { const i = document.getElementById(l.getAttribute('for')); if (i) { i.checked = true; updateStars(i); i.dispatchEvent(new Event('change', { bubbles: true })); }});
-      });
-    });
-
-    const form = container.querySelector('form');
-    if (form) {
-      form.addEventListener('submit', async e => {
-        e.preventDefault(); const btn = form.querySelector('button[type="submit"], .action.submit');
-        if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.dataset.orig = btn.innerHTML; btn.innerHTML = 'Submitting...'; }
-        const fd = new FormData(form); fd.append('store', shop); fd.append('routine_name', 'addformdata'); fd.append('form_id', formId);
-        try {
-          const r = await fetch(ajaxUrl, { method: 'POST', body: fd }); const d = await r.json();
-          if (d.result === 'success') { notify(d.msg || 'Success!', 'success'); form.reset(); } else notify(d.msg || 'Error', 'error');
-        } catch(err) { notify('Submission failed', 'error'); }
-        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = btn.dataset.orig; }
-      });
-    }
-
+    const renderUrl = `/apps/easy-form-builder/render?form_id=${encodeURIComponent(formId)}&shop=${encodeURIComponent(shop)}&cb=${Date.now()}`;
+    console.log('EFB: Fetching URL:', renderUrl);
+    
     try {
-      const designRes = await fetch(ajaxUrl, { method: 'POST', body: new URLSearchParams({ routine_name: 'get_form_design_settings', form_id: formId, store: shop }) });
-      const designData = await designRes.json();
-      if (designData.result === 'success') {
-        const s = designData.settings || designData.data || {};
-        Object.keys(s).forEach(k => { if (k.startsWith('element_')) applyDesign(container, k.replace('element_', ''), s[k]); });
-        const ed = designData.element_data || {};
-        Object.keys(ed).forEach(k => { if (k.startsWith('element_')) applyData(container, k.replace('element_', ''), ed[k].element_id, ed[k].data); });
+      const res = await fetch(renderUrl, { credentials: 'same-origin' });
+      const html = await res.text();
+      if (!html || !html.trim()) { 
+        console.warn('EFB: Empty HTML response');
+        container.style.display = 'none'; return; 
       }
-    } catch(e) {}
+      
+      container.innerHTML = html;
+      console.log('EFB: HTML injected');
+      
+      // Setup file and star rating events normally
+      container.querySelectorAll('.file_button').forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); const i = btn.closest('.upload-area')?.querySelector('input[type="file"]'); if (i) i.click(); }));
+    } catch (e) {
+      console.error('EFB: Init setup error', e);
+    }
   }
 
-  window.EFB = { init: initForm, notify: notify };
+  // GLOBAL FALLBACK HANDLER - Handles ANY form in ANY theme
+  const globalSubmitHandler = async (e, forcedForm = null) => {
+    const btn = e ? e.target.closest('.action.submit, button[type="submit"]') : null;
+    const form = forcedForm || (btn ? btn.closest('form') : null);
+    
+    if (form && (form.classList.contains('get_selected_elements') || form.querySelector('[data-formdataid]'))) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      console.log('EFB: Global submit/click detected');
+      
+      if (form.reportValidity && !form.reportValidity()) { console.log('EFB: Validation failed'); return; }
+      
+      const subBtn = btn || form.querySelector('.action.submit, button[type="submit"]');
+      if (subBtn && subBtn.disabled) return;
+      
+      if (subBtn) { 
+        subBtn.disabled = true; subBtn.style.opacity = '0.6'; 
+        subBtn.dataset.orig = subBtn.innerHTML; 
+        subBtn.innerHTML = 'Submitting...'; 
+      }
+      
+      const formDataId = form.querySelector('.form_id')?.value || form.getAttribute('data-form-id');
+      const shopDomain = window.Shopify?.shop || new URLSearchParams(window.location.search).get('shop');
+      
+      const fd = new FormData(form);
+      fd.append('routine_name', 'addformdata');
+      if (!fd.has('store')) fd.append('store', shopDomain);
+      if (!fd.has('form_id')) fd.append('form_id', formDataId);
+      
+      console.log('EFB: Sending POST...');
+      try {
+        const r = await fetch('/apps/easy-form-builder/ajax', { method:'POST', body:fd, credentials:'same-origin' });
+        const d = await r.json();
+        console.log('EFB: Result', d);
+        if (d.result === 'success') { 
+          notify(d.msg || 'Success!', 'success'); 
+          form.reset(); 
+          form.querySelectorAll('.img-container').forEach(c => c.innerHTML = '');
+          form.querySelectorAll('.upload-area').forEach(a => { a.classList.remove('has-files'); a.querySelectorAll('.upload-p, .file_button').forEach(el => el.style.display = ''); });
+        } else {
+          notify(d.msg || 'Error', 'error');
+        }
+      } catch(err) { console.error('EFB: Err', err); notify('Failed', 'error'); }
+      if (subBtn) { subBtn.disabled = false; subBtn.style.opacity = '1'; subBtn.innerHTML = subBtn.dataset.orig; }
+    }
+  }
+
+  // Intercept all submits and clicks globally
+  document.addEventListener('submit', globalSubmitHandler, true);
+  document.addEventListener('click', e => {
+    if (e.target.closest('.action.submit, button[type="submit"]')) globalSubmitHandler(e);
+  }, true);
+
+  window.EFB = window.EFB || { init: initForm, notify: notify };
+  document.dispatchEvent(new CustomEvent('efb:loaded'));
 })();

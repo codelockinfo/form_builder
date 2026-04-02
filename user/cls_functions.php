@@ -4023,10 +4023,11 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
                                 $form_html .= '<div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                     <label for="false-email" class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Email" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="email" data-type="email" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value=""  maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                        <input type="email" data-type="email" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value=""  maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                     </div>
                                     <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                 </div>';
@@ -4057,10 +4058,11 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
                                 $textarea_id = 'false-textarea-' . $form_data_id;
                                 $form_html .= '<div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                                     <label for="' . $textarea_id . '" class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="textarea" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
-                                                    <textarea id="' . $textarea_id . '" data-type="textarea" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder" rows="3" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '></textarea>
+                                                    <textarea id="' . $textarea_id . '" data-type="textarea" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder" rows="3" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '></textarea>
                                                         <small class="help-text globo-description"></small>
                                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                                 </div>';
@@ -4091,10 +4093,11 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                     <label for="false-phone-1" class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Phone" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="text" data-type="phone" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" default-country-code="us" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                        <input type="text" data-type="phone" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" default-country-code="us" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                     </div>
                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                 </div>';
@@ -4663,12 +4666,13 @@ class Client_functions extends common_function
                                 // Generate field name from label
                                 $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
 
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '">
                                         <label for="false-text' . $elements['id'] . '" class="classic-label globo-label ' . $is_keepossition_label . '">
                                         <span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="First Name" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                         <div class="globo-form-input">
-                                            <input type="text" data-type="text" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '">
+                                            <input type="text" data-type="text" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '"' . $is_required_attr . '>
                                         </div>
                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                     </div>';
@@ -4712,9 +4716,7 @@ class Client_functions extends common_function
                 // No need to add it at the bottom
 
                 $form_html .= '</div>';
-                if (!empty($element_data_array)) {
-                    $form_html .= '</form>';
-                }
+                // The form closing tag is moved after the footer to include the submit button
                 if ($formData != '' || !empty($form_footer_data)) {
                     $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
                     $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
@@ -4806,12 +4808,16 @@ class Client_functions extends common_function
 
                     $form_html .= '<div class="footer forFooterAlign ' . $footer_align . '">
                                 <div class="messages footer-data__footerdescription">' . (isset($form_footer_data[0]) ? $form_footer_data[0] : '') . '</div>
-                                <button class="action submit classic-button footer-data__submittext ' . $fullwidth_button . '" ' . $button_style . ' ' . $button_hover_style . '>
+                                <button type="submit" class="action submit classic-button footer-data__submittext ' . $fullwidth_button . '" ' . $button_style . ' ' . $button_hover_style . '>
                                     <span class="spinner"></span>
                                     ' . (isset($form_footer_data[1]) ? $form_footer_data[1] : 'Submit') . '
                                 </button>
                                 <button class="action reset classic-button footer-data__resetbuttontext ' . $reset_button . ' ' . $fullwidth_button . '" type="button" ' . $reset_button_style . ' ' . $reset_button_hover_style . '>' . (isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset') . '</button>
                             </div>';
+                }
+                // Close the form AFTER the footer button
+                if (!empty($element_data_array)) {
+                    $form_html .= '</form>';
                 }
                 // Close the code-form-app wrapper only if we opened it (storefront mode)
                 if ($is_storefront) {

@@ -508,55 +508,61 @@
         box-sizing: border-box;
       }
       
-      /* Layout column width styles */
+      /* Layout column width styles - Fixed to match app logic (1=100%, 2=50%, 3=33%, etc) */
       .code-form-control.layout-1-column,
-      .contact-form .code-form-control.layout-1-column {
-        width: 8.333% !important;
-      }
-      .code-form-control.layout-2-column,
-      .contact-form .code-form-control.layout-2-column {
-        width: 16.666% !important;
-      }
-      .code-form-control.layout-3-column,
-      .contact-form .code-form-control.layout-3-column {
-        width: 25% !important;
-      }
-      .code-form-control.layout-4-column,
-      .contact-form .code-form-control.layout-4-column {
-        width: 33.333% !important;
-      }
-      .code-form-control.layout-5-column,
-      .contact-form .code-form-control.layout-5-column {
-        width: 41.666% !important;
-      }
-      .code-form-control.layout-6-column,
-      .contact-form .code-form-control.layout-6-column {
-        width: 50% !important;
-      }
-      .code-form-control.layout-7-column,
-      .contact-form .code-form-control.layout-7-column {
-        width: 58.333% !important;
-      }
-      .code-form-control.layout-8-column,
-      .contact-form .code-form-control.layout-8-column {
-        width: 66.666% !important;
-      }
-      .code-form-control.layout-9-column,
-      .contact-form .code-form-control.layout-9-column {
-        width: 75% !important;
-      }
-      .code-form-control.layout-10-column,
-      .contact-form .code-form-control.layout-10-column {
-        width: 83.333% !important;
-      }
-      .code-form-control.layout-11-column,
-      .contact-form .code-form-control.layout-11-column {
-        width: 91.666% !important;
-      }
-      .code-form-control.layout-12-column,
-      .contact-form .code-form-control.layout-12-column {
+      .contact-form .code-form-control.layout-1-column,
+      .layout-1-column {
         width: 100% !important;
       }
+      .code-form-control.layout-2-column,
+      .contact-form .code-form-control.layout-2-column,
+      .layout-2-column {
+        width: 50% !important;
+      }
+      .code-form-control.layout-3-column,
+      .contact-form .code-form-control.layout-3-column,
+      .layout-3-column {
+        width: 33.333% !important;
+      }
+      .code-form-control.layout-4-column,
+      .contact-form .code-form-control.layout-4-column,
+      .layout-4-column {
+        width: 25% !important;
+      }
+      
+      /* Global Layout Fixes */
+      .code-form-app .content {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        margin: 0 -5px !important;
+      }
+      
+      .code-form-control {
+        margin-bottom: 20px !important;
+        padding: 0 5px !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Basic Input Styling to match dashboard */
+      .code-form-control input:not([type="checkbox"]):not([type="radio"]),
+      .code-form-control textarea,
+      .code-form-control select {
+        width: 100% !important;
+        height: 41px;
+        padding: 10px 12px !important;
+        background-color: #f1f1f1 !important;
+        border: none !important;
+        border-radius: 2px !important;
+        font-size: 14px !important;
+        box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02) !important;
+        box-sizing: border-box !important;
+      }
+      
+      .code-form-control textarea {
+        height: auto !important;
+        min-height: 100px !important;
+      }
+
       .globo-paragraph,
       .heading-caption,
       .code-form-control .messages {
@@ -564,8 +570,34 @@
         display: block !important;
         word-break: break-all !important;
         overflow-wrap: anywhere !important;
+        margin-top: 5px !important;
+        font-size: 12px !important;
+        color: #6c757d !important;
       }
       
+      /* Button Alignment classes */
+      .btnLeft, .align-left { text-align: left !important; }
+      .btnCenter, .align-center { text-align: center !important; }
+      .btnRight, .align-right { text-align: right !important; }
+      
+      .classic-button {
+        margin: 10px 0 !important;
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 999 !important;
+        pointer-events: auto !important;
+        transition: transform 0.1s ease, filter 0.2s ease !important;
+      }
+      .classic-button:hover {
+        filter: brightness(0.9);
+      }
+      .classic-button:active {
+        transform: scale(0.98);
+      }
+      .classic-button .spinner {
+        pointer-events: none !important;
+      }
+
       /* Validation Error Styles */
       .validation-error {
         color: #ff0000 !important;
