@@ -17,6 +17,21 @@
   const formId = '{{ block.settings.form_id }}';
   const shop = '{{ shop.permanent_domain }}';
 
+  function notify(msg, type) {
+    const n = document.createElement('div');
+    Object.assign(n.style, { 
+      position:'fixed', top:'20px', right:'20px', 
+      background:type==='success'?'#4caf50':'#f44336', 
+      color:'white', padding:'16px 24px', borderRadius:'4px', 
+      boxOrigin:'border-box', boxShadow:'0 4px 12px rgba(0,0,0,0.15)', 
+      zIndex:'99999', cursor:'pointer', fontFamily: 'sans-serif',
+      fontSize: '14px', fontWeight: '500', transition: 'all 0.3s ease'
+    });
+    n.textContent = msg; document.body.appendChild(n);
+    setTimeout(() => { n.style.opacity = '0'; setTimeout(() => n.remove(), 300); }, 3500);
+    n.onclick = () => n.remove();
+  }
+
   async function init() {
     if (!formId || formId === '0') return;
     const url = `/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}&cb=${Date.now()}`;
@@ -53,6 +68,26 @@
       
       if (form.reportValidity && !form.reportValidity()) return;
       
+      // Strict Validation Checks
+      const emailInput = form.querySelector('input[type="email"], input[name="email"]');
+      if (emailInput && emailInput.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,20}$/;
+        if (!emailRegex.test(emailInput.value)) {
+          notify('Please enter a valid email address (e.g. user@domain.com).', 'error');
+          emailInput.focus();
+          return;
+        }
+      }
+
+      const phoneInput = form.querySelector('input[type="tel"]');
+      if (phoneInput && phoneInput.value) {
+        if (phoneInput.value.length < 5) {
+          notify('Please enter a valid phone number.', 'error');
+          phoneInput.focus();
+          return;
+        }
+      }
+      
       const btn = form.querySelector('.action.submit, button[type="submit"]');
       if (btn) { 
         btn.disabled = true; 
@@ -72,15 +107,15 @@
         console.log('EFB: Response:', data);
         
         if (data.result === 'success') {
-          alert(data.msg || 'Success!');
+          notify(data.msg || 'Success!', 'success');
           form.reset();
           // Clear any file previews if they exist
           cont.querySelectorAll('.img-container').forEach(c => c.innerHTML = '');
           cont.querySelectorAll('.upload-area').forEach(a => a.classList.remove('has-files'));
         } else {
-          alert(data.msg || 'Error: ' + JSON.stringify(data));
+          notify(data.msg || 'Error: ' + JSON.stringify(data), 'error');
         }
-      } catch(err) { console.error('EFB: Ajax error:', err); alert('Submission failed. Check console for details.'); }
+      } catch(err) { console.error('EFB: Ajax error:', err); notify('Submission failed. Check console for details.', 'error'); }
       
       if (btn) { 
         btn.disabled = false; 
