@@ -126,17 +126,91 @@ input[id^="fileimage-"] {
 /* Remove list markers from checkbox and radio lists */
 .code-form-control ul,
 .contact-form .code-form-control ul,
+.code-form-control ul.flex-wrap,
+.contact-form .code-form-control ul.flex-wrap,
 .code-form-control ul li,
+.contact-form .code-form-control ul li,
+.code-form-control .globo-list-control,
+.contact-form .code-form-control .globo-list-control,
+.code-form-control li.globo-list-control,
+.contact-form .code-form-control li.globo-list-control,
+.code-form-control li,
 .contact-form .code-form-control li,
-.code-form-control .globo-list-control {
+ul.code-form-control,
+ul.contact-form,
+li.code-form-control,
+li.contact-form,
+.code-form-control ul li.globo-list-control,
+.contact-form .code-form-control ul li.globo-list-control {
   list-style: none !important;
   list-style-type: none !important;
+  list-style-position: outside !important;
+  list-style-image: none !important;
+  margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.code-form-control ul::before,
+.contact-form .code-form-control ul::before,
+.code-form-control ul::after,
+.contact-form .code-form-control ul::after,
+.code-form-control ul.flex-wrap::before,
+.contact-form .code-form-control ul.flex-wrap::before,
+.code-form-control ul.flex-wrap::after,
+.contact-form .code-form-control ul.flex-wrap::after,
+.code-form-control li::before,
+.contact-form .code-form-control li::before,
+.code-form-control li::after,
+.contact-form .code-form-control li::after,
+.code-form-control li.globo-list-control::before,
+.contact-form .code-form-control li.globo-list-control::before,
+.code-form-control li.globo-list-control::after,
+.contact-form .code-form-control li.globo-list-control::after,
+.code-form-control .globo-list-control::before,
+.contact-form .code-form-control .globo-list-control::before,
+.code-form-control .globo-list-control::after,
+.contact-form .code-form-control .globo-list-control::after,
+.code-form-control ul li.globo-list-control::before,
+.contact-form .code-form-control ul li.globo-list-control::before,
+.code-form-control ul li.globo-list-control::after,
+.contact-form .code-form-control ul li.globo-list-control::after {
+  display: none !important;
+  content: "" !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+.code-form-control ul *,
+.contact-form .code-form-control ul * {
+  list-style: none !important;
+  list-style-type: none !important;
+  list-style-image: none !important;
 }
 
+/* Checkbox Styles */
 .code-form-control .checkbox-wrapper,
-.contact-form .code-form-control .checkbox-wrapper,
+.contact-form .code-form-control .checkbox-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  list-style: none !important;
+}
+.code-form-control .checkbox-wrapper.checkbox-option,
+.contact-form .code-form-control .checkbox-wrapper.checkbox-option {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Radio Button Styles */
 .code-form-control .radio-wrapper,
 .contact-form .code-form-control .radio-wrapper {
   position: relative;
@@ -145,9 +219,77 @@ input[id^="fileimage-"] {
   min-height: 24px;
   list-style: none !important;
 }
-
 .code-form-control .radio-wrapper .radio-input,
-.contact-form .code-form-control .radio-wrapper .radio-input,
+.contact-form .code-form-control .radio-wrapper .radio-input {
+  position: absolute !important;
+  top: 1px !important;
+  left: 0px !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  z-index: 3 !important;
+  pointer-events: auto !important;
+}
+.code-form-control .radio-wrapper .radio-label,
+.contact-form .code-form-control .radio-wrapper .radio-label {
+  display: inline-block;
+  padding-left: 28px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+.code-form-control .radio-wrapper .radio-input~.radio-label:before,
+.contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:before {
+  position: absolute;
+  top: 1px;
+  left: 0px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  content: "";
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  background-color: #fff;
+  box-shadow: none;
+  border: 2px solid #d1d5db;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
+  border-radius: 50%;
+  transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1;
+}
+.code-form-control .radio-wrapper .radio-input:checked~.radio-label:before,
+.contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:before {
+  border-color: #EB1256;
+  box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
+  background-color: #EB1256;
+}
+.code-form-control .radio-wrapper .radio-input~.radio-label:after,
+.contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:after {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 8px;
+  height: 8px;
+  content: "";
+  margin: 0;
+  background-color: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .2s;
+  z-index: 2;
+  pointer-events: none;
+}
+.code-form-control .radio-wrapper .radio-input:checked~.radio-label:after,
+.contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:after {
+  opacity: 1;
+}
 .code-form-control .checkbox-wrapper .checkbox-input,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-input {
   position: absolute !important;
@@ -162,9 +304,6 @@ input[id^="fileimage-"] {
   z-index: 3 !important;
   pointer-events: auto !important;
 }
-
-.code-form-control .radio-wrapper .radio-label,
-.contact-form .code-form-control .radio-wrapper .radio-label,
 .code-form-control .checkbox-wrapper .checkbox-label,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-label {
   display: inline-block;
@@ -173,49 +312,6 @@ input[id^="fileimage-"] {
   position: relative;
   user-select: none;
 }
-
-.code-form-control .radio-wrapper .radio-input~.radio-label:before,
-.contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:before {
-  position: absolute;
-  top: 1px;
-  left: 0px;
-  display: block;
-  width: 20px;
-  height: 20px;
-  content: "";
-  background-color: #fff;
-  border: 2px solid #d1d5db;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-.code-form-control .radio-wrapper .radio-input:checked~.radio-label:before,
-.contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:before {
-  border-color: #EB1256;
-  background-color: #EB1256;
-}
-
-.code-form-control .radio-wrapper .radio-input~.radio-label:after,
-.contact-form .code-form-control .radio-wrapper .radio-input~.radio-label:after {
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translate(-50%, -50%);
-  display: block;
-  width: 8px;
-  height: 8px;
-  content: "";
-  background-color: #fff;
-  border-radius: 50%;
-  opacity: 0;
-  z-index: 2;
-}
-
-.code-form-control .radio-wrapper .radio-input:checked~.radio-label:after,
-.contact-form .code-form-control .radio-wrapper .radio-input:checked~.radio-label:after {
-  opacity: 1;
-}
-
 .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:before {
   position: absolute;
@@ -225,18 +321,24 @@ input[id^="fileimage-"] {
   width: 20px;
   height: 20px;
   content: "";
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
   background-color: #fff;
+  box-shadow: none;
   border: 1px solid #d1d5db;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
   border-radius: 0.25rem;
+  transition: all .2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   z-index: 1;
 }
-
 .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:before {
   border-color: #EB1256;
+  box-shadow: 0 4px 6px rgba(50,50,93,0.11), 0 1px 3px rgba(0,0,0,0.08);
   background-color: #EB1256;
 }
-
 .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-input~.checkbox-label:after {
   position: absolute;
@@ -246,13 +348,15 @@ input[id^="fileimage-"] {
   width: 20px;
   height: 20px;
   content: "";
+  margin: 0;
   background-repeat: no-repeat;
   background-position: center;
   background-size: 12px 12px;
   opacity: 0;
+  transition: opacity .2s;
   z-index: 2;
+  pointer-events: none;
 }
-
 .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after,
 .contact-form .code-form-control .checkbox-wrapper .checkbox-input:checked~.checkbox-label:after {
   background-image: url('https://codelocksolutions.com/form_builder/assets/images/checkbox.svg');
@@ -268,17 +372,26 @@ input[id^="fileimage-"] {
   justify-content: flex-end;
   padding: 0;
   margin: 0;
+  overflow: visible;
+  line-height: 1;
 }
 .code-form-control .star-rating>fieldset label,
 .contact-form .code-form-control .star-rating>fieldset label {
   width: 1.5em;
   height: 1.5em;
+  padding: 0;
+  overflow: visible;
+  white-space: nowrap;
   cursor: pointer !important;
   font-size: 200%;
   color: rgba(0,0,0,0);
   position: relative;
   margin: 0 2px;
   display: block;
+  line-height: 1;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background: transparent !important;
 }
 .code-form-control .star-rating>fieldset input[type="radio"],
 .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
@@ -286,9 +399,13 @@ input[id^="fileimage-"] {
   opacity: 0;
   width: 1.5em;
   height: 1.5em;
+  margin: 0;
+  padding: 0;
+  cursor: pointer !important;
   z-index: 10;
   top: 0;
   left: 0;
+  pointer-events: auto !important;
 }
 .code-form-control .star-rating>fieldset label:before,
 .contact-form .code-form-control .star-rating>fieldset label:before {
@@ -301,49 +418,127 @@ input[id^="fileimage-"] {
   left: 0;
 }
 .code-form-control .star-rating>fieldset label.star-filled:before,
-.code-form-control .star-rating>fieldset label[data-star-state="filled"]:before {
+.contact-form .code-form-control .star-rating>fieldset label.star-filled:before,
+.code-form-control .star-rating>fieldset label[data-star-state="filled"]:before,
+.contact-form .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before {
   content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg') !important;
+  display: block !important;
+  width: 1.5em !important;
+  height: 1.5em !important;
+}
+.code-form-control .star-rating>fieldset label.star-empty:before,
+.contact-form .code-form-control .star-rating>fieldset label.star-empty:before,
+.code-form-control .star-rating>fieldset label[data-star-state="empty"]:before,
+.contact-form .code-form-control .star-rating>fieldset label[data-star-state="empty"]:before {
+  content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg') !important;
+}
+.code-form-control .star-rating>fieldset label:hover:before,
+.contact-form .code-form-control .star-rating>fieldset label:hover:before {
+  content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
 }
 
-/* Options per line */
-.globo-list-control.option-1-column { width: 100%; }
-.globo-list-control.option-2-column { width: 50%; }
-.globo-list-control.option-3-column { width: 33.333%; }
-.globo-list-control.option-4-column { width: 25%; }
-.globo-list-control.option-5-column { width: 20%; }
+/* Options per line styles */
+.globo-list-control.option-1-column,
+.contact-form .globo-list-control.option-1-column { width: 100%; }
+.globo-list-control.option-2-column,
+.contact-form .globo-list-control.option-2-column { width: 50%; }
+.globo-list-control.option-3-column,
+.contact-form .globo-list-control.option-3-column { width: 33.333%; }
+.globo-list-control.option-4-column,
+.contact-form .globo-list-control.option-4-column { width: 25%; }
+.globo-list-control.option-5-column,
+.contact-form .globo-list-control.option-5-column { width: 20%; }
 
-/* Layout column widths */
-.code-form-control.layout-1-column { width: 8.333% !important; }
-.code-form-control.layout-2-column { width: 16.666% !important; }
-.code-form-control.layout-3-column { width: 25% !important; }
-.code-form-control.layout-4-column { width: 33.333% !important; }
-.code-form-control.layout-5-column { width: 41.666% !important; }
-.code-form-control.layout-6-column { width: 50% !important; }
-.code-form-control.layout-7-column { width: 58.333% !important; }
-.code-form-control.layout-8-column { width: 66.666% !important; }
-.code-form-control.layout-9-column { width: 75% !important; }
-.code-form-control.layout-10-column { width: 83.333% !important; }
-.code-form-control.layout-11-column { width: 91.666% !important; }
-.code-form-control.layout-12-column { width: 100% !important; }
+.globo-list-control,
+.contact-form .globo-list-control {
+  padding: 0 5px;
+  position: relative;
+  box-sizing: border-box;
+}
 
-/* Validation */
-.validation-error { color: #ff0000 !important; font-size: 12px !important; margin-top: 4px !important; display: block !important; }
-.input-error { border-color: #ff0000 !important; box-shadow: 0 0 0 1px #ff0000 !important; }
+/* Layout column width styles */
+.code-form-control.layout-1-column, .contact-form .code-form-control.layout-1-column { width: 8.333% !important; }
+.code-form-control.layout-2-column, .contact-form .code-form-control.layout-2-column { width: 16.666% !important; }
+.code-form-control.layout-3-column, .contact-form .code-form-control.layout-3-column { width: 25% !important; }
+.code-form-control.layout-4-column, .contact-form .code-form-control.layout-4-column { width: 33.333% !important; }
+.code-form-control.layout-5-column, .contact-form .code-form-control.layout-5-column { width: 41.666% !important; }
+.code-form-control.layout-6-column, .contact-form .code-form-control.layout-6-column { width: 50% !important; }
+.code-form-control.layout-7-column, .contact-form .code-form-control.layout-7-column { width: 58.333% !important; }
+.code-form-control.layout-8-column, .contact-form .code-form-control.layout-8-column { width: 66.666% !important; }
+.code-form-control.layout-9-column, .contact-form .code-form-control.layout-9-column { width: 75% !important; }
+.code-form-control.layout-10-column, .contact-form .code-form-control.layout-10-column { width: 83.333% !important; }
+.code-form-control.layout-11-column, .contact-form .code-form-control.layout-11-column { width: 91.666% !important; }
+.code-form-control.layout-12-column, .contact-form .code-form-control.layout-12-column { width: 100% !important; }
+
+.globo-paragraph,
+.heading-caption,
+.code-form-control .messages {
+  width: 100% !important;
+  display: block !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Ensure all form elements use border-box */
+.form-builder-container,
+.form-builder-container * {
+  box-sizing: border-box !important;
+}
+
+/* Form layout flexbox */
+form.get_selected_elements,
+.form-builder-container form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.code-form-control {
+  display: block !important;
+  margin-bottom: 5px !important;
+  padding: 0 5px !important;
+}
+
+/* Ensure inputs and labels fill the column */
+.code-form-control input:not([type="checkbox"]):not([type="radio"]),
+.code-form-control textarea,
+.code-form-control select,
+.code-form-control .upload-area {
+  width: 100% !important;
+}
+
+/* Validation Error Styles */
+.validation-error {
+  color: #ff0000 !important;
+  font-size: 12px !important;
+  margin-top: 4px !important;
+  display: block !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+.input-error {
+  border-color: #ff0000 !important;
+  box-shadow: 0 0 0 1px #ff0000 !important;
+}
+.code-form-control {
+  margin-bottom: 5px !important;
+}
 
 /* Notification Styles */
-.form-notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 16px 24px;
-  border-radius: 8px;
-  color: white;
-  z-index: 10000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  font-weight: 500;
-  animation: slideIn 0.3s ease-out;
-}
 @keyframes slideIn {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+.form-notification {
+  animation: slideIn 0.3s ease-out;
+}
+.form-notification.hiding {
+  animation: slideOut 0.3s ease-out;
 }

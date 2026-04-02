@@ -1,76 +1,31 @@
-<div 
-  id="easy-form-{{ block.id }}" 
-  class="form-builder-container" 
-  data-block-id="{{ block.id }}"
-  data-form-id="{{ block.settings.form_id }}"
-  data-shop-permanent="{{ shop.permanent_domain }}"
-  data-shop-myshopify="{{ shop.myshopify_domain }}"
-  data-shop-domain="{{ shop.domain }}"
-  data-heading-text="{{ block.settings.heading_text | escape }}"
-  data-description-text="{{ block.settings.description_text | escape }}"
-  data-custom-heading="{{ block.settings.form_heading | escape }}"
-  data-custom-description="{{ block.settings.form_description | escape }}"
-  data-custom-button-label="{{ block.settings.submit_button_label | escape }}"
->
-  <div class="form-loading">Loading form...</div>
-</div>
+<div id="easy-form-{{ block.id }}" class="form-builder-container" data-form-id="{{ block.settings.form_id }}"><div class="form-loading">Loading form...</div></div>
 
-{%- style -%}
-  #easy-form-{{ block.id }} {
-    width: {{ block.settings.form_width | default: 100 }}% !important;
-    display: block !important;
-    {% if block.settings.form_alignment == 'center' %}
-      margin-left: auto !important;
-      margin-right: auto !important;
-    {% elsif block.settings.form_alignment == 'right' %}
-      margin-left: auto !important;
-      margin-right: 0 !important;
-    {% else %}
-      margin-left: 0 !important;
-      margin-right: auto !important;
-    {% endif %}
-  }
+{{ 'form-builder-dynamic.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'form-builder-dynamic.js' | asset_url }}" defer="defer"></script>
 
-  #easy-form-{{ block.id }} form,
-  #easy-form-{{ block.id }} .get_selected_elements {
-    width: 100% !important;
-    max-width: 100% !important;
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById("easy-form-{{ block.id }}");
+  const formId = "{{ block.settings.form_id }}";
+  const shop = "{{ shop.permanent_domain | default: shop.myshopify_domain | default: shop.domain }}";
+  if (container && formId && formId !== '0' && window.EFB) {
+    window.EFB.init(formId, shop, container);
+  } else if (container && formId && formId !== '0') {
+    const checkEFB = setInterval(() => { if (window.EFB) { window.EFB.init(formId, shop, container); clearInterval(checkEFB); } }, 100);
+    setTimeout(() => clearInterval(checkEFB), 5000);
   }
-  
-  #easy-form-{{ block.id }} .globo-heading {
-    {% if block.settings.heading_color != blank and block.settings.heading_color != 'rgba(0,0,0,0)' %}
-      color: {{ block.settings.heading_color }} !important;
-    {% else %}
-      color: {{ block.settings.color_scheme.settings.headings }} !important;
-    {% endif %}
-  }
-  
-  #easy-form-{{ block.id }} .globo-description,
-  #easy-form-{{ block.id }} .globo-description-label {
-    {% if block.settings.description_color != blank and block.settings.description_color != 'rgba(0,0,0,0)' %}
-      color: {{ block.settings.description_color }} !important;
-    {% else %}
-      color: {{ block.settings.color_scheme.settings.text }} !important;
-    {% endif %}
-  }
-  
-  #easy-form-{{ block.id }} .globo-label {
-    {% if block.settings.label_color != blank and block.settings.label_color != 'rgba(0,0,0,0)' %}
-      color: {{ block.settings.label_color }} !important;
-    {% else %}
-      color: {{ block.settings.color_scheme.settings.text }} !important;
-    {% endif %}
-  }
-{%- endstyle -%}
-
-<link rel="stylesheet" href="{{ 'form-builder-dynamic.css' | asset_url }}">
-<script src="{{ 'form-builder-dynamic.js' | asset_url }}" defer></script>
+});
+</script>
 
 {% schema %}
 {
   "name": "Easy Form Builder",
   "target": "section",
   "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add a form created in the Easy Form Builder app to your page."
+    },
     {
       "type": "header",
       "content": "Form Settings"
@@ -79,85 +34,8 @@
       "type": "text",
       "id": "form_id",
       "label": "Form ID",
-      "info": "Enter the Form ID. You can find this in your app dashboard.",
+      "info": "Enter the Form ID of the form you created in the Easy Form Builder app.",
       "default": "0"
-    },
-    {
-      "type": "range",
-      "id": "form_width",
-      "min": 50,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
-      "label": "Form Width (%)",
-      "default": 100
-    },
-    {
-      "type": "select",
-      "id": "form_alignment",
-      "label": "Form Alignment",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "header",
-      "content": "Heading Settings"
-    },
-    {
-      "type": "text",
-      "id": "heading_text",
-      "label": "Heading Text Override"
-    },
-    {
-      "type": "color",
-      "id": "heading_color",
-      "label": "Heading Color"
-    },
-    {
-      "type": "header",
-      "content": "Description Settings"
-    },
-    {
-      "type": "richtext",
-      "id": "description_text",
-      "label": "Description Text Override"
-    },
-    {
-      "type": "color",
-      "id": "description_color",
-      "label": "Description Color"
-    },
-    {
-      "type": "header",
-      "content": "Label Settings"
-    },
-    {
-      "type": "color",
-      "id": "label_color",
-      "label": "Label Color"
-    },
-    {
-      "type": "header",
-      "content": "Custom Text Overrides"
-    },
-    {
-      "type": "text",
-      "id": "form_heading",
-      "label": "Form Heading Override"
-    },
-    {
-      "type": "textarea",
-      "id": "form_description",
-      "label": "Form Description Override"
-    },
-    {
-      "type": "text",
-      "id": "submit_button_label",
-      "label": "Submit Button Label Override"
     }
   ]
 }
