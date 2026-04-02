@@ -152,32 +152,39 @@ window.store = store;
                     return false;
                 }
 
+                // Clear previous error messages
+                $form.find('.messages').each(function() {
+                    const $el = $(this);
+                    if (!$el.data('orig')) $el.data('orig', $el.text());
+                    $el.text($el.data('orig')).removeClass('has-error').css('color', '');
+                });
+
                 // Required field validation
                 var isValid = true;
                 $form.find('[required]').each(function() {
                     var $input = $(this);
                     var value = $input.val();
                     
-                    // Special handling for checkbox groups if needed, but [required] on single checkbox usually means it must be checked
+                    // Special handling for checkbox groups if needed
                     if (($input.attr('type') === 'checkbox' || $input.attr('type') === 'radio') && !$input.is(':checked')) {
-                        // Check if at least one in the group is checked
                         var name = $input.attr('name');
-                        if (name && $form.find('[name="' + name + '"]:checked').length === 0) {
-                            value = "";
-                        } else if (!name) {
-                            value = "";
-                        } else {
-                            value = "checked"; // Group has one checked
-                        }
+                        if (name && $form.find('[name="' + name + '"]:checked').length === 0) value = "";
+                        else if (!name) value = "";
+                        else value = "checked";
                     }
 
                     if (!value || (typeof value === 'string' && value.trim() === '')) {
                         var fieldLabel = $input.closest('.code-form-control').find('label').first().text().replace('*', '').trim();
-                        if (!fieldLabel) {
-                            fieldLabel = $input.attr('placeholder') || $input.attr('name');
-                        }
+                        if (!fieldLabel) fieldLabel = $input.attr('placeholder') || $input.attr('name');
+                        
                         var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
                         
+                        // Inline error message
+                        const $msgEl = $input.closest('.code-form-control').find('.messages');
+                        if ($msgEl.length) {
+                            $msgEl.text(errorMessage).addClass('has-error').css('color', '#f44336');
+                        }
+
                         if (typeof notify === 'function') {
                             notify(errorMessage);
                         } else if (typeof flashNotice === 'function') {

@@ -68,12 +68,32 @@
       
       if (form.reportValidity && !form.reportValidity()) return;
       
+      // Clear previous error messages
+      form.querySelectorAll('.messages').forEach(el => {
+          if (!el.hasAttribute('data-orig')) el.setAttribute('data-orig', el.textContent);
+          el.textContent = el.getAttribute('data-orig');
+          el.classList.remove('has-error');
+          el.style.color = '';
+      });
+
       // Check for required fields manually to show custom notifications
       const requiredFields = form.querySelectorAll('[required]');
       for (const field of requiredFields) {
           if (!field.value || field.value.trim() === '') {
-              const label = field.closest('.element-wrapper')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
-              notify(`${label} is required.`, 'error');
+              const label = field.closest('.code-form-control')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
+              const errorMessage = `${label} is required.`;
+              
+              // Show in toast
+              notify(errorMessage, 'error');
+              
+              // Show inline in description area
+              const msgEl = field.closest('.code-form-control')?.querySelector('.messages');
+              if (msgEl) {
+                  msgEl.textContent = errorMessage;
+                  msgEl.style.color = '#f44336';
+                  msgEl.classList.add('has-error');
+              }
+              
               field.focus();
               return;
           }

@@ -2401,14 +2401,29 @@ function savepublishdata(onComplete) {
 $(document).on("click", ".submit.action", function (e) {
     e.preventDefault();
 
+    // Clear previous error messages
+    $(".get_selected_elements").find('.messages').each(function() {
+        const $el = $(this);
+        if (!$el.data('orig')) $el.data('orig', $el.text());
+        $el.text($el.data('orig')).removeClass('has-error').css('color', '');
+    });
+
     // Required field validation
     var isValid = true;
     $(".get_selected_elements [required]").each(function() {
-        if ($(this).val().trim() === "") {
-            var fieldLabel = $(this).closest('.code-form-control').find('label').text().replace('*', '').trim();
+        var $input = $(this);
+        if ($input.val().trim() === "") {
+            var fieldLabel = $input.closest('.code-form-control').find('label').text().replace('*', '').trim();
             var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
+            
+            // Inline error message
+            const $msgEl = $input.closest('.code-form-control').find('.messages');
+            if ($msgEl.length) {
+                $msgEl.text(errorMessage).addClass('has-error').css('color', '#f44336');
+            }
+            
             flashNotice(errorMessage, 'error');
-            $(this).focus();
+            $input.focus();
             isValid = false;
             return false;
         }
