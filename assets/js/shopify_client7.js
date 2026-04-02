@@ -2400,6 +2400,21 @@ function savepublishdata(onComplete) {
 
 $(document).on("click", ".submit.action", function (e) {
     e.preventDefault();
+
+    // Required field validation
+    var isValid = true;
+    $(".get_selected_elements [required]").each(function() {
+        if ($(this).val().trim() === "") {
+            var fieldLabel = $(this).closest('.code-form-control').find('label').text().replace('*', '').trim();
+            var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
+            flashNotice(errorMessage, 'error');
+            $(this).focus();
+            isValid = false;
+            return false;
+        }
+    });
+    if (!isValid) return;
+
     var form_data = $(".get_selected_elements")[0];
     var form_data = new FormData(form_data);
     // form_data.append('images',$("#ImagePreview").attr("src"));

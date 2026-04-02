@@ -149,13 +149,50 @@ window.store = store;
                 }
                 
                 if (!$form || $form.length === 0) {
-                    
                     return false;
                 }
 
+                // Required field validation
+                var isValid = true;
+                $form.find('[required]').each(function() {
+                    var $input = $(this);
+                    var value = $input.val();
+                    
+                    // Special handling for checkbox groups if needed, but [required] on single checkbox usually means it must be checked
+                    if (($input.attr('type') === 'checkbox' || $input.attr('type') === 'radio') && !$input.is(':checked')) {
+                        // Check if at least one in the group is checked
+                        var name = $input.attr('name');
+                        if (name && $form.find('[name="' + name + '"]:checked').length === 0) {
+                            value = "";
+                        } else if (!name) {
+                            value = "";
+                        } else {
+                            value = "checked"; // Group has one checked
+                        }
+                    }
 
-                
-                // Get form ID
+                    if (!value || (typeof value === 'string' && value.trim() === '')) {
+                        var fieldLabel = $input.closest('.code-form-control').find('label').first().text().replace('*', '').trim();
+                        if (!fieldLabel) {
+                            fieldLabel = $input.attr('placeholder') || $input.attr('name');
+                        }
+                        var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
+                        
+                        if (typeof notify === 'function') {
+                            notify(errorMessage);
+                        } else if (typeof flashNotice === 'function') {
+                            flashNotice(errorMessage, 'error');
+                        } else {
+                            alert(errorMessage);
+                        }
+                        
+                        $input.focus();
+                        isValid = false;
+                        return false;
+                    }
+                });
+
+                if (!isValid) return false;
                 var formId = $form.find('input[name="form_id"], input.form_id').val();
                 
                 if (!formId) {

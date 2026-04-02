@@ -81,4 +81,5 @@ var _E_tp_rm_succes = '<?php _e('Selected integration removed successfully.'); ?
 var _E_tp_rm_error = '<?php _e('Something wrong. Try again later.'); ?>';
 var _E_tp_tobi_synched = '<?php _e('Synced with Tobi'); ?>';
 var _E_tp_select = '<?php _e('Select'); ?>';
+var _E_fieldRequired = '<?php _e('This field is required.'); ?>';
 </script>

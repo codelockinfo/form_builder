@@ -68,6 +68,17 @@
       
       if (form.reportValidity && !form.reportValidity()) return;
       
+      // Check for required fields manually to show custom notifications
+      const requiredFields = form.querySelectorAll('[required]');
+      for (const field of requiredFields) {
+          if (!field.value || field.value.trim() === '') {
+              const label = field.closest('.element-wrapper')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
+              notify(`${label} is required.`, 'error');
+              field.focus();
+              return;
+          }
+      }
+      
       // Strict Validation Checks
       const emailInput = form.querySelector('input[type="email"], input[name="email"]');
       if (emailInput && emailInput.value) {

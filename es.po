@@ -450,15 +450,15 @@ messagestr ""
 
 #: collection/pomo_library/lang.php:47
 messageid "Please enter name."
-messagestr ""
+messagestr "Por favor ingrese el nombre."
 
 #: collection/pomo_library/lang.php:48
 messageid "Please enter URL."
-messagestr ""
+messagestr "Por favor ingrese la URL."
 
 #: collection/pomo_library/lang.php:49
 messageid "Please enter logo."
-messagestr ""
+messagestr "Por favor ingrese el logo."
 
 #: collection/pomo_library/lang.php:50
 messageid "ReConvert"
@@ -563,3 +563,12 @@ messagestr ""
 #: collection/pomo_library/lang.php:102
 messageid "Synced with Tobi"
 messagestr ""
+
+#: collection/pomo_library/lang.php:103
+messageid "This field is required."
+messagestr "Este campo es obligatorio."
+
+#: collection/pomo_library/lang.php:104
+messageid "Required"
+messagestr "Requerido"
+
