@@ -2409,12 +2409,30 @@ $(document).on("click", ".submit.action", function (e) {
     });
 
     // Required field validation
-    var isValid = true;
-    $(".get_selected_elements [required]").each(function() {
-        var $input = $(this);
-        if ($input.val().trim() === "") {
-            var fieldLabel = $input.closest('.code-form-control').find('label').text().replace('*', '').trim();
-            var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
+    let hasError = false;
+    let firstErrorField = null;
+    const requiredFields = $(".get_selected_elements [required]");
+    
+    requiredFields.each(function() {
+        const $input = $(this);
+        let value = $input.val();
+
+        // Specialized handling for radio and checkboxes
+        if (($input.attr('type') === 'checkbox' || $input.attr('type') === 'radio') && !$input.is(':checked')) {
+            const name = $input.attr('name');
+            if (name) {
+                const groupCount = $input.closest('form').find('input[name="' + name + '"]:checked').length;
+                if (groupCount === 0) value = "";
+                else value = "checked";
+            } else {
+                value = "";
+            }
+        }
+
+        if (!value || (typeof value === 'string' && value.trim() === "")) {
+            hasError = true;
+            const fieldLabel = $input.closest('.code-form-control').find('label').text().replace('*', '').trim() || 'This field';
+            const errorMessage = fieldLabel + ' is required.';
             
             // Inline error message
             const $msgEl = $input.closest('.code-form-control').find('.messages');
@@ -2422,13 +2440,17 @@ $(document).on("click", ".submit.action", function (e) {
                 $msgEl.text(errorMessage).addClass('has-error').css('color', '#f44336');
             }
             
-            flashNotice(errorMessage, 'error');
-            $input.focus();
-            isValid = false;
-            return false;
+            if (!firstErrorField) {
+                firstErrorField = $input;
+                flashNotice(errorMessage, 'error');
+            }
         }
     });
-    if (!isValid) return;
+
+    if (hasError) {
+        if (firstErrorField) firstErrorField.focus();
+        return;
+    }
 
     var form_data = $(".get_selected_elements")[0];
     var form_data = new FormData(form_data);

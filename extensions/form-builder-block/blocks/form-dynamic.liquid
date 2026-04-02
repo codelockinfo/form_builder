@@ -77,14 +77,29 @@
       });
 
       // Check for required fields manually to show custom notifications
+      let firstErrorField = null;
+      let hasError = false;
       const requiredFields = form.querySelectorAll('[required]');
-      for (const field of requiredFields) {
-          if (!field.value || field.value.trim() === '') {
+      
+      requiredFields.forEach(field => {
+          let value = field.value;
+          
+          // Specialized handling for radio and checkboxes
+          if ((field.type === 'checkbox' || field.type === 'radio') && !field.checked) {
+              const name = field.getAttribute('name');
+              if (name) {
+                  const group = form.querySelectorAll(`input[name="${name}"]:checked`);
+                  if (group.length === 0) value = "";
+                  else value = "checked";
+              } else {
+                  value = "";
+              }
+          }
+          
+          if (!value || (typeof value === 'string' && value.trim() === '')) {
+              hasError = true;
               const label = field.closest('.code-form-control')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
               const errorMessage = `${label} is required.`;
-              
-              // Show in toast
-              notify(errorMessage, 'error');
               
               // Show inline in description area
               const msgEl = field.closest('.code-form-control')?.querySelector('.messages');
@@ -94,9 +109,16 @@
                   msgEl.classList.add('has-error');
               }
               
-              field.focus();
-              return;
+              if (!firstErrorField) {
+                  firstErrorField = field;
+                  notify(errorMessage, 'error'); // Only notify first error in toast
+              }
           }
+      });
+      
+      if (hasError) {
+          if (firstErrorField) firstErrorField.focus();
+          return;
       }
       
       // Strict Validation Checks
@@ -104,7 +126,12 @@
       if (emailInput && emailInput.value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,20}$/;
         if (!emailRegex.test(emailInput.value)) {
-          notify('Please enter a valid email address (e.g. user@domain.com).', 'error');
+          notify('Please enter a valid email address.', 'error');
+          const msgEl = emailInput.closest('.code-form-control')?.querySelector('.messages');
+          if (msgEl) {
+              msgEl.textContent = 'Please enter a valid email address.';
+              msgEl.style.color = '#f44336';
+          }
           emailInput.focus();
           return;
         }
@@ -114,6 +141,11 @@
       if (phoneInput && phoneInput.value) {
         if (phoneInput.value.length < 5) {
           notify('Please enter a valid phone number.', 'error');
+          const msgEl = phoneInput.closest('.code-form-control')?.querySelector('.messages');
+          if (msgEl) {
+              msgEl.textContent = 'Please enter a valid phone number.';
+              msgEl.style.color = '#f44336';
+          }
           phoneInput.focus();
           return;
         }

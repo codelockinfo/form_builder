@@ -160,24 +160,32 @@ window.store = store;
                 });
 
                 // Required field validation
-                var isValid = true;
-                $form.find('[required]').each(function() {
-                    var $input = $(this);
-                    var value = $input.val();
+                let hasError = false;
+                let firstErrorField = null;
+                const requiredFields = $form.find('[required]');
+                
+                requiredFields.each(function() {
+                    const $input = $(this);
+                    let value = $input.val();
                     
-                    // Special handling for checkbox groups if needed
+                    // Specialized handling for radio and checkboxes
                     if (($input.attr('type') === 'checkbox' || $input.attr('type') === 'radio') && !$input.is(':checked')) {
-                        var name = $input.attr('name');
-                        if (name && $form.find('[name="' + name + '"]:checked').length === 0) value = "";
-                        else if (!name) value = "";
-                        else value = "checked";
+                        const name = $input.attr('name');
+                        if (name) {
+                            const groupCount = $form.find('input[name="' + name + '"]:checked').length;
+                            if (groupCount === 0) value = "";
+                            else value = "checked";
+                        } else {
+                            value = "";
+                        }
                     }
 
                     if (!value || (typeof value === 'string' && value.trim() === '')) {
-                        var fieldLabel = $input.closest('.code-form-control').find('label').first().text().replace('*', '').trim();
-                        if (!fieldLabel) fieldLabel = $input.attr('placeholder') || $input.attr('name');
+                        hasError = true;
+                        let fieldLabel = $input.closest('.code-form-control').find('label').first().text().replace('*', '').trim();
+                        if (!fieldLabel) fieldLabel = $input.attr('placeholder') || $input.attr('name') || 'This field';
                         
-                        var errorMessage = fieldLabel ? fieldLabel + ' is required.' : (typeof _E_fieldRequired !== 'undefined' ? _E_fieldRequired : 'This field is required.');
+                        const errorMessage = fieldLabel + ' is required.';
                         
                         // Inline error message
                         const $msgEl = $input.closest('.code-form-control').find('.messages');
@@ -185,21 +193,21 @@ window.store = store;
                             $msgEl.text(errorMessage).addClass('has-error').css('color', '#f44336');
                         }
 
-                        if (typeof notify === 'function') {
-                            notify(errorMessage);
-                        } else if (typeof flashNotice === 'function') {
-                            flashNotice(errorMessage, 'error');
-                        } else {
-                            alert(errorMessage);
+                        if (!firstErrorField) {
+                            firstErrorField = $input;
+                            if (typeof notify === 'function') {
+                                notify(errorMessage);
+                            } else if (typeof flashNotice === 'function') {
+                                flashNotice(errorMessage, 'error');
+                            }
                         }
-                        
-                        $input.focus();
-                        isValid = false;
-                        return false;
                     }
                 });
 
-                if (!isValid) return false;
+                if (hasError) {
+                    if (firstErrorField) firstErrorField.focus();
+                    return false;
+                }
                 var formId = $form.find('input[name="form_id"], input.form_id').val();
                 
                 if (!formId) {
