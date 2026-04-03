@@ -10,6 +10,19 @@
   #easy-form-{{ block.id }} button.submit:hover { opacity: 0.9 !important; transform: translateY(-1px) !important; }
   #easy-form-{{ block.id }} small.messages.has-error,
   #easy-form-{{ block.id }} .messages.has-error { color: #f44336 !important; display: block !important; }
+  
+  /* Instant transparency for Shopify Color Schemes */
+  {% if block.settings.color_scheme != blank or section.settings.color_scheme != blank %}
+    #easy-form-{{ block.id }} .code-form-app,
+    #easy-form-{{ block.id }} .contact-form,
+    #easy-form-{{ block.id }} .get_selected_elements,
+    #easy-form-{{ block.id }} .form-builder-wrapper {
+      background-color: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+  {% endif %}
 </style>
 
 <script>
@@ -68,7 +81,8 @@
 
   async function init() {
     if (!formId || formId === '0') return;
-    const colorScheme = '{{ block.settings.color_scheme }}' || '';
+    // Check both block and section settings for scheme
+    const colorScheme = '{{ block.settings.color_scheme }}' || '{{ section.settings.color_scheme }}' || '';
     const url = `/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}&color_scheme=${encodeURIComponent(colorScheme)}&cb=${Date.now()}`;
     console.log('EFB: Loading form from:', url);
     try {
@@ -397,6 +411,11 @@
       "id": "form_id",
       "label": "Form ID",
       "default": "0"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme"
     }
   ]
 }
