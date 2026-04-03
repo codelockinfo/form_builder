@@ -3711,6 +3711,11 @@ class Client_functions extends common_function
                             $styles[] = 'color: ' . $element_design['color'];
                         }
 
+                        // Background color - apply if explicitly set (useful for upload areas, etc.)
+                        if (isset($element_design['bgColor']) && !empty($element_design['bgColor']) && $element_design['bgColor'] !== 'initial' && $element_design['bgColor'] !== 'transparent') {
+                            $styles[] = 'background-color: ' . $element_design['bgColor'];
+                        }
+
                         // Border radius - apply if set (even if it's the default 4px, user might have explicitly set it)
                         if (isset($element_design['borderRadius'])) {
                             $border_radius = intval($element_design['borderRadius']);
@@ -4248,6 +4253,7 @@ class Client_functions extends common_function
 
                                 // Get design style for file element (border radius, font size, etc.)
                                 $element_design_style = $get_element_design_style($form_data_id, $unserialize_elementdata);
+                                $file_button_style = ' style="border: 1px solid ' . htmlspecialchars($button_bg_color, ENT_QUOTES, 'UTF-8') . '; color: ' . htmlspecialchars($button_bg_color, ENT_QUOTES, 'UTF-8') . '; background-color: #ffffff;"';
                                 $is_required_attr = ($unserialize_elementdata[8] == "1") ? " required" : "";
 
                                 $form_html .= '<div class="code-form-control layout-' . $unserialize_elementdata[10] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '">
