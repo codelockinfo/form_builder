@@ -11918,23 +11918,23 @@ class Client_functions extends common_function
 .code-form-app .content .code-form-control input,
 .code-form-app .content .code-form-control textarea,
 .code-form-app .content .code-form-control select {
-    display: block;
-    height: 41px;
-    padding: 10px 12px;
-    color: #000;
-    background-color: #f1f1f1;
-    border-radius: 2px;
-    font-size: 14px;
-    position: relative;
-    flex: 1 1 auto;
-    margin-bottom: 0;
-    width: 100%;
-    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
-    transition: box-shadow .15s ease;
-    outline: none;
+    display: block !important;
+    height: 41px !important;
+    padding: 10px 12px !important;
+    color: #000 !important;
+    background-color: #f1f1f1 !important;
+    border-radius: 2px !important;
+    font-size: 14px !important;
+    position: relative !important;
+    flex: 1 1 auto !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02) !important;
+    transition: box-shadow .15s ease !important;
+    outline: none !important;
     background-image: none !important;
-    border: none;
-    box-sizing: border-box;
+    border: none !important;
+    box-sizing: border-box !important;
 }
 /* Override pointer-events for storefront forms - enable interaction */
 .form-builder-wrapper .contact-form input,
