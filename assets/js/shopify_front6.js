@@ -297,17 +297,52 @@ window.store = store;
                         }
                         
                         if (response.result == 'success') {
-                            // Show success message
+                            // Show animated right-side toast popup
                             var successMsg = response.msg || "Form submitted successfully!";
-                            if (typeof flashNotice === 'function') {
-                                flashNotice(successMsg);
-                            } else {
-                                var $notification = $('<div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 20px; border-radius: 4px; z-index: 10000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">' + successMsg + '</div>');
-                                $('body').append($notification);
-                                setTimeout(function() {
-                                    $notification.fadeOut(300, function() { $(this).remove(); });
-                                }, 3000);
-                            }
+                            (function showToast(msg, type) {
+                                var isSuccess = type === 'success';
+                                var n = document.createElement('div');
+                                Object.assign(n.style, {
+                                    position: 'fixed',
+                                    top: '24px',
+                                    right: '-400px',
+                                    background: isSuccess
+                                        ? 'linear-gradient(135deg,#16a34a,#22c55e)'
+                                        : 'linear-gradient(135deg,#dc2626,#ef4444)',
+                                    color: '#fff',
+                                    padding: '14px 20px 14px 16px',
+                                    borderRadius: '10px',
+                                    boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                                    zIndex: '999999',
+                                    cursor: 'pointer',
+                                    fontFamily: 'system-ui,sans-serif',
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    minWidth: '260px',
+                                    maxWidth: '340px',
+                                    transition: 'right 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
+                                    opacity: '0'
+                                });
+                                var icon = isSuccess ? '✓' : '✕';
+                                n.innerHTML = '<span style="font-size:18px;font-weight:700;flex-shrink:0">' + icon + '</span><span>' + msg + '</span>';
+                                document.body.appendChild(n);
+                                requestAnimationFrame(function() {
+                                    requestAnimationFrame(function() {
+                                        n.style.right = '24px';
+                                        n.style.opacity = '1';
+                                    });
+                                });
+                                var dismiss = function() {
+                                    n.style.right = '-400px';
+                                    n.style.opacity = '0';
+                                    setTimeout(function() { n.remove(); }, 400);
+                                };
+                                setTimeout(dismiss, 4000);
+                                n.onclick = dismiss;
+                            })(successMsg, 'success');
                             
                             // Reset form - clear all input fields
                             try {

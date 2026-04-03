@@ -21,17 +21,49 @@
 
   function notify(msg, type) {
     const n = document.createElement('div');
-    Object.assign(n.style, { 
-      position:'fixed', top:'20px', right:'20px', 
-      background:type==='success'?'#4caf50':'#f44336', 
-      color:'white', padding:'16px 24px', borderRadius:'4px', 
-      boxOrigin:'border-box', boxShadow:'0 4px 12px rgba(0,0,0,0.15)', 
-      zIndex:'99999', cursor:'pointer', fontFamily: 'sans-serif',
-      fontSize: '14px', fontWeight: '500', transition: 'all 0.3s ease'
+    const isSuccess = type === 'success';
+    Object.assign(n.style, {
+      position: 'fixed',
+      top: '24px',
+      right: '-400px',
+      background: isSuccess
+        ? 'linear-gradient(135deg,#16a34a,#22c55e)'
+        : 'linear-gradient(135deg,#dc2626,#ef4444)',
+      color: '#fff',
+      padding: '14px 20px 14px 16px',
+      borderRadius: '10px',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+      zIndex: '999999',
+      cursor: 'pointer',
+      fontFamily: 'system-ui,sans-serif',
+      fontSize: '14px',
+      fontWeight: '500',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      minWidth: '260px',
+      maxWidth: '340px',
+      transition: 'right 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
+      opacity: '0'
     });
-    n.textContent = msg; document.body.appendChild(n);
-    setTimeout(() => { n.style.opacity = '0'; setTimeout(() => n.remove(), 300); }, 3500);
-    n.onclick = () => n.remove();
+    const icon = isSuccess ? '✓' : '✕';
+    n.innerHTML = `<span style="font-size:18px;font-weight:700;flex-shrink:0">${icon}</span><span>${msg}</span>`;
+    document.body.appendChild(n);
+    // Slide in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        n.style.right = '24px';
+        n.style.opacity = '1';
+      });
+    });
+    // Auto dismiss after 4s
+    const dismiss = () => {
+      n.style.right = '-400px';
+      n.style.opacity = '0';
+      setTimeout(() => n.remove(), 400);
+    };
+    setTimeout(dismiss, 4000);
+    n.onclick = dismiss;
   }
 
   async function init() {
@@ -246,26 +278,19 @@
         console.log('EFB: Response:', data);
         
         if (data.result === 'success') {
-          // Show inline success in footer messages area
-          const footerMsg = cont.querySelector('.footer .messages');
-          if (footerMsg) {
-              footerMsg.textContent = data.msg || 'Form submitted successfully!';
-              footerMsg.style.color = '#4caf50';
-              footerMsg.style.display = 'block';
-          }
+          // Show right-side toast popup
+          notify(data.msg || 'Form submitted successfully!', 'success');
           form.reset();
-          // Clear error styles
+          // Clear error styles and footer message
           form.querySelectorAll('.messages.has-error').forEach(el => el.classList.remove('has-error'));
+          const footerMsg = cont.querySelector('.footer .messages');
+          if (footerMsg) { footerMsg.textContent = ''; footerMsg.style.color = ''; }
           // Clear any file previews if they exist
           cont.querySelectorAll('.img-container').forEach(c => c.innerHTML = '');
           cont.querySelectorAll('.upload-area').forEach(a => a.classList.remove('has-files'));
         } else {
-          // Show error in footer messages
-          const footerMsg = cont.querySelector('.footer .messages');
-          if (footerMsg) {
-              footerMsg.textContent = data.msg || 'Something went wrong. Please try again.';
-              footerMsg.classList.add('has-error');
-          }
+          // Show error toast
+          notify(data.msg || 'Something went wrong. Please try again.', 'error');
         }
       } catch(err) { console.error('EFB: Ajax error:', err); }
       
