@@ -3988,11 +3988,12 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column  container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                                     <label for="false-text' . $elements['id'] . '" class="classic-label globo-label ' . $is_keepossition_label . '">
                                                     <span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Name" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="text" data-type="text" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                                        <input type="text" data-type="text" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                                     </div>
                                                     <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                                 </div>';
@@ -4128,11 +4129,12 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column  container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                                     <label for="false-text' . $elements['id'] . '" class="classic-label globo-label ' . $is_keepossition_label . '">
                                                     <span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Name" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                                     <div class="globo-form-input">
-                                                        <input type="number" data-type="number" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                                        <input type="number" data-type="number" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" value="" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                                     </div>
                                                     <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                                 </div>';
@@ -4164,13 +4166,14 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = (isset($unserialize_elementdata[9]) && $unserialize_elementdata[9] == "1") ? " required" : "";
                                 $layout_col = isset($unserialize_elementdata[16]) ? $unserialize_elementdata[16] : '2';
                                 $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
                                 $description_text = isset($unserialize_elementdata[2]) ? $unserialize_elementdata[2] : '';
                                 $form_html .= ' <div class="code-form-control layout-' . $layout_col . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                     <label for="false-password-1" class="classic-label globo-label  ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Password" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $label_text . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                     <div class="globo-form-input">
-                                        <input type="password" data-type="password" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $placeholder_text . '" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                        <input type="password" data-type="password" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $placeholder_text . '" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                     </div>
                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ($description_text !== '0' ? $description_text : '') . '</small>
                                 </div>';
@@ -4200,10 +4203,11 @@ class Client_functions extends common_function
 
                                 // Remove readonly and tabindex for storefront
                                 $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = ($unserialize_elementdata[5] == "1") ? " required" : "";
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[12] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
                                         <label  class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Date time" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                         <div class="globo-form-input datepicker">
-                                            <input type="date" id="dateInput" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" class="' . $elementtitle . '' . $form_data_id . '__placeholder" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . '>
+                                            <input type="date" id="dateInput" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $unserialize_elementdata[1] . '" class="' . $elementtitle . '' . $form_data_id . '__placeholder" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
                                         </div>
                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ((isset($unserialize_elementdata[2]) && $unserialize_elementdata[2] !== '0') ? $unserialize_elementdata[2] : '') . '</small>
                                 </div>';
@@ -4244,6 +4248,7 @@ class Client_functions extends common_function
 
                                 // Get design style for file element (border radius, font size, etc.)
                                 $element_design_style = $get_element_design_style($form_data_id, $unserialize_elementdata);
+                                $is_required_attr = ($unserialize_elementdata[8] == "1") ? " required" : "";
 
                                 $form_html .= '<div class="code-form-control layout-' . $unserialize_elementdata[10] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '">
                                         <label  class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="File" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
@@ -4252,7 +4257,7 @@ class Client_functions extends common_function
                                                 <!-- CSS applied here: ' . htmlspecialchars($element_design_style, ENT_QUOTES, 'UTF-8') . ' -->
                                                 <p class="upload-p ' . $elementtitle . '' . $form_data_id . '__placeholder" id="uploadText-' . $form_data_id . '">' . $unserialize_elementdata[2] . '</p>
                                                 <span class="file_button ' . $elementtitle . '' . $form_data_id . '__buttontext ' . $is_buttonhidden . '"  id="fileButton-' . $form_data_id . '"' . $file_button_style . '>' . $unserialize_elementdata[1] . '</span>
-                                                <input id="fileimage-' . $form_data_id . '" type="file" data-formdataid="' . $form_data_id . '" data-type="file" ' . $is_allowmultiple . ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; border: none; padding: 0; margin: 0; pointer-events: auto !important; visibility: visible !important;">
+                                                <input id="fileimage-' . $form_data_id . '" type="file" data-formdataid="' . $form_data_id . '" data-type="file" ' . $is_allowmultiple . $is_required_attr . ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; border: none; padding: 0; margin: 0; pointer-events: auto !important; visibility: visible !important;">
                                                 <div class="img-container" id="imgContainer-' . $form_data_id . '"></div>
                                             </div>
                                         </div>
@@ -4282,6 +4287,7 @@ class Client_functions extends common_function
                                 // Generate field name from label
                                 $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                $is_required_attr = ($unserialize_elementdata[6] == "1") ? " required" : "";
 
                                 $checkbox_options = explode(",", $unserialize_elementdata[1]);
                                 $checkbox_deafult_options = array_map('trim', explode(',', $unserialize_elementdata[2]));
@@ -4330,9 +4336,11 @@ class Client_functions extends common_function
                                         $label_style .= ' color: ' . $optionColor_val . ' !important;';
                                     }
 
+                                    // Add required only to first checkbox so browser/JS validation triggers
+                                    $checkbox_required = ($index === 0) ? $is_required_attr : '';
                                     $form_html .= '<li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column">
                                                     <div class="checkbox-wrapper  checkbox-option" style="position: relative;">
-                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="' . $checkbox_id . '" type="checkbox" data-type="checkbox" data-formdataid="' . $form_data_id . '" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" ' . $checkbox_option_checked . ' style="' . $input_style . '">
+                                                        <input class="checkbox-input checkboxs-input-new ' . $elementtitle . $form_data_id . '__checkbox" id="' . $checkbox_id . '" type="checkbox" data-type="checkbox" data-formdataid="' . $form_data_id . '" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '[]" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" ' . $checkbox_option_checked . $checkbox_required . ' style="' . $input_style . '">
                                                         <label class="checkbox-label checkbox_new globo-option ' . $elementtitle . $form_data_id . '__checkbox" for="' . $checkbox_id . '" style="' . $label_style . '">' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '</label>
                                                     </div>
                                                     </li>';
@@ -4402,6 +4410,7 @@ class Client_functions extends common_function
                                 // Generate field name from label
                                 $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                $is_required_attr = ($unserialize_elementdata[6] == "1") ? " required" : "";
 
                                 $radio_options = explode(",", $unserialize_elementdata[1]);
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
@@ -4439,9 +4448,11 @@ class Client_functions extends common_function
                                         $label_style .= ' color: ' . $optionColor_val . ' !important;';
                                     }
 
+                                    // Add required only to first radio so browser/JS validation triggers
+                                    $radio_required = ($index === 0) ? $is_required_attr : '';
                                     $form_html .= ' <li class="globo-list-control option-' . $unserialize_elementdata[8] . '-column" style="padding: 4px 0; margin: 0; display: flex; align-items: flex-start;">
                                                     <div class="radio-wrapper" style="display: flex; align-items: center; gap: 6px; width: 100%; position: relative;">
-                                                        <input class="radio-input  new-radio-option ' . $elementtitle . '' . $form_data_id . '__radio" id="' . $radio_id . '" type="radio" data-type="radio" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" ' . $radio_option_checked . ' style="' . $input_style . '">
+                                                        <input class="radio-input  new-radio-option ' . $elementtitle . '' . $form_data_id . '__radio" id="' . $radio_id . '" type="radio" data-type="radio" name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . '" ' . $radio_option_checked . $radio_required . ' style="' . $input_style . '">
                                                         <label class="radio-label globo-option ' . $elementtitle . '' . $form_data_id . '__radio" for="' . $radio_id . '" style="' . $label_style . '">' . $option . '</label>
                                                     </div>
                                                 </li>';
@@ -4502,11 +4513,12 @@ class Client_functions extends common_function
                                 // Generate field name from label
                                 $field_label = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : '';
                                 $field_name = $generate_field_name($field_label, $elements['id'], $form_data_id);
+                                $is_required_attr = ($unserialize_elementdata[7] == "1") ? " required" : "";
 
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[9] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '">
                                                 <label for="false-select-' . $form_data_id . '" class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Dropdown" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span  class="text-danger text-smaller ' . $is_hiderequire . '"> *</span> </label>
                                                 <div class="globo-form-input">
-                                                    <select name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" id="false-select-' . $form_data_id . '" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"' . $element_design_style . '>
+                                                    <select name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" id="false-select-' . $form_data_id . '" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"' . $element_design_style . $is_required_attr . '>
                                                     <option value=""  disabled="disabled" selected="selected">' . $unserialize_elementdata[1] . '</option>';
                                 $dropdown_options = explode(",", $unserialize_elementdata[2]);
                                 foreach ($dropdown_options as $index => $option) {
@@ -4538,10 +4550,11 @@ class Client_functions extends common_function
                                 if ($unserialize_elementdata[5] == "1") {
                                     $is_keepossition_label = "position--label";
                                 }
+                                $is_required_attr = ($unserialize_elementdata[6] == "1") ? " required" : "";
                                 $form_html .= ' <div class="code-form-control layout-' . $unserialize_elementdata[8] . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '">
                                             <label for="false-country-' . $form_data_id . '" class="classic-label globo-label ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Country" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $unserialize_elementdata[0] . '</span><span  class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
                                             <div class="globo-form-input">
-                                            <select name="country-1" id="false-country-' . $form_data_id . '" class="classic-input">
+                                            <select name="country-1" id="false-country-' . $form_data_id . '" class="classic-input"' . $is_required_attr . '>
                                             <option value="" disabled="disabled" selected="selected">' . $unserialize_elementdata[1] . '</option>';
                                 $countries = [
                                     'Afghanistan', 'Aland Islands', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla',
