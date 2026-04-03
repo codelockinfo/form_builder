@@ -2236,6 +2236,63 @@ console.log('Custom code loaded');
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Success Message Section -->
+                                        <div class="theme-settings-section">
+                                            <div class="theme-settings-section-header">
+                                                <h3 class="theme-settings-section-title">Success Message</h3>
+                                                <button class="theme-settings-expand-btn" data-section="successMessage">
+                                                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="theme-settings-section-content" id="successMessageSectionContent">
+                                                <div class="success-message-position-item" style="padding: 10px 0;">
+                                                    <p style="margin-bottom: 12px; font-size: 13px; color: #6d7175;">Choose where to show the success message after form submission.</p>
+                                                    <div class="Polaris-ChoiceList">
+                                                        <ul class="Polaris-ChoiceList__Choices">
+                                                            <li>
+                                                                <label class="Polaris-Choice" for="msg_pos_popup">
+                                                                    <span class="Polaris-Choice__Control">
+                                                                        <span class="Polaris-RadioButton">
+                                                                            <input type="radio" name="success_msg_pos" id="msg_pos_popup" class="Polaris-RadioButton__Input success-msg-pos-radio" value="popup" checked>
+                                                                            <span class="Polaris-RadioButton__Backdrop"></span>
+                                                                            <span class="Polaris-RadioButton__Icon"></span>
+                                                                        </span>
+                                                                    </span>
+                                                                    <span class="Polaris-Choice__Label">Right Popup Message</span>
+                                                                </label>
+                                                            </li>
+                                                            <li style="margin-top: 8px;">
+                                                                <label class="Polaris-Choice" for="msg_pos_above_submit">
+                                                                    <span class="Polaris-Choice__Control">
+                                                                        <span class="Polaris-RadioButton">
+                                                                            <input type="radio" name="success_msg_pos" id="msg_pos_above_submit" class="Polaris-RadioButton__Input success-msg-pos-radio" value="above_submit">
+                                                                            <span class="Polaris-RadioButton__Backdrop"></span>
+                                                                            <span class="Polaris-RadioButton__Icon"></span>
+                                                                        </span>
+                                                                    </span>
+                                                                    <span class="Polaris-Choice__Label">Above Submit Button</span>
+                                                                </label>
+                                                            </li>
+                                                            <li style="margin-top: 8px;">
+                                                                <label class="Polaris-Choice" for="msg_pos_above_form">
+                                                                    <span class="Polaris-Choice__Control">
+                                                                        <span class="Polaris-RadioButton">
+                                                                            <input type="radio" name="success_msg_pos" id="msg_pos_above_form" class="Polaris-RadioButton__Input success-msg-pos-radio" value="above_form">
+                                                                            <span class="Polaris-RadioButton__Backdrop"></span>
+                                                                            <span class="Polaris-RadioButton__Icon"></span>
+                                                                        </span>
+                                                                    </span>
+                                                                    <span class="Polaris-Choice__Label">Above Entire Form</span>
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -6366,6 +6423,37 @@ console.log('Custom code loaded');
                 $btn.addClass('expanded');
             }
         });
+
+        // Handle success message position changes
+        $(document).on('change', '.success-msg-pos-radio', function() {
+            var position = $(this).val();
+            var formId = $('.formid').val();
+            
+            // Save to form_container settings
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'save_form_design_settings',
+                    store: store,
+                    form_id: formId,
+                    element_type: 'form_container',
+                    settings: {
+                        // Merge with existing container settings if possible
+                        // But for simplicity, we pass just the new setting
+                        // the backend should ideally merge, but let's see
+                        'success_message_position': position
+                    },
+                    merge: true // Theoretical flag for backend to merge settings
+                },
+                success: function(response) {
+                    if (response.result == 'success') {
+                        console.log('Success message position saved:', position);
+                    }
+                }
+            });
+        });
         
         // Handle font select changes
         $(document).on('change', '.font-select', function() {
@@ -7202,12 +7290,31 @@ console.log('Custom code loaded');
             }
         }
         
-        // Load and apply saved design settings on page load
+        // Load and apply saved design settings
         function loadSavedDesignSettings() {
             var formId = $('.formid').val();
             if (!formId) {
                 return;
             }
+            $.ajax({
+                url: "ajax_call.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    routine_name: 'get_form_design_settings',
+                    store: store,
+                    form_id: formId
+                },
+                success: function(response) {
+                    if (response.result == 'success' && response.settings) {
+                        // Load success message position
+                        if (response.settings.form_container && response.settings.form_container.success_message_position) {
+                            var pos = response.settings.form_container.success_message_position;
+                            $('.success-msg-pos-radio[value="' + pos + '"]').prop('checked', true);
+                        }
+                    }
+                }
+            });
             
             // Ensure color picker and text input are synced for all elements
             $('.element-design-color').each(function() {

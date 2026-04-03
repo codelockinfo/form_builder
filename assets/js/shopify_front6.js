@@ -297,52 +297,86 @@ window.store = store;
                         }
                         
                         if (response.result == 'success') {
-                            // Show animated right-side toast popup
                             var successMsg = response.msg || "Form submitted successfully!";
-                            (function showToast(msg, type) {
-                                var isSuccess = type === 'success';
-                                var n = document.createElement('div');
-                                Object.assign(n.style, {
-                                    position: 'fixed',
-                                    top: '24px',
-                                    right: '-400px',
-                                    background: isSuccess
-                                        ? 'linear-gradient(135deg,#16a34a,#22c55e)'
-                                        : 'linear-gradient(135deg,#dc2626,#ef4444)',
-                                    color: '#fff',
-                                    padding: '14px 20px 14px 16px',
-                                    borderRadius: '10px',
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
-                                    zIndex: '999999',
-                                    cursor: 'pointer',
-                                    fontFamily: 'system-ui,sans-serif',
-                                    fontSize: '14px',
-                                    fontWeight: '500',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    minWidth: '260px',
-                                    maxWidth: '340px',
-                                    transition: 'right 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
-                                    opacity: '0'
-                                });
-                                var icon = isSuccess ? '✓' : '✕';
-                                n.innerHTML = '<span style="font-size:18px;font-weight:700;flex-shrink:0">' + icon + '</span><span>' + msg + '</span>';
-                                document.body.appendChild(n);
-                                requestAnimationFrame(function() {
-                                    requestAnimationFrame(function() {
-                                        n.style.right = '24px';
-                                        n.style.opacity = '1';
+                            var position = $form.attr('data-success-message-position') || 'popup';
+                            
+                            if (position === 'popup') {
+                                // Show animated right-side toast popup
+                                (function showToast(msg, type) {
+                                    var isSuccess = type === 'success';
+                                    var n = document.createElement('div');
+                                    Object.assign(n.style, {
+                                        position: 'fixed',
+                                        top: '24px',
+                                        right: '-400px',
+                                        background: isSuccess
+                                            ? 'linear-gradient(135deg,#16a34a,#22c55e)'
+                                            : 'linear-gradient(135deg,#dc2626,#ef4444)',
+                                        color: '#fff',
+                                        padding: '14px 20px 14px 16px',
+                                        borderRadius: '10px',
+                                        boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                                        zIndex: '999999',
+                                        cursor: 'pointer',
+                                        fontFamily: 'system-ui,sans-serif',
+                                        fontSize: '14px',
+                                        fontWeight: '500',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px',
+                                        minWidth: '260px',
+                                        maxWidth: '340px',
+                                        transition: 'right 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease',
+                                        opacity: '0'
                                     });
-                                });
-                                var dismiss = function() {
-                                    n.style.right = '-400px';
-                                    n.style.opacity = '0';
-                                    setTimeout(function() { n.remove(); }, 400);
-                                };
-                                setTimeout(dismiss, 4000);
-                                n.onclick = dismiss;
-                            })(successMsg, 'success');
+                                    var icon = isSuccess ? '✓' : '✕';
+                                    n.innerHTML = '<span style="font-size:18px;font-weight:700;flex-shrink:0">' + icon + '</span><span>' + msg + '</span>';
+                                    document.body.appendChild(n);
+                                    requestAnimationFrame(function() {
+                                        requestAnimationFrame(function() {
+                                            n.style.right = '24px';
+                                            n.style.opacity = '1';
+                                        });
+                                    });
+                                    var dismiss = function() {
+                                        n.style.right = '-400px';
+                                        n.style.opacity = '0';
+                                        setTimeout(function() { n.remove(); }, 400);
+                                    };
+                                    setTimeout(dismiss, 4000);
+                                    n.onclick = dismiss;
+                                })(successMsg, 'success');
+                            } else {
+                                // Inline success message
+                                // Remove any existing inline messages first
+                                $form.find('.form-success-message-inline').remove();
+                                
+                                var $msgDiv = $('<div class="form-success-message-inline" style="background: #e7f9ed; color: #1e7a3d; padding: 12px 16px; border-radius: 6px; border: 1px solid #c3e6cb; margin: 15px 0; font-weight: 500; display: flex; align-items: center; gap: 10px; width: 100%;">' +
+                                                '<span style="font-size: 18px; line-height: 1;">✓</span>' +
+                                                '<span style="line-height: 1.4;">' + successMsg + '</span>' +
+                                                '</div>');
+                                
+                                if (position === 'above_submit') {
+                                    // Find submit button container or fallback to bottom
+                                    var $footer = $form.find(".footer, .action, .submit").first();
+                                    if ($footer.length) {
+                                        $msgDiv.insertBefore($footer);
+                                    } else {
+                                        $form.append($msgDiv);
+                                    }
+                                } else {
+                                    // above_form
+                                    $form.prepend($msgDiv);
+                                }
+                                
+                                // Scroll to message
+                                try {
+                                    $msgDiv[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                } catch(e) {}
+                                
+                                // Auto-remove after 8 seconds
+                                setTimeout(function() { $msgDiv.fadeOut(function() { $(this).remove(); }); }, 8000);
+                            }
                             
                             // Reset form - clear all input fields
                             try {
@@ -493,6 +527,59 @@ window.store = store;
                 if (isChecked && $msgEl.hasClass('has-error')) {
                     if (!$msgEl.data('orig')) $msgEl.data('orig', '');
                     $msgEl.text($msgEl.data('orig')).removeClass('has-error');
+                }
+            });
+
+            // File upload preview logic with close button
+            $(document).on('change', 'input[type="file"]', function(e) {
+                var $input = $(this);
+                var formdataid = $input.data('formdataid');
+                var $container = $('#imgContainer-' + formdataid);
+                
+                if (!$container.length) {
+                    // Try finding by the wrapper if ID doesn't match perfectly
+                    $container = $input.closest('.upload-area').find('.img-container');
+                }
+                
+                if (!$container.length) return;
+                
+                $container.empty();
+                
+                if (this.files && this.files.length > 0) {
+                    // Increase container visibility if it was hidden
+                    $container.css('display', 'flex').css('flex-wrap', 'wrap').css('margin-top', '10px');
+                    
+                    Array.from(this.files).forEach(function(file) {
+                        if (file.type.indexOf('image/') === 0) {
+                            var reader = new FileReader();
+                            reader.onload = function(event) {
+                                var $previewWrapper = $('<div class="img-preview-wrapper" style="position: relative; display: inline-block; margin: 10px 10px 5px 0; border: 1px solid #ddd; border-radius: 4px; padding: 4px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);"></div>');
+                                var $img = $('<img src="' + event.target.result + '" style="width: 80px; height: 80px; object-fit: cover; display: block; border-radius: 2px;">');
+                                
+                                // Close button at top-right
+                                var $closeBtn = $('<div class="img-remove-btn" style="position: absolute; top: -8px; right: -8px; background: #ff4d4f; color: white; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 20; border: 2px solid #fff;">×</div>');
+                                
+                                $closeBtn.on('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    $previewWrapper.remove();
+                                    // Reset the file input to allow re-selection of same file if needed
+                                    $input.val('');
+                                });
+                                
+                                $previewWrapper.append($img).append($closeBtn);
+                                $container.append($previewWrapper);
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            // Non-image file support: show file name and icon
+                            var $fileWrapper = $('<div class="file-preview-wrapper" style="display: flex; align-items: center; gap: 8px; margin: 5px 5px 5px 0; padding: 6px 10px; background: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef; font-size: 12px; color: #495057;">' +
+                                                '<span style="font-size: 16px;">📄</span>' +
+                                                '<span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + file.name + '</span>' +
+                                                '</div>');
+                            $container.append($fileWrapper);
+                        }
+                    });
                 }
             });
             

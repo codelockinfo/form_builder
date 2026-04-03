@@ -357,8 +357,42 @@
         console.log('EFB: Response:', data);
         
         if (data.result === 'success') {
-          // Show right-side toast popup
-          notify(data.msg || 'Form submitted successfully!', 'success');
+          const position = form.getAttribute('data-success-message-position') || 'popup';
+          const successMsg = data.msg || 'Form submitted successfully!';
+          
+          if (position === 'popup') {
+              notify(successMsg, 'success');
+          } else {
+              // Inline success message - Remove any existing ones first
+              cont.querySelectorAll('.form-success-message-inline').forEach(el => el.remove());
+              
+              const msgDiv = document.createElement('div');
+              msgDiv.className = 'form-success-message-inline';
+              msgDiv.style.cssText = 'background: #e7f9ed; color: #1e7a3d; padding: 12px 16px; border-radius: 6px; border: 1px solid #c3e6cb; margin: 15px 0; font-weight: 500; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;';
+              msgDiv.innerHTML = '<span style="font-size: 18px; line-height: 1;">✓</span><span style="line-height: 1.4;">' + successMsg + '</span>';
+              
+              if (position === 'above_submit') {
+                  const footer = form.querySelector('.footer, .action, .submit');
+                  if (footer) footer.parentNode.insertBefore(msgDiv, footer);
+                  else form.appendChild(msgDiv);
+              } else {
+                  // above_form
+                  form.insertBefore(msgDiv, form.firstChild);
+              }
+              
+              // Scroll to message
+              try { 
+                  msgDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+              } catch(e) {}
+              
+              // Auto-remove after 8 seconds
+              setTimeout(() => { 
+                msgDiv.style.transition = 'opacity 0.5s ease';
+                msgDiv.style.opacity = '0';
+                setTimeout(() => msgDiv.remove(), 500);
+              }, 8000);
+          }
+
           form.reset();
           // Clear error styles and footer message
           form.querySelectorAll('.messages.has-error').forEach(el => el.classList.remove('has-error'));

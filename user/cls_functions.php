@@ -3599,7 +3599,8 @@ class Client_functions extends common_function
                 if (!empty($element_data_array)) {
                     // Use public_id for storefront forms, database ID for preview/admin
                     $form_id_value = $is_storefront ? $form_id_for_submission : $_POST['form_id'];
-                    $form_html .= '<form class="get_selected_elements" name="get_selected_elements" method="post">
+                    $success_msg_pos = isset($design_settings['form_container']['success_message_position']) ? $design_settings['form_container']['success_message_position'] : 'popup';
+                    $form_html .= '<form class="get_selected_elements" name="get_selected_elements" method="post" data-success-message-position="' . htmlspecialchars($success_msg_pos, ENT_QUOTES, 'UTF-8') . '">
                         <input type="hidden" class="form_id" name="form_id" value="' . htmlspecialchars($form_id_value, ENT_QUOTES, 'UTF-8') . '">';
                     error_log("Form HTML - form_id input value: " . $form_id_value . " (is_storefront: " . ($is_storefront ? 'YES' : 'NO') . ")");
                 }
