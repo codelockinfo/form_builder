@@ -3505,8 +3505,8 @@ class Client_functions extends common_function
 
 
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
-                                <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ';">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
-                                <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ';">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
+                                <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ' !important;">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
+                                <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ' !important;">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
                     }
                     else {
@@ -3534,8 +3534,8 @@ class Client_functions extends common_function
 
 
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
-                                <h3 class="title globo-heading" style="font-size: ' . $header_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $header_text_color . ';">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
-                                <div class="description globo-description" style="text-align: ' . $header_text_align . '; color: ' . $header_desc_color . ';">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
+                                <h3 class="title globo-heading" style="font-size: ' . $header_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $header_text_color . ' !important;">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
+                                <div class="description globo-description" style="text-align: ' . $header_text_align . '; color: ' . $header_desc_color . ' !important;">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
                     }
                 }
