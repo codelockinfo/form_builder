@@ -68,7 +68,8 @@
 
   async function init() {
     if (!formId || formId === '0') return;
-    const url = `/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}&cb=${Date.now()}`;
+    const colorScheme = '{{ block.settings.color_scheme }}' || '';
+    const url = `/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}&color_scheme=${encodeURIComponent(colorScheme)}&cb=${Date.now()}`;
     console.log('EFB: Loading form from:', url);
     try {
       const r = await fetch(url);
@@ -375,6 +376,14 @@
   } else {
     init();
   }
+
+  // Support Shopify customizer live preview
+  document.addEventListener('shopify:section:load', init);
+  document.addEventListener('shopify:block:select', function(e) {
+    if (e.target.id === 'easy-form-{{ block.id }}') {
+      init();
+    }
+  });
 })();
 </script>
 

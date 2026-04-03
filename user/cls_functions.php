@@ -11743,8 +11743,18 @@ class Client_functions extends common_function
             $css_properties = array();
 
             // Background color
+            // If a Shopify color scheme is being used, we should be careful not to override it with hardcoded backgrounds
+            // unless the user specifically set one in the app design settings that isn't empty
+            $has_scheme = isset($_GET['color_scheme']) && !empty($_GET['color_scheme']);
+
             if (isset($settings['background_color']) && !empty($settings['background_color'])) {
+                // If it's the form container and we have a scheme, maybe we should make it transparent?
+                // But for now, just output the user setting but allow it to be empty
                 $css_properties[] = 'background-color: ' . $this->sanitize_css_value($settings['background_color']) . ';';
+            } else if (($element_type == 'form_container' || $element_type == 'form') && $has_scheme) {
+                // If using a scheme and no hardcoded bg set, ensure it inherits properly
+                $css_properties[] = 'background-color: transparent !important;';
+                $css_properties[] = 'background-image: none !important;';
             }
 
             // Text color
