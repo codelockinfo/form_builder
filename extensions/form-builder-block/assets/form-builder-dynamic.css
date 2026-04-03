@@ -58,10 +58,13 @@
         padding: 10px !important;
         min-height: 50px !important;
         position: relative !important;
-        z-index: 5 !important;
+        z-index: 20 !important;
         visibility: visible !important;
         opacity: 1 !important;
         box-sizing: border-box !important;
+      }
+      .upload-area.has-files {
+        overflow: visible !important;
       }
       .upload-area.has-files .upload-p,
       .upload-area.has-files .file_button {
@@ -109,7 +112,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 10;
+        z-index: 99 !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         transition: all 0.2s ease;
         line-height: 1;

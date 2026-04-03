@@ -95,6 +95,70 @@
         if (input) input.click();
       };
     });
+
+    // File upload preview logic
+    form.querySelectorAll('input[type="file"]').forEach(fileInput => {
+      fileInput.addEventListener('change', function() {
+        const area = this.closest('.upload-area');
+        const imgContainer = area?.querySelector('.img-container');
+        if (!imgContainer) return;
+        
+        imgContainer.innerHTML = ''; // Clear previous previews
+        
+        if (this.files && this.files.length > 0) {
+          area.classList.add('has-files');
+          Array.from(this.files).forEach(file => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'img-preview-wrapper';
+            wrapper.style.position = 'relative'; // Ensure relative positioning for button
+            
+            // Close/Remove Button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'img-remove-btn';
+            removeBtn.innerHTML = '✕';
+            removeBtn.title = 'Remove file';
+            removeBtn.onclick = (ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              this.value = '';
+              imgContainer.innerHTML = '';
+              area.classList.remove('has-files');
+              // Clear validation error if any
+              if (typeof clearFieldError === 'function') clearFieldError(this);
+            };
+            
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-preview';
+                wrapper.innerHTML = ''; // Clean up
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                imgContainer.appendChild(wrapper);
+              };
+              reader.readAsDataURL(file);
+            } else {
+              // Non-image file name
+              const nameDiv = document.createElement('div');
+              nameDiv.className = 'file-name-preview';
+              nameDiv.style.cssText = 'padding: 10px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 4px; font-size: 11px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+              nameDiv.textContent = file.name;
+              wrapper.appendChild(nameDiv);
+              wrapper.appendChild(removeBtn);
+              imgContainer.appendChild(wrapper);
+            }
+          });
+          // Clear error if files are added
+          if (typeof clearFieldError === 'function') clearFieldError(this);
+        } else {
+          area.classList.remove('has-files');
+        }
+      });
+    });
+
     // Email validation helper
     const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
     
