@@ -63,6 +63,44 @@
         if (input) input.click();
       };
     });
+    // Email validation helper
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+    
+    function validateEmailField(emailInput) {
+      const msgEl = emailInput.closest('.code-form-control')?.querySelector('.messages');
+      const val = emailInput.value.trim();
+      if (!val) return true; // empty handled by required check
+      if (!emailRegex.test(val)) {
+        if (msgEl) {
+          msgEl.textContent = 'Please enter a valid email address (e.g. name@example.com)';
+          msgEl.classList.add('has-error');
+        }
+        emailInput.focus();
+        return false;
+      } else {
+        // Valid — clear error
+        if (msgEl) {
+          if (!msgEl.hasAttribute('data-orig')) msgEl.setAttribute('data-orig', msgEl.textContent);
+          msgEl.textContent = msgEl.getAttribute('data-orig');
+          msgEl.classList.remove('has-error');
+        }
+        return true;
+      }
+    }
+
+    // Attach real-time validation on email fields
+    form.querySelectorAll('input[type="email"]').forEach(emailInput => {
+      emailInput.addEventListener('blur', () => validateEmailField(emailInput));
+      emailInput.addEventListener('input', () => {
+        // Only show OK state on input (don't show error while typing until blur)
+        const msgEl = emailInput.closest('.code-form-control')?.querySelector('.messages');
+        if (msgEl && msgEl.classList.contains('has-error') && emailRegex.test(emailInput.value.trim())) {
+          if (!msgEl.hasAttribute('data-orig')) msgEl.setAttribute('data-orig', '');
+          msgEl.textContent = msgEl.getAttribute('data-orig');
+          msgEl.classList.remove('has-error');
+        }
+      });
+    });
 
     const handleSubmit = async (e) => {
       if (e) e.preventDefault();
@@ -129,24 +167,18 @@
           return;
       }
       
-      // Strict Validation Checks
+      // Email format validation
       const emailInput = form.querySelector('input[type="email"], input[name="email"]');
-      if (emailInput && emailInput.value) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,20}$/;
-        if (!emailRegex.test(emailInput.value)) {
-          const msgEl = emailInput.closest('.code-form-control')?.querySelector('.messages');
-          if (msgEl) {
-              msgEl.textContent = 'Please enter a valid email address.';
-              msgEl.classList.add('has-error');
-          }
-          emailInput.focus();
+      if (emailInput && emailInput.value.trim()) {
+        if (!validateEmailField(emailInput)) {
           return;
         }
       }
 
+      // Phone validation
       const phoneInput = form.querySelector('input[type="tel"]');
-      if (phoneInput && phoneInput.value) {
-        if (phoneInput.value.length < 5) {
+      if (phoneInput && phoneInput.value.trim()) {
+        if (phoneInput.value.trim().length < 5) {
           const msgEl = phoneInput.closest('.code-form-control')?.querySelector('.messages');
           if (msgEl) {
               msgEl.textContent = 'Please enter a valid phone number.';
@@ -197,7 +229,7 @@
               footerMsg.classList.add('has-error');
           }
         }
-      } catch(err) { console.error('EFB: Ajax error:', err); notify('Submission failed. Check console for details.', 'error'); }
+      } catch(err) { console.error('EFB: Ajax error:', err); }
       
       if (btn) { 
         btn.disabled = false; 

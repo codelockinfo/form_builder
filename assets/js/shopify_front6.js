@@ -156,8 +156,11 @@ window.store = store;
                 $form.find('.messages').each(function() {
                     const $el = $(this);
                     if (!$el.data('orig')) $el.data('orig', $el.text());
-                    $el.text($el.data('orig')).removeClass('has-error').css('color', '');
+                    $el.text($el.data('orig')).removeClass('has-error');
                 });
+
+                // Email validation helper
+                var emailRegexFront = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
                 // Required field validation
                 let hasError = false;
@@ -203,6 +206,19 @@ window.store = store;
                 if (hasError) {
                     if (firstErrorField) firstErrorField.focus();
                     return false;
+                }
+
+                // Email format validation (after required check)
+                var $emailInput = $form.find('input[type="email"]').first();
+                if ($emailInput.length && $emailInput.val().trim()) {
+                    if (!emailRegexFront.test($emailInput.val().trim())) {
+                        var $emailMsg = $emailInput.closest('.code-form-control').find('.messages');
+                        if ($emailMsg.length) {
+                            $emailMsg.text('Please enter a valid email address (e.g. name@example.com)').addClass('has-error');
+                        }
+                        $emailInput.focus();
+                        return false;
+                    }
                 }
                 var formId = $form.find('input[name="form_id"], input.form_id').val();
                 
@@ -384,6 +400,30 @@ window.store = store;
                     $btn = $form.find("button[type='submit'], input[type='submit']");
                 }
                 handleFormSubmission(e, $btn);
+            });
+            
+            // Real-time email validation on blur
+            var emailValidRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+            $(document).on('blur', 'input[type="email"]', function() {
+                var $input = $(this);
+                var val = $input.val().trim();
+                var $msgEl = $input.closest('.code-form-control').find('.messages');
+                if (!$msgEl.length) return;
+                if (!$msgEl.data('orig')) $msgEl.data('orig', $msgEl.text());
+                if (val && !emailValidRegex.test(val)) {
+                    $msgEl.text('Please enter a valid email address (e.g. name@example.com)').addClass('has-error');
+                } else {
+                    $msgEl.text($msgEl.data('orig')).removeClass('has-error');
+                }
+            });
+            // Clear error as soon as user types valid email
+            $(document).on('input', 'input[type="email"]', function() {
+                var $input = $(this);
+                var val = $input.val().trim();
+                var $msgEl = $input.closest('.code-form-control').find('.messages');
+                if ($msgEl.length && $msgEl.hasClass('has-error') && emailValidRegex.test(val)) {
+                    $msgEl.text($msgEl.data('orig') || '').removeClass('has-error');
+                }
             });
             
         });
