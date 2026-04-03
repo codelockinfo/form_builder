@@ -66,9 +66,7 @@
       if (e) e.preventDefault();
       console.log('EFB: Submit triggered');
       
-      if (form.reportValidity && !form.reportValidity()) return;
-      
-      // Clear previous error messages
+      // Clear previous error messages first
       form.querySelectorAll('.messages').forEach(el => {
           if (!el.hasAttribute('data-orig')) el.setAttribute('data-orig', el.textContent);
           el.textContent = el.getAttribute('data-orig');
@@ -76,7 +74,7 @@
           el.style.color = '';
       });
 
-      // Check for required fields manually to show custom notifications
+      // Custom validation — show inline errors for all required fields
       let firstErrorField = null;
       let hasError = false;
       const requiredFields = form.querySelectorAll('[required]');
@@ -84,7 +82,7 @@
       requiredFields.forEach(field => {
           let value = field.value;
           
-          // Specialized handling for radio and checkboxes
+          // Checkbox / Radio — check if at least one in group is selected
           if ((field.type === 'checkbox' || field.type === 'radio') && !field.checked) {
               const name = field.getAttribute('name');
               if (name) {
@@ -96,12 +94,22 @@
               }
           }
           
+          // File input — check if a file is selected
+          if (field.type === 'file') {
+              value = field.files && field.files.length > 0 ? 'file' : '';
+          }
+
+          // Select (dropdown / country) — empty string means nothing selected
+          if (field.tagName === 'SELECT') {
+              value = field.value || '';
+          }
+          
           if (!value || (typeof value === 'string' && value.trim() === '')) {
               hasError = true;
               const label = field.closest('.code-form-control')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
               const errorMessage = `${label} is required.`;
               
-              // Show inline in description area
+              // Show inline error in .messages element
               const msgEl = field.closest('.code-form-control')?.querySelector('.messages');
               if (msgEl) {
                   msgEl.textContent = errorMessage;
@@ -111,7 +119,7 @@
               
               if (!firstErrorField) {
                   firstErrorField = field;
-                  notify(errorMessage, 'error'); // Only notify first error in toast
+                  notify(errorMessage, 'error'); // Toast only for first error
               }
           }
       });
