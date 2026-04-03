@@ -425,6 +425,41 @@ window.store = store;
                     $msgEl.text($msgEl.data('orig') || '').removeClass('has-error');
                 }
             });
+
+            // Real-time error clearing for ALL required fields (text, number, tel, textarea)
+            $(document).on('input', 'input[type="text"], input[type="number"], input[type="tel"], input[type="url"], input[type="date"], input[type="time"], input[type="password"], textarea', function() {
+                var $input = $(this);
+                var $msgEl = $input.closest('.code-form-control').find('.messages');
+                if ($msgEl.length && $msgEl.hasClass('has-error') && $input.val().trim() !== '') {
+                    if (!$msgEl.data('orig')) $msgEl.data('orig', '');
+                    $msgEl.text($msgEl.data('orig')).removeClass('has-error');
+                }
+            });
+
+            // Real-time error clearing for select dropdowns
+            $(document).on('change', 'select', function() {
+                var $input = $(this);
+                var $msgEl = $input.closest('.code-form-control').find('.messages');
+                if ($msgEl.length && $msgEl.hasClass('has-error') && $input.val()) {
+                    if (!$msgEl.data('orig')) $msgEl.data('orig', '');
+                    $msgEl.text($msgEl.data('orig')).removeClass('has-error');
+                }
+            });
+
+            // Real-time error clearing for checkboxes and radios
+            $(document).on('change', 'input[type="checkbox"], input[type="radio"]', function() {
+                var $input = $(this);
+                var name = $input.attr('name');
+                var $msgEl = $input.closest('.code-form-control').find('.messages');
+                if (!$msgEl.length) return;
+                var isChecked = name
+                    ? $('input[name="' + name + '"]:checked').length > 0
+                    : $input.is(':checked');
+                if (isChecked && $msgEl.hasClass('has-error')) {
+                    if (!$msgEl.data('orig')) $msgEl.data('orig', '');
+                    $msgEl.text($msgEl.data('orig')).removeClass('has-error');
+                }
+            });
             
         });
     }

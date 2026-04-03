@@ -102,6 +102,44 @@
       });
     });
 
+    // Real-time error clearing for ALL required fields (text, tel, number, textarea, select)
+    function clearFieldError(field) {
+      const msgEl = field.closest('.code-form-control')?.querySelector('.messages');
+      if (msgEl && msgEl.classList.contains('has-error')) {
+        let hasValue = false;
+        if (field.type === 'checkbox' || field.type === 'radio') {
+          const name = field.getAttribute('name');
+          hasValue = name
+            ? form.querySelectorAll(`input[name="${name}"]:checked`).length > 0
+            : field.checked;
+        } else if (field.type === 'file') {
+          hasValue = field.files && field.files.length > 0;
+        } else {
+          hasValue = field.value.trim() !== '';
+        }
+        if (hasValue) {
+          if (!msgEl.hasAttribute('data-orig')) msgEl.setAttribute('data-orig', '');
+          msgEl.textContent = msgEl.getAttribute('data-orig');
+          msgEl.classList.remove('has-error');
+        }
+      }
+    }
+
+    // Attach to text, number, tel, textarea inputs
+    form.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], input[type="url"], input[type="date"], input[type="time"], input[type="password"], textarea').forEach(field => {
+      field.addEventListener('input', () => clearFieldError(field));
+    });
+
+    // Attach to select dropdowns
+    form.querySelectorAll('select').forEach(field => {
+      field.addEventListener('change', () => clearFieldError(field));
+    });
+
+    // Attach to checkboxes and radios
+    form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(field => {
+      field.addEventListener('change', () => clearFieldError(field));
+    });
+
     const handleSubmit = async (e) => {
       if (e) e.preventDefault();
       console.log('EFB: Submit triggered');
