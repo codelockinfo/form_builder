@@ -4791,6 +4791,28 @@ class Client_functions extends common_function
                         $reset_button_hover_bg_color = '#292929';
                     }
 
+                    // Override with design settings if available (more reliable for schema changes)
+                    if (isset($design_settings['form_container']['button_bg_color']) && !empty($design_settings['form_container']['button_bg_color'])) {
+                        $button_bg_color = $design_settings['form_container']['button_bg_color'];
+                    }
+                    if (isset($design_settings['form_container']['button_text_color']) && !empty($design_settings['form_container']['button_text_color'])) {
+                        $button_text_color = $design_settings['form_container']['button_text_color'];
+                    }
+                    if (isset($design_settings['form_container']['button_hover_bg_color']) && !empty($design_settings['form_container']['button_hover_bg_color'])) {
+                        $button_hover_bg_color = $design_settings['form_container']['button_hover_bg_color'];
+                    }
+
+                    // Reset button overrides
+                    if (isset($design_settings['form_container']['reset_bg_color']) && !empty($design_settings['form_container']['reset_bg_color'])) {
+                        $reset_button_bg_color = $design_settings['form_container']['reset_bg_color'];
+                    }
+                    if (isset($design_settings['form_container']['reset_text_color']) && !empty($design_settings['form_container']['reset_text_color'])) {
+                        $reset_button_text_color = $design_settings['form_container']['reset_text_color'];
+                    }
+                    if (isset($design_settings['form_container']['reset_hover_bg_color']) && !empty($design_settings['form_container']['reset_hover_bg_color'])) {
+                        $reset_button_hover_bg_color = $design_settings['form_container']['reset_hover_bg_color'];
+                    }
+
                     // Validate colors
                     if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $button_text_color)) {
                         $button_text_color = '#ffffff';
