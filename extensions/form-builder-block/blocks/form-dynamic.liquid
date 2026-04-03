@@ -8,6 +8,8 @@
   #easy-form-{{ block.id }} form { width: 100% !important; pointer-events: auto !important; display: flex !important; flex-wrap: wrap !important; }
   #easy-form-{{ block.id }} button.submit { transition: all 0.2s ease !important; cursor: pointer !important; position: relative !important; z-index: 999 !important; }
   #easy-form-{{ block.id }} button.submit:hover { opacity: 0.9 !important; transform: translateY(-1px) !important; }
+  #easy-form-{{ block.id }} small.messages.has-error,
+  #easy-form-{{ block.id }} .messages.has-error { color: #f44336 !important; display: block !important; }
 </style>
 
 <script>
@@ -71,7 +73,6 @@
           if (!el.hasAttribute('data-orig')) el.setAttribute('data-orig', el.textContent);
           el.textContent = el.getAttribute('data-orig');
           el.classList.remove('has-error');
-          el.style.color = '';
       });
 
       // Custom validation — show inline errors for all required fields
@@ -109,17 +110,16 @@
               const label = field.closest('.code-form-control')?.querySelector('label')?.textContent.replace('*', '').trim() || 'This field';
               const errorMessage = `${label} is required.`;
               
-              // Show inline error in .messages element
+              // Show inline error in .messages element (red color via CSS class)
               const msgEl = field.closest('.code-form-control')?.querySelector('.messages');
               if (msgEl) {
                   msgEl.textContent = errorMessage;
-                  msgEl.style.color = '#f44336';
                   msgEl.classList.add('has-error');
               }
               
               if (!firstErrorField) {
                   firstErrorField = field;
-                  notify(errorMessage, 'error'); // Toast only for first error
+                  // No toast/popup — sirf inline error
               }
           }
       });
@@ -134,11 +134,10 @@
       if (emailInput && emailInput.value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,20}$/;
         if (!emailRegex.test(emailInput.value)) {
-          notify('Please enter a valid email address.', 'error');
           const msgEl = emailInput.closest('.code-form-control')?.querySelector('.messages');
           if (msgEl) {
               msgEl.textContent = 'Please enter a valid email address.';
-              msgEl.style.color = '#f44336';
+              msgEl.classList.add('has-error');
           }
           emailInput.focus();
           return;
@@ -148,11 +147,10 @@
       const phoneInput = form.querySelector('input[type="tel"]');
       if (phoneInput && phoneInput.value) {
         if (phoneInput.value.length < 5) {
-          notify('Please enter a valid phone number.', 'error');
           const msgEl = phoneInput.closest('.code-form-control')?.querySelector('.messages');
           if (msgEl) {
               msgEl.textContent = 'Please enter a valid phone number.';
-              msgEl.style.color = '#f44336';
+              msgEl.classList.add('has-error');
           }
           phoneInput.focus();
           return;
@@ -178,13 +176,26 @@
         console.log('EFB: Response:', data);
         
         if (data.result === 'success') {
-          notify(data.msg || 'Success!', 'success');
+          // Show inline success in footer messages area
+          const footerMsg = cont.querySelector('.footer .messages');
+          if (footerMsg) {
+              footerMsg.textContent = data.msg || 'Form submitted successfully!';
+              footerMsg.style.color = '#4caf50';
+              footerMsg.style.display = 'block';
+          }
           form.reset();
+          // Clear error styles
+          form.querySelectorAll('.messages.has-error').forEach(el => el.classList.remove('has-error'));
           // Clear any file previews if they exist
           cont.querySelectorAll('.img-container').forEach(c => c.innerHTML = '');
           cont.querySelectorAll('.upload-area').forEach(a => a.classList.remove('has-files'));
         } else {
-          notify(data.msg || 'Error: ' + JSON.stringify(data), 'error');
+          // Show error in footer messages
+          const footerMsg = cont.querySelector('.footer .messages');
+          if (footerMsg) {
+              footerMsg.textContent = data.msg || 'Something went wrong. Please try again.';
+              footerMsg.classList.add('has-error');
+          }
         }
       } catch(err) { console.error('EFB: Ajax error:', err); notify('Submission failed. Check console for details.', 'error'); }
       

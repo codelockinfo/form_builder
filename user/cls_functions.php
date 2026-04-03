@@ -5011,6 +5011,12 @@ class Client_functions extends common_function
                         text-align: left !important;
                         display: block;
                         width: 100%;
+                    }
+                    .code-form-app .messages.has-error,
+                    .contact-form .messages.has-error,
+                    small.messages.has-error {
+                        color: #f44336 !important;
+                        display: block !important;
                     }';
 
                 $all_css .= '</style>';

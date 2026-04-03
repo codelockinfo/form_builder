@@ -187,19 +187,15 @@ window.store = store;
                         
                         const errorMessage = fieldLabel + ' is required.';
                         
-                        // Inline error message
+                        // Inline error message via has-error class (red color from CSS)
                         const $msgEl = $input.closest('.code-form-control').find('.messages');
                         if ($msgEl.length) {
-                            $msgEl.text(errorMessage).addClass('has-error').css('color', '#f44336');
+                            $msgEl.text(errorMessage).addClass('has-error');
                         }
 
                         if (!firstErrorField) {
                             firstErrorField = $input;
-                            if (typeof notify === 'function') {
-                                notify(errorMessage);
-                            } else if (typeof flashNotice === 'function') {
-                                flashNotice(errorMessage, 'error');
-                            }
+                            // No toast/popup — sirf inline error
                         }
                     }
                 });
