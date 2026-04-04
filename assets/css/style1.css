@@ -13,7 +13,7 @@
   margin: 30px auto;
 }
 .code-form-app form.get_selected_elements {
-  padding: 30px;
+  padding: 30px !important;
 }
 /* .hidden {
   display: none;
