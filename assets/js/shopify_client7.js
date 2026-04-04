@@ -12,7 +12,8 @@ var elementChangesTracker = {
     elements: {}, // Store element form data by formdataid
     designSettings: {}, // Store design settings by formdataid
     header: null, // Store header form data
-    footer: null  // Store footer form data
+    footer: null,  // Store footer form data
+    topHeader: null // Store top header form data
 };
 
 // Function to save current element form data to tracker
@@ -741,6 +742,39 @@ function get_selected_elements(form_id, callback) {
                 if (response['form_type'] == "4") {
                     $(".preview-box").addClass("floting_form_main");
                 }
+
+                // Load Top Header settings
+                if (response['top_header_data']) {
+                    var topHeaderData = response['top_header_data'];
+                    $(".topHeaderData .showTopHeader").prop("checked", topHeaderData['0'] == 1);
+                    $(".top-header-bg-color").val(topHeaderData['1'] || '#000000');
+                    $(".top-header-bg-color-text").val(topHeaderData['1'] || '#000000');
+                    $(".top-header-text-color").val(topHeaderData['2'] || '#ffffff');
+                    $(".top-header-text-color-text").val(topHeaderData['2'] || '#ffffff');
+                    $(".top-header-logo").val(topHeaderData['3'] || '');
+                    
+                    var logoAlign = topHeaderData['4'] || 'left';
+                    $(".top-header-logo-align-input").val(logoAlign);
+                    $(".topHeaderData .chooseItem-top-logo-align").removeClass('active');
+                    $(".topHeaderData .chooseItem-top-logo-align[data-value='" + logoAlign + "']").addClass('active');
+                    
+                    $(".top-header-text-input").val(topHeaderData['5'] || '');
+                    
+                    var textAlign = topHeaderData['6'] || 'right';
+                    $(".top-header-text-align-input").val(textAlign);
+                    $(".topHeaderData .chooseItem-top-text-align").removeClass('active');
+                    $(".topHeaderData .chooseItem-top-text-align[data-value='" + textAlign + "']").addClass('active');
+                    
+                    $(".top-header-font-size-input").val(topHeaderData['7'] || '14');
+
+                    // If there's an existing logo URL, show it in the upload preview
+                    var existingLogo = topHeaderData['3'] || '';
+                    if (existingLogo) {
+                        $('#topHeaderLogoPreview').show().find('img').attr('src', existingLogo);
+                    }
+
+                }
+                $(".topHeaderData .form_id").val(response['form_id']);
                 if (response['form_header_data'] && response['form_header_data']['0'] == 1) {
                     $(".headerData .showHeader").prop("checked", true);
                 } else {
@@ -751,10 +785,19 @@ function get_selected_elements(form_id, callback) {
 
                 // Set header description content - use val() for textarea, and also set in CKEditor if it exists
                 var headerDescription = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
+                var headerDescription = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
                 $('.headerData textarea[name="contentheader"]').val(headerDescription);
-                // Also set in CKEditor if it's already initialized
                 if (CKEDITOR.instances['contentheader']) {
                     CKEDITOR.instances['contentheader'].setData(headerDescription);
+                }
+
+                // Set Header Banner data
+                var headerBanner = response['form_header_data'] && response['form_header_data']['8'] ? response['form_header_data']['8'] : '';
+                $('.headerData .header-banner-image').val(headerBanner);
+                if (headerBanner) {
+                    $('#headerBannerPreview').show().find('img').attr('src', headerBanner);
+                } else {
+                    $('#headerBannerPreview').hide();
                 }
 
                 // Load saved settings
@@ -807,6 +850,9 @@ function get_selected_elements(form_id, callback) {
                     if (typeof window.updateHeaderPreview === 'function') {
                         window.updateHeaderPreview();
                     }
+                    if (typeof window.updateTopHeaderPreview === 'function') {
+                        window.updateTopHeaderPreview();
+                    }
                 }, 300);
 
                 // Set form name - prefer form_name from response, fallback to header title
@@ -849,6 +895,11 @@ function get_selected_elements(form_id, callback) {
 
                         // Add the floating class
                         $(".preview-box").addClass("floting_form_main");
+                        
+                        // Render the Top Header preview now that the container is ready
+                        if (typeof updateTopHeaderPreview === 'function') {
+                            updateTopHeaderPreview();
+                        }
                     } catch (e) {
                         // Don't clear on error - keep existing content to prevent losing all elements
                         // $(".preview-box .contact-form").html(''); // Commented out to prevent clearing
@@ -1860,16 +1911,25 @@ $(document).on("click", ".saveForm", function (event) {
             elementChangesTracker.footer = footerData;
         }
 
+        var $topHeaderForm = $(".add_topheaderdata");
+        if ($topHeaderForm.length) {
+            var formData = new FormData($topHeaderForm[0]);
+            var topHeaderData = {};
+            for (var pair of formData.entries()) {
+                topHeaderData[pair[0]] = pair[1];
+            }
+            elementChangesTracker.topHeader = topHeaderData;
+        }
+
         // Now save everything sequentially to prevent race conditions
         saveposition();
 
-        // Chain the saves: Properties -> Design -> Others in a controlled sequence
+        // Chain the saves: Properties (includes Top Header) -> Design -> Others 
         saveAllElementProperties(function () {
             saveAllElementDesignSettings(function() {
                 saveheaderform(function() {
                     savefooterform(function() {
                         savepublishdata(function() {
-                            // Final cleanup and notification
                             if (typeof flashNotice === 'function') {
                                 flashNotice('All changes saved successfully!', 'inline-flash--success');
                             }
@@ -1947,8 +2007,6 @@ function saveAllElementProperties(onComplete) {
         }
     });
 
-
-
     allFormdataids.forEach(function (formdataid) {
         var elementData = null;
         var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
@@ -1991,13 +2049,11 @@ function saveAllElementProperties(onComplete) {
             return;
         }
 
-        // Check if we already have this formdataid
         var exists = allElementsData.some(function (item) {
             return item.formdata_id == formdataid;
         });
 
         if (!exists) {
-            // Try to find the form for this element
             var $form = $('form.add_elementdata[formdataid="' + formdataid + '"]');
             if ($form.length) {
                 var elementFormData = new FormData($form[0]);
@@ -2024,23 +2080,20 @@ function saveAllElementProperties(onComplete) {
                 elementData['routine_name'] = 'saveform';
 
                 allElementsData.push(elementData);
-                processedFormdataids[formdataid] = true;
             }
         }
     });
 
+    var $topHeaderForm = $('form.add_topheaderdata');
+    var totalCount = allElementsData.length + ($topHeaderForm.length ? 1 : 0);
+    var saveCount = 0;
 
-
-    // Save each element
-    if (allElementsData.length > 0) {
-        var saveCount = 0;
-        var totalCount = allElementsData.length;
-
+    if (totalCount > 0) {
+        // Save elements
         allElementsData.forEach(function (elementData) {
             var formData = new FormData();
             for (var key in elementData) {
                 if (Array.isArray(elementData[key])) {
-                    // For allowextention, always append even if empty (to clear database)
                     if (key === 'allowextention' && elementData[key].length === 0) {
                         formData.append(key + '[]', '');
                     } else {
@@ -2061,7 +2114,6 @@ function saveAllElementProperties(onComplete) {
                 processData: false,
                 data: formData,
                 success: function (response) {
-
                     saveCount++;
                     if (saveCount === totalCount && typeof onComplete === 'function') {
                         onComplete();
@@ -2076,6 +2128,16 @@ function saveAllElementProperties(onComplete) {
                 }
             });
         });
+
+        // Save Top Header
+        if ($topHeaderForm.length) {
+            savetopheaderform(function() {
+                saveCount++;
+                if (saveCount === totalCount && typeof onComplete === 'function') {
+                    onComplete();
+                }
+            });
+        }
     } else {
         if (typeof onComplete === 'function') {
             onComplete();
@@ -2122,6 +2184,70 @@ function saveform() {
         }
     });
 }
+
+function savetopheaderform(onComplete) {
+    var $topHeaderForm = $(".add_topheaderdata");
+    var formDataObj = new FormData();
+
+    if ($topHeaderForm.length) {
+        formDataObj = new FormData($topHeaderForm[0]);
+    } else if (elementChangesTracker.topHeader) {
+        for (var key in elementChangesTracker.topHeader) {
+            formDataObj.append(key, elementChangesTracker.topHeader[key]);
+        }
+    }
+
+    formDataObj.append('store', store);
+    formDataObj.append('routine_name', 'savetopheaderform');
+    formDataObj.append('form_id', $('#form_id').val() || $('input[name="form_id"]').val());
+
+    $.ajax({
+        url: "ajax_call.php",
+        type: "post",
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        data: formDataObj,
+        success: function (response) {
+            if (typeof onComplete === 'function') onComplete();
+        },
+        error: function() {
+            if (typeof onComplete === 'function') onComplete();
+        }
+    });
+}
+
+// Top Header Logo Upload Handlers
+$(document).on('click', '#topHeaderLogoUploadArea', function() {
+    $('#topHeaderLogoFile').click();
+});
+
+$(document).on('change', '#topHeaderLogoFile', function() {
+    var file = this.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#topHeaderLogoPreview img').attr('src', e.target.result);
+            $('#topHeaderLogoPreview').show();
+            // We'll let the file upload handle the data, but display Name
+            $('#topHeaderLogoUrl').val("Uploaded: " + file.name);
+            
+            // Sync with preview if possible
+            $('.globo-top-header img').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+$(document).on('input', '#topHeaderLogoUrl', function() {
+    var url = $(this).val();
+    if (url && (url.startsWith('http') || url.startsWith('//'))) {
+        $('#topHeaderLogoPreview img').attr('src', url);
+        $('#topHeaderLogoPreview').show();
+        $('.globo-top-header img').attr('src', url);
+    }
+});
+
 
 function saveheaderform(onComplete) {
     // Save header data to tracker
@@ -2886,3 +3012,38 @@ $(document).ready(function() {
         updateHeaderTitle();
     });
 });
+
+// Top Header Alignment Handlers
+$(document).on("click", ".chooseItem-top-logo-align", function() {
+    var val = $(this).data("value");
+    $(".top-header-logo-align-input").val(val);
+    $(".chooseItem-top-logo-align").removeClass("active");
+    $(this).addClass("active");
+});
+
+$(document).on("click", ".chooseItem-top-text-align", function() {
+    var val = $(this).data("value");
+    $(".top-header-text-align-input").val(val);
+    $(".chooseItem-top-text-align").removeClass("active");
+    $(this).addClass("active");
+});
+
+// Top Header Color Syncers
+$(document).on("input change", ".top-header-bg-color", function() {
+    $(".top-header-bg-color-text").val($(this).val());
+});
+$(document).on("input change", ".top-header-bg-color-text", function() {
+    var val = $(this).val();
+    if (/^#[0-9A-F]{6}$/i.test(val)) {
+        $(".top-header-bg-color").val(val);
+    }
+});
+$(document).on("input change", ".top-header-text-color", function() {
+    $(".top-header-text-color-text").val($(this).val());
+});
+$(document).on("input change", ".top-header-text-color-text", function() {
+    var val = $(this).val();
+    if (/^#[0-9A-F]{6}$/i.test(val)) {
+        $(".top-header-text-color").val(val);
+    }
+});

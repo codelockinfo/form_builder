@@ -465,7 +465,10 @@ $(document).ready(function () {
             var hasElementAppend = $slide.hasClass('elementAppend') || $slide.find('.elementAppend').length > 0 || $slide.is('.elementAppend');
 
             // Detect slide type by content (check in order of specificity)
-            if (hasHeaderData || title === 'Header') {
+            if (title === 'Top Header' || $slide.find('.topHeaderData').length > 0) {
+                slideType = 'top-header';
+                mapping[16] = index; // data-owl="16" maps to Top Header
+            } else if (hasHeaderData || title === 'Header') {
                 slideType = 'header';
                 mapping[2] = index; // data-owl="2" maps to Header
             } else if (hasElementAppend) {
