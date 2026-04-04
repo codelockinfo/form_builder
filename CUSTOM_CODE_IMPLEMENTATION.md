@@ -55,7 +55,7 @@ Successfully implemented a custom code feature that allows users to add any HTML
   - Helpful placeholder with examples
   - Polaris design system styling
 
-### 2. JavaScript - `shopify_client7.js`
+### 2. JavaScript - `shopify_client8.js`
 
 **Location**: Line ~863-876
 
@@ -120,7 +120,7 @@ Successfully implemented a custom code feature that allows users to add any HTML
 
 1. ✅ `c:\wamp64\www\form_builder\user\cls_functions.php`
 2. ✅ `c:\wamp64\www\form_builder\user\form_design.php`
-3. ✅ `c:\wamp64\www\form_builder\assets\js\shopify_client7.js`
+3. ✅ `c:\wamp64\www\form_builder\assets\js\shopify_client8.js`
 
 ## Files Created
 
