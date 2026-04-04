@@ -3373,7 +3373,12 @@ class Client_functions extends common_function
                 error_log("Form Data Query Result - Data count: " . (isset($comeback_client['data']) && is_array($comeback_client['data']) ? count($comeback_client['data']) : 'not array or not set'));
 
                 $resource_array = array('single' => true);
-                $where_query = array(["", "id", "=", $_POST['form_id']], ["AND", "store_client_id", "=", "$shopinfo->store_user_id"]);
+                // Support both internal ID and public ID
+                $where_query = array(
+                    '0(' => ["", "id", "=", $_POST['form_id']],
+                    '1)' => ["OR", "public_id", "=", $_POST['form_id']],
+                    ["AND", "store_client_id", "=", "$shopinfo->store_user_id"]
+                );
                 $comeback_form = $this->select_result(TABLE_FORMS, '*', $where_query, $resource_array);
 
                 // Debug: Log the form query result
@@ -3456,6 +3461,48 @@ class Client_functions extends common_function
                         $publishdata = array("", 'Please <a href="/account/login" title="login">login</a> to continue', md5(uniqid(rand(), true)));
                     }
 
+                    // Top Header Processing
+                    $top_header_data_raw = isset($formData['top_header_data']) ? $formData['top_header_data'] : '';
+                    $top_header_data_array = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("0", "#000000", "#ffffff", "", "left", "", "right");
+                    if ($top_header_data_array === false) {
+                        $top_header_data_array = array("0", "#000000", "#ffffff", "", "left", "", "right");
+                    }
+
+                    $top_header_html = '';
+                    if (isset($top_header_data_array[0]) && $top_header_data_array[0] == 1) {
+                        $top_header_bg = isset($top_header_data_array[1]) ? $top_header_data_array[1] : '#000000';
+                        $top_header_text_color = isset($top_header_data_array[2]) ? $top_header_data_array[2] : '#ffffff';
+                        $top_header_logo = isset($top_header_data_array[3]) ? $top_header_data_array[3] : '';
+                        $top_header_logo_align = isset($top_header_data_array[4]) ? $top_header_data_array[4] : 'left';
+                        $top_header_text       = isset($top_header_data_array[5]) ? $top_header_data_array[5] : '';
+                        $top_header_text_align = isset($top_header_data_array[6]) ? $top_header_data_array[6] : 'right';
+                        $top_header_font_size  = isset($top_header_data_array[7]) ? $top_header_data_array[7] : '14';
+
+                        $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px; margin-bottom: 15px;">';
+
+                        $logo_html = '';
+                        if (!empty($top_header_logo)) {
+                            $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">
+                                            <img src="' . $top_header_logo . '" style="max-height: 35px; vertical-align: middle; display: inline-block;">
+                                          </div>';
+                        }
+
+                        $text_html = '';
+                        if (!empty($top_header_text)) {
+                            $text_html = '<div class="globo-top-header-text" style="flex: 1; text-align: ' . $top_header_text_align . '; font-weight: 500; font-size: ' . $top_header_font_size . 'px; padding: 0 10px;">
+                                            ' . $top_header_text . '
+                                          </div>';
+                        }
+
+                        if ($top_header_logo_align == 'right' && $top_header_text_align == 'left') {
+                            $top_header_html .= $text_html . $logo_html;
+                        } else {
+                            $top_header_html .= $logo_html . $text_html;
+                        }
+
+                        $top_header_html .= '</div>';
+                    }
+
                     // Check if header should be shown - handle both string '1' and integer 1
                     $show_header = false;
                     if (isset($form_header_data[0])) {
@@ -3504,7 +3551,16 @@ class Client_functions extends common_function
 
 
 
+                        $header_banner_url = isset($form_header_data[8]) ? $form_header_data[8] : '';
+                        $banner_html = '';
+                        if (!empty($header_banner_url)) {
+                            $banner_html = '<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;">
+                                               <img src="' . $header_banner_url . '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+                                            </div>';
+                        }
+
                         $form_html = '<div class="formHeader header ' . $header_hidden . '">
+                                ' . $banner_html . '
                                 <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ' !important;">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
                                 <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ' !important;">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
@@ -5679,7 +5735,7 @@ class Client_functions extends common_function
                 // Check if this is a floating form (form_type == 4) AND we're on storefront
                 if ($form_type == '4' && $is_storefront) {
                     // Floating form: wrap in popup overlay structure - PUT SCRIPT AFTER FORM HTML
-                    $form_html = '<div class="' . $form_wrapper_class . '">' .
+                    $form_html = $top_header_html . '<div class="' . $form_wrapper_class . '">' .
                         $css_links .
                         $all_css .
                         '<!-- Floating Form Icon -->
@@ -5705,7 +5761,7 @@ class Client_functions extends common_function
                 }
                 else {
                     // Regular form: normal wrapper - PUT SCRIPT AFTER FORM HTML so it can find the form
-                    $form_html = '<div class="' . $form_wrapper_class . '">' .
+                    $form_html = $top_header_html . '<div class="' . $form_wrapper_class . '">' .
                         $css_links .
                         $all_css .
                         $form_html .
@@ -5722,6 +5778,7 @@ class Client_functions extends common_function
                     'form_id' => $form_id,
                     'form_html' => $form_html,
                     'form_header_data' => $form_header_data,
+                    'top_header_data' => $top_header_data_array,
                     'form_footer_data' => $form_footer_data,
                     'publishdata' => $publishdata,
                     'custom_code' => isset($custom_code) ? $custom_code : '',
@@ -10500,6 +10557,86 @@ class Client_functions extends common_function
         return $response;
     }
 
+    function savetopheaderform()
+    {
+        error_log("=== savetopheaderform CALLED ===");
+        
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? $_POST['form_id'] : '';
+            
+            // Handle array form_id (if double-appended in frontend)
+            if (is_array($form_id)) {
+                $form_id = end($form_id); // Take the latest one
+            }
+            
+            if (empty($form_id)) {
+                error_log("savetopheaderform ERROR: form_id is empty");
+                die(json_encode(array('result' => 'fail', 'msg' => __('Form ID is required'))));
+            }
+
+            error_log("savetopheaderform: form_id determined as: " . $form_id);
+
+            $show_top_header = isset($_POST['show_top_header']) ? $_POST['show_top_header'] : '0';
+            $bg_color = isset($_POST['top_header_bg_color_text']) ? $_POST['top_header_bg_color_text'] : (isset($_POST['top_header_bg_color']) ? $_POST['top_header_bg_color'] : '#000000');
+            $text_color = isset($_POST['top_header_text_color_text']) ? $_POST['top_header_text_color_text'] : (isset($_POST['top_header_text_color']) ? $_POST['top_header_text_color'] : '#ffffff');
+            $logo = isset($_POST['top_header_logo']) ? $_POST['top_header_logo'] : '';
+
+            // Handle logo file upload
+            if (isset($_FILES['top_header_logo_file']) && $_FILES['top_header_logo_file']['error'] == 0) {
+                $target_dir = "../assets/images/";
+                $file_name = time() . '_' . basename($_FILES["top_header_logo_file"]["name"]);
+                $target_file = $target_dir . $file_name;
+                if (move_uploaded_file($_FILES["top_header_logo_file"]["tmp_name"], $target_file)) {
+                    $logo = "assets/images/" . $file_name;
+                }
+            }
+
+            $logo_align = isset($_POST['top_header_logo_align']) ? $_POST['top_header_logo_align'] : 'left';
+            $text = isset($_POST['top_header_text']) ? $_POST['top_header_text'] : '';
+            $text_align = isset($_POST['top_header_text_align']) ? $_POST['top_header_text_align'] : 'right';
+            $font_size = isset($_POST['top_header_font_size']) ? $_POST['top_header_font_size'] : '14';
+
+            // Validate color formats
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $bg_color))
+                $bg_color = '#000000';
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $text_color))
+                $text_color = '#ffffff';
+
+            $top_header_data_array = array(
+                $show_top_header, // 0
+                $bg_color,        // 1
+                $text_color,      // 2
+                $logo,            // 3
+                $logo_align,      // 4
+                $text,            // 5
+                $text_align,      // 6
+                $font_size        // 7
+            );
+            $top_header_data = serialize($top_header_data_array);
+            
+            // Escape the serialized data for safe SQL insertion
+            $top_header_data_escaped = mysqli_real_escape_string($this->db_connection, $top_header_data);
+
+            $fields = array(
+                '`top_header_data`' => $top_header_data_escaped,
+            );
+
+            // Simplified WHERE clause avoids bracket handling bugs in ORM
+            $where_query = array(
+                ["", "id", "=", "$form_id"],
+                ["OR", "public_id", "=", "$form_id"]
+            );
+            
+            error_log("savetopheaderform: Saving for form_id " . $form_id);
+            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+
+            $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+        }
+        return $response_data;
+    }
+
+
     function saveheaderform()
     {
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
@@ -10519,6 +10656,20 @@ class Client_functions extends common_function
 
             // Alignment (applies to both)
             $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
+            $header_banner = isset($_POST['header_banner_image']) ? $_POST['header_banner_image'] : '';
+
+            // Handle header banner file upload
+            if (isset($_FILES['header_banner_image_file']) && $_FILES['header_banner_image_file']['error'] == 0) {
+                $target_dir = "../assets/images/";
+                if (!is_dir($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+                $file_name = time() . '_banner_' . basename($_FILES["header_banner_image_file"]["name"]);
+                $target_file = $target_dir . $file_name;
+                if (move_uploaded_file($_FILES["header_banner_image_file"]["tmp_name"], $target_file)) {
+                    $header_banner = "assets/images/" . $file_name;
+                }
+            }
 
             // Validate color formats
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $heading_text_color)) {
@@ -10535,8 +10686,8 @@ class Client_functions extends common_function
                 return $response;
             }
 
-            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color
-            $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color));
+            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color, [8]=header_banner
+            $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color, $header_banner));
 
             // Use title for form_name, or default to "Blank Form" if empty
             $form_name = !empty($title) ? $title : 'Blank Form';
@@ -10546,7 +10697,11 @@ class Client_functions extends common_function
                 '`form_name`' => $form_name,
             );
 
-            $where_query = array(["", "id", "=", "$form_id"]);
+            // Handle both internal id and public_id
+            $where_query = array(
+                ["(", "id", "=", "$form_id"],
+                ["OR", "public_id", "=", "$form_id", ")"]
+            );
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
 
@@ -10630,7 +10785,11 @@ class Client_functions extends common_function
 
             error_log("savefooterform DEBUG: Serialized length: " . strlen($form_footer_data));
 
-            $where_query = array(["", "id", "=", "$form_id"]);
+            // Handle both internal id and public_id
+            $where_query = array(
+                ["(", "id", "=", "$form_id"],
+                ["OR", "public_id", "=", "$form_id", ")"]
+            );
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
         }
@@ -10679,7 +10838,12 @@ class Client_functions extends common_function
                         '`publishdata`' => $updatedSerializedData,
                         '`custom_code`' => $custom_code_escaped // Store escaped code in dedicated column
                     );
-                    $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+                    // Handle both internal id and public_id
+                    $where_query_update = array(
+                        ["(", "id", "=", "$form_id"],
+                        ["OR", "public_id", "=", "$form_id", ")"]
+                    );
+                    $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query_update);
 
                     error_log("savepublishdata: Save result - " . json_encode($comeback));
                     $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);

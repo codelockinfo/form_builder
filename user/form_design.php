@@ -21,7 +21,7 @@ if ($form_id > 0) {
 <body style="padding: 0; margin: 0;">
     <div>
         <div class=" form_header">
-            <input type="hidden" class="formid" name="formid" value="<?php echo $form_id ?>">
+            <input type="hidden" id="form_id" class="formid" name="formid" value="<?php echo $form_id ?>">
             <div class="context">
                 <div class="context-inner">
                     <div class="item form-name-wrapper">
@@ -215,6 +215,26 @@ if ($form_id > 0) {
                         aria-labelledby="elements" tabindex="-1">
                         <div class="tabContent">
                             <div class="root">
+                                <div class="builder-item-wrapper ">
+                                    <div class="list-item" data-owl="16">
+                                        <div class="row">
+                                            <div class="icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false"
+                                                        aria-hidden="true">
+                                                        <path
+                                                            d="M1 2.5v2.5h18v-2.5a1.5 1.5 0 0 0-1.5-1.5h-15a1.5 1.5 0 0 0-1.5 1.5zm1 16.5a1 1 0 0 1-1-1v-2h2v1h1v2h-2zm17-1a1 1 0 0 1-1 1h-2v-2h1v-1h2v2zm-18-4v-3h2v3h-2zm16-3v3h2v-3h-2zm-11 6h3v2h-3v-2zm8 0h-3v2h3v-2z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="title">
+                                                <div>Top Header</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="builder-item-wrapper ">
                                     <div class="list-item" data-owl="2">
                                         <div class="row">
@@ -1056,6 +1076,176 @@ console.log('Custom code loaded');
                         </div>
                     </div>
                 </div>
+                <div class="polarisformcontrol topHeaderData" style="display:none;">
+                    <div class="header backheader">
+                        <button class="ui-btn back-icon">
+                            <span class="Polaris-Icon backBtn" data-id='0'>
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path
+                                        d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="title">Top Header</div>
+                    </div>
+                    <div class="container">
+                        <div class="add_topheaderdata_form">
+                         <form class="add_topheaderdata" method="POST">
+                            <input type="hidden" class="form_id" name="form_id" value='<?php echo $form_id; ?>'>
+                            
+                            <!-- Show Top Header -->
+                            <div class="form-control">
+                                <label class="Polaris-Choice" for="showTopHeader">
+                                    <span class="Polaris-Choice__Control">
+                                        <span class="Polaris-Checkbox">
+                                            <input name="show_top_header" id="showTopHeader" type="checkbox" class="Polaris-Checkbox__Input showTopHeader" value="1">
+                                            <span class="Polaris-Checkbox__Backdrop"></span>
+                                            <span class="Polaris-Checkbox__Icon">
+                                                <span class="Polaris-Icon">
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span class="Polaris-Choice__Label">Show Top Header</span>
+                                </label>
+                            </div>
+
+                            <!-- Background Color -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Background Color</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item" style="width: 60px;">
+                                            <input type="color" name="top_header_bg_color" class="top-header-bg-color" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                        </div>
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input type="text" name="top_header_bg_color_text" class="Polaris-TextField__Input top-header-bg-color-text" value="#000000" placeholder="#000000">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Color -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Text Color</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item" style="width: 60px;">
+                                            <input type="color" name="top_header_text_color" class="top-header-text-color" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                        </div>
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input type="text" name="top_header_text_color_text" class="Polaris-TextField__Input top-header-text-color-text" value="#ffffff" placeholder="#ffffff">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Logo Upload -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Logo</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="top_header_logo" id="topHeaderLogoUrl" placeholder="https://example.com/logo.png" class="Polaris-TextField__Input top-header-logo" type="text">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <div class="upload-area" id="topHeaderLogoUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px;">
+                                            <p>Click or Drag & Drop to upload logo</p>
+                                            <input type="file" id="topHeaderLogoFile" name="top_header_logo_file" style="display: none;" accept="image/*">
+                                            <div id="topHeaderLogoPreview" style="margin-top: 10px; display: none; text-align: center;">
+                                                <img src="" alt="Logo Preview" style="max-height: 50px; display: inline-block;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Logo Alignment -->
+                            <div class="form-control">
+                                <input name="top_header_logo_align" type="hidden" value="left" class="top-header-logo-align-input">
+                                <div class="chooseInput">
+                                    <div class="label">Logo Alignment</div>
+                                    <div class="chooseItems">
+                                        <div class="chooseItem-top-logo-align active" data-value="left">Left</div>
+                                        <div class="chooseItem-top-logo-align" data-value="center">Center</div>
+                                        <div class="chooseItem-top-logo-align" data-value="right">Right</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top Header Text -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Header Text</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="top_header_text" placeholder="Enter header text" class="Polaris-TextField__Input top-header-text-input" type="text">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Alignment -->
+                            <div class="form-control">
+                                <input name="top_header_text_align" type="hidden" value="right" class="top-header-text-align-input">
+                                <div class="chooseInput">
+                                    <div class="label">Text Alignment</div>
+                                    <div class="chooseItems">
+                                        <div class="chooseItem-top-text-align" data-value="left">Left</div>
+                                        <div class="chooseItem-top-text-align" data-value="center">Center</div>
+                                        <div class="chooseItem-top-text-align active" data-value="right">Right</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Font Size -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Font Size (px)</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="top_header_font_size" min="10" max="60" class="Polaris-TextField__Input top-header-font-size-input" type="number" value="14">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 20px;"></div>
+                         </form>
+                        </div>
+                    </div>
+                </div>
                 <div class="polarisformcontrol  headerData" style="display:none;">
                     <div class="header backheader">
 
@@ -1073,7 +1263,7 @@ console.log('Custom code loaded');
                     </div>
                     <div class="container">
                         <form class="add_headerdata" method="POST">
-                            <input type="hidden" class="form_id" name="form_id"  value=''>
+                            <input type="hidden" class="form_id" name="form_id"  value='<?php echo $form_id; ?>'>
                             <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox12"><span
                                         class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="showheader"
                                                 id="PolarisCheckbox12" type="checkbox" class="Polaris-Checkbox__Input showHeader"
@@ -1089,24 +1279,47 @@ console.log('Custom code loaded');
                                         class="Polaris-Choice__Label">Show Header</span></label></div>
                             <div class="form-control">
                                 <div class="textfield-wrapper">
-                                    <div class="">
-                                        <div class="Polaris-Labelled__LabelWrapper">
-                                            <div class="Polaris-Label"><label id="PolarisTextField58Label"
-                                                    for="PolarisTextField58" class="Polaris-Label__Text">
-                                                    <div>Title</div>
-                                                </label></div>
-                                        </div>
-                                        <div class="Polaris-Connected">
-                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                    <input name="header__title" placeholder="" class="Polaris-TextField__Input headerTitle" type="text" aria-labelledby="PolarisTextField58Label" aria-invalid="false">
-                                                    <div class="Polaris-TextField__Backdrop"></div>
-                                                </div>
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Title</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="header__title" placeholder="Enter form title" class="Polaris-TextField__Input headerTitle" type="text">
+                                                <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Header Banner Image -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Banner Image (Above Title)</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected" style="margin-bottom: 10px;">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="header_banner_image" id="headerBannerUrl" placeholder="https://example.com/banner.png" class="Polaris-TextField__Input header-banner-image" type="text">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="upload-area" id="headerBannerUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px; background: #fafbfb;">
+                                        <div style="margin-bottom: 8px;">
+                                            <svg viewBox="0 0 20 20" width="20" height="20" fill="#5c5f62" style="display: inline-block;"><path d="M10 0c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm1 15v-5h3l-4-5-4 5h3v5h2z"/></svg>
+                                        </div>
+                                        <p style="font-size: 13px; color: #5c5f62;">Click or Drag & Drop for banner</p>
+                                        <input type="file" id="headerBannerFile" name="header_banner_image_file" style="display: none;" accept="image/*">
+                                        <div id="headerBannerPreview" style="margin-top: 12px; display: none; text-align: center;">
+                                            <img src="" style="max-width: 100%; max-height: 120px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(63,63,68,0.05);">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-control">
                                 <div class="Polaris-Labelled__LabelWrapper">
                                     <div class="Polaris-Label">
@@ -1838,8 +2051,8 @@ console.log('Custom code loaded');
                             <div class="container tabContent footerData">
                                     <div class="">
                                         <div class="footerData">
+                                                                             <input type="hidden" class="form_id" name="form_id" value='<?php echo $form_id; ?>'>
                                     
-                                        <input type="hidden" class="form_id" name="form_id" value=''>
                                         <div class="form-control">
                                             <div class="textfield-wrapper">
                                                 <div class="">
@@ -7113,29 +7326,124 @@ console.log('Custom code loaded');
                 'text-align': textAlign,
                 'color': subheadingTextColor
             });
+
+            // Update Header Banner Preview
+            var bannerUrl = $('.header-banner-image').val() || '';
+            var $bannerWrapper = $('.globo-header-banner-wrapper');
+            if (bannerUrl) {
+                if ($bannerWrapper.length === 0) {
+                    $('.formHeader').prepend('<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;"><img class="globo-header-banner" src="' + bannerUrl + '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;"></div>');
+                } else {
+                    $bannerWrapper.find('img').attr('src', bannerUrl);
+                    $bannerWrapper.show();
+                }
+            } else {
+                $bannerWrapper.hide();
+            }
             
             // Also apply alignment classes to formHeader
             $(".formHeader").removeClass("align-left align-center align-right").addClass(textAlign);
         };
         
-        // Real-time preview updates for header design controls
-        // Real-time preview updates for header design controls
+        // Function to update top header preview in real-time
+        window.updateTopHeaderPreview = function() {
+            var showHeader = $('.showTopHeader').is(':checked');
+            var bgColor = $('.top-header-bg-color-text').val() || $('.top-header-bg-color').val() || '#000000';
+            var textColor = $('.top-header-text-color-text').val() || $('.top-header-text-color').val() || '#ffffff';
+            var logoUrl = $('.top-header-logo').val() || '';
+            var logoAlign = $('.top-header-logo-align-input').val() || 'left';
+            var headerText = $('.top-header-text-input').val() || '';
+            var textAlign = $('.top-header-text-align-input').val() || 'right';
+            var fontSize = $('.top-header-font-size-input').val() || '14';
+            
+            var $allHeaders = $('.globo-top-header');
+            
+            if ($allHeaders.length > 0) {
+                // If more than one exists, or the only one is in the wrong place (inside the card), re-organize
+                // Move it to the very top edge (.contact-form)
+                if ($allHeaders.length > 1 || $('.contact-form > .globo-top-header').length === 0) {
+                    var $theHeader = $allHeaders.first();
+                    if ($('.contact-form').length > 0) {
+                        $('.contact-form').prepend($theHeader);
+                        $('.globo-top-header').not($theHeader).remove();
+                    }
+                }
+            } else {
+                // Doesn't exist at all, create it at the top edge
+                var initialHtml = '<div class="globo-top-header" style="display:none; padding: 10px 20px; align-items: center;"></div>';
+                if ($('.contact-form').length > 0) {
+                    $('.contact-form').prepend(initialHtml);
+                } else if ($('.code-form-app').length > 0) {
+                    $('.code-form-app').prepend(initialHtml);
+                }
+            }
+            
+            var $topHeader = $('.globo-top-header').first();
+
+            if (showHeader) {
+                $topHeader.show().css({
+                    'background-color': bgColor,
+                    'color': textColor,
+                    'display': 'flex'
+                });
+                
+                var logoHtml = logoUrl ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="max-height: 35px; vertical-align: middle;"></div>' : '';
+                var textHtml = headerText ? '<div class="globo-top-header-text" style="flex: 1; text-align: ' + textAlign + '; font-weight: 500; font-size: ' + fontSize + 'px; padding: 0 10px;">' + headerText + '</div>' : '';
+                
+                // If both exist, we need to decide order. If only one exists, it will naturally take 100% width due to flex:1
+                if (logoUrl && headerText) {
+                    if (logoAlign == 'right' && textAlign == 'left') {
+                        $topHeader.html(textHtml + logoHtml);
+                    } else {
+                        $topHeader.html(logoHtml + textHtml);
+                    }
+                } else {
+                    $topHeader.html(logoHtml + textHtml);
+                }
+            } else {
+                $topHeader.hide();
+            }
+        };
+
+        // Debounce timer for auto-saving top header
+        var topHeaderAutoSaveTimer;
+        
+        // Real-time preview updates and auto-save for Top Header
+        $(document).on('input change', '.showTopHeader, .top-header-bg-color, .top-header-bg-color-text, .top-header-text-color, .top-header-text-color-text, .top-header-logo, .top-header-logo-align-input, .top-header-text-input, .top-header-text-align-input, .top-header-font-size-input', function() {
+            // Auto-check the toggle if user is adding content
+            if ($(this).hasClass('top-header-text-input') || $(this).hasClass('top-header-logo')) {
+                if ($(this).val().trim().length > 0) {
+                    $('.showTopHeader').prop('checked', true);
+                }
+            }
+            updateTopHeaderPreview();
+            
+            // Debounced auto-save
+            clearTimeout(topHeaderAutoSaveTimer);
+            topHeaderAutoSaveTimer = setTimeout(function() {
+                if (typeof savetopheaderform === 'function') {
+                    savetopheaderform();
+                }
+            }, 1000); // Save after 1 second of inactivity
+        });
+
+        // Real-time preview updates for standard Header design controls
         $(document).on('input change', '.header-design-heading-font-size, .header-design-subheading-font-size, .header-design-text-align, .header-text-align-input, .header-design-heading-text-color, .header-design-heading-text-color-text, .header-design-subheading-text-color, .header-design-subheading-text-color-text', function() {
-            updateHeaderPreview();
+            if (typeof updateHeaderPreview === 'function') updateHeaderPreview();
         });
         
         // Sync heading color picker with text input
         $(document).on('change', '.header-design-heading-text-color', function() {
             var colorValue = $(this).val();
             $('.header-design-heading-text-color-text').val(colorValue);
-            updateHeaderPreview();
+            if (typeof updateHeaderPreview === 'function') updateHeaderPreview();
         });
         
         $(document).on('input', '.header-design-heading-text-color-text', function() {
             var colorValue = $(this).val();
             if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
                 $('.header-design-heading-text-color').val(colorValue);
-                updateHeaderPreview();
+                if (typeof updateHeaderPreview === 'function') updateHeaderPreview();
             }
         });
         
@@ -7143,17 +7451,78 @@ console.log('Custom code loaded');
         $(document).on('change', '.header-design-subheading-text-color', function() {
             var colorValue = $(this).val();
             $('.header-design-subheading-text-color-text').val(colorValue);
-            updateHeaderPreview();
+            if (typeof updateHeaderPreview === 'function') updateHeaderPreview();
         });
         
         $(document).on('input', '.header-design-subheading-text-color-text', function() {
             var colorValue = $(this).val();
             if (/^#[0-9A-Fa-f]{6}$/i.test(colorValue)) {
                 $('.header-design-subheading-text-color').val(colorValue);
-                updateHeaderPreview();
+                if (typeof updateHeaderPreview === 'function') updateHeaderPreview();
             }
         });
-        
+
+        // Sync Top Header background color picker with text input
+        $(document).on('change', '.top-header-bg-color', function() {
+            $('.top-header-bg-color-text').val($(this).val());
+            updateTopHeaderPreview();
+        });
+        $(document).on('input', '.top-header-bg-color-text', function() {
+            if (/^#[0-9A-Fa-f]{6}$/i.test($(this).val())) {
+                $('.top-header-bg-color').val($(this).val());
+                updateTopHeaderPreview();
+            }
+        });
+
+        // Sync Top Header text color picker with text input
+        $(document).on('change', '.top-header-text-color', function() {
+            $('.top-header-text-color-text').val($(this).val());
+            updateTopHeaderPreview();
+        });
+        $(document).on('input', '.top-header-text-color-text', function() {
+            if (/^#[0-9A-Fa-f]{6}$/i.test($(this).val())) {
+                $('.top-header-text_color').val($(this).val());
+                updateTopHeaderPreview();
+            }
+        });
+
+        // Logo & Text alignment button clicks (Top Header)
+        $(document).on('click', '.chooseItem-top-logo-align', function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            $('.top-header-logo-align-input').val($(this).data('value'));
+            updateTopHeaderPreview();
+        });
+        $(document).on('click', '.chooseItem-top-text-align', function() {
+            $(this).addClass('active').siblings().removeClass('active');
+            $('.top-header-text-align-input').val($(this).data('value'));
+            updateTopHeaderPreview();
+        });
+
+        // Handle Top Header logo upload interaction
+        $(document).on('click', '#topHeaderLogoUploadArea', function() {
+            $('#topHeaderLogoFile').click();
+        });
+
+        $(document).on('change', '#topHeaderLogoFile', function() {
+            var file = this.files[0];
+            if (file) {
+                // Show local preview immediately
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#topHeaderLogoPreview').show().find('img').attr('src', e.target.result);
+                    // Update the preview area with the new image - we can't wait for server yet
+                    // But updateTopHeaderPreview will pick up the temporary data
+                    updateTopHeaderPreview();
+                };
+                reader.readAsDataURL(file);
+                
+                // Trigger auto-save which will upload the actual file
+                if (typeof savetopheaderform === 'function') {
+                    savetopheaderform();
+                }
+            }
+        });
+
         // Ensure select displays selected value properly
         $(document).ready(function() {
             // Force select to show selected value
@@ -8795,7 +9164,7 @@ console.log('Custom code loaded');
                                 $('.contact-form').not($formContainer).css('background-color', 'transparent');
                             }
                             $('.code-form-app label, .contact-form label, .code-form-app .label-content, .contact-form .label-content').css('color', textColor);
-                            $('.code-form-app input, .contact-form input, .code-form-app textarea, .contact-form textarea, .code-form-app select, .contact-form select').not('.star-rating input').css({
+                            $('.code-form-app input, .contact-form input,  textarea, .contact-form textarea, .code-form-app select, .contact-form select').not('.star-rating input').css({
                                 'color': textColor,
                                 'background-color': bgColor,
                                 'border-color': swatch1
@@ -8943,3 +9312,37 @@ console.log('Custom code loaded');
     }, 1500); // 1.5s delay to allow other scripts to run
 
 </script>
+
+<style>
+.chooseItems {
+    display: flex;
+    border: 1px solid #dfe3e8;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+    max-width: 250px;
+}
+.chooseItem-top-logo-align, .chooseItem-top-text-align {
+    flex: 1;
+    padding: 8px 5px;
+    text-align: center;
+    cursor: pointer;
+    background: #f4f6f8;
+    color: #454f5b;
+    font-size: 13px;
+    border-right: 1px solid #dfe3e8;
+    transition: all 0.2s;
+    user-select: none;
+}
+.chooseItem-top-logo-align:last-child, .chooseItem-top-text-align:last-child {
+    border-right: none;
+}
+.chooseItem-top-logo-align.active, .chooseItem-top-text-align.active {
+    background: #008060;
+    color: white;
+    font-weight: 600;
+}
+.chooseItem-top-logo-align:hover:not(.active), .chooseItem-top-text-align:hover:not(.active) {
+    background: #e1e3e5;
+}
+</style>
