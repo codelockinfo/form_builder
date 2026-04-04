@@ -169,6 +169,13 @@ if ($form_id > 0) {
                 </div>
                 <div class="preview-box iframe-wrapper desktop">
                     <div class="contact-form">
+                        <div class="top-header-preview" style="padding: 15px; border-bottom: 1px solid #eee; display: none;">
+                            <div class="top-logo-wrapper" style="text-align: center; margin-bottom: 10px; display: none;">
+                                <img src="" style="max-width: 150px; height: auto;">
+                            </div>
+                            <div class="top-title" style="font-size: 24px; font-weight: bold; text-align: center;"></div>
+                            <div class="top-description" style="text-align: center; margin-top: 5px;"></div>
+                        </div>
                         <div class="code-form-app boxed-layout" style="padding: 0;">
                         </div> 
                     </div>
@@ -214,6 +221,26 @@ if ($form_id > 0) {
                     <div class="Polaris-Tabs__Panel tab-content  active" id="tab-1" role="tabpanel"
                         aria-labelledby="elements" tabindex="-1">
                         <div class="tabContent">
+                            <div class="root">
+                                <div class="builder-item-wrapper ">
+                                    <div class="list-item" data-owl="16">
+                                        <div class="row">
+                                            <div class="icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false"
+                                                        aria-hidden="true">
+                                                        <path d="M1 4h18v2H1V4zm0 4h18v2H1V8zm0 4h18v2H1v-2z" fill="currentColor"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="title">
+                                                <div>Top Header</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="root">
                                 <div class="builder-item-wrapper ">
                                     <div class="list-item" data-owl="2">
@@ -1056,6 +1083,165 @@ console.log('Custom code loaded');
                         </div>
                     </div>
                 </div>
+                <div class="polarisformcontrol  topHeaderData" style="display:none;">
+                    <div class="header backheader">
+
+                        <button class="ui-btn back-icon">
+                            <span class="Polaris-Icon backBtn" data-id='0'>
+                                <span class="Polaris-VisuallyHidden"></span>
+                                <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                    <path
+                                        d="M14 20.001a.994.994 0 0 1-.747-.336l-8-9a.999.999 0 0 1 0-1.328l8-9a1 1 0 0 1 1.494 1.328l-7.41 8.336 7.41 8.336a.998.998 0 0 1-.747 1.664z">
+                                    </path>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="title">Top Header</div>
+                    </div>
+                    <div class="container">
+                        <form class="add_top_headerdata" method="POST">
+                            <input type="hidden" class="form_id" name="form_id"  value=''>
+                            <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckboxTopHeader"><span
+                                        class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="show_top_header"
+                                                id="PolarisCheckboxTopHeader" type="checkbox" class="Polaris-Checkbox__Input showTopHeader"
+                                                aria-invalid="false" role="checkbox" aria-checked="true" value="1"><span class="Polaris-Checkbox__Backdrop"></span><span
+                                                class="Polaris-Checkbox__Icon"><span class="Polaris-Icon"><span
+                                                        class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20"
+                                                        class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path
+                                                            d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                        </path>
+                                                    </svg></span></span></span></span><span
+                                        class="Polaris-Choice__Label">Show Top Header</span></label></div>
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="">
+                                        <div class="Polaris-Labelled__LabelWrapper">
+                                            <div class="Polaris-Label"><label id="PolarisTextFieldTopTitleLabel"
+                                                    for="PolarisTextFieldTopTitle" class="Polaris-Label__Text">
+                                                    <div>Title</div>
+                                                </label></div>
+                                        </div>
+                                        <div class="Polaris-Connected">
+                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                    <input name="top_header__title" placeholder="" class="Polaris-TextField__Input topHeaderTitle" type="text" aria-labelledby="PolarisTextFieldTopTitleLabel" aria-invalid="false">
+                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <div class="Polaris-Labelled__LabelWrapper">
+                                    <div class="Polaris-Label">
+                                        <label class="Polaris-Label__Text">Description</label>
+                                    </div>
+                                </div>
+                                <textarea name="top_contentheader" id="top_contentheader" class="myeditor"></textarea>
+                            </div>
+                            
+                            <!-- Top Header Design Customization -->
+                            <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                                <div style="margin-bottom: 16px;">
+                                    <div class="Polaris-Label">
+                                        <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Background Color -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Background Color</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                    <input type="color" name="top_header_bg_color" class="top-header-design-bg-color" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                </div>
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="text" name="top_header_bg_color_text" class="Polaris-TextField__Input top-header-design-bg-color-text" value="#ffffff" placeholder="#ffffff">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Logo -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Logo (optional)</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="text" name="top_header_logo_url" id="topHeaderLogoUrl" class="Polaris-TextField__Input top-header-design-logo-url" value="" placeholder="https://example.com/logo.png">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected__Item">
+                                                    <button type="button" class="Polaris-Button upload-top-logo-btn" style="margin-left: 8px;">
+                                                        <span class="Polaris-Button__Content">Upload</span>
+                                                    </button>
+                                                    <input type="file" id="top_logo_file_input" style="display:none;" accept="image/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Heading Font Size -->
+                                <div class="form-control">
+                                    <div class="textfield-wrapper">
+                                        <div class="">
+                                            <div class="Polaris-Labelled__LabelWrapper">
+                                                <div class="Polaris-Label">
+                                                    <label class="Polaris-Label__Text">Heading Font Size</label>
+                                                </div>
+                                            </div>
+                                            <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField">
+                                                        <input type="number" name="top_header_heading_font_size" class="Polaris-TextField__Input top-header-design-heading-font-size" value="24" min="10" max="72" step="1">
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected__Item" style="width: 45px;">
+                                                    <div style="display: flex; align-items: center; height: 100%; padding-left: 8px; color: #6d7175; font-size: 14px;">px</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Text Align -->
+                                <div class="form-control">
+                                    <input name="top_header_text_align" type="hidden" value="center" class="top-header-text-align-input">
+                                    <div class="chooseInput">
+                                        <div class="label">Alignment</div>
+                                        <div class="chooseItems">
+                                            <div class="chooseItem-top-align" data-value="left">Left</div>
+                                            <div class="chooseItem-top-align active" data-value="center">Center</div>
+                                            <div class="chooseItem-top-align" data-value="right">Right</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px;"></div>
+                        </form>
+                    </div>
+                </div>
                 <div class="polarisformcontrol  headerData" style="display:none;">
                     <div class="header backheader">
 
@@ -1120,19 +1306,70 @@ console.log('Custom code loaded');
                             <div class="form-control design-customizer-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
                                 <div style="margin-bottom: 16px;">
                                     <div class="Polaris-Label">
-                                        <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
-                                    </div>
-                                </div>
-                                
-                                <!-- Heading Font Size -->
-                                <div class="form-control">
-                                    <div class="textfield-wrapper">
-                                        <div class="">
-                                            <div class="Polaris-Labelled__LabelWrapper">
-                                                <div class="Polaris-Label">
-                                                    <label class="Polaris-Label__Text">Heading Font Size</label>
+                                                    <label class="Polaris-Label__Text" style="font-weight: 600; font-size: 16px;">Design Customization</label>
                                                 </div>
                                             </div>
+
+                                            <!-- Header Background Color -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Header Background Color</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item" style="width: 60px;">
+                                                                <input type="color" name="header_bg_color" class="header-design-bg-color" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="header_bg_color_text" class="Polaris-TextField__Input header-design-bg-color-text" value="#ffffff" placeholder="#ffffff">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Logo Upload -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Header Logo (optional)</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-Connected">
+                                                            <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                                <div class="Polaris-TextField">
+                                                                    <input type="text" name="header_logo_url" id="headerLogoUrl" class="Polaris-TextField__Input header-design-logo-url" value="" placeholder="https://example.com/logo.png">
+                                                                    <div class="Polaris-TextField__Backdrop"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="Polaris-Connected__Item">
+                                                                <button type="button" class="Polaris-Button upload-logo-btn" style="margin-left: 8px;">
+                                                                    <span class="Polaris-Button__Content">Upload</span>
+                                                                </button>
+                                                                <input type="file" id="logo_file_input" style="display:none;" accept="image/*">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Heading Font Size -->
+                                            <div class="form-control">
+                                                <div class="textfield-wrapper">
+                                                    <div class="">
+                                                        <div class="Polaris-Labelled__LabelWrapper">
+                                                            <div class="Polaris-Label">
+                                                                <label class="Polaris-Label__Text">Heading Font Size</label>
+                                                            </div>
+                                                        </div>
                                             <div class="Polaris-Connected">
                                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                     <div class="Polaris-TextField">

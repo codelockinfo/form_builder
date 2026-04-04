@@ -468,6 +468,9 @@ $(document).ready(function () {
             if (hasHeaderData || title === 'Header') {
                 slideType = 'header';
                 mapping[2] = index; // data-owl="2" maps to Header
+            } else if (title === 'Top Header' || $slide.hasClass('topHeaderData')) {
+                slideType = 'top-header';
+                mapping[16] = index; // data-owl="16" maps to Top Header
             } else if (hasElementAppend) {
                 // This is the element edit panel (shows when clicking on an element)
                 // It's the slide with class "elementAppend" - this is where element properties are edited
@@ -721,6 +724,30 @@ $(document).ready(function () {
                         initializeCKEditor('contentheader', '.boxed-layout .formHeader .description');
                     } else {
 
+                    }
+                }, 500);
+            }
+            // Initialize CKEditor when Top Header drawer is opened
+            if (slideTo == 16) { // Top Header drawer
+                setTimeout(function () {
+                    var $topHeaderEditor = $('.topHeaderData textarea[name="top_contentheader"]');
+                    if ($topHeaderEditor.length > 0) {
+                        if (CKEDITOR.instances['top_contentheader']) {
+                            try {
+                                CKEDITOR.instances['top_contentheader'].destroy();
+                            } catch (e) {
+                            }
+                        }
+                        initializeCKEditor('top_contentheader', '.top-header-preview .top-description');
+                        
+                        // Add listener for real-time preview and auto-save
+                        if (CKEDITOR.instances['top_contentheader']) {
+                            CKEDITOR.instances['top_contentheader'].on('change', function() {
+                                var editorData = this.getData();
+                                $('.top-header-preview .top-description').html(editorData);
+                                debounceTopHeaderSave();
+                            });
+                        }
                     }
                 }, 500);
             }
@@ -1287,7 +1314,184 @@ $(document).on("change", ".allowMultipleCheckbox", function () {
     }
 });
 
-// copy input enbed value
+// Header Auto-save and Design updates
+var headerSaveTimeout;
+function debounceHeaderSave() {
+    if (headerSaveTimeout) clearTimeout(headerSaveTimeout);
+    headerSaveTimeout = setTimeout(function () {
+        if (typeof saveheaderform === 'function') {
+            saveheaderform();
+        }
+    }, 1000);
+}
+
+$(document).on('input change', '.add_headerdata input, .add_headerdata textarea', function () {
+    var $input = $(this);
+    var name = $input.attr('name');
+    var val = $input.val();
+
+    // Live Preview Updates
+    if (name === 'header_bg_color' || name === 'header_bg_color_text') {
+        // Find all formHeader elements (including those in different layouts like floting_form_main)
+        $('.formHeader').each(function() {
+            this.style.setProperty('background-color', val, 'important');
+        });
+        
+        if (name === 'header_bg_color') $('.header-design-bg-color-text').val(val);
+        else $('.header-design-bg-color').val(val);
+    } else if (name === 'header_logo_url') {
+        var $logoWrappers = $('.formHeader .logo-wrapper');
+        var textAlign = $('.header-text-align-input').val() || 'center';
+        if (val) {
+            if ($logoWrappers.length === 0) {
+                $('.formHeader').prepend('<div class="logo-wrapper" style="text-align: ' + textAlign + '; margin-bottom: 10px;"><img src="' + val + '" style="max-width: 150px; height: auto;"></div>');
+            } else {
+                $logoWrappers.css('text-align', textAlign).find('img').attr('src', val);
+            }
+        } else {
+            $logoWrappers.remove();
+        }
+    } else if (name === 'header_heading_font_size') {
+        $('.formHeader .title').css('font-size', val + 'px');
+    } else if (name === 'header_heading_text_color' || name === 'header_heading_text_color_text') {
+        $('.formHeader .title').css('color', val);
+        if (name === 'header_heading_text_color') $('.header-design-heading-text-color-text').val(val);
+        else $('.header-design-heading-text-color').val(val);
+    } else if (name === 'header_subheading_font_size') {
+        $('.formHeader .description').css('font-size', val + 'px');
+    } else if (name === 'header_subheading_text_color' || name === 'header_subheading_text_color_text') {
+        $('.formHeader .description').css('color', val);
+        if (name === 'header_subheading_text_color') $('.header-design-subheading-text-color-text').val(val);
+        else $('.header-design-subheading-text-color').val(val);
+    } else if (name === 'header__title') {
+        $('.formHeader .title').text(val);
+    }
+
+    debounceHeaderSave();
+});
+
+// Update logo alignment when alignment changes
+$(document).on('click', '.headerData .chooseItem-align', function() {
+    var textAlign = $(this).data('value');
+    $('.formHeader .logo-wrapper').css('text-align', textAlign);
+    debounceHeaderSave();
+});
+
+$(document).on('click', '.upload-logo-btn', function () {
+    $('#logo_file_input').click();
+});
+
+$(document).on('change', '#logo_file_input', function () {
+    var file_data = $(this).prop('files')[0];
+    if (!file_data) return;
+
+    var form_id = $('.headerData .form_id').val();
+    var form_data = new FormData();
+    form_data.append('header_logo_file', file_data);
+    form_data.append('routine_name', 'upload_header_logo');
+    form_data.append('form_id', form_id);
+    form_data.append('store', store);
+
+    $.ajax({
+        url: 'ajax_call.php',
+        type: 'POST',
+        data: form_data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            var res = JSON.parse(response);
+            if (res.result === 'success') {
+                $('#headerLogoUrl').val(res.url).trigger('change');
+            } else {
+                alert(res.msg);
+            }
+        }
+    });
+});
+// Top Header Auto-save and Design updates
+var topHeaderSaveTimeout;
+function debounceTopHeaderSave() {
+    if (topHeaderSaveTimeout) clearTimeout(topHeaderSaveTimeout);
+    topHeaderSaveTimeout = setTimeout(function () {
+        if (typeof savetopheaderform === 'function') {
+            savetopheaderform();
+        }
+    }, 1000);
+}
+
+$(document).on('input change', '.add_top_headerdata input, .add_top_headerdata textarea', function () {
+    var $input = $(this);
+    var name = $input.attr('name');
+    var val = $input.val();
+
+    // Live Preview Updates
+    if (name === 'show_top_header') {
+        if ($input.is(':checked')) $('.top-header-preview').show();
+        else $('.top-header-preview').hide();
+    } else if (name === 'top_header_bg_color' || name === 'top_header_bg_color_text') {
+        $('.top-header-preview').each(function() {
+            this.style.setProperty('background-color', val, 'important');
+        });
+        if (name === 'top_header_bg_color') $('.top-header-design-bg-color-text').val(val);
+        else $('.top-header-design-bg-color').val(val);
+    } else if (name === 'top_header_logo_url') {
+        var $logoWrapper = $('.top-header-preview .top-logo-wrapper');
+        if (val) {
+            $logoWrapper.show().find('img').attr('src', val);
+        } else {
+            $logoWrapper.hide();
+        }
+    } else if (name === 'top_header_heading_font_size') {
+        $('.top-header-preview .top-title').css('font-size', val + 'px');
+    } else if (name === 'top_header__title') {
+        $('.top-header-preview .top-title').text(val);
+    }
+
+    debounceTopHeaderSave();
+});
+
+// Update top header alignment
+$(document).on('click', '.topHeaderData .chooseItem-top-align', function() {
+    $(this).addClass('active').siblings().removeClass('active');
+    var textAlign = $(this).data('value');
+    $('.top-header-text-align-input').val(textAlign);
+    $('.top-header-preview .top-title, .top-header-preview .top-description, .top-header-preview .top-logo-wrapper').css('text-align', textAlign);
+    debounceTopHeaderSave();
+});
+
+$(document).on('click', '.upload-top-logo-btn', function () {
+    $('#top_logo_file_input').click();
+});
+
+$(document).on('change', '#top_logo_file_input', function () {
+    var file_data = $(this).prop('files')[0];
+    if (!file_data) return;
+
+    var form_id = $('.topHeaderData .form_id').val();
+    var form_data = new FormData();
+    form_data.append('header_logo_file', file_data);
+    form_data.append('routine_name', 'upload_header_logo'); // Reuse same backend
+    form_data.append('form_id', form_id);
+    form_data.append('store', store);
+
+    $.ajax({
+        url: 'ajax_call.php',
+        type: 'POST',
+        data: form_data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            var res = JSON.parse(response);
+            if (res.result === 'success') {
+                $('#topHeaderLogoUrl').val(res.url).trigger('change');
+            } else {
+                alert(res.msg);
+            }
+        }
+    });
+});
 $(document).on("click", ".copyButton", function () {
     var copyText = document.querySelector(".embed_code");
     copyText.select();

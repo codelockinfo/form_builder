@@ -2705,6 +2705,7 @@ class Client_functions extends common_function
                     '`form_type`' => isset($form_data['form_type']) ? $form_data['form_type'] : '1',
                     '`form_header_data`' => isset($form_data['form_header_data']) ? $form_data['form_header_data'] : '',
                     '`form_footer_data`' => isset($form_data['form_footer_data']) ? $form_data['form_footer_data'] : '',
+                    '`top_header_data`' => isset($form_data['top_header_data']) ? $form_data['top_header_data'] : '',
                     '`publishdata`' => isset($form_data['publishdata']) ? $form_data['publishdata'] : '',
                     '`public_id`' => $new_public_id,
                     '`status`' => isset($form_data['status']) ? $form_data['status'] : '1',
@@ -3405,6 +3406,7 @@ class Client_functions extends common_function
                 if ($formData != '') {
                     $form_header_data_raw = isset($formData['form_header_data']) ? $formData['form_header_data'] : '';
                     $form_footer_data_raw = isset($formData['form_footer_data']) ? $formData['form_footer_data'] : '';
+                    $top_header_data_raw = isset($formData['top_header_data']) ? $formData['top_header_data'] : '';
                     $publishdata_raw = isset($formData['publishdata']) ? $formData['publishdata'] : '';
                     $custom_code = isset($formData['custom_code']) ? $formData['custom_code'] : '';
 
@@ -3414,6 +3416,11 @@ class Client_functions extends common_function
                     $form_header_data = !empty($form_header_data_raw) ? @unserialize($form_header_data_raw) : array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
                     if ($form_header_data === false) {
                         $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center");
+                    }
+
+                    $top_header_data = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("0", "", "", 24, "center", "", "", "", "#ffffff", "");
+                    if ($top_header_data === false) {
+                        $top_header_data = array("0", "", "", 24, "center", "", "", "", "#ffffff", "");
                     }
 
                     // Ensure array has all required elements (backward compatibility - add missing elements)
@@ -3444,6 +3451,14 @@ class Client_functions extends common_function
                     }
 
                     // Debug logging for header data
+                    if (count($form_header_data) < 10) {
+                        if (count($form_header_data) < 9) {
+                            $form_header_data[] = '#ffffff'; // bg_color
+                        }
+                        if (count($form_header_data) < 10) {
+                            $form_header_data[] = ''; // logo_url
+                        }
+                    }
                     error_log("Form Header Data - form_id: $form_id, show_header[0]: " . (isset($form_header_data[0]) ? $form_header_data[0] : 'NOT SET') . ", title[1]: " . (isset($form_header_data[1]) ? $form_header_data[1] : 'NOT SET') . ", count: " . count($form_header_data));
 
                     $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0", "Reset", "0", "align-left");
@@ -3477,18 +3492,23 @@ class Client_functions extends common_function
 
                     if ($header_data_length >= 8) {
                         // New format: separate heading and sub-heading settings
-                        $heading_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
-                        $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
-                        $heading_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#000000';
-                        $subheading_font_size = isset($form_header_data[6]) ? intval($form_header_data[6]) : 16;
                         $subheading_text_color = isset($form_header_data[7]) ? $form_header_data[7] : '#000000';
+                        $header_bg_color = isset($form_header_data[8]) ? $form_header_data[8] : '#ffffff';
+                        $header_logo_url = isset($form_header_data[9]) ? $form_header_data[9] : '';
 
                         // Validate color formats
-                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $heading_text_color)) {
-                            $heading_text_color = '#000000';
-                        }
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $subheading_text_color)) {
                             $subheading_text_color = '#000000';
+                        }
+                        if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $header_bg_color)) {
+                            $header_bg_color = '#ffffff';
+                        }
+                        
+                        $logo_html = '';
+                        if (!empty($header_logo_url)) {
+                            $logo_html = '<div class="logo-wrapper" style="text-align: ' . $header_text_align . '; margin-bottom: 10px;">
+                                <img src="' . $header_logo_url . '" alt="Logo" style="max-width: 150px; height: auto;">
+                            </div>';
                         }
                         
                         // Override with theme color scheme settings if they exist
@@ -3504,7 +3524,8 @@ class Client_functions extends common_function
 
 
 
-                        $form_html = '<div class="formHeader header ' . $header_hidden . '">
+                        $form_html = '<div class="formHeader header ' . $header_hidden . '" style="background-color: ' . $header_bg_color . ' !important;">
+                                ' . $logo_html . '
                                 <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ' !important;">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
                                 <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ' !important;">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
@@ -5723,6 +5744,7 @@ class Client_functions extends common_function
                     'form_html' => $form_html,
                     'form_header_data' => $form_header_data,
                     'form_footer_data' => $form_footer_data,
+                    'top_header_data' => $top_header_data,
                     'publishdata' => $publishdata,
                     'custom_code' => isset($custom_code) ? $custom_code : '',
                     'form_name' => isset($form_name) ? $form_name : 'Blank Form',
@@ -10520,12 +10542,18 @@ class Client_functions extends common_function
             // Alignment (applies to both)
             $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
 
+            $bg_color = isset($_POST['header_bg_color_text']) ? $_POST['header_bg_color_text'] : (isset($_POST['header_bg_color']) ? $_POST['header_bg_color'] : '#ffffff');
+            $logo_url = isset($_POST['header_logo_url']) ? $_POST['header_logo_url'] : '';
+
             // Validate color formats
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $heading_text_color)) {
                 $heading_text_color = '#000000'; // Default to black if invalid
             }
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $subheading_text_color)) {
                 $subheading_text_color = '#000000'; // Default to black if invalid
+            }
+            if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $bg_color)) {
+                $bg_color = '#ffffff'; // Default to white if invalid
             }
 
             // Validate form_id and title
@@ -10535,8 +10563,11 @@ class Client_functions extends common_function
                 return $response;
             }
 
-            // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color
-            $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color));
+            // form_header_data array: 
+            // [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, 
+            // [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color,
+            // [8]=bg_color, [9]=logo_url
+            $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color, $bg_color, $logo_url));
 
             // Use title for form_name, or default to "Blank Form" if empty
             $form_name = !empty($title) ? $title : 'Blank Form';
@@ -10558,6 +10589,34 @@ class Client_functions extends common_function
         // if (isset($response_data['data']) && $response_data['data'] == 'success') {
         //     $this->generateFormBlockFile($form_id, $form_name);
         // }
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+
+    function upload_header_logo()
+    {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '' && isset($_FILES['header_logo_file'])) {
+            $file = $_FILES['header_logo_file'];
+            $form_id = isset($_POST['form_id']) ? $_POST['form_id'] : 'common';
+            
+            // Create directory if not exists
+            $upload_dir = ABS_PATH . '/assets/uploads/logos/';
+            if (!file_exists($upload_dir)) {
+                @mkdir($upload_dir, 0755, true);
+            }
+            
+            $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $new_name = 'logo_' . $form_id . '_' . time() . '.' . $file_ext;
+            $upload_path = $upload_dir . $new_name;
+            
+            if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+                $logo_url = MAIN_URL . '/assets/uploads/logos/' . $new_name;
+                $response_data = array('result' => 'success', 'url' => $logo_url);
+            } else {
+                $response_data = array('result' => 'fail', 'msg' => __('Failed to upload file'));
+            }
         }
         $response = json_encode($response_data);
         return $response;
@@ -10629,6 +10688,36 @@ class Client_functions extends common_function
             );
 
             error_log("savefooterform DEBUG: Serialized length: " . strlen($form_footer_data));
+
+            $where_query = array(["", "id", "=", "$form_id"]);
+            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+            $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+        }
+        $response = json_encode($response_data);
+        return $response;
+    }
+
+    function savetopheaderform()
+    {
+        $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
+        if (isset($_POST['store']) && $_POST['store'] != '') {
+            $form_id = isset($_POST['form_id']) ? $_POST['form_id'] : '';
+            $showheader = isset($_POST['show_top_header']) ? $_POST['show_top_header'] : '0';
+            $title = isset($_POST['top_header_title']) ? $_POST['top_header_title'] : '';
+            $description = isset($_POST['top_header_description']) ? $_POST['top_header_description'] : '';
+            $font_size = isset($_POST['top_header_font_size']) ? intval($_POST['top_header_font_size']) : 24;
+            $text_align = isset($_POST['top_header_text_align']) ? $_POST['top_header_text_align'] : 'center';
+            $bg_color = isset($_POST['top_header_bg_color']) ? $_POST['top_header_bg_color'] : '#ffffff';
+            $logo_url = isset($_POST['top_header_logo_url']) ? $_POST['top_header_logo_url'] : '';
+
+            // top_header_data array: [0]=show, [1]=title, [2]=description, [3]=font_size, [4]=alignment, [8]=bg_color, [9]=logo_url
+            $header_data_array = array($showheader, $title, $description, $font_size, $text_align, "", "", "", $bg_color, $logo_url);
+
+            $top_header_data = serialize($header_data_array);
+
+            $fields = array(
+                '`top_header_data`' => $top_header_data,
+            );
 
             $where_query = array(["", "id", "=", "$form_id"]);
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);

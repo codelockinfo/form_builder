@@ -749,6 +749,53 @@ function get_selected_elements(form_id, callback) {
                 $(".headerData .form_id").val(response['form_id']);
                 $(".headerData .headerTitle").val(response['form_header_data'] && response['form_header_data']['1'] ? response['form_header_data']['1'] : '');
 
+                // Load Top Header Data
+                $(".topHeaderData .form_id").val(response['form_id']);
+                if (response['top_header_data']) {
+                    var topHeaderData = response['top_header_data'];
+                    if (topHeaderData[0] == 1) {
+                        $(".topHeaderData .showTopHeader").prop("checked", true);
+                        $(".top-header-preview").show();
+                    } else {
+                        $(".topHeaderData .showTopHeader").prop("checked", false);
+                        $(".top-header-preview").hide();
+                    }
+                    $(".topHeaderData .topHeaderTitle").val(topHeaderData[1] || '');
+                    $(".top-header-preview .top-title").text(topHeaderData[1] || '');
+                    
+                    var topDescription = topHeaderData[2] || '';
+                    $(".topHeaderData textarea[name='top_contentheader']").val(topDescription);
+                    $(".top-header-preview .top-description").html(topDescription);
+                    if (CKEDITOR.instances['top_contentheader']) {
+                        CKEDITOR.instances['top_contentheader'].setData(topDescription);
+                    }
+
+                    var topFontSize = topHeaderData[3] || 24;
+                    $(".top-header-design-heading-font-size").val(topFontSize);
+                    $(".top-header-preview .top-title").css('font-size', topFontSize + 'px');
+
+                    var topAlignment = topHeaderData[4] || 'center';
+                    $(".topHeaderData .chooseItem-top-align").removeClass('active');
+                    $(".topHeaderData .chooseItem-top-align[data-value='" + topAlignment + "']").addClass('active');
+                    $(".top-header-text-align-input").val(topAlignment);
+                    $(".top-header-preview .top-title, .top-header-preview .top-description, .top-header-preview .top-logo-wrapper").css('text-align', topAlignment);
+
+                    var topBgColor = topHeaderData[8] || '#ffffff';
+                    $(".top-header-design-bg-color").val(topBgColor);
+                    $(".top-header-design-bg-color-text").val(topBgColor);
+                    $(".top-header-preview").each(function() {
+                        this.style.setProperty('background-color', topBgColor, 'important');
+                    });
+
+                    var topLogoUrl = topHeaderData[9] || '';
+                    $(".top-header-design-logo-url").val(topLogoUrl);
+                    if (topLogoUrl) {
+                        $(".top-header-preview .top-logo-wrapper").show().find('img').attr('src', topLogoUrl);
+                    } else {
+                        $(".top-header-preview .top-logo-wrapper").hide();
+                    }
+                }
+
                 // Set header description content - use val() for textarea, and also set in CKEditor if it exists
                 var headerDescription = response['form_header_data'] && response['form_header_data']['2'] ? response['form_header_data']['2'] : '';
                 $('.headerData textarea[name="contentheader"]').val(headerDescription);
@@ -776,6 +823,15 @@ function get_selected_elements(form_id, callback) {
                     $('.header-design-subheading-font-size').val(subheadingFontSize);
                     $('.header-design-subheading-text-color').val(subheadingTextColor);
                     $('.header-design-subheading-text-color-text').val(subheadingTextColor);
+
+                    // Load Background Color and Logo (indices 8 and 9)
+                    if (headerDataLength >= 10) {
+                        var bgColor = response['form_header_data']['8'] || '#ffffff';
+                        var logoUrl = response['form_header_data']['9'] || '';
+                        $('.header-design-bg-color').val(bgColor);
+                        $('.header-design-bg-color-text').val(bgColor);
+                        $('.header-design-logo-url').val(logoUrl);
+                    }
                 } else {
                     // Old format: use same values for both heading and sub-heading
                     var headerFontSize = (response['form_header_data'] && response['form_header_data']['3']) ? parseInt(response['form_header_data']['3']) : 24;
@@ -2209,6 +2265,44 @@ function savefooterform(onComplete) {
         processData: false,
         data: formDataObj,
         success: function (response) {
+            if (typeof onComplete === 'function') onComplete();
+        },
+        error: function() {
+            if (typeof onComplete === 'function') onComplete();
+        }
+    });
+}
+
+function savetopheaderform(onComplete) {
+    if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances['top_contentheader']) {
+        CKEDITOR.instances['top_contentheader'].updateElement();
+    }
+    
+    var form_id = $('.topHeaderData .form_id').val();
+    var top_header__title = $('.topHeaderTitle').val();
+    var top_header_content = CKEDITOR.instances['top_contentheader'] ? CKEDITOR.instances['top_contentheader'].getData() : '';
+    var show_top_header = $('.showTopHeader').is(':checked') ? 1 : 0;
+    var top_header_bg_color = $('.top-header-design-bg-color').val();
+    var top_header_logo_url = $('.top-header-design-logo-url').val();
+    var top_header_font_size = $('.top-header-design-heading-font-size').val();
+    var top_header_alignment = $('.top-header-text-align-input').val();
+
+    $.ajax({
+        url: 'ajax_call.php',
+        type: 'POST',
+        data: {
+            routine_name: 'savetopheaderform',
+            form_id: form_id,
+            store: store,
+            show_top_header: show_top_header,
+            top_header_title: top_header__title,
+            top_header_description: top_header_content,
+            top_header_font_size: top_header_font_size,
+            top_header_text_align: top_header_alignment,
+            top_header_bg_color: top_header_bg_color,
+            top_header_logo_url: top_header_logo_url
+        },
+        success: function(response) {
             if (typeof onComplete === 'function') onComplete();
         },
         error: function() {
