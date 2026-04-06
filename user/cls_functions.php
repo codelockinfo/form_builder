@@ -3482,8 +3482,10 @@ class Client_functions extends common_function
 
                         $logo_html = '';
                         if (!empty($top_header_logo)) {
+                            // Ensure logo URL is absolute for storefront and preview
+                            $full_logo_url = (strpos($top_header_logo, 'http') === 0) ? $top_header_logo : main_url($top_header_logo);
                             $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">
-                                            <img src="' . $top_header_logo . '" style="max-height: 35px; vertical-align: middle; display: inline-block;">
+                                            <img src="' . $full_logo_url . '" style="max-height: 35px; vertical-align: middle; display: inline-block;">
                                           </div>';
                         }
 
@@ -3554,8 +3556,10 @@ class Client_functions extends common_function
                         $header_banner_url = isset($form_header_data[8]) ? $form_header_data[8] : '';
                         $banner_html = '';
                         if (!empty($header_banner_url)) {
+                            // Ensure banner URL is absolute
+                            $full_banner_url = (strpos($header_banner_url, 'http') === 0) ? $header_banner_url : main_url($header_banner_url);
                             $banner_html = '<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;">
-                                               <img src="' . $header_banner_url . '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
+                                               <img src="' . $full_banner_url . '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
                                             </div>';
                         }
 
@@ -5768,6 +5772,14 @@ class Client_functions extends common_function
                         $form_js .
                         '</div>';
                     error_log("Form HTML wrapped with CSS. Design CSS length: " . strlen($design_css));
+                }
+
+                // Ensure assets have absolute URLs for admin dashboard preview
+                if (isset($top_header_data_array[3]) && !empty($top_header_data_array[3])) {
+                    $top_header_data_array[3] = (strpos($top_header_data_array[3], 'http') === 0) ? $top_header_data_array[3] : main_url($top_header_data_array[3]);
+                }
+                if (isset($form_header_data[8]) && !empty($form_header_data[8])) {
+                    $form_header_data[8] = (strpos($form_header_data[8], 'http') === 0) ? $form_header_data[8] : main_url($form_header_data[8]);
                 }
 
                 $response_data = array(
@@ -10583,13 +10595,21 @@ class Client_functions extends common_function
             $logo = isset($_POST['top_header_logo']) ? $_POST['top_header_logo'] : '';
 
             // Handle logo file upload
-            if (isset($_FILES['top_header_logo_file']) && $_FILES['top_header_logo_file']['error'] == 0) {
-                $target_dir = "../assets/images/";
-                $file_name = time() . '_' . basename($_FILES["top_header_logo_file"]["name"]);
-                $target_file = $target_dir . $file_name;
-                if (move_uploaded_file($_FILES["top_header_logo_file"]["tmp_name"], $target_file)) {
-                    $logo = "assets/images/" . $file_name;
+            if (isset($_FILES['top_header_logo_file'])) {
+                error_log("savetopheaderform: Files logo exist. Error: " . $_FILES['top_header_logo_file']['error']);
+                if ($_FILES['top_header_logo_file']['error'] == 0) {
+                    $target_dir = "../assets/images/";
+                    $file_name = time() . '_' . basename($_FILES["top_header_logo_file"]["name"]);
+                    $target_file = $target_dir . $file_name;
+                    if (move_uploaded_file($_FILES["top_header_logo_file"]["tmp_name"], $target_file)) {
+                        $logo = "assets/images/" . $file_name;
+                        error_log("savetopheaderform: Logo uploaded successfully to: " . $logo);
+                    } else {
+                        error_log("savetopheaderform ERROR: move_uploaded_file failed to " . $target_file);
+                    }
                 }
+            } else {
+                error_log("savetopheaderform: File logo does NOT exist");
             }
 
             $logo_align = isset($_POST['top_header_logo_align']) ? $_POST['top_header_logo_align'] : 'left';
@@ -10637,14 +10657,27 @@ class Client_functions extends common_function
                 ["AND", "store_client_id", "=", "$store_user_id"]
             );
             
-            error_log("savetopheaderform: Saving for form_id " . $form_id . " for store_user_id " . $store_user_id);
-            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
-
-            if ($comeback == 1) {
-                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            error_log("savetopheaderform: Saving for form_id " . $form_id);
+            if (!empty($_FILES)) {
+                error_log("savetopheaderform: $_FILES contents: " . print_r($_FILES, true));
             } else {
-                error_log("savetopheaderform ERROR: Database update failed for form_id " . $form_id);
-                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+                error_log("savetopheaderform: $_FILES is EMPTY");
+            }
+
+            $comeback_json = $this->put_data(TABLE_FORMS, $fields, $where_query);
+            $comeback_arr = json_decode($comeback_json, true);
+
+            if (isset($comeback_arr['status']) && $comeback_arr['status'] == '1') {
+                $affected = isset($comeback_arr['data']['affected_rows']) ? $comeback_arr['data']['affected_rows'] : 'unknown';
+                error_log("savetopheaderform SUCCESS: Rows affected: $affected");
+                $response_data = array(
+                    'data' => 'success', 
+                    'msg' => 'Update successfully', 
+                    'logo_url' => (strpos($logo, 'http') === 0) ? $logo : main_url($logo)
+                );
+            } else {
+                error_log("savetopheaderform ERROR: Database update failed for form_id " . $form_id . " | Response: " . $comeback_json);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback_json);
             }
         }
         return $response_data;
@@ -10722,13 +10755,25 @@ class Client_functions extends common_function
                 '1)' => ["OR", "public_id", "=", "$form_id"],
                 ["AND", "store_client_id", "=", "$store_user_id"]
             );
-            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
-            
-            if ($comeback == 1) {
-                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            error_log("saveheaderform: Saving for form_id " . $form_id);
+            if (!empty($_FILES)) {
+                error_log("saveheaderform: $_FILES contents: " . print_r($_FILES, true));
             } else {
-                error_log("saveheaderform ERROR: Database update failed for form_id " . $form_id);
-                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+                error_log("saveheaderform: $_FILES is EMPTY");
+            }
+
+            $comeback_json = $this->put_data(TABLE_FORMS, $fields, $where_query);
+            $comeback_arr = json_decode($comeback_json, true);
+
+            if (isset($comeback_arr['status']) && $comeback_arr['status'] == '1') {
+                $response_data = array(
+                    'data' => 'success', 
+                    'msg' => 'Update successfully', 
+                    'banner_url' => (strpos($header_banner, 'http') === 0) ? $header_banner : main_url($header_banner)
+                );
+            } else {
+                error_log("saveheaderform ERROR: Database update failed for form_id " . $form_id . " | Response: " . $comeback_json);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback_json);
             }
 
         // NOTE: Individual block file generation is DISABLED
@@ -10821,13 +10866,14 @@ class Client_functions extends common_function
                 '1)' => ["OR", "public_id", "=", "$form_id"],
                 ["AND", "store_client_id", "=", "$store_user_id"]
             );
-            $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
+            $comeback_json = $this->put_data(TABLE_FORMS, $fields, $where_query);
+            $comeback_arr = json_decode($comeback_json, true);
             
-            if ($comeback == 1) {
-                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            if (isset($comeback_arr['status']) && $comeback_arr['status'] == '1') {
+                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback_json);
             } else {
-                error_log("savefooterform ERROR: Database update failed for form_id " . $form_id);
-                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+                error_log("savefooterform ERROR: Database update failed for form_id " . $form_id . " | Response: " . $comeback_json);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback_json);
             }
         }
         $response = json_encode($response_data);

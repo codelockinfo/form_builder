@@ -1092,7 +1092,7 @@ console.log('Custom code loaded');
                     </div>
                     <div class="container">
                         <div class="add_topheaderdata_form">
-                         <form class="add_topheaderdata" method="POST">
+                         <form id="topHeaderForm" class="add_topheaderdata" method="POST" enctype="multipart/form-data">
                             <input type="hidden" class="form_id" name="form_id" value='<?php echo $form_id; ?>'>
                             
                             <!-- Show Top Header -->
@@ -1172,7 +1172,7 @@ console.log('Custom code loaded');
                                     <div style="margin-top: 10px;">
                                         <div class="upload-area" id="topHeaderLogoUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px;">
                                             <p>Click or Drag & Drop to upload logo</p>
-                                            <input type="file" id="topHeaderLogoFile" name="top_header_logo_file" style="display: none;" accept="image/*">
+                                            <input type="file" id="topHeaderLogoFile" name="top_header_logo_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
                                             <div id="topHeaderLogoPreview" style="margin-top: 10px; display: none; text-align: center;">
                                                 <img src="" alt="Logo Preview" style="max-height: 50px; display: inline-block;">
                                             </div>
@@ -1262,7 +1262,7 @@ console.log('Custom code loaded');
                         <div class="title">Header</div>
                     </div>
                     <div class="container">
-                        <form class="add_headerdata" method="POST">
+                        <form id="formHeaderSettings" class="add_headerdata" method="POST" enctype="multipart/form-data">
                             <input type="hidden" class="form_id" name="form_id"  value='<?php echo $form_id; ?>'>
                             <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox12"><span
                                         class="Polaris-Choice__Control"><span class="Polaris-Checkbox"><input name="showheader"
@@ -1312,7 +1312,7 @@ console.log('Custom code loaded');
                                             <svg viewBox="0 0 20 20" width="20" height="20" fill="#5c5f62" style="display: inline-block;"><path d="M10 0c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm1 15v-5h3l-4-5-4 5h3v5h2z"/></svg>
                                         </div>
                                         <p style="font-size: 13px; color: #5c5f62;">Click or Drag & Drop for banner</p>
-                                        <input type="file" id="headerBannerFile" name="header_banner_image_file" style="display: none;" accept="image/*">
+                                        <input type="file" id="headerBannerFile" name="header_banner_image_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
                                         <div id="headerBannerPreview" style="margin-top: 12px; display: none; text-align: center;">
                                             <img src="" style="max-width: 100%; max-height: 120px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(63,63,68,0.05);">
                                         </div>
@@ -7132,7 +7132,7 @@ console.log('Custom code loaded');
             }).attr('data-hover-bg', buttonHoverBgColor);
             
             // REMOVED: Applying to reset button here caused the issue
-            // Reset button is now handled by its own listeners in shopify_client8.js
+            // Reset button is now handled by its own listeners in shopify_client9.js
         };
         
         // Real-time preview updates for footer button design controls
@@ -7329,6 +7329,9 @@ console.log('Custom code loaded');
 
             // Update Header Banner Preview
             var bannerUrl = $('.header-banner-image').val() || '';
+            if (bannerUrl.indexOf('Uploaded: ') === 0) {
+                bannerUrl = $('#headerBannerPreview img').attr('src') || '';
+            }
             var $bannerWrapper = $('.globo-header-banner-wrapper');
             if (bannerUrl) {
                 if ($bannerWrapper.length === 0) {
@@ -7351,6 +7354,9 @@ console.log('Custom code loaded');
             var bgColor = $('.top-header-bg-color-text').val() || $('.top-header-bg-color').val() || '#000000';
             var textColor = $('.top-header-text-color-text').val() || $('.top-header-text-color').val() || '#ffffff';
             var logoUrl = $('.top-header-logo').val() || '';
+            if (logoUrl.indexOf('Uploaded: ') === 0) {
+                logoUrl = $('#topHeaderLogoPreview img').attr('src') || '';
+            }
             var logoAlign = $('.top-header-logo-align-input').val() || 'left';
             var headerText = $('.top-header-text-input').val() || '';
             var textAlign = $('.top-header-text-align-input').val() || 'right';
@@ -7498,30 +7504,6 @@ console.log('Custom code loaded');
             updateTopHeaderPreview();
         });
 
-        // Handle Top Header logo upload interaction
-        $(document).on('click', '#topHeaderLogoUploadArea', function() {
-            $('#topHeaderLogoFile').click();
-        });
-
-        $(document).on('change', '#topHeaderLogoFile', function() {
-            var file = this.files[0];
-            if (file) {
-                // Show local preview immediately
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#topHeaderLogoPreview').show().find('img').attr('src', e.target.result);
-                    // Update the preview area with the new image - we can't wait for server yet
-                    // But updateTopHeaderPreview will pick up the temporary data
-                    updateTopHeaderPreview();
-                };
-                reader.readAsDataURL(file);
-                
-                // Trigger auto-save which will upload the actual file
-                if (typeof savetopheaderform === 'function') {
-                    savetopheaderform();
-                }
-            }
-        });
 
         // Ensure select displays selected value properly
         $(document).ready(function() {

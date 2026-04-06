@@ -43,9 +43,9 @@ if (!function_exists('main_url')) {
             echo "</pre>";
             exit;
         } elseif (MAIN_URL != '' && $uri != '') {
-            return MAIN_URL . '/' . $uri;
+            return rtrim(MAIN_URL, '/') . '/' . ltrim($uri, '/');
         } elseif (MAIN_URL != '') {
-            return MAIN_URL . '/';
+            return rtrim(MAIN_URL, '/') . '/';
         }
     }
 

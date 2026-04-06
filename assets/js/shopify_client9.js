@@ -2209,6 +2209,9 @@ function savetopheaderform(onComplete) {
         processData: false,
         data: formDataObj,
         success: function (response) {
+            if (response && response.data === 'success' && response.logo_url) {
+                $('#topHeaderLogoUrl').val(response.logo_url);
+            }
             if (typeof onComplete === 'function') onComplete();
         },
         error: function() {
@@ -2217,11 +2220,39 @@ function savetopheaderform(onComplete) {
     });
 }
 
-// Top Header Logo Upload Handlers
-$(document).on('click', '#topHeaderLogoUploadArea', function() {
-    $('#topHeaderLogoFile').click();
+// Upload area interaction (click and drag-and-drop) handlers
+$(document).on('click', '.upload-area', function(e) {
+    if (e.target.tagName !== 'INPUT') {
+        $(this).find('input[type="file"]').click();
+    }
 });
 
+$(document).on('dragover', '.upload-area', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#3f4eae').css('background', '#f4f6f8');
+});
+
+$(document).on('dragleave', '.upload-area', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#dfe3e8').css('background', '');
+});
+
+$(document).on('drop', '.upload-area', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#dfe3e8').css('background', '');
+    
+    var files = e.originalEvent.dataTransfer.files;
+    if (files.length > 0) {
+        var $input = $(this).find('input[type="file"]');
+        $input[0].files = files;
+        $input.trigger('change');
+    }
+});
+
+// Top Header Logo Change Handler
 $(document).on('change', '#topHeaderLogoFile', function() {
     var file = this.files[0];
     if (file) {
@@ -2229,11 +2260,34 @@ $(document).on('change', '#topHeaderLogoFile', function() {
         reader.onload = function(e) {
             $('#topHeaderLogoPreview img').attr('src', e.target.result);
             $('#topHeaderLogoPreview').show();
-            // We'll let the file upload handle the data, but display Name
-            $('#topHeaderLogoUrl').val("Uploaded: " + file.name);
-            
-            // Sync with preview if possible
+            // DON'T set the text field to "Uploaded: ..." as it corrupts the DB if save is incomplete
+            // The value will be updated from the server response in savetopheaderform success
             $('.globo-top-header img').attr('src', e.target.result);
+            
+            // Auto-save Top Header
+            if (typeof savetopheaderform === 'function') {
+                savetopheaderform();
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Header Banner Change Handler
+$(document).on('change', '#headerBannerFile', function() {
+    var file = this.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#headerBannerPreview img').attr('src', e.target.result);
+            $('#headerBannerPreview').show();
+            // DON'T set the text field to "Uploaded: ..."
+            $('.formHeader .globo-header-banner-wrapper img').attr('src', e.target.result);
+            
+            // Auto-save Header (includes banner)
+            if (typeof saveheaderform === 'function') {
+                saveheaderform();
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -2288,6 +2342,9 @@ function saveheaderform(onComplete) {
         processData: false,
         data: formDataObj,
         success: function (response) {
+            if (response && response.data === 'success' && response.banner_url) {
+                $('#headerBannerUrl').val(response.banner_url);
+            }
             if (typeof onComplete === 'function') onComplete();
         },
         error: function() {
