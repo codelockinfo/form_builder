@@ -10618,20 +10618,34 @@ class Client_functions extends common_function
             // Escape the serialized data for safe SQL insertion
             $top_header_data_escaped = mysqli_real_escape_string($this->db_connection, $top_header_data);
 
+            // Ensure the column exists on live environment (one-time check/migration)
+            $schema_check = mysqli_query($this->db_connection, "SHOW COLUMNS FROM " . TABLE_FORMS . " LIKE 'top_header_data'");
+            if (mysqli_num_rows($schema_check) == 0) {
+                error_log("savetopheaderform: Column top_header_data missing, creating now...");
+                mysqli_query($this->db_connection, "ALTER TABLE " . TABLE_FORMS . " ADD COLUMN `top_header_data` LONGTEXT NULL AFTER `form_header_data`") or error_log("savetopheaderform: FAILED to add column! " . mysqli_error($this->db_connection));
+            }
+
             $fields = array(
                 '`top_header_data`' => $top_header_data_escaped,
             );
 
-            // Simplified WHERE clause avoids bracket handling bugs in ORM
+            // Correct tenant-safe check with proper grouping for ORM
+            $store_user_id = $this->get_store_client_id();
             $where_query = array(
-                ["", "id", "=", "$form_id"],
-                ["OR", "public_id", "=", "$form_id"]
+                '0(' => ["", "id", "=", "$form_id"],
+                '1)' => ["OR", "public_id", "=", "$form_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
             );
             
-            error_log("savetopheaderform: Saving for form_id " . $form_id);
+            error_log("savetopheaderform: Saving for form_id " . $form_id . " for store_user_id " . $store_user_id);
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
 
-            $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            if ($comeback == 1) {
+                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            } else {
+                error_log("savetopheaderform ERROR: Database update failed for form_id " . $form_id);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+            }
         }
         return $response_data;
     }
@@ -10689,21 +10703,33 @@ class Client_functions extends common_function
             // form_header_data array: [0]=showheader, [1]=title, [2]=content, [3]=heading_font_size, [4]=text_align, [5]=heading_text_color, [6]=subheading_font_size, [7]=subheading_text_color, [8]=header_banner
             $form_header_data = serialize(array($showheader, $title, $content, $heading_font_size, $text_align, $heading_text_color, $subheading_font_size, $subheading_text_color, $header_banner));
 
+            // Escape the serialized data for safe SQL insertion (handles single quotes in content)
+            $form_header_data_escaped = mysqli_real_escape_string($this->db_connection, $form_header_data);
+
             // Use title for form_name, or default to "Blank Form" if empty
             $form_name = !empty($title) ? $title : 'Blank Form';
+            $form_name_escaped = mysqli_real_escape_string($this->db_connection, $form_name);
 
             $fields = array(
-                '`form_header_data`' => $form_header_data,
-                '`form_name`' => $form_name,
+                '`form_header_data`' => $form_header_data_escaped,
+                '`form_name`' => $form_name_escaped,
             );
 
-            // Handle both internal id and public_id
+            // Correct tenant-safe check with proper grouping for ORM
+            $store_user_id = $this->get_store_client_id();
             $where_query = array(
-                ["(", "id", "=", "$form_id"],
-                ["OR", "public_id", "=", "$form_id", ")"]
+                '0(' => ["", "id", "=", "$form_id"],
+                '1)' => ["OR", "public_id", "=", "$form_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
             );
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
-            $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            
+            if ($comeback == 1) {
+                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            } else {
+                error_log("saveheaderform ERROR: Database update failed for form_id " . $form_id);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+            }
 
         // NOTE: Individual block file generation is DISABLED
         // We now use a SINGLE dynamic block (form-dynamic.liquid) that works for all forms
@@ -10778,20 +10804,31 @@ class Client_functions extends common_function
             error_log("savefooterform DEBUG: Reset BG Color Index 12: " . $footer_data_array[12]);
 
             $form_footer_data = serialize($footer_data_array);
+            
+            // Escape the serialized data for safe SQL insertion (handles single quotes in content)
+            $form_footer_data_escaped = mysqli_real_escape_string($this->db_connection, $form_footer_data);
 
             $fields = array(
-                '`form_footer_data`' => $form_footer_data,
+                '`form_footer_data`' => $form_footer_data_escaped,
             );
 
             error_log("savefooterform DEBUG: Serialized length: " . strlen($form_footer_data));
 
-            // Handle both internal id and public_id
+            // Correct tenant-safe check with proper grouping for ORM
+            $store_user_id = $this->get_store_client_id();
             $where_query = array(
-                ["(", "id", "=", "$form_id"],
-                ["OR", "public_id", "=", "$form_id", ")"]
+                '0(' => ["", "id", "=", "$form_id"],
+                '1)' => ["OR", "public_id", "=", "$form_id"],
+                ["AND", "store_client_id", "=", "$store_user_id"]
             );
             $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query);
-            $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            
+            if ($comeback == 1) {
+                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+            } else {
+                error_log("savefooterform ERROR: Database update failed for form_id " . $form_id);
+                $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback);
+            }
         }
         $response = json_encode($response_data);
         return $response;
