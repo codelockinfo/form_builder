@@ -15,8 +15,6 @@ var elementChangesTracker = {
     footer: null,  // Store footer form data
     topHeader: null // Store top header form data
 };
-
-// Function to save current element form data to tracker
 function saveElementFormToTracker(formdataid) {
     if (!formdataid) return;
 
@@ -3103,4 +3101,4 @@ $(document).on("input change", ".top-header-text-color-text", function() {
     if (/^#[0-9A-F]{6}$/i.test(val)) {
         $(".top-header-text-color").val(val);
     }
-});
+});
