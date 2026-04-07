@@ -7335,7 +7335,8 @@ console.log('Custom code loaded');
                 bannerUrl = $('#headerBannerPreview img').attr('src') || '';
             }
             var $bannerWrapper = $('.globo-header-banner-wrapper');
-            if (bannerUrl) {
+            var isBannerImage = bannerUrl && (/(^data:image\/)|(\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$)/i.test(bannerUrl));
+            if (isBannerImage) {
                 if ($bannerWrapper.length === 0) {
                     $('.formHeader').prepend('<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;"><img class="globo-header-banner" src="' + bannerUrl + '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;"></div>');
                 } else {
@@ -7395,7 +7396,8 @@ console.log('Custom code loaded');
                     'display': 'flex'
                 });
                 
-                var logoHtml = logoUrl ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="width : 150px; vertical-align: middle;"></div>' : '';
+                var isLogoImage = logoUrl && (/(^data:image\/)|(\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$)/i.test(logoUrl));
+                var logoHtml = isLogoImage ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="width : 150px; vertical-align: middle;"></div>' : '';
                 var textHtml = headerText ? '<div class="globo-top-header-text" style="flex: 1; text-align: ' + textAlign + '; font-weight: 500; font-size: ' + fontSize + 'px; padding: 0 10px;">' + headerText + '</div>' : '';
                 
                 // If both exist, we need to decide order. If only one exists, it will naturally take 100% width due to flex:1

@@ -3481,7 +3481,8 @@ class Client_functions extends common_function
                         $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px;">';
 
                         $logo_html = '';
-                        if (!empty($top_header_logo)) {
+                        // Only show logo if it has a valid image extension
+                        if (!empty($top_header_logo) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i', $top_header_logo)) {
                             // Ensure logo URL is absolute for storefront and preview
                             $full_logo_url = (strpos($top_header_logo, 'http') === 0) ? $top_header_logo : main_url($top_header_logo);
                             $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">
@@ -3555,7 +3556,7 @@ class Client_functions extends common_function
 
                         $header_banner_url = isset($form_header_data[8]) ? $form_header_data[8] : '';
                         $banner_html = '';
-                        if (!empty($header_banner_url)) {
+                        if (!empty($header_banner_url) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i', $header_banner_url)) {
                             // Ensure banner URL is absolute
                             $full_banner_url = (strpos($header_banner_url, 'http') === 0) ? $header_banner_url : main_url($header_banner_url);
                             $banner_html = '<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;">

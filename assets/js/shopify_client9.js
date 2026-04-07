@@ -766,7 +766,7 @@ function get_selected_elements(form_id, callback) {
 
                     // If there's an existing logo URL, show it in the upload preview
                     var existingLogo = topHeaderData['3'] || '';
-                    if (existingLogo) {
+                    if (existingLogo && /\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i.test(existingLogo)) {
                         $('#topHeaderLogoPreview').show().find('img').attr('src', existingLogo);
                     }
 
@@ -791,7 +791,7 @@ function get_selected_elements(form_id, callback) {
                 // Set Header Banner data
                 var headerBanner = response['form_header_data'] && response['form_header_data']['8'] ? response['form_header_data']['8'] : '';
                 $('.headerData .header-banner-image').val(headerBanner);
-                if (headerBanner) {
+                if (headerBanner && /\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i.test(headerBanner)) {
                     $('#headerBannerPreview').show().find('img').attr('src', headerBanner);
                 } else {
                     $('#headerBannerPreview').hide();
@@ -2257,9 +2257,9 @@ $(document).on('change', '#topHeaderLogoFile', function() {
         reader.onload = function(e) {
             $('#topHeaderLogoPreview img').attr('src', e.target.result);
             $('#topHeaderLogoPreview').show();
-            // DON'T set the text field to "Uploaded: ..." as it corrupts the DB if save is incomplete
-            // The value will be updated from the server response in savetopheaderform success
-            $('.globo-top-header img').attr('src', e.target.result);
+            
+            // Set the URL field to the Data URL and trigger change to update preview immediately
+            $('#topHeaderLogoUrl').val(e.target.result).trigger('change');
             
             // Auto-save Top Header
             if (typeof savetopheaderform === 'function') {
@@ -2278,8 +2278,9 @@ $(document).on('change', '#headerBannerFile', function() {
         reader.onload = function(e) {
             $('#headerBannerPreview img').attr('src', e.target.result);
             $('#headerBannerPreview').show();
-            // DON'T set the text field to "Uploaded: ..."
-            $('.formHeader .globo-header-banner-wrapper img').attr('src', e.target.result);
+            
+            // Set the URL field to the Data URL and trigger change to update preview immediately
+            $('.headerData .header-banner-image').val(e.target.result).trigger('change');
             
             // Auto-save Header (includes banner)
             if (typeof saveheaderform === 'function') {
