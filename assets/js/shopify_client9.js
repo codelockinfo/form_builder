@@ -8,7 +8,7 @@ var CLS_CIRCLE_PLUS = '<svg class="Polaris-Icon__Svg" viewBox="0 0 510 510" focu
 var BACKTO = 0;
 
 var elementChangesTracker = {
-    elements: {}, // Store element form data by formdataid
+    elements: {}, 
     designSettings: {}, // Store design settings by formdataid
     header: null, // Store header form data
     footer: null,  // Store footer form data
