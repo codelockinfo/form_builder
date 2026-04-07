@@ -1173,8 +1173,9 @@ console.log('Custom code loaded');
                                         <div class="upload-area" id="topHeaderLogoUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px;">
                                             <p>Click or Drag & Drop to upload logo</p>
                                             <input type="file" id="topHeaderLogoFile" name="top_header_logo_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
-                                            <div id="topHeaderLogoPreview" style="margin-top: 10px; display: none; text-align: center;">
-                                                <img src="" alt="Logo Preview" style="max-height: 50px; display: inline-block;">
+                                            <div id="topHeaderLogoPreview" style="margin-top: 10px; display: none; text-align: center; position: relative; display: inline-block;">
+                                                <span class="remove-preview" data-for="topHeaderLogo" style="position: absolute; top: -10px; right: -10px; cursor: pointer; color: #fff; background: red; border-radius: 50%; width: 26px; height: 27px; display: flex; justify-content: center; font-size: 16px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;">&times;</span>
+                                                <img src="" alt="Logo Preview" style="max-height: 50px; display: inline-block; border: 1px solid #dfe3e8; border-radius: 3px; padding: 2px;">
                                             </div>
                                         </div>
                                     </div>
@@ -1313,8 +1314,9 @@ console.log('Custom code loaded');
                                         </div>
                                         <p style="font-size: 13px; color: #5c5f62;">Click or Drag & Drop for banner</p>
                                         <input type="file" id="headerBannerFile" name="header_banner_image_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
-                                        <div id="headerBannerPreview" style="margin-top: 12px; display: none; text-align: center;">
-                                            <img src="" style="max-width: 100%; max-height: 120px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(63,63,68,0.05);">
+                                        <div id="headerBannerPreview" style="margin-top: 12px; display: none; text-align: center; position: relative; display: inline-block;">
+                                            <span class="remove-preview" data-for="headerBanner" style="position: absolute; top: -10px; right: -10px; cursor: pointer; color: #fff; background: red; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;">&times;</span>
+                                            <img src="" style="max-width: 100%; max-height: 120px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(63,63,68,0.05); border: 1px solid #dfe3e8; padding: 2px;">
                                         </div>
                                     </div>
                                 </div>

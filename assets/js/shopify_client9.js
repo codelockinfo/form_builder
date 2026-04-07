@@ -2299,6 +2299,31 @@ $(document).on('input', '#topHeaderLogoUrl', function() {
     }
 });
 
+// Remove preview handler
+$(document).on('click', '.remove-preview', function(e) {
+    e.stopPropagation(); // Prevent triggering the upload-area click
+    var target = $(this).data('for');
+    if (target === 'topHeaderLogo') {
+        $('#topHeaderLogoPreview').hide();
+        $('#topHeaderLogoPreview img').attr('src', '');
+        $('#topHeaderLogoUrl').val('');
+        $('#topHeaderLogoFile').val('');
+        $('.globo-top-header img').attr('src', '');
+        if (typeof savetopheaderform === 'function') {
+            savetopheaderform();
+        }
+    } else if (target === 'headerBanner') {
+        $('#headerBannerPreview').hide();
+        $('#headerBannerPreview img').attr('src', '');
+        $('#headerBannerUrl').val('');
+        $('#headerBannerFile').val('');
+        $('.formHeader .globo-header-banner-wrapper img').attr('src', '');
+        if (typeof saveheaderform === 'function') {
+            saveheaderform();
+        }
+    }
+});
+
 
 function saveheaderform(onComplete) {
     // Save header data to tracker
