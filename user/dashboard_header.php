@@ -46,17 +46,17 @@ else {
             <div style="display: flex; gap: 10px;">
                 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
-$is_dashboard = ($current_page == 'dashboard.php' && isset($_GET['view']) && $_GET['view'] == 'submissions') || $current_page == 'dashboard_submissions.php' || $current_page == 'submissions.php';
-$is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' && (!isset($_GET['view']) || $_GET['view'] != 'submissions'));
+$is_dashboard = $current_page == 'index.php' || $current_page == 'dashboard_submissions.php' || $current_page == 'submissions.php' || ($current_page == 'dashboard.php' && isset($_GET['view']) && $_GET['view'] == 'submissions');
+$is_design = $current_page == 'dashboard.php' && (!isset($_GET['view']) || $_GET['view'] != 'submissions');
 ?>
             
-             <a href="dashboard_submissions.php?shop=<?php echo $store; ?>" class="Polaris-Button <?php echo $is_dashboard ? 'Polaris-Button--primary' : ''; ?>" style="min-height: 2.2rem;">
+             <a href="index.php?shop=<?php echo $store; ?>" class="Polaris-Button <?php echo $is_dashboard ? 'Polaris-Button--primary' : ''; ?>" style="min-height: 2.2rem;">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Dashboard</span>
                 </span>
             </a>
 
-             <a href="index.php?shop=<?php echo $store; ?>" class="Polaris-Button <?php echo $is_design ? 'Polaris-Button--primary' : ''; ?>" style="min-height: 2.2rem;">
+             <a href="dashboard.php?shop=<?php echo $store; ?>" class="Polaris-Button <?php echo $is_design ? 'Polaris-Button--primary' : ''; ?>" style="min-height: 2.2rem;">
                 <span class="Polaris-Button__Content">
                     <span class="Polaris-Button__Text">Design Form</span>
                 </span>
@@ -113,12 +113,12 @@ $is_design = $current_page == 'index.php' || ($current_page == 'dashboard.php' &
         </div>
         <ul class="mobile-sidebar__menu">
             <li>
-                <a href="dashboard_submissions.php?shop=<?php echo $store; ?>" class="mobile-sidebar__link <?php echo $is_dashboard ? 'is-active' : ''; ?>">
+                <a href="index.php?shop=<?php echo $store; ?>" class="mobile-sidebar__link <?php echo $is_dashboard ? 'is-active' : ''; ?>">
                     Dashboard
                 </a>
             </li>
             <li>
-                <a href="index.php?shop=<?php echo $store; ?>" class="mobile-sidebar__link <?php echo $is_design ? 'is-active' : ''; ?>">
+                <a href="dashboard.php?shop=<?php echo $store; ?>" class="mobile-sidebar__link <?php echo $is_design ? 'is-active' : ''; ?>">
                     Design Form
                 </a>
             </li>

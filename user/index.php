@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WI
 require_once('include.php');
 include_once('cls_header.php');
 $common_function = new common_function();
-include 'dashboard.php';
+include 'dashboard_submissions.php';
 die;
 
  /*  BACKUP  */
