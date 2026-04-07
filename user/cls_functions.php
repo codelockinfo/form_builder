@@ -3478,14 +3478,14 @@ class Client_functions extends common_function
                         $top_header_text_align = isset($top_header_data_array[6]) ? $top_header_data_array[6] : 'right';
                         $top_header_font_size  = isset($top_header_data_array[7]) ? $top_header_data_array[7] : '14';
 
-                        $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px; margin-bottom: 15px;">';
+                        $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px;">';
 
                         $logo_html = '';
                         if (!empty($top_header_logo)) {
                             // Ensure logo URL is absolute for storefront and preview
                             $full_logo_url = (strpos($top_header_logo, 'http') === 0) ? $top_header_logo : main_url($top_header_logo);
                             $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">
-                                            <img src="' . $full_logo_url . '" style="max-height: 35px; vertical-align: middle; display: inline-block;">
+                                            <img src="' . $full_logo_url . '" style="width : 150px; vertical-align: middle; display: inline-block;">
                                           </div>';
                         }
 
@@ -12115,7 +12115,7 @@ class Client_functions extends common_function
 .code-form-app {
     max-width: 600px;
     background-color: #FFF;
-    margin: 30px auto;
+    /* margin: 30px auto; */
     padding: 30px;
     position: relative;
     transition: box-shadow .25s;

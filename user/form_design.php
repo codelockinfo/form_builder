@@ -7393,7 +7393,7 @@ console.log('Custom code loaded');
                     'display': 'flex'
                 });
                 
-                var logoHtml = logoUrl ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="max-height: 35px; vertical-align: middle;"></div>' : '';
+                var logoHtml = logoUrl ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="width : 150px; vertical-align: middle;"></div>' : '';
                 var textHtml = headerText ? '<div class="globo-top-header-text" style="flex: 1; text-align: ' + textAlign + '; font-weight: 500; font-size: ' + fontSize + 'px; padding: 0 10px;">' + headerText + '</div>' : '';
                 
                 // If both exist, we need to decide order. If only one exists, it will naturally take 100% width due to flex:1

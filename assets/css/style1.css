@@ -10,7 +10,7 @@
 .code-form-app {
   max-width: 600px;
   background-color: #FFF;
-  margin: 30px auto;
+  margin: 0 auto 30px;
 }
 .code-form-app form.get_selected_elements {
   padding: 30px;
@@ -30,7 +30,7 @@
   line-height: 1.5;
   font-size: 26px;
   color: #000;
-  margin-top: 5px;
+  /* margin-top: 5px; */
 }
 .code-form-app .header .description {
   margin-top: 0;
