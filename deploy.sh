@@ -13,6 +13,9 @@ if [ -f "core/logger.php" ] && ! git ls-files --error-unmatch core/logger.php &>
     rm -f core/logger.php
 fi
 
+# Ensure git pull strategy is set (avoids divergent branch fatal error)
+git config pull.rebase false
+
 # Pull latest changes
 echo "Pulling latest changes from repository..."
 git pull origin main

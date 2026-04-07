@@ -15,6 +15,9 @@ if (Test-Path "core/logger.php") {
     }
 }
 
+# Ensure git pull strategy is set (avoids divergent branch fatal error)
+git config pull.rebase false
+
 # Pull latest changes
 Write-Host "Pulling latest changes from repository..." -ForegroundColor Green
 git pull origin main
