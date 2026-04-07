@@ -103,7 +103,7 @@ if ($form_id > 0) {
                                 </button>
                             </div>
                             <div class="Polaris-ButtonGroup__Item">
-                                <button class="Polaris-Button" type="button" onclick="window.location.href='index.php?shop=<?php echo $store; ?>'">
+                                <button class="Polaris-Button" type="button" onclick="window.location.href='dashboard.php?shop=<?php echo $store; ?>'">
                                     <span class="Polaris-Button__Content">
                                         <span class="Polaris-Button__Text">
                                             <span>Cancel</span>
@@ -129,7 +129,7 @@ if ($form_id > 0) {
             </div>
             <div class="brand desktop">
                 <div class="logo">
-                    <a href="index.php?shop=<?php echo $store; ?>">
+                    <a href="dashboard.php?shop=<?php echo $store; ?>">
                         <button type="button" class="Polaris-Link backtoindex">
                             <span class="Polaris-Icon">
                                 <span class="Polaris-VisuallyHidden"></span>
