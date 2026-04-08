@@ -2407,6 +2407,11 @@ function savefooterform(onComplete) {
     formDataObj.append('store', store);
     formDataObj.append('routine_name', 'savefooterform');
 
+    console.log("Saving footer data to server...");
+    for (var pair of formDataObj.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+
     $.ajax({
         url: "ajax_call.php",
         type: "post",
@@ -2415,9 +2420,11 @@ function savefooterform(onComplete) {
         processData: false,
         data: formDataObj,
         success: function (response) {
+            console.log("Footer save success:", response);
             if (typeof onComplete === 'function') onComplete();
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            console.log("Footer save error:", xhr.responseText, status, error);
             if (typeof onComplete === 'function') onComplete();
         }
     });

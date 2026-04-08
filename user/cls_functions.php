@@ -10792,6 +10792,9 @@ class Client_functions extends common_function
 
     function savefooterform()
     {
+        error_log("=== savefooterform STARTED ===");
+        error_log("POST data received: " . print_r($_POST, true));
+        
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
         if (isset($_POST['store']) && $_POST['store'] != '') {
             $form_id = isset($_POST['form_id']) ? $_POST['form_id'] : '';
@@ -10870,13 +10873,21 @@ class Client_functions extends common_function
             $comeback_json = $this->put_data(TABLE_FORMS, $fields, $where_query);
             $comeback_arr = json_decode($comeback_json, true);
             
+            // Debug: Log the exact query that was executed
+            error_log("savefooterform DEBUG: Executed query for form_id " . $form_id . ": UPDATE " . TABLE_FORMS . " SET `form_footer_data` = '" . $form_footer_data_escaped . "' WHERE (id = '" . $form_id . "' OR public_id = '" . $form_id . "') AND store_client_id = '" . $store_user_id . "'");
+            error_log("savefooterform DEBUG: Serialized data: " . $form_footer_data);
+            error_log("savefooterform DEBUG: Array index 5 (alignment): " . $footer_data_array[5]);
+            
             if (isset($comeback_arr['status']) && $comeback_arr['status'] == '1') {
                 $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback_json);
             } else {
                 error_log("savefooterform ERROR: Database update failed for form_id " . $form_id . " | Response: " . $comeback_json);
                 $response_data = array('data' => 'fail', 'msg' => 'Database update failed', 'outcome' => $comeback_json);
             }
+        } else {
+            error_log("savefooterform ERROR: Store not set in POST");
         }
+        error_log("=== savefooterform ENDED ===");
         $response = json_encode($response_data);
         return $response;
     }

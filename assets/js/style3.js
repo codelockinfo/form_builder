@@ -918,6 +918,7 @@ $(document).on("click", ".chooseItems .chooseItem-align", function () {
     $inputFormate = $(this).closest(".form-control").find(".footer-button__alignment");
     if ($inputFormate.length > 0) {
         $inputFormate.val($dataValue);
+        console.log("Footer alignment updated to:", $dataValue);
         $(".forFooterAlign").removeClass("align-left align-center align-right").addClass($dataValue);
     }
 
