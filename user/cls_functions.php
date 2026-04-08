@@ -5120,7 +5120,7 @@ class Client_functions extends common_function
                 if ($is_storefront) {
                     $base_js_url = defined('MAIN_URL') ? MAIN_URL : 'https://codelocksolutions.com/form_builder';
                     $jquery_url = $base_js_url . '/assets/js/jquery3.6.4.min.js';
-                    $frontend_js_url = $base_js_url . '/assets/js/shopify_front6.js';
+                    $frontend_js_url = $base_js_url . '/assets/js/shopify_front7.js';
 
                     // Get shop domain for form submission
                     $shop_domain = isset($_POST['store']) ? $_POST['store'] : (isset($shopinfo->shop_name) ? $shopinfo->shop_name : '');
@@ -5381,7 +5381,7 @@ class Client_functions extends common_function
     
     function loadFormSubmissionScript() {
         // Load form submission script
-        if (document.querySelector("script[src*=\'shopify_front6.js\']")) {
+        if (document.querySelector("script[src*=\'shopify_front7.js\']")) {
             return;
         }
         
