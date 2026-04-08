@@ -2124,32 +2124,6 @@ console.log('Custom code loaded');
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox7"><span class="Polaris-Choice__Control"><span
-                                                        class="Polaris-Checkbox"><input name="fullwidth" id="PolarisCheckbox7"
-                                                            type="checkbox" class="Polaris-Checkbox__Input fullFooterButton"
-                                                            aria-invalid="false" role="checkbox" aria-checked="false"
-                                                            value="1"><span
-                                                            class="Polaris-Checkbox__Backdrop"></span><span
-                                                            class="Polaris-Checkbox__Icon"><span
-                                                                class="Polaris-Icon"><span
-                                                                    class="Polaris-VisuallyHidden"></span><svg
-                                                                    viewBox="0 0 20 20" class="Polaris-Icon__Svg"
-                                                                    focusable="false" aria-hidden="true">
-                                                                    <path
-                                                                        d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
-                                                                    </path>
-                                                                </svg></span></span></span></span><span class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
-                                                    <div class="form-control alignment" >
-                                                        <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
-                                                        <div class="chooseInput">
-                                                            <div class="label">Alignment</div>
-                                                            <div class="chooseItems">
-                                                                <div class="chooseItem-align active" data-value="align-left">Left</div>
-                                                                <div class="chooseItem-align" data-value="align-center">Center</div>
-                                                                <div class="chooseItem-align" data-value="align-right">Right</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2340,7 +2314,33 @@ console.log('Custom code loaded');
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+                                            <div class="form-control alignment" >
+                                                        <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
+                                                        <div class="chooseInput">
+                                                            <div class="label">Alignment</div>
+                                                            <div class="chooseItems">
+                                                                <div class="chooseItem-align active" data-value="align-left">Left</div>
+                                                                <div class="chooseItem-align" data-value="align-center">Center</div>
+                                                                <div class="chooseItem-align" data-value="align-right">Right</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>  
+                                                    
+                                                    <div class="form-control"><label class="Polaris-Choice" for="PolarisCheckbox7"><span class="Polaris-Choice__Control"><span
+                                                        class="Polaris-Checkbox"><input name="fullwidth" id="PolarisCheckbox7"
+                                                            type="checkbox" class="Polaris-Checkbox__Input fullFooterButton"
+                                                            aria-invalid="false" role="checkbox" aria-checked="false"
+                                                            value="1"><span
+                                                            class="Polaris-Checkbox__Backdrop"></span><span
+                                                            class="Polaris-Checkbox__Icon"><span
+                                                                class="Polaris-Icon"><span
+                                                                    class="Polaris-VisuallyHidden"></span><svg
+                                                                    viewBox="0 0 20 20" class="Polaris-Icon__Svg"
+                                                                    focusable="false" aria-hidden="true">
+                                                                    <path
+                                                                        d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z">
+                                                                    </path>
+                                                                </svg></span></span></span></span><span class="Polaris-Choice__Label">Full width footerbutton</span></label></div>
                                             <!-- Border Radius -->
                                             <div class="form-control">
                                                 <div class="textfield-wrapper">
