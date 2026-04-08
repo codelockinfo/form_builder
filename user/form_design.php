@@ -7134,7 +7134,7 @@ console.log('Custom code loaded');
             }).attr('data-hover-bg', buttonHoverBgColor);
             
             // REMOVED: Applying to reset button here caused the issue
-            // Reset button is now handled by its own listeners in shopify_client9.js
+            // Reset button is now handled by its own listeners in shopify_client10.js
         };
         
         // Real-time preview updates for footer button design controls
