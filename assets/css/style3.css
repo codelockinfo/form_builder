@@ -229,14 +229,27 @@ button.action.submit.classic-button {
 .footer.flef {
   margin-top: 4%;
 }
+.footer {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
 .align-left{
-  text-align: left;
+  text-align: left !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
 }
 .align-center{
-  text-align: center;
+  text-align: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
 }
 .align-right{
-  text-align: right;
+  text-align: right !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
 }
 button.action.reset.classic-button {
   text-transform: none;
