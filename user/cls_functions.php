@@ -3463,9 +3463,9 @@ class Client_functions extends common_function
 
                     // Top Header Processing
                     $top_header_data_raw = isset($formData['top_header_data']) ? $formData['top_header_data'] : '';
-                    $top_header_data_array = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("0", "#000000", "#ffffff", "", "left", "", "right");
+                    $top_header_data_array = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("0", "#000000", "#ffffff", "", "left", "", "right", "14", "150");
                     if ($top_header_data_array === false) {
-                        $top_header_data_array = array("0", "#000000", "#ffffff", "", "left", "", "right");
+                        $top_header_data_array = array("0", "#000000", "#ffffff", "", "left", "", "right", "14", "150");
                     }
 
                     $top_header_html = '';
@@ -3477,6 +3477,7 @@ class Client_functions extends common_function
                         $top_header_text       = isset($top_header_data_array[5]) ? $top_header_data_array[5] : '';
                         $top_header_text_align = isset($top_header_data_array[6]) ? $top_header_data_array[6] : 'right';
                         $top_header_font_size  = isset($top_header_data_array[7]) ? $top_header_data_array[7] : '14';
+                        $top_header_logo_width = isset($top_header_data_array[8]) ? $top_header_data_array[8] : '150';
 
                         $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px;">';
 
@@ -3485,9 +3486,13 @@ class Client_functions extends common_function
                         if (!empty($top_header_logo) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i', $top_header_logo)) {
                             // Ensure logo URL is absolute for storefront and preview
                             $full_logo_url = (strpos($top_header_logo, 'http') === 0) ? $top_header_logo : main_url($top_header_logo);
-                            $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">
-                                            <img src="' . $full_logo_url . '" style="width : 150px; vertical-align: middle; display: inline-block;">
-                                          </div>';
+                            $logo_width_px = intval($top_header_logo_width);
+                            if ($logo_width_px <= 0) {
+                                $logo_width_px = 150;
+                            }
+                            $logo_html = '<div class="globo-top-header-logo" style="flex: 1; text-align: ' . $top_header_logo_align . ';">' .
+                                         '<img src="' . $full_logo_url . '" style="width: ' . $logo_width_px . 'px; max-width: 100%; vertical-align: middle; display: inline-block;">' .
+                                         '</div>';
                         }
 
                         $text_html = '';
@@ -4971,7 +4976,7 @@ class Client_functions extends common_function
                 $css_links = '';
                 if (!empty($base_css_url)) {
                     // Try to include CSS file, but also add inline fallback
-                    $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style3.css') . '" type="text/css">';
+                    $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style2.css') . '" type="text/css">';
                 }
 
                 // Base inline CSS for form styling (critical styles)
@@ -10617,6 +10622,12 @@ class Client_functions extends common_function
             $text = isset($_POST['top_header_text']) ? $_POST['top_header_text'] : '';
             $text_align = isset($_POST['top_header_text_align']) ? $_POST['top_header_text_align'] : 'right';
             $font_size = isset($_POST['top_header_font_size']) ? $_POST['top_header_font_size'] : '14';
+            $logo_width = isset($_POST['top_header_logo_width']) ? intval($_POST['top_header_logo_width']) : 150;
+            if ($logo_width < 10) {
+                $logo_width = 10;
+            } elseif ($logo_width > 1000) {
+                $logo_width = 1000;
+            }
 
             // Validate color formats
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $bg_color))
@@ -10632,7 +10643,8 @@ class Client_functions extends common_function
                 $logo_align,      // 4
                 $text,            // 5
                 $text_align,      // 6
-                $font_size        // 7
+                $font_size,       // 7
+                $logo_width       // 8
             );
             $top_header_data = serialize($top_header_data_array);
             
@@ -12188,6 +12200,8 @@ class Client_functions extends common_function
 .code-form-app .content .code-form-control input,
 .code-form-app .content .code-form-control textarea,
 .code-form-app .content .code-form-control select {
+    display: block !important;
+    height: 41px !important;
     padding: 10px 12px !important;
     color: #000 !important;
     background-color: #f1f1f1 !important;
@@ -12249,9 +12263,6 @@ class Client_functions extends common_function
 }
 .code-form-app .footer {
     margin-top: 4%;
-    width: 100% !important;
-    display: block !important;
-    box-sizing: border-box !important;
 }
 /* Footer button hover effect - use data attribute for dynamic hover color */
 .code-form-app .footer .action.submit.classic-button:hover,
@@ -12305,22 +12316,13 @@ class Client_functions extends common_function
     margin: 10px 0;
 }
 .code-form-app .footer.align-left {
-    text-align: left !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-start !important;
+    text-align: left;
 }
 .code-form-app .footer.align-center {
-    text-align: center !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
+    text-align: center;
 }
 .code-form-app .footer.align-right {
-    text-align: right !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: flex-end !important;
+    text-align: right;
 }
 .code-form-app .w100 {
     width: 100%;

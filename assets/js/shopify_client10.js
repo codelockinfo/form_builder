@@ -763,6 +763,7 @@ function get_selected_elements(form_id, callback) {
                     $(".topHeaderData .chooseItem-top-text-align[data-value='" + textAlign + "']").addClass('active');
                     
                     $(".top-header-font-size-input").val(topHeaderData['7'] || '14');
+                    $(".top-header-logo-width-input").val(topHeaderData['8'] || '150');
 
                     // If there's an existing logo URL, show it in the upload preview
                     var existingLogo = topHeaderData['3'] || '';

@@ -1182,6 +1182,23 @@ console.log('Custom code loaded');
                                 </div>
                             </div>
 
+                            <!-- Logo Width -->
+                            <div class="form-control">
+                                <div class="textfield-wrapper">
+                                    <div class="Polaris-Labelled__LabelWrapper">
+                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Logo Width (px)</label></div>
+                                    </div>
+                                    <div class="Polaris-Connected">
+                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                            <div class="Polaris-TextField">
+                                                <input name="top_header_logo_width" min="10" max="1000" class="Polaris-TextField__Input top-header-logo-width-input" type="number" value="150" placeholder="150">
+                                                <div class="Polaris-TextField__Backdrop"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Logo Alignment -->
                             <div class="form-control">
                                 <input name="top_header_logo_align" type="hidden" value="left" class="top-header-logo-align-input">
@@ -7364,6 +7381,7 @@ console.log('Custom code loaded');
             var headerText = $('.top-header-text-input').val() || '';
             var textAlign = $('.top-header-text-align-input').val() || 'right';
             var fontSize = $('.top-header-font-size-input').val() || '14';
+            var logoWidth = $('.top-header-logo-width-input').val() || '150';
             
             var $allHeaders = $('.globo-top-header');
             
@@ -7397,7 +7415,7 @@ console.log('Custom code loaded');
                 });
                 
                 var isLogoImage = logoUrl && (/(^data:image\/)|(\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$)/i.test(logoUrl));
-                var logoHtml = isLogoImage ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="width : 150px; vertical-align: middle;"></div>' : '';
+                var logoHtml = isLogoImage ? '<div class="globo-top-header-logo" style="flex: 1; text-align: ' + logoAlign + ';"><img src="' + logoUrl + '" style="width: ' + logoWidth + 'px; max-width: 100%; vertical-align: middle;"></div>' : '';
                 var textHtml = headerText ? '<div class="globo-top-header-text" style="flex: 1; text-align: ' + textAlign + '; font-weight: 500; font-size: ' + fontSize + 'px; padding: 0 10px;">' + headerText + '</div>' : '';
                 
                 // If both exist, we need to decide order. If only one exists, it will naturally take 100% width due to flex:1
@@ -7419,7 +7437,7 @@ console.log('Custom code loaded');
         var topHeaderAutoSaveTimer;
         
         // Real-time preview updates and auto-save for Top Header
-        $(document).on('input change', '.showTopHeader, .top-header-bg-color, .top-header-bg-color-text, .top-header-text-color, .top-header-text-color-text, .top-header-logo, .top-header-logo-align-input, .top-header-text-input, .top-header-text-align-input, .top-header-font-size-input', function() {
+        $(document).on('input change', '.showTopHeader, .top-header-bg-color, .top-header-bg-color-text, .top-header-text-color, .top-header-text-color-text, .top-header-logo, .top-header-logo-width-input, .top-header-logo-align-input, .top-header-text-input, .top-header-text-align-input, .top-header-font-size-input', function() {
             // Auto-check the toggle if user is adding content
             if ($(this).hasClass('top-header-text-input') || $(this).hasClass('top-header-logo')) {
                 if ($(this).val().trim().length > 0) {
