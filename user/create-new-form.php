@@ -364,11 +364,11 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                                             <p class="text_image_list">Multi-Step Form</p>
                                         </div> -->
                                         <div class="main_list_" data-val="6">
-                                            <img src="../assets/images/form_img/application_form.jpg" alt="" />
+                                            <img src="../assets/images/form_img/application.png" alt="" />
                                             <p class="text_image_list">Application form</p>
                                         </div>
                                         <div class="main_list_" data-val="7">
-                                            <img src="../assets/images/form_img/refund.jpg" alt="" />
+                                            <img src="../assets/images/form_img/refund1.png" alt="" />
                                             <p class="text_image_list">Refund Form</p>
                                         </div>
                                   
