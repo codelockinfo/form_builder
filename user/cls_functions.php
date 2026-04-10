@@ -12200,7 +12200,6 @@ class Client_functions extends common_function
 .code-form-app .content .code-form-control input,
 .code-form-app .content .code-form-control textarea,
 .code-form-app .content .code-form-control select {
-    display: block !important;
     height: 41px !important;
     padding: 10px 12px !important;
     color: #000 !important;

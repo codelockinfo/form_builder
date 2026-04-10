@@ -356,7 +356,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                                             <p class="text_image_list">Shopify Registration Form</p>
                                         </div>
                                         <div class="main_list_" data-val="4">
-                                            <img src="../assets/images/form_img/floating_contact_us_form.jpg" alt="" />
+                                            <img src="../assets/images/form_img/floating-form.png" alt="" />
                                             <p class="text_image_list">Floating contact form</p>
                                         </div>
                                         <!-- <div class="main_list_" data-val="5">
