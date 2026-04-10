@@ -12263,6 +12263,9 @@ class Client_functions extends common_function
 }
 .code-form-app .footer {
     margin-top: 4%;
+    width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
 }
 /* Footer button hover effect - use data attribute for dynamic hover color */
 .code-form-app .footer .action.submit.classic-button:hover,
@@ -12316,13 +12319,22 @@ class Client_functions extends common_function
     margin: 10px 0;
 }
 .code-form-app .footer.align-left {
-    text-align: left;
+    text-align: left !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
 }
 .code-form-app .footer.align-center {
-    text-align: center;
+     text-align: center !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
 }
 .code-form-app .footer.align-right {
-    text-align: right;
+ text-align: right !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
 }
 .code-form-app .w100 {
     width: 100%;
