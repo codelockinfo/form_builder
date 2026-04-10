@@ -348,7 +348,7 @@ html[class*="Polaris-"] .Polaris-Checkbox__Input:checked + .Polaris-Checkbox__Ba
                                             <p class="text_image_list firstone_ first_txt_image">Blank Form</p>
                                         </div>
                                         <div class="main_list_" data-val="2">
-                                            <img src="../assets/images/form_img/contact_us_form.jpg" alt="" />
+                                            <img src="../assets/images/form_img/Contact.png" alt="" />
                                             <p class="text_image_list">Contact Form</p>
                                         </div>
                                         <div class="main_list_" data-val="3">
