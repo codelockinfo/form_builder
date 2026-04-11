@@ -3021,51 +3021,47 @@ class Client_functions extends common_function
                     $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
                 }
                 else if ($_POST['form_type'] == 6) {
-                    // Application Form Template
+                    // Application Form Template (11 fields)
                     $where_query = array(
-                        ["", "id", "=", "1"],   // 1. Full Name (Text)
-                        ["OR", "id", "=", "1"],  // 2. Company Name (Text)
-                        ["OR", "id", "=", "2"],  // 3. Email Address (Email)
-                        ["OR", "id", "=", "1"],  // 4. WhatsApp / Phone Number (Text)
-                        ["OR", "id", "=", "15"], // 5. Country (Country)
-                        ["OR", "id", "=", "14"], // 6. Dropdown (Dropdown)
-                        ["OR", "id", "=", "1"],  // 7. Order Quantity (Text)
-                        ["OR", "id", "=", "1"],  // 8. Size Standard (Text)
-                        ["OR", "id", "=", "1"],  // 9. Expected Delivery Time (Text)
-                        ["OR", "id", "=", "12"], // 10. Custom Needs (Checkbox)
-                        ["OR", "id", "=", "4"]   // 11. Additional Message (Textarea)
+                        ["", "id", "=", "1"],   // 1. Full Name
+                        ["OR", "id", "=", "1"],  // 2. Company Name
+                        ["OR", "id", "=", "2"],  // 3. Email Address
+                        ["OR", "id", "=", "1"],  // 4. WhatsApp / Phone Number
+                        ["OR", "id", "=", "15"], // 5. Country
+                        ["OR", "id", "=", "14"], // 6. Dropdown
+                        ["OR", "id", "=", "1"],  // 7. Order Quantity
+                        ["OR", "id", "=", "1"],  // 8. Size Standard
+                        ["OR", "id", "=", "1"],  // 9. Expected Delivery Time
+                        ["OR", "id", "=", "13"], // 10. Custom Needs (Radio)
+                        ["OR", "id", "=", "4"]   // 11. Additional Message
                     );
                 }
                 else if ($_POST['form_type'] == 7) {
-                    // Refund Form Template
-                    // Customer Information: Full Name (text), Email (email), Phone (tel)
-                    // Order Details: Order Number (text), Order Date (date), Product Name (text)
-                    // Refund Request: Reason (select/dropdown), Description (textarea)
-                    // Evidence: File upload
-                    // Refund Preferences: Refund Type (radio), UPI/Bank (text), IFSC (text)
-                    // Confirmation: Checkbox
-                    // Submit button is added automatically
+                    // Refund Form Template (12 fields)
                     $where_query = array(
-                        ["", "id", "=", "1"], // Full Name (Text input)
-                        ["OR", "id", "=", "2"], // Email Address (Email input)
-                        ["OR", "id", "=", "7"], // Phone Number (Number input)
-                        ["OR", "id", "=", "1"], // Order Number (Text input)
-                        ["OR", "id", "=", "9"], // Order Date (Date picker)
-                        ["OR", "id", "=", "1"], // Product Name (Text input)
-                        ["OR", "id", "=", "14"], // Reason for Refund (Dropdown/Select)
-                        ["OR", "id", "=", "13"], // Refund Type (Radio buttons) - element_id 13 is Radio
-                        ["OR", "id", "=", "1"], // UPI ID / Bank Account No (Text input)
-                        ["OR", "id", "=", "1"], // IFSC Code (Text input)
-                        ["OR", "id", "=", "10"], // Upload Images/Video (File upload)
-                        ["OR", "id", "=", "12"] // Agree to Refund Policy (Checkbox) - element_id 12 is Checkbox
+                        ["", "id", "=", "1"],   // 1. Full Name
+                        ["OR", "id", "=", "2"],   // 2. Email Address
+                        ["OR", "id", "=", "7"],   // 3. Phone Number
+                        ["OR", "id", "=", "1"],   // 4. Order Number
+                        ["OR", "id", "=", "9"],   // 5. Order Date
+                        ["OR", "id", "=", "1"],   // 6. Product Name
+                        ["OR", "id", "=", "14"],  // 7. Reason for Refund
+                        ["OR", "id", "=", "13"],  // 8. Refund Type
+                        ["OR", "id", "=", "1"],   // 9. UPI ID / Bank Account No
+                        ["OR", "id", "=", "1"],   // 10. IFSC Code
+                        ["OR", "id", "=", "10"],  // 11. Upload Video Proof
+                        ["OR", "id", "=", "12"]   // 12. Agree to Refund Policy
                     );
+                }
+                else {
+                    // Generic Blank Form fallback
+                    $where_query = array(["", "id", "=", "1"], ["OR", "id", "=", "2"], ["OR", "id", "=", "4"]);
                 }
 
                 $sortedData = array();
                 $counter = 1;
 
                 foreach ($where_query as $templates) {
-
                     $elementid = $templates[3];
                     $where_query_cause = array(["", "id", "=", "$elementid"]);
                     $resource_array = array('single' => true);
@@ -3088,9 +3084,12 @@ class Client_functions extends common_function
                     $element_type14 = array("20", "21", "22", "23");
                     $element_type15 = array("14");
 
-                    // Custom handling for Blank, Contact, and Registration Forms (form_type 1, 2, 3, 4)
+                    $element_data = '';
+
+                    // Start of data mapping logic
                     if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 3, 4])) {
-                        $layout = in_array($_POST['form_type'], [2, 3]) ? "2" : "1";
+                        // Contact/Registration/Blank Form Layouts
+                        $layout = (in_array($_POST['form_type'], [2, 3])) ? "2" : "1";
                         if ($counter == 1 && in_array($elementid, [1, 20])) {
                             // First Name
                             $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", $layout));
@@ -3100,205 +3099,115 @@ class Client_functions extends common_function
                             $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", $layout));
                         }
                         else if ($counter == 3 && $elementid == 2) {
-                            // Email (50% for Contact Form, 100% for others like Registration/Blank)
+                            // Email (50% for Contact Form 2)
                             $email_layout = ($_POST['form_type'] == 2) ? "2" : "1";
                             $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", $email_layout));
                         }
-                        else if ($counter == 4 && $elementid == 1 && $_POST['form_type'] == 3) {
-                            // Address for Registration (100%)
-                            $element_data = serialize(array("Address", "Address", "", "0", "100", "0", "0", "1", "0", "1"));
-                        }
-                        else if ($counter == 5 && $elementid == 7 && $_POST['form_type'] == 3) {
-                            // Phone for Registration (50%)
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 6 && $elementid == 8 && $_POST['form_type'] == 3) {
-                            // Password for Registration (50%)
-                            $element_data = serialize(array("Password", "Password", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 7 && $elementid == 15 && $_POST['form_type'] == 3) {
-                            // Country for Registration (50%)
-                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
-                        }
-                        else if ($counter == 8 && $elementid == 1 && $_POST['form_type'] == 3) {
-                            // City for Registration (50%)
-                            $element_data = serialize(array("City", "City", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
                         else if ($counter == 4 && $elementid == 7) {
-                            // Phone Number (50% for Contact Form, 100% for others)
+                            // Phone Number (50% for Contact Form 2)
                             $phone_layout = ($_POST['form_type'] == 2) ? "2" : "1";
                             $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", $phone_layout));
                         }
-                        else if ($counter == 5 && $elementid == 4) {
-                            // Message (100%)
-                            $element_data = serialize(array("Message", "Message", "", "0", "100", "0", "0", "1", "0", "1"));
-                        }
-                        else if ($_POST['form_type'] == 6) {
-                            // Application Form specific element data mapping
-                            if ($counter == 1 && $elementid == 1) {
-                                // Full Name (50%)
-                                $element_data = serialize(array("Full Name", "e.g. jhon smith", "", "0", "100", "0", "0", "1", "0", "2"));
+                        else if ($_POST['form_type'] == 3) {
+                            // Special Registration fields (already partially handled above for 1, 2, 3, 5)
+                            if ($counter == 4 && $elementid == 1) {
+                                $element_data = serialize(array("Address", "Address", "", "0", "100", "0", "0", "1", "0", "1"));
                             }
-                            else if ($counter == 2 && $elementid == 1) {
-                                // Company Name (50%)
-                                $element_data = serialize(array("Company Name", "e.g. FC Barcelona Club", "", "0", "100", "0", "0", "1", "0", "2"));
+                            else if ($counter == 6 && $elementid == 8) {
+                                $element_data = serialize(array("Password", "Password", "", "0", "100", "0", "0", "1", "0", "2"));
                             }
-                            else if ($counter == 3 && $elementid == 2) {
-                                // Email Address (50%)
-                                $element_data = serialize(array("Email Address", "e.g. john@example.com", "", "1", "100", "0", "0", "1", "0", "2"));
-                            }
-                            else if ($counter == 4 && $elementid == 1) {
-                                // WhatsApp / Phone Number (50%)
-                                $element_data = serialize(array("WhatsApp / Phone Number", "e.g. +1 234 567 8900", "", "0", "100", "0", "0", "1", "0", "2"));
-                            }
-                            else if ($counter == 5 && $elementid == 15) {
-                                // Country (50%)
-                                $element_data = serialize(array("Country", "Please select_count", "", "", "0", "0", "0", "0", "2"));
-                            }
-                            else if ($counter == 6 && $elementid == 14) {
-                                // Dropdown (50%)
-                                $element_data = serialize(array("Dropdown", "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
-                            }
-                            else if ($counter == 7 && $elementid == 1) {
-                                // Order Quantity (50%)
-                                $element_data = serialize(array("Order Quantity", "e.g 50", "", "0", "100", "0", "0", "1", "0", "2"));
+                            else if ($counter == 7 && $elementid == 15) {
+                                $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
                             }
                             else if ($counter == 8 && $elementid == 1) {
-                                // Size Standard (50%)
-                                $element_data = serialize(array("Size Standard", "Size Standard", "", "0", "100", "0", "0", "1", "0", "2"));
-                            }
-                            else if ($counter == 9 && $elementid == 1) {
-                                // Expected Delivery Time (100%)
-                                $element_data = serialize(array("Expected Delivery Time", "e.g. Within 30 days, Before June 2026", "", "0", "100", "0", "0", "1", "0", "1"));
-                            }
-                            else if ($counter == 10 && $elementid == 12) {
-                                // Custom Needs (Checkboxes, 100% width, 2 columns per line)
-                                // Index 8 is options per line => "2" for 50% width items
-                                $element_data = serialize(array("Custom Needs", "Team Logo,Player Name,Sponsor Logo,Custom Colors", "", "0", "0", "1", "0", "2", "2"));
-                            }
-                            else if ($counter == 11 && $elementid == 4) {
-                                // Additional Message (100%)
-                                $element_data = serialize(array("Additional Message", "Tell us more about your VEXO order requirements...", "", "0", "100", "0", "0", "1", "0", "1"));
+                                $element_data = serialize(array("City", "City", "", "0", "100", "0", "0", "1", "0", "2"));
                             }
                         }
-                        else {
-                            // Fallback
-                            if (in_array($elementid, $element_type)) {
-                                $layout = "1"; // Default to 100% width for general forms
-                                $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
-                                $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
-                                $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
-                            }
+                        else if ($counter == 5 && $elementid == 4) {
+                            // Message
+                            $element_data = serialize(array("Message", "Message", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                    }
+                    else if (isset($_POST['form_type']) && $_POST['form_type'] == 6) {
+                        // Application Form specific element data mapping
+                        if ($counter == 1 && $elementid == 1) {
+                            $element_data = serialize(array("Full Name", "e.g. jhon smith", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 2 && $elementid == 1) {
+                            $element_data = serialize(array("Company Name", "e.g. FC Barcelona Club", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 3 && $elementid == 2) {
+                            $element_data = serialize(array("Email Address", "e.g. john@example.com", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 4 && $elementid == 1) {
+                            $element_data = serialize(array("WhatsApp / Phone Number", "e.g. +1 234 567 8900", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 5 && $elementid == 15) {
+                            $element_data = serialize(array("Country", "Please select_count", "", "", "0", "0", "0", "0", "2"));
+                        }
+                        else if ($counter == 6 && $elementid == 14) {
+                            $element_data = serialize(array("Dropdown", "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 7 && $elementid == 1) {
+                            $element_data = serialize(array("Order Quantity", "e.g 50", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 8 && $elementid == 1) {
+                            $element_data = serialize(array("Size Standard", "Size Standard", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 9 && $elementid == 1) {
+                            $element_data = serialize(array("Expected Delivery Time", "e.g. Within 30 days, Before June 2026", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 10 && $elementid == 13) {
+                            // Radio, 2 Columns, 100% Width
+                            $element_data = serialize(array("Custom Needs", "Team Logo,Player Name,Sponsor Logo,Custom Colors", "", "", "0", "0", "0", "1", "2", "1"));
+                        }
+                        else if ($counter == 11 && $elementid == 4) {
+                            $element_data = serialize(array("Additional Message", "Tell us more about your VEXO order requirements...", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                     }
                     else if (isset($_POST['form_type']) && $_POST['form_type'] == 7) {
-                        // Refund Form specific element data based on counter position and element type
+                        // Refund Form specific element data mapping
                         if ($counter == 1 && $elementid == 1) {
-                            // Full Name (Text input)
                             $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 2 && $elementid == 2) {
-                            // Email Address (Email input)
                             $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 3 && $elementid == 7) {
-                            // Phone Number (Number input)
                             $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 4 && $elementid == 1) {
-                            // Order Number / Order ID (Text input)
                             $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 5 && $elementid == 9) {
                             $element_data = serialize(array("Order Date", "Order Date", "", "0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "1"));
                         }
                         else if ($counter == 6 && $elementid == 1) {
-                            // Product Name (Text input)
                             $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 7 && $elementid == 14) {
-                            // Reason for Refund (Dropdown)
                             $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 8 && $elementid == 13) {
-                            // Refund Type (Radio)
                             $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "1"));
                         }
                         else if ($counter == 9 && $elementid == 1) {
-                            // UPI ID / Bank Account No (Text input)
                             $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 10 && $elementid == 1) {
-                            // IFSC Code (Text input)
                             $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 11 && $elementid == 10) {
-                            // Upload Images / Video (File upload) - Moved to last
-                            // Fixed: Added distinct Label and Button Text
-                            // Format: Label, Button Text, Description, Multi-select, ...
-                            // Fixed: Set Index 10 to "2" for Layout (50%), will be ignored as font-size by new check
                             $element_data = serialize(array("Upload Video Proof", "Select File", "Upload a video (max 20MB)", "0", "", "", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 12 && $elementid == 12) {
-                            // Agree to Refund Policy & Terms (Checkbox)
                             $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "1"));
                         }
-                        else {
-                            // Fallback to default
-                            if (in_array($elementid, $element_type)) {
-                                $layout = "1";
-                                $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
-                                $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
-                                $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
-                            }
-                            else if (in_array($elementid, $element_type2)) {
-                                $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type3)) {
-                                $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "1"));
-                            }
-                            else if (in_array($elementid, $element_type4)) {
-                                $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type5)) {
-                                $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type6)) {
-                                $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
-                            }
-                            else if (in_array($elementid, $element_type7)) {
-                                $element_data = serialize(array("I agree Terms and Conditions", "0", "", "1"));
-                            }
-                            else if (in_array($elementid, $element_type8)) {
-                                $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
-                            }
-                            else if (in_array($elementid, $element_type9)) {
-                                $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type10)) {
-                                $element_data = serialize(array("Heading", "", "1"));
-                            }
-                            else if (in_array($elementid, $element_type11)) {
-                                $element_data = serialize(array("Paragraph", "1"));
-                            }
-                            else if (in_array($elementid, $element_type12)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type13)) {
-                                $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "1"));
-                            }
-                            else if (in_array($elementid, $element_type14)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "1"));
-                            }
-                            else if (in_array($elementid, $element_type15)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "1"));
-                            }
-                        }
                     }
-                    else {
-                        // Default handling for other form types
+
+                    // Fallback block - if element_data is still empty (either not a special form type or counter mismatch)
+                    if (empty($element_data)) {
                         if (in_array($elementid, $element_type)) {
-                            $layout = "1"; // Default to 100% width for general fallback
                             $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                             $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                             $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
