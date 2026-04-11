@@ -542,4 +542,7 @@ input:focus-visible {
   .content .code-form-control.layout-3-column {
     width: 100% !important;
   }
+  .code-form-app form.get_selected_elements{
+    padding: 0px 15px30px;
+  }
 }
