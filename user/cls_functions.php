@@ -1034,7 +1034,7 @@ class Client_functions extends common_function
                             }
 
                             // Extract text/foreground color - prioritize 'text' then 'foreground' then 'foreground_label'
-                            $text_color = '#000000';
+                            $text_color = '#004166';
                             if (isset($scheme_colors['text'])) {
                                 $text_color = $scheme_colors['text'];
                             }
@@ -1155,7 +1155,7 @@ class Client_functions extends common_function
                                         $scheme_colors = $fallback_colors;
 
                                         $bg_color = isset($scheme_colors['background']) ? $scheme_colors['background'] : (isset($scheme_colors['background_label']) ? $scheme_colors['background_label'] : '#ffffff');
-                                        $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#000000'));
+                                        $text_color = isset($scheme_colors['text']) ? $scheme_colors['text'] : (isset($scheme_colors['foreground']) ? $scheme_colors['foreground'] : (isset($scheme_colors['foreground_label']) ? $scheme_colors['foreground_label'] : '#004166'));
                                         $heading_color = isset($scheme_colors['heading']) ? $scheme_colors['heading'] : (isset($scheme_colors['headings']) ? $scheme_colors['headings'] : $text_color);
 
                                         // Get all other colors
@@ -1256,7 +1256,7 @@ class Client_functions extends common_function
 
                             if (is_array($direct_colors) && count($direct_colors) > 0) {
                                 $bg_color = isset($direct_colors['background']) ? $direct_colors['background'] : (isset($direct_colors['background_label']) ? $direct_colors['background_label'] : '#ffffff');
-                                $text_color = isset($direct_colors['text']) ? $direct_colors['text'] : (isset($direct_colors['foreground']) ? $direct_colors['foreground'] : (isset($direct_colors['foreground_label']) ? $direct_colors['foreground_label'] : '#000000'));
+                                $text_color = isset($direct_colors['text']) ? $direct_colors['text'] : (isset($direct_colors['foreground']) ? $direct_colors['foreground'] : (isset($direct_colors['foreground_label']) ? $direct_colors['foreground_label'] : '#004166'));
 
                                 $other_colors = array();
                                 foreach ($direct_colors as $ck => $cv) {
@@ -3435,7 +3435,7 @@ class Client_functions extends common_function
                             $form_header_data[] = 'center'; // text_align
                         }
                         if (count($form_header_data) < 6) {
-                            $form_header_data[] = '#000000'; // text_color
+                            $form_header_data[] = '#004166'; // text_color
                         }
                     }
                     // Ensure we have at least 8 elements for new format (add subheading settings if missing)
@@ -3444,7 +3444,7 @@ class Client_functions extends common_function
                             $form_header_data[] = 16; // subheading_font_size
                         }
                         if (count($form_header_data) < 8) {
-                            $form_header_data[] = '#000000'; // subheading_text_color
+                            $form_header_data[] = '#004166'; // subheading_text_color
                         }
                     }
 
@@ -3534,16 +3534,16 @@ class Client_functions extends common_function
                         // New format: separate heading and sub-heading settings
                         $heading_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
                         $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
-                        $heading_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#000000';
+                        $heading_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#004166';
                         $subheading_font_size = isset($form_header_data[6]) ? intval($form_header_data[6]) : 16;
-                        $subheading_text_color = isset($form_header_data[7]) ? $form_header_data[7] : '#000000';
+                        $subheading_text_color = isset($form_header_data[7]) ? $form_header_data[7] : '#004166';
 
                         // Validate color formats
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $heading_text_color)) {
-                            $heading_text_color = '#000000';
+                            $heading_text_color = '#004166';
                         }
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $subheading_text_color)) {
-                            $subheading_text_color = '#000000';
+                            $subheading_text_color = '#004166';
                         }
                         
                         // Override with theme color scheme settings if they exist
@@ -3579,11 +3579,11 @@ class Client_functions extends common_function
                         // Old format: use same values for both
                         $header_font_size = isset($form_header_data[3]) ? intval($form_header_data[3]) : 24;
                         $header_text_align = isset($form_header_data[4]) ? $form_header_data[4] : 'center';
-                        $header_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#000000';
+                        $header_text_color = isset($form_header_data[5]) ? $form_header_data[5] : '#004166';
 
                         // Validate color format
                         if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $header_text_color)) {
-                            $header_text_color = '#000000';
+                            $header_text_color = '#004166';
                         }
                         
                         $header_desc_color = $header_text_color;
@@ -3728,7 +3728,7 @@ class Client_functions extends common_function
                         // Fallback to theme global text color for descriptions and inputs if not explicitly set
                         if (isset($design_settings['form_container']['text_color']) && !empty($design_settings['form_container']['text_color'])) {
                             if ($element_design === null) $element_design = array();
-                            if (!isset($element_design['color']) || empty($element_design['color']) || $element_design['color'] == '#000000' || $element_design['color'] == '#333333') {
+                            if (!isset($element_design['color']) || empty($element_design['color']) || $element_design['color'] == '#000000' || $element_design['color'] == '#333333' || $element_design['color'] == '#004166') {
                                 $element_design['color'] = $design_settings['form_container']['text_color'];
                             }
                         }
@@ -3740,8 +3740,8 @@ class Client_functions extends common_function
                         $element_design = array(
                             'inputFontSize' => (isset($element_data_array[30]) && $element_data_array[30] !== '') ? intval($element_data_array[30]) : (isset($element_data_array[10]) && intval($element_data_array[10]) > 9 ? intval($element_data_array[10]) : 16),
                             'labelFontSize' => (isset($element_data_array[35]) && $element_data_array[35] !== '') ? intval($element_data_array[35]) : (isset($element_data_array[15]) && intval($element_data_array[15]) > 9 ? intval($element_data_array[15]) : 16),
-                            'fontWeight' => isset($element_data_array[31]) ? $element_data_array[31] : (isset($element_data_array[11]) ? $element_data_array[11] : '400'),
-                            'color' => isset($element_data_array[32]) && $element_data_array[32] !== '' ? $element_data_array[32] : (isset($element_data_array[12]) ? $element_data_array[12] : '#000000'),
+                            'fontWeight' => (isset($element_data_array[31]) && $element_data_array[31] !== '400') ? $element_data_array[31] : (isset($element_data_array[11]) && $element_data_array[11] !== '400' ? $element_data_array[11] : '500'),
+                            'color' => (isset($element_data_array[32]) && !empty($element_data_array[32]) && $element_data_array[32] !== '#000000') ? $element_data_array[32] : (isset($element_data_array[12]) && !empty($element_data_array[12]) && $element_data_array[12] !== '#000000' ? $element_data_array[12] : '#004166'),
                             'borderRadius' => isset($element_data_array[33]) ? intval($element_data_array[33]) : (isset($element_data_array[13]) ? intval($element_data_array[13]) : 4),
                             'bgColor' => isset($element_data_array[34]) && $element_data_array[34] !== '' ? $element_data_array[34] : (isset($element_data_array[14]) ? $element_data_array[14] : '')
                         );
@@ -3770,12 +3770,12 @@ class Client_functions extends common_function
 
                         // Font weight - apply if set
                         if (isset($element_design['fontWeight'])) {
-                            $styles[] = 'font-weight: ' . $element_design['fontWeight'];
+                            $styles[] = 'font-weight: ' . $element_design['fontWeight'] . ' !important';
                         }
 
                         // Color - apply if set
                         if (isset($element_design['color']) && !empty($element_design['color'])) {
-                            $styles[] = 'color: ' . $element_design['color'];
+                            $styles[] = 'color: ' . $element_design['color'] . ' !important';
                         }
 
                         // Background color - apply if explicitly set (useful for upload areas, etc.)
@@ -3851,8 +3851,8 @@ class Client_functions extends common_function
                         $element_design = array(
                             'inputFontSize' => (isset($element_data_array[30]) && $element_data_array[30] !== '') ? intval($element_data_array[30]) : (isset($element_data_array[10]) && intval($element_data_array[10]) > 9 ? intval($element_data_array[10]) : 16),
                             'labelFontSize' => (isset($element_data_array[35]) && $element_data_array[35] !== '') ? intval($element_data_array[35]) : (isset($element_data_array[15]) && intval($element_data_array[15]) > 9 ? intval($element_data_array[15]) : 16),
-                            'fontWeight' => isset($element_data_array[31]) ? $element_data_array[31] : (isset($element_data_array[11]) ? $element_data_array[11] : '400'),
-                            'color' => isset($element_data_array[32]) && $element_data_array[32] !== '' ? $element_data_array[32] : (isset($element_data_array[12]) ? $element_data_array[12] : '#000000'),
+                            'fontWeight' => (isset($element_data_array[31]) && $element_data_array[31] !== '400') ? $element_data_array[31] : (isset($element_data_array[11]) && $element_data_array[11] !== '400' ? $element_data_array[11] : '500'),
+                            'color' => (isset($element_data_array[32]) && !empty($element_data_array[32]) && $element_data_array[32] !== '#000000') ? $element_data_array[32] : (isset($element_data_array[12]) && !empty($element_data_array[12]) && $element_data_array[12] !== '#000000' ? $element_data_array[12] : '#004166'),
                             'borderRadius' => isset($element_data_array[33]) ? intval($element_data_array[33]) : (isset($element_data_array[13]) ? intval($element_data_array[13]) : 4),
                             'bgColor' => isset($element_data_array[34]) && $element_data_array[34] !== '' ? $element_data_array[34] : (isset($element_data_array[14]) ? $element_data_array[14] : '')
                         );
@@ -3869,7 +3869,7 @@ class Client_functions extends common_function
                         if (isset($element_design['color']) && !empty($element_design['color'])) {
                             $color = trim($element_design['color']);
                             if ($color !== '' && $color !== null && preg_match('/^#[0-9A-Fa-f]{6}$/', $color)) {
-                                $styles[] = 'color: ' . htmlspecialchars($color, ENT_QUOTES, 'UTF-8');
+                                $styles[] = 'color: ' . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') . ' !important';
                             }
                         }
 
@@ -3890,8 +3890,8 @@ class Client_functions extends common_function
                         // Font weight - apply if set and different from default
                         if (isset($element_design['fontWeight']) && !empty($element_design['fontWeight'])) {
                             $font_weight = trim($element_design['fontWeight']);
-                            if ($font_weight !== '400' && $font_weight !== '') {
-                                $styles[] = 'font-weight: ' . htmlspecialchars($font_weight, ENT_QUOTES, 'UTF-8');
+                            if ($font_weight !== 'nothing' && $font_weight !== '') {
+                                $styles[] = 'font-weight: ' . htmlspecialchars($font_weight, ENT_QUOTES, 'UTF-8') . ' !important';
                             }
                         }
 
@@ -4383,7 +4383,7 @@ class Client_functions extends common_function
                                     $design_data = $design_settings['element_' . $form_data_id];
                                 }
                                 $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
-                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#004166'; // Default brand color
                                 $borderRadius_val = isset($design_data['borderRadius']) ? $design_data['borderRadius'] : 4;
                                 // END: Retrieve design data
 
@@ -4436,7 +4436,7 @@ class Client_functions extends common_function
                                     $design_data = $design_settings['element_' . $form_data_id];
                                 }
                                 $color_val = isset($design_data['color']) ? $design_data['color'] : '';
-                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#004166'; // Default brand color
                                 // END: Retrieve design data
 
                                 // Prepare inline styles
@@ -4498,7 +4498,7 @@ class Client_functions extends common_function
                                     $design_data = $design_settings['element_' . $form_data_id];
                                 }
                                 $optionColor_val = isset($design_data['optionColor']) ? $design_data['optionColor'] : '';
-                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#000000'; // Default black
+                                $checkmarkColor_val = isset($design_data['checkmarkColor']) ? $design_data['checkmarkColor'] : '#004166'; // Default brand color
                                 // END: Retrieve design data
 
                                 foreach ($radio_options as $index => $option) {
@@ -6082,29 +6082,28 @@ class Client_functions extends common_function
         $labelFontSize = isset($saved_settings['labelFontSize']) ? intval($saved_settings['labelFontSize']) : (isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16);
         $inputFontSize = isset($saved_settings['inputFontSize']) ? intval($saved_settings['inputFontSize']) : (isset($saved_settings['fontSize']) ? intval($saved_settings['fontSize']) : 16);
         $fontSize = $labelFontSize; // For backward compatibility in some places if needed
-        $fontWeight = isset($saved_settings['fontWeight']) ? $saved_settings['fontWeight'] : '400';
-        // Preserve color value - don't default to #000000 if it was explicitly set
-        // Check if color exists and is not empty string, null, or false
-        $color = '#000000'; // Default
+        $fontWeight = (isset($saved_settings['fontWeight']) && $saved_settings['fontWeight'] !== '400') ? $saved_settings['fontWeight'] : '500';
+        // Preserve color value - upgrade from black/grey if needed
+        $color = '#004166'; // Default
         if (isset($saved_settings['color'])) {
             $color_value = trim($saved_settings['color']);
-            if ($color_value !== '' && $color_value !== null && $color_value !== false) {
+            if ($color_value !== '' && $color_value !== null && $color_value !== false && $color_value !== '#000000' && $color_value !== '#333333') {
                 $color = $color_value;
             }
         }
 
-        $optionColor = '#000000'; // Default
+        $optionColor = '#004166'; // Default
         if (isset($saved_settings['optionColor'])) {
             $optionColor_value = trim($saved_settings['optionColor']);
-            if ($optionColor_value !== '' && $optionColor_value !== null && $optionColor_value !== false) {
+            if ($optionColor_value !== '' && $optionColor_value !== null && $optionColor_value !== false && $optionColor_value !== '#000000') {
                 $optionColor = $optionColor_value;
             }
         }
 
-        $checkmarkColor = '#000000'; // Default
+        $checkmarkColor = '#004166'; // Default
         if (isset($saved_settings['checkmarkColor'])) {
             $checkmarkColor_value = trim($saved_settings['checkmarkColor']);
-            if ($checkmarkColor_value !== '' && $checkmarkColor_value !== null && $checkmarkColor_value !== false) {
+            if ($checkmarkColor_value !== '' && $checkmarkColor_value !== null && $checkmarkColor_value !== false && $checkmarkColor_value !== '#000000') {
                 $checkmarkColor = $checkmarkColor_value;
             }
         }
@@ -6178,7 +6177,7 @@ class Client_functions extends common_function
                                             </div>
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input type="text" name="element_design_color_text" class="Polaris-TextField__Input element-design-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') . '" placeholder="#000000">
+                                                    <input type="text" name="element_design_color_text" class="Polaris-TextField__Input element-design-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($color, ENT_QUOTES, 'UTF-8') . '" placeholder="#004166">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -6202,7 +6201,7 @@ class Client_functions extends common_function
                                             </div>
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input type="text" name="element_design_option_color_text" class="Polaris-TextField__Input element-design-option-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($optionColor, ENT_QUOTES, 'UTF-8') . '" placeholder="#000000">
+                                                    <input type="text" name="element_design_option_color_text" class="Polaris-TextField__Input element-design-option-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($optionColor, ENT_QUOTES, 'UTF-8') . '" placeholder="#004166">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -6226,7 +6225,7 @@ class Client_functions extends common_function
                                             </div>
                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                 <div class="Polaris-TextField">
-                                                    <input type="text" name="element_design_checkmark_color_text" class="Polaris-TextField__Input element-design-checkmark-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($checkmarkColor, ENT_QUOTES, 'UTF-8') . '" placeholder="#000000">
+                                                    <input type="text" name="element_design_checkmark_color_text" class="Polaris-TextField__Input element-design-checkmark-color-text" data-formdataid="' . $form_data_id . '" value="' . htmlspecialchars($checkmarkColor, ENT_QUOTES, 'UTF-8') . '" placeholder="#004166">
                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                 </div>
                                             </div>
@@ -6484,8 +6483,8 @@ class Client_functions extends common_function
                     $design_settings[$design_settings_key] = array(
                         'inputFontSize' => (isset($formData[30]) && $formData[30] !== '') ? intval($formData[30]) : (isset($formData[10]) && intval($formData[10]) > 9 ? intval($formData[10]) : 16),
                         'labelFontSize' => (isset($formData[35]) && $formData[35] !== '') ? intval($formData[35]) : (isset($formData[15]) && intval($formData[15]) > 9 ? intval($formData[15]) : 16),
-                        'fontWeight' => isset($formData[31]) ? $formData[31] : (isset($formData[11]) ? $formData[11] : '400'),
-                        'color' => isset($formData[32]) && $formData[32] !== '' ? $formData[32] : (isset($formData[12]) ? $formData[12] : '#000000'),
+                        'fontWeight' => isset($formData[31]) ? $formData[31] : (isset($formData[11]) ? $formData[11] : '500'),
+                        'color' => isset($formData[32]) && $formData[32] !== '' ? $formData[32] : (isset($formData[12]) ? $formData[12] : '#004166'),
                         'borderRadius' => isset($formData[33]) ? intval($formData[33]) : (isset($formData[13]) ? intval($formData[13]) : 4),
                         'bgColor' => isset($formData[34]) && $formData[34] !== '' ? $formData[34] : (isset($formData[14]) ? $formData[14] : '')
                     );
@@ -9901,7 +9900,7 @@ class Client_functions extends common_function
                             $element_data[30] = $settings['color'];
                         }
                         elseif (!isset($element_data[30])) {
-                            $element_data[30] = '#000000';
+                            $element_data[30] = '#004166';
                         }
 
                         // Checkmark Color (Index 32) - Preserve existing if not in settings
@@ -9909,7 +9908,7 @@ class Client_functions extends common_function
                             $element_data[32] = $settings['checkmarkColor'];
                         }
                         elseif (!isset($element_data[32])) {
-                            $element_data[32] = '#000000';
+                            $element_data[32] = '#004166';
                         }
                     }
                     else {
@@ -9930,7 +9929,7 @@ class Client_functions extends common_function
                             $element_data[32] = $settings['color'];
                         }
                         elseif (!isset($element_data[32])) {
-                            $element_data[32] = '#000000';
+                            $element_data[32] = '#004166';
                         }
                     }
 
@@ -10056,7 +10055,7 @@ class Client_functions extends common_function
                             'labelFontSize' => isset($_POST['settings']['labelFontSize']) ? intval($_POST['settings']['labelFontSize']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
                             'inputFontSize' => isset($_POST['settings']['inputFontSize']) ? intval($_POST['settings']['inputFontSize']) : (isset($_POST['settings']['fontSize']) ? intval($_POST['settings']['fontSize']) : 16),
                             'fontWeight' => isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400',
-                            'color' => isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000',
+                            'color' => isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#004166',
                             'borderRadius' => isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4,
                             'bgColor' => isset($_POST['settings']['bgColor']) ? $_POST['settings']['bgColor'] : ''
                         );
@@ -10071,7 +10070,7 @@ class Client_functions extends common_function
                     'labelFontSize' => isset($_POST['settings[labelFontSize]']) ? intval($_POST['settings[labelFontSize]']) : (isset($_POST['settings']['labelFontSize']) ? intval($_POST['settings']['labelFontSize']) : 16),
                     'inputFontSize' => isset($_POST['settings[inputFontSize]']) ? intval($_POST['settings[inputFontSize]']) : (isset($_POST['settings']['inputFontSize']) ? intval($_POST['settings']['inputFontSize']) : 16),
                     'fontWeight' => isset($_POST['settings[fontWeight]']) ? $_POST['settings[fontWeight]'] : (isset($_POST['settings']['fontWeight']) ? $_POST['settings']['fontWeight'] : '400'),
-                    'color' => isset($_POST['settings[color]']) ? $_POST['settings[color]'] : (isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#000000'),
+                    'color' => isset($_POST['settings[color]']) ? $_POST['settings[color]'] : (isset($_POST['settings']['color']) ? $_POST['settings']['color'] : '#004166'),
                     'borderRadius' => isset($_POST['settings[borderRadius]']) ? intval($_POST['settings[borderRadius]']) : (isset($_POST['settings']['borderRadius']) ? intval($_POST['settings']['borderRadius']) : 4),
                     'bgColor' => isset($_POST['settings[bgColor]']) ? $_POST['settings[bgColor]'] : (isset($_POST['settings']['bgColor']) ? $_POST['settings']['bgColor'] : '')
                 );
@@ -10149,15 +10148,15 @@ class Client_functions extends common_function
                     if (is_array($element_data)) {
                         // SPECIAL HANDLING: For Radio (13) and Checkbox (11), map custom colors
                         if (in_array($current_element_id, [11, 13, 12])) { // 13=Radio, 11=Checkbox, 12=Terms
-                            $element_data[30] = isset($settings['optionColor']) ? $settings['optionColor'] : (isset($settings['color']) ? $settings['color'] : '#000000'); // Use index 30 for Option Color
-                            $element_data[32] = isset($settings['checkmarkColor']) ? $settings['checkmarkColor'] : '#000000'; // Use index 32 for Checkmark Color
+                            $element_data[30] = isset($settings['optionColor']) ? $settings['optionColor'] : (isset($settings['color']) ? $settings['color'] : '#004166'); // Use index 30 for Option Color
+                            $element_data[32] = isset($settings['checkmarkColor']) ? $settings['checkmarkColor'] : '#004166'; // Use index 32 for Checkmark Color
                         }
                         else {
                             $element_data[30] = isset($settings['inputFontSize']) ? intval($settings['inputFontSize']) : (isset($settings['fontSize']) ? intval($settings['fontSize']) : 16);
-                            $element_data[32] = isset($settings['color']) ? $settings['color'] : '#000000';
+                            $element_data[32] = isset($settings['color']) ? $settings['color'] : '#004166';
                         }
 
-                        $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '400';
+                        $element_data[31] = isset($settings['fontWeight']) ? $settings['fontWeight'] : '500';
                         // Index 32 handled above
                         $element_data[33] = isset($settings['borderRadius']) ? intval($settings['borderRadius']) : 4;
                         $element_data[34] = isset($settings['bgColor']) ? $settings['bgColor'] : '';
@@ -10708,11 +10707,11 @@ class Client_functions extends common_function
 
             // Heading (title) settings
             $heading_font_size = isset($_POST['header_heading_font_size']) ? intval($_POST['header_heading_font_size']) : 24;
-            $heading_text_color = isset($_POST['header_heading_text_color_text']) ? $_POST['header_heading_text_color_text'] : (isset($_POST['header_heading_text_color']) ? $_POST['header_heading_text_color'] : (isset($_POST['theme_heading_color']) ? $_POST['theme_heading_color'] : '#000000'));
+            $heading_text_color = isset($_POST['header_heading_text_color_text']) ? $_POST['header_heading_text_color_text'] : (isset($_POST['header_heading_text_color']) ? $_POST['header_heading_text_color'] : (isset($_POST['theme_heading_color']) ? $_POST['theme_heading_color'] : '#004166'));
 
             // Sub-heading (description) settings
             $subheading_font_size = isset($_POST['header_subheading_font_size']) ? intval($_POST['header_subheading_font_size']) : 16;
-            $subheading_text_color = isset($_POST['header_subheading_text_color_text']) ? $_POST['header_subheading_text_color_text'] : (isset($_POST['header_subheading_text_color']) ? $_POST['header_subheading_text_color'] : (isset($_POST['theme_text_color']) ? $_POST['theme_text_color'] : '#000000'));
+            $subheading_text_color = isset($_POST['header_subheading_text_color_text']) ? $_POST['header_subheading_text_color_text'] : (isset($_POST['header_subheading_text_color']) ? $_POST['header_subheading_text_color'] : (isset($_POST['theme_text_color']) ? $_POST['theme_text_color'] : '#004166'));
 
             // Alignment (applies to both)
             $text_align = isset($_POST['header_text_align']) ? $_POST['header_text_align'] : 'center';
@@ -10733,10 +10732,10 @@ class Client_functions extends common_function
 
             // Validate color formats
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $heading_text_color)) {
-                $heading_text_color = '#000000'; // Default to black if invalid
+                $heading_text_color = '#004166'; // Default brand color
             }
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $subheading_text_color)) {
-                $subheading_text_color = '#000000'; // Default to black if invalid
+                $subheading_text_color = '#004166'; // Default brand color
             }
 
             // Validate form_id and title

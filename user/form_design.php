@@ -6813,8 +6813,8 @@ console.log('Custom code loaded');
              inputFontSize = oldFontSize;
         }
 
-        var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
-        var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
+        var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '500';
+        var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#004166';
         var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
         var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
         if (isNaN(borderRadius) || borderRadius < 0) {
@@ -7593,8 +7593,8 @@ console.log('Custom code loaded');
             
             // Fallback: Get all design values for this element
             var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
-            var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400';
-            var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000';
+            var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '500';
+            var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#004166';
             var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
             var borderRadius = (borderRadiusVal !== '' && borderRadiusVal !== null && borderRadiusVal !== undefined) ? parseInt(borderRadiusVal) : 4;
             if (isNaN(borderRadius) || borderRadius < 0) {
@@ -8329,8 +8329,8 @@ console.log('Custom code loaded');
             // Get current settings
             var settings = {
                 fontSize: parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16,
-                fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '400',
-                color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#000000',
+                fontWeight: $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '500',
+                color: $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#004166',
                 borderRadius: parseInt($('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val()) || 4,
                 bgColor: $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]').val() || ''
             };
@@ -8499,7 +8499,7 @@ console.log('Custom code loaded');
             if (!colorScheme) return;
             
             var bgColor = colorScheme.bg || colorScheme.background || '#ffffff';
-            var textColor = colorScheme.text || '#000000';
+            var textColor = colorScheme.text || '#004166';
             var headingColor = colorScheme.heading || textColor;
             var swatch1 = colorScheme.swatch1 || colorScheme.accent1 || textColor;
             var swatch2 = colorScheme.swatch2 || colorScheme.accent2 || bgColor;
