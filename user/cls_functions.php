@@ -2849,14 +2849,14 @@ class Client_functions extends common_function
                 $element_type15 = array("14");
 
                 if (in_array($elementid, $element_type)) {
-                    $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type2)) {
-                    $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type3)) {
                     // Password element data structure: [label, placeholder, description, limit_char_enable, limit_char_value, confirm_password, confirm_placeholder, hidelabel, keeppositionlabel, required, required_hidelabel, columnwidth, confirm_label, confirm_placeholder_confirm, confirm_description, confirm_columnwidth]
-                    $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                    $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "1"));
                     error_log("Password element (ID: " . $elementid . ") - Serialized data length: " . strlen($element_data));
                     // Test unserialize to make sure it works
                     $test_unserialize = @unserialize($element_data);
@@ -2868,44 +2868,44 @@ class Client_functions extends common_function
                     }
                 }
                 else if (in_array($elementid, $element_type4)) {
-                    $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                    $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type5)) {
-                    $element_data = serialize(array("File", "Choose file", "upload", "0", "", "", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array("File", "Choose file", "upload", "0", "", "", "0", "0", "1", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type6)) {
-                    $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                    $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                 }
                 else if (in_array($elementid, $element_type7)) {
-                    $element_data = serialize(array("I agree Terms and Conditions", "0", "", "0", "2"));
+                    $element_data = serialize(array("I agree Terms and Conditions", "0", "", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type8)) {
-                    $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                    $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                 }
                 else if (in_array($elementid, $element_type9)) {
-                    $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                    $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type10)) {
-                    $element_data = serialize(array("Heading", "", "2"));
+                    $element_data = serialize(array("Heading", "", "1"));
                 }
                 else if (in_array($elementid, $element_type11)) {
-                    $element_data = serialize(array("Paragraph", "2"));
+                    $element_data = serialize(array("Paragraph", "1"));
                 }
                 else if (in_array($elementid, $element_type12)) {
-                    $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                    $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type13)) {
-                    $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                    $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "1"));
                 }
                 else if (in_array($elementid, $element_type14)) {
-                    $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "1"));
                 }
                 else if (in_array($elementid, $element_type15)) {
-                    $element_data = serialize(array($comeback_client['element_title'], "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array($comeback_client['element_title'], "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "1"));
                 }
                 else {
                     // Default element data if element type is not recognized
-                    $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "2"));
+                    $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "1"));
                 }
 
                 // Validate element_data was set
@@ -3077,13 +3077,14 @@ class Client_functions extends common_function
 
                     // Custom handling for Blank, Contact, and Registration Forms (form_type 1, 2, 3, 4)
                     if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 3, 4])) {
+                        $layout = ($_POST['form_type'] == 3) ? "2" : "1";
                         if ($counter == 1 && in_array($elementid, [1, 20])) {
-                            // First Name (50%)
-                            $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                            // First Name
+                            $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", $layout));
                         }
                         else if ($counter == 2 && in_array($elementid, [1, 21])) {
-                            // Last Name (50%)
-                            $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                            // Last Name
+                            $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", $layout));
                         }
                         else if ($counter == 3 && $elementid == 2) {
                             // Email (100%)
@@ -3111,7 +3112,7 @@ class Client_functions extends common_function
                         }
                         else if ($counter == 4 && $elementid == 7) {
                             // Phone Number (100% for Contact Form, 50% was already handled above for Reg)
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 5 && $elementid == 4) {
                             // Message (100%)
@@ -3120,7 +3121,7 @@ class Client_functions extends common_function
                         else {
                             // Fallback
                             if (in_array($elementid, $element_type)) {
-                                $layout = ($elementid == 4) ? "1" : "2";
+                                $layout = "1"; // Default to 100% width for general forms
                                 $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
@@ -3131,22 +3132,42 @@ class Client_functions extends common_function
                         // Refund Form specific element data based on counter position and element type
                         if ($counter == 1 && $elementid == 1) {
                             // Full Name (Text input)
-                            $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 2 && $elementid == 2) {
                             // Email Address (Email input)
-                            $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 3 && $elementid == 7) {
                             // Phone Number (Number input)
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 4 && $elementid == 1) {
                             // Order Number / Order ID (Text input)
-                            $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 5 && $elementid == 9) {
-                            $element_data = serialize(array("Order Date", "Order Date", "", "0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "2"));
+                            $element_data = serialize(array("Order Date", "Order Date", "", "0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "1"));
+                        }
+                        else if ($counter == 6 && $elementid == 1) {
+                            // Product Name (Text input)
+                            $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 7 && $elementid == 14) {
+                            // Reason for Refund (Dropdown)
+                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 8 && $elementid == 13) {
+                            // Refund Type (Radio)
+                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "1"));
+                        }
+                        else if ($counter == 9 && $elementid == 1) {
+                            // UPI ID / Bank Account No (Text input)
+                            $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 10 && $elementid == 1) {
+                            // IFSC Code (Text input)
+                            $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 6 && $elementid == 1) {
                             // Product Name (Text input)
@@ -3179,109 +3200,109 @@ class Client_functions extends common_function
                         }
                         else if ($counter == 12 && $elementid == 12) {
                             // Agree to Refund Policy & Terms (Checkbox)
-                            $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "2"));
+                            $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "1"));
                         }
                         else {
                             // Fallback to default
                             if (in_array($elementid, $element_type)) {
-                                $layout = ($elementid == 4) ? "1" : "2";
+                                $layout = "1";
                                 $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
                             }
                             else if (in_array($elementid, $element_type2)) {
-                                $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                                $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type3)) {
-                                $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                                $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "1"));
                             }
                             else if (in_array($elementid, $element_type4)) {
-                                $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                                $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type5)) {
-                                $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
+                                $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type6)) {
-                                $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                                $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                             }
                             else if (in_array($elementid, $element_type7)) {
-                                $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
+                                $element_data = serialize(array("I agree Terms and Conditions", "0", "", "1"));
                             }
                             else if (in_array($elementid, $element_type8)) {
-                                $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                                $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                             }
                             else if (in_array($elementid, $element_type9)) {
-                                $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                                $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type10)) {
-                                $element_data = serialize(array("Heading", "", "2"));
+                                $element_data = serialize(array("Heading", "", "1"));
                             }
                             else if (in_array($elementid, $element_type11)) {
-                                $element_data = serialize(array("Paragraph", "2"));
+                                $element_data = serialize(array("Paragraph", "1"));
                             }
                             else if (in_array($elementid, $element_type12)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                                $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type13)) {
-                                $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                                $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "1"));
                             }
                             else if (in_array($elementid, $element_type14)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                                $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "1"));
                             }
                             else if (in_array($elementid, $element_type15)) {
-                                $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                                $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "1"));
                             }
                         }
                     }
                     else {
                         // Default handling for other form types
                         if (in_array($elementid, $element_type)) {
-                            $layout = ($elementid == 4) ? "1" : "2";
+                            $layout = "1"; // Default to 100% width for general fallback
                             $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                             $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                             $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
                         }
                         else if (in_array($elementid, $element_type2)) {
-                            $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type3)) {
-                            $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "2"));
+                            $element_data = serialize(array("Password", "", "", "0", "100", "false", "", "0", "0", "0", "0", "0", "0", "Confirm password", "Confirm password", "", "1"));
                         }
                         else if (in_array($elementid, $element_type4)) {
-                            $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "2"));
+                            $element_data = serialize(array("Date time", "Date time", "", "0", "0", "0", "0", "2", "0", "Y-m-d", "12h", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type5)) {
-                            $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array("File", "", "", "0", "", "", "0", "0", "1", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type6)) {
-                            $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                            $element_data = serialize(array("Checkbox", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                         }
                         else if (in_array($elementid, $element_type7)) {
-                            $element_data = serialize(array("I agree Terms and Conditions", "0", "", "2"));
+                            $element_data = serialize(array("I agree Terms and Conditions", "0", "", "1"));
                         }
                         else if (in_array($elementid, $element_type8)) {
-                            $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "2"));
+                            $element_data = serialize(array("Radio", "Option 1,Option 2", "", "", "0", "0", "0", "0", "1", "1"));
                         }
                         else if (in_array($elementid, $element_type9)) {
-                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type10)) {
-                            $element_data = serialize(array("Heading", "", "2"));
+                            $element_data = serialize(array("Heading", "", "1"));
                         }
                         else if (in_array($elementid, $element_type11)) {
-                            $element_data = serialize(array("Paragraph", "2"));
+                            $element_data = serialize(array("Paragraph", "1"));
                         }
                         else if (in_array($elementid, $element_type12)) {
-                            $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "2"));
+                            $element_data = serialize(array($comeback_client['element_title'], "", "0", "0", "0", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type13)) {
-                            $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "2"));
+                            $element_data = serialize(array("&lt;div&gt;Enter your code&lt;/div&gt;", "1"));
                         }
                         else if (in_array($elementid, $element_type14)) {
-                            $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array($comeback_client['element_title'], "", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if (in_array($elementid, $element_type15)) {
-                            $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                            $element_data = serialize(array($comeback_client['element_title'], "", "Option 1,Option 2", "", "", "0", "0", "1", "0", "1"));
                         }
                     }
 
@@ -4008,10 +4029,10 @@ class Client_functions extends common_function
                                 if (!isset($unserialize_elementdata[9]) || $unserialize_elementdata[9] === '' || $unserialize_elementdata[9] === null) {
                                     // Only set default if it's truly missing - preserve '0' if it was explicitly set
                                     if (!isset($unserialize_elementdata[9])) {
-                                        $unserialize_elementdata[9] = '2'; // Default to 50% only if not set at all
+                                        $unserialize_elementdata[9] = '1'; // Default to 100% only if not set at all
                                     }
                                     else if ($unserialize_elementdata[9] === '' || $unserialize_elementdata[9] === null) {
-                                        $unserialize_elementdata[9] = '2'; // Default to 50% if empty string or null
+                                        $unserialize_elementdata[9] = '1'; // Default to 100% if empty string or null
                                     }
                                 }
                             }
