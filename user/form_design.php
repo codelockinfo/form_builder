@@ -6825,11 +6825,12 @@ console.log('Custom code loaded');
         var checkmarkColor = $('.element-design-checkmark-color-text[data-formdataid="' + formdataid + '"]').val() || null;
         
         // Apply to input, textarea, select elements (Input Font Size)
-        $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').css({
-            'font-size': inputFontSize + 'px',
-            'font-weight': fontWeight,
-            'color': color,
-            'border-radius': borderRadius + 'px'
+        $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').each(function() {
+            var elem = $(this)[0];
+            elem.style.setProperty('font-size', inputFontSize + 'px');
+            elem.style.setProperty('font-weight', fontWeight);
+            elem.style.setProperty('color', color);
+            elem.style.setProperty('border-radius', borderRadius + 'px', 'important');
         });
 
         // Apply to Labels (Label Font Size)
@@ -7617,8 +7618,8 @@ console.log('Custom code loaded');
             // Apply border-radius to the input field, textarea, and select (not font-size)
             var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"], .contact-form select[data-formdataid="' + formdataid + '"], .code-form-app input[data-formdataid="' + formdataid + '"], .code-form-app textarea[data-formdataid="' + formdataid + '"], .code-form-app select[data-formdataid="' + formdataid + '"]');
             if ($previewInput.length) {
-                $previewInput.css({
-                    'border-radius': borderRadius + 'px'
+                $previewInput.each(function() {
+                    $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
                 });
             }
             
