@@ -1422,7 +1422,8 @@ ul {
 }
 
 .floting_form_main .content {
-    display: block !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
     width: 100% !important;
 }
 
@@ -1437,9 +1438,23 @@ ul {
 }
 
 .floting_form_main .code-form-control {
-    display: block !important;
+    display: block;
     margin-bottom: 15px !important;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 5px !important;
+}
+
+.floting_form_main .code-form-control.layout-1-column {
     width: 100% !important;
+}
+
+.floting_form_main .code-form-control.layout-2-column {
+    width: 50% !important;
+}
+
+.floting_form_main .code-form-control.layout-3-column {
+    width: 33.33% !important;
 }
 
 .floting_form_main input.classic-input,
