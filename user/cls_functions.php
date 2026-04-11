@@ -3021,7 +3021,20 @@ class Client_functions extends common_function
                     $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
                 }
                 else if ($_POST['form_type'] == 6) {
-                    $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "4"]);
+                    // Application Form Template
+                    $where_query = array(
+                        ["", "id", "=", "1"],   // 1. Full Name (Text)
+                        ["OR", "id", "=", "1"],  // 2. Company Name (Text)
+                        ["OR", "id", "=", "2"],  // 3. Email Address (Email)
+                        ["OR", "id", "=", "1"],  // 4. WhatsApp / Phone Number (Text)
+                        ["OR", "id", "=", "15"], // 5. Country (Country)
+                        ["OR", "id", "=", "14"], // 6. Dropdown (Dropdown)
+                        ["OR", "id", "=", "1"],  // 7. Order Quantity (Text)
+                        ["OR", "id", "=", "1"],  // 8. Size Standard (Text)
+                        ["OR", "id", "=", "1"],  // 9. Expected Delivery Time (Text)
+                        ["OR", "id", "=", "12"], // 10. Custom Needs (Checkbox)
+                        ["OR", "id", "=", "4"]   // 11. Additional Message (Textarea)
+                    );
                 }
                 else if ($_POST['form_type'] == 7) {
                     // Refund Form Template
@@ -3077,7 +3090,7 @@ class Client_functions extends common_function
 
                     // Custom handling for Blank, Contact, and Registration Forms (form_type 1, 2, 3, 4)
                     if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 3, 4])) {
-                        $layout = ($_POST['form_type'] == 3) ? "2" : "1";
+                        $layout = in_array($_POST['form_type'], [2, 3]) ? "2" : "1";
                         if ($counter == 1 && in_array($elementid, [1, 20])) {
                             // First Name
                             $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", $layout));
@@ -3087,8 +3100,9 @@ class Client_functions extends common_function
                             $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", $layout));
                         }
                         else if ($counter == 3 && $elementid == 2) {
-                            // Email (100%)
-                            $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", "1"));
+                            // Email (50% for Contact Form, 100% for others like Registration/Blank)
+                            $email_layout = ($_POST['form_type'] == 2) ? "2" : "1";
+                            $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", $email_layout));
                         }
                         else if ($counter == 4 && $elementid == 1 && $_POST['form_type'] == 3) {
                             // Address for Registration (100%)
@@ -3111,12 +3125,61 @@ class Client_functions extends common_function
                             $element_data = serialize(array("City", "City", "", "0", "100", "0", "0", "1", "0", "2"));
                         }
                         else if ($counter == 4 && $elementid == 7) {
-                            // Phone Number (100% for Contact Form, 50% was already handled above for Reg)
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "1"));
+                            // Phone Number (50% for Contact Form, 100% for others)
+                            $phone_layout = ($_POST['form_type'] == 2) ? "2" : "1";
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", $phone_layout));
                         }
                         else if ($counter == 5 && $elementid == 4) {
                             // Message (100%)
                             $element_data = serialize(array("Message", "Message", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($_POST['form_type'] == 6) {
+                            // Application Form specific element data mapping
+                            if ($counter == 1 && $elementid == 1) {
+                                // Full Name (50%)
+                                $element_data = serialize(array("Full Name", "e.g. jhon smith", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 2 && $elementid == 1) {
+                                // Company Name (50%)
+                                $element_data = serialize(array("Company Name", "e.g. FC Barcelona Club", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 3 && $elementid == 2) {
+                                // Email Address (50%)
+                                $element_data = serialize(array("Email Address", "e.g. john@example.com", "", "1", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 4 && $elementid == 1) {
+                                // WhatsApp / Phone Number (50%)
+                                $element_data = serialize(array("WhatsApp / Phone Number", "e.g. +1 234 567 8900", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 5 && $elementid == 15) {
+                                // Country (50%)
+                                $element_data = serialize(array("Country", "Please select_count", "", "", "0", "0", "0", "0", "2"));
+                            }
+                            else if ($counter == 6 && $elementid == 14) {
+                                // Dropdown (50%)
+                                $element_data = serialize(array("Dropdown", "Please select", "Option 1,Option 2", "", "", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 7 && $elementid == 1) {
+                                // Order Quantity (50%)
+                                $element_data = serialize(array("Order Quantity", "e.g 50", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 8 && $elementid == 1) {
+                                // Size Standard (50%)
+                                $element_data = serialize(array("Size Standard", "Size Standard", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 9 && $elementid == 1) {
+                                // Expected Delivery Time (100%)
+                                $element_data = serialize(array("Expected Delivery Time", "e.g. Within 30 days, Before June 2026", "", "0", "100", "0", "0", "1", "0", "1"));
+                            }
+                            else if ($counter == 10 && $elementid == 12) {
+                                // Custom Needs (Checkboxes, 100% width, 2 columns per line)
+                                // Index 8 is options per line => "2" for 50% width items
+                                $element_data = serialize(array("Custom Needs", "Team Logo,Player Name,Sponsor Logo,Custom Colors", "", "0", "0", "1", "0", "2", "2"));
+                            }
+                            else if ($counter == 11 && $elementid == 4) {
+                                // Additional Message (100%)
+                                $element_data = serialize(array("Additional Message", "Tell us more about your VEXO order requirements...", "", "0", "100", "0", "0", "1", "0", "1"));
+                            }
                         }
                         else {
                             // Fallback
