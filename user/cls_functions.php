@@ -3165,45 +3165,45 @@ class Client_functions extends common_function
                             $element_data = serialize(array("Additional Message", "Tell us more about your VEXO order requirements...", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                     }
-                    else if (isset($_POST['form_type']) && $_POST['form_type'] == 7) {
-                        // Refund Form specific element data mapping
-                        if ($counter == 1 && $elementid == 1) {
-                            $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                        else if (isset($_POST['form_type']) && $_POST['form_type'] == 7) {
+                            // Refund Form specific element data mapping
+                            if ($counter == 1 && $elementid == 1) {
+                                $element_data = serialize(array("Full Name", "Full Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 2 && $elementid == 2) {
+                                $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 3 && $elementid == 7) {
+                                $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 4 && $elementid == 7) {
+                                $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 5 && $elementid == 9) {
+                                $element_data = serialize(array("Order Date", "Order Date", "", "0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "2"));
+                            }
+                            else if ($counter == 6 && $elementid == 1) {
+                                $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 7 && $elementid == 14) {
+                                $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 8 && $elementid == 13) {
+                                $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "2"));
+                            }
+                            else if ($counter == 9 && $elementid == 1) {
+                                $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 10 && $elementid == 1) {
+                                $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "2"));
+                            }
+                            else if ($counter == 11 && $elementid == 10) {
+                                $element_data = serialize(array("Upload Photo", "Select File", "Upload product photo or proof", "0", "", "", "0", "0", "1", "0", "1"));
+                            }
+                            else if ($counter == 12 && $elementid == 12) {
+                                $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "1"));
+                            }
                         }
-                        else if ($counter == 2 && $elementid == 2) {
-                            $element_data = serialize(array("Email Address", "Email Address", "", "1", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 3 && $elementid == 7) {
-                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 4 && $elementid == 7) {
-                            $element_data = serialize(array("Order Number / Order ID", "Order Number / Order ID", "", "1", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 5 && $elementid == 9) {
-                            $element_data = serialize(array("Order Date", "Order Date", "", "0", "100", "0", "0", "2", "0", "Y-m-d", "", "0", "2"));
-                        }
-                        else if ($counter == 6 && $elementid == 1) {
-                            $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 7 && $elementid == 14) {
-                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 8 && $elementid == 13) {
-                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "2"));
-                        }
-                        else if ($counter == 9 && $elementid == 1) {
-                            $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 10 && $elementid == 1) {
-                            $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 11 && $elementid == 10) {
-                            $element_data = serialize(array("Upload Video Proof", "Select File", "Upload a video (max 20MB)", "0", "", "", "0", "0", "1", "0", "1"));
-                        }
-                        else if ($counter == 12 && $elementid == 12) {
-                            $element_data = serialize(array("I agree to Refund Policy & Terms", "1", "", "1"));
-                        }
-                    }
 
                     // Fallback block - if element_data is still empty (either not a special form type or counter mismatch)
                     if (empty($element_data)) {
@@ -5018,7 +5018,7 @@ class Client_functions extends common_function
                 $css_links = '';
                 if (!empty($base_css_url)) {
                     // Try to include CSS file, but also add inline fallback
-                    $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style2.css') . '" type="text/css">';
+                    $css_links = '<link rel="stylesheet" href="' . htmlspecialchars($base_css_url . '/assets/css/style3.css?v=' . time()) . '" type="text/css">';
                 }
 
                 // Base inline CSS for form styling (critical styles)
@@ -12385,14 +12385,15 @@ class Client_functions extends common_function
 .code-form-app .text-danger {
     color: #d32f2f;
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .code-form-app {
         margin: 15px;
         padding: 20px;
     }
     .code-form-app .content .code-form-control.layout-2-column,
-    .code-form-app .content .code-form-control.layout-3-column {
-        width: 100%;
+    .code-form-app .content .code-form-control.layout-3-column,
+    .code-form-app .content .code-form-control.layout-4-column {
+        width: 100% !important;
     }
 }
 ';
