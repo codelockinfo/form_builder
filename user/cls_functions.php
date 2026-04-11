@@ -1453,7 +1453,14 @@ class Client_functions extends common_function
                 // store client id mate direct aa set karelu hatu but second day work notu kartu
                 // $shopinfo->store_user_id
                 // $last_id = $this->db->insert_id;
-                $headerserialize = serialize(array("1", $_POST['formnamehide'], "Leave your message and we will get back to you shortly."));
+                    // Form Header (Title/Desc): Shown (1) for all new forms
+                    $headerserialize = serialize(array("1", $_POST['formnamehide'], "Leave your message and we will get back to you shortly."));
+                    
+                    // Top Header (Logo Header): Hidden (0) for Registration Forms (type 3, 5), Visible (1) for others
+                    $top_header_visibility = (isset($_POST['selectedType']) && in_array($_POST['selectedType'], [3, 5])) ? "0" : "1";
+                    // Initialize Top Header Data with the specified default settings
+                    $top_header_data = serialize(array($top_header_visibility, "#297eb0", "#ffffff", "assets/images/header-logo.png", "center", "", "right", "14", "60"));
+
                 $footerserialize = serialize(array("", "Submit", "0", "Reset", "0", "align-center", 16, "#ffffff", "#297eb0", "#004166", 4, "#ffffff", "#297eb0", "#004166"));
                 $publishdataserialize = serialize(array("", 'Please a href="/account/login" title="login">login</a> to continue', md5(uniqid(rand(), true))));
                 if (isset($_POST['selectedType']) && $_POST['selectedType'] != '') {
@@ -1468,6 +1475,7 @@ class Client_functions extends common_function
                         '`form_name`' => $_POST['formnamehide'],
                         '`form_type`' => $_POST['selectedType'],
                         '`form_header_data`' => $headerserialize,
+                        '`top_header_data`' => $top_header_data,
                         '`form_footer_data`' => $footerserialize,
                         '`publishdata`' => $publishdataserialize,
                         '`public_id`' => $public_id,
@@ -2998,7 +3006,16 @@ class Client_functions extends common_function
                     );
                 }
                 else if ($_POST['form_type'] == 3) {
-                    $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "22"], ["OR", "id", "=", "8"]);
+                    $where_query = array(
+                        ["", "id", "=", "20"], // First Name
+                        ["OR", "id", "=", "21"], // Last Name
+                        ["OR", "id", "=", "2"], // Email
+                        ["OR", "id", "=", "1"], // Address
+                        ["OR", "id", "=", "7"], // Phone
+                        ["OR", "id", "=", "8"], // Password
+                        ["OR", "id", "=", "15"], // Country
+                        ["OR", "id", "=", "1"]  // City
+                    );
                 }
                 else if ($_POST['form_type'] == 5) {
                     $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "22"], ["OR", "id", "=", "6"], ["OR", "id", "=", "8"]);
@@ -3058,37 +3075,55 @@ class Client_functions extends common_function
                     $element_type14 = array("20", "21", "22", "23");
                     $element_type15 = array("14");
 
-                    // Custom handling for Blank and Contact Forms (form_type 1, 2, 4)
-                    if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 4])) {
-                        if ($counter == 1 && $elementid == 1) {
-                            // First Name (Text input, 50%)
+                    // Custom handling for Blank, Contact, and Registration Forms (form_type 1, 2, 3, 4)
+                    if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 3, 4])) {
+                        if ($counter == 1 && in_array($elementid, [1, 20])) {
+                            // First Name (50%)
                             $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", "2"));
                         }
-                        else if ($counter == 2 && $elementid == 1) {
-                            // Last Name (Text input, 50%)
+                        else if ($counter == 2 && in_array($elementid, [1, 21])) {
+                            // Last Name (50%)
                             $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", "2"));
                         }
                         else if ($counter == 3 && $elementid == 2) {
-                            // Email (Email input, 50%)
-                            $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", "2"));
+                            // Email (100%)
+                            $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 4 && $elementid == 1 && $_POST['form_type'] == 3) {
+                            // Address for Registration (100%)
+                            $element_data = serialize(array("Address", "Address", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 5 && $elementid == 7 && $_POST['form_type'] == 3) {
+                            // Phone for Registration (50%)
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 6 && $elementid == 8 && $_POST['form_type'] == 3) {
+                            // Password for Registration (50%)
+                            $element_data = serialize(array("Password", "Password", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 7 && $elementid == 15 && $_POST['form_type'] == 3) {
+                            // Country for Registration (50%)
+                            $element_data = serialize(array("Country", "Please select", "", "", "0", "0", "0", "0", "2"));
+                        }
+                        else if ($counter == 8 && $elementid == 1 && $_POST['form_type'] == 3) {
+                            // City for Registration (50%)
+                            $element_data = serialize(array("City", "City", "", "0", "100", "0", "0", "1", "0", "2"));
                         }
                         else if ($counter == 4 && $elementid == 7) {
-                            // Phone Number (Number input, 50%)
+                            // Phone Number (100% for Contact Form, 50% was already handled above for Reg)
                             $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
                         }
                         else if ($counter == 5 && $elementid == 4) {
-                            // Message (Textarea, 100%)
+                            // Message (100%)
                             $element_data = serialize(array("Message", "Message", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else {
-                            // Fallback for types 1, 2, 4
+                            // Fallback
                             if (in_array($elementid, $element_type)) {
                                 $layout = ($elementid == 4) ? "1" : "2";
                                 $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
                                 $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
-                            } else {
-                                // use standard default logic
                             }
                         }
                     }
