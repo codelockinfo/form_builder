@@ -1454,7 +1454,7 @@ class Client_functions extends common_function
                 // $shopinfo->store_user_id
                 // $last_id = $this->db->insert_id;
                 $headerserialize = serialize(array("1", $_POST['formnamehide'], "Leave your message and we will get back to you shortly."));
-                $footerserialize = serialize(array("", "Submit", "0", "Reset", "0", "align-left"));
+                $footerserialize = serialize(array("", "Submit", "0", "Reset", "0", "align-center", 16, "#ffffff", "#297eb0", "#004166", 4, "#ffffff", "#297eb0", "#004166"));
                 $publishdataserialize = serialize(array("", 'Please a href="/account/login" title="login">login</a> to continue', md5(uniqid(rand(), true))));
                 if (isset($_POST['selectedType']) && $_POST['selectedType'] != '') {
                     $mysql_date = date('Y-m-d H:i:s');
@@ -2988,11 +2988,14 @@ class Client_functions extends common_function
 
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
-                if ($_POST['form_type'] == 1) {
-                    $where_query = array(["", "id", "=", ""]);
-                }
-                if ($_POST['form_type'] == 2 || $_POST['form_type'] == 4) {
-                    $where_query = array(["", "id", "=", "3"], ["OR", "id", "=", "2"], ["OR", "id", "=", "4"]);
+                if ($_POST['form_type'] == 1 || $_POST['form_type'] == 2 || $_POST['form_type'] == 4) {
+                    $where_query = array(
+                        ["", "id", "=", "1"], // First Name
+                        ["OR", "id", "=", "1"], // Last Name
+                        ["OR", "id", "=", "2"], // Email
+                        ["OR", "id", "=", "7"], // Phone
+                        ["OR", "id", "=", "4"]  // Message
+                    );
                 }
                 else if ($_POST['form_type'] == 3) {
                     $where_query = array(["", "id", "=", "20"], ["OR", "id", "=", "21"], ["OR", "id", "=", "2"], ["OR", "id", "=", "6"], ["OR", "id", "=", "22"], ["OR", "id", "=", "8"]);
@@ -3055,8 +3058,41 @@ class Client_functions extends common_function
                     $element_type14 = array("20", "21", "22", "23");
                     $element_type15 = array("14");
 
-                    // Custom handling for Refund Form (form_type 7)
-                    if (isset($_POST['form_type']) && $_POST['form_type'] == 7) {
+                    // Custom handling for Blank and Contact Forms (form_type 1, 2, 4)
+                    if (isset($_POST['form_type']) && in_array($_POST['form_type'], [1, 2, 4])) {
+                        if ($counter == 1 && $elementid == 1) {
+                            // First Name (Text input, 50%)
+                            $element_data = serialize(array("First Name", "First Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 2 && $elementid == 1) {
+                            // Last Name (Text input, 50%)
+                            $element_data = serialize(array("Last Name", "Last Name", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 3 && $elementid == 2) {
+                            // Email (Email input, 50%)
+                            $element_data = serialize(array("Email", "Email", "", "1", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 4 && $elementid == 7) {
+                            // Phone Number (Number input, 50%)
+                            $element_data = serialize(array("Phone Number", "Phone Number", "", "0", "100", "0", "0", "1", "0", "2"));
+                        }
+                        else if ($counter == 5 && $elementid == 4) {
+                            // Message (Textarea, 100%)
+                            $element_data = serialize(array("Message", "Message", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else {
+                            // Fallback for types 1, 2, 4
+                            if (in_array($elementid, $element_type)) {
+                                $layout = ($elementid == 4) ? "1" : "2";
+                                $label = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                                $placeholder = ($elementid == 4) ? "Message" : $comeback_client['element_title'];
+                                $element_data = serialize(array($label, $placeholder, "", "0", "100", "0", "0", "1", "0", $layout));
+                            } else {
+                                // use standard default logic
+                            }
+                        }
+                    }
+                    else if (isset($_POST['form_type']) && $_POST['form_type'] == 7) {
                         // Refund Form specific element data based on counter position and element type
                         if ($counter == 1 && $elementid == 1) {
                             // Full Name (Text input)
@@ -3451,9 +3487,9 @@ class Client_functions extends common_function
                     // Debug logging for header data
                     error_log("Form Header Data - form_id: $form_id, show_header[0]: " . (isset($form_header_data[0]) ? $form_header_data[0] : 'NOT SET') . ", title[1]: " . (isset($form_header_data[1]) ? $form_header_data[1] : 'NOT SET') . ", count: " . count($form_header_data));
 
-                    $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0", "Reset", "0", "align-left");
+                    $form_footer_data = !empty($form_footer_data_raw) ? @unserialize($form_footer_data_raw) : array("", "Submit", "0", "Reset", "0", "align-center");
                     if ($form_footer_data === false) {
-                        $form_footer_data = array("", "Submit", "0", "Reset", "0", "align-left");
+                        $form_footer_data = array("", "Submit", "0", "Reset", "0", "align-center");
                     }
 
                     $publishdata = !empty($publishdata_raw) ? @unserialize($publishdata_raw) : array("", 'Please <a href="/account/login" title="login">login</a> to continue', md5(uniqid(rand(), true)));
@@ -3463,14 +3499,14 @@ class Client_functions extends common_function
 
                     // Top Header Processing
                     $top_header_data_raw = isset($formData['top_header_data']) ? $formData['top_header_data'] : '';
-                    $top_header_data_array = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("0", "#000000", "#ffffff", "", "left", "", "right", "14", "150");
+                    $top_header_data_array = !empty($top_header_data_raw) ? @unserialize($top_header_data_raw) : array("1", "#297eb0", "#ffffff", "assets/images/header-logo.png", "center", "", "right", "14", "60");
                     if ($top_header_data_array === false) {
-                        $top_header_data_array = array("0", "#000000", "#ffffff", "", "left", "", "right", "14", "150");
+                        $top_header_data_array = array("1", "#297eb0", "#ffffff", "assets/images/header-logo.png", "center", "", "right", "14", "60");
                     }
 
                     $top_header_html = '';
                     if (isset($top_header_data_array[0]) && $top_header_data_array[0] == 1) {
-                        $top_header_bg = isset($top_header_data_array[1]) ? $top_header_data_array[1] : '#000000';
+                        $top_header_bg = isset($top_header_data_array[1]) ? $top_header_data_array[1] : '#297eb0';
                         $top_header_text_color = isset($top_header_data_array[2]) ? $top_header_data_array[2] : '#ffffff';
                         $top_header_logo = isset($top_header_data_array[3]) ? $top_header_data_array[3] : '';
                         $top_header_logo_align = isset($top_header_data_array[4]) ? $top_header_data_array[4] : 'left';
@@ -3607,8 +3643,8 @@ class Client_functions extends common_function
                 }
                 else {
                     // Default values if no form data found
-                    $form_header_data = array("1", "Blank Form", "Leave your message and we will get back to you shortly.", 24, "center", "#000000");
-                    $form_footer_data = array("", "Submit", "0", "Reset", "0", "align-left");
+                    $form_header_data = array("1", "Contact Form", "Leave your message and we will get back to you shortly.", 24, "center", "#004166");
+                    $form_footer_data = array("", "Submit", "0", "Reset", "0", "align-center");
                     $publishdata = array("", 'Please <a href="/account/login" title="login">login</a> to continue', md5(uniqid(rand(), true)));
                     $form_type = '0';
                     $form_name = 'Blank Form';
@@ -3620,7 +3656,7 @@ class Client_functions extends common_function
                 
                 $footer_data_len = count($form_footer_data);
                 if ($footer_data_len >= 11) {
-                    $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#EB1256';
+                    $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#297eb0';
                     $button_text_color = isset($form_footer_data[7]) ? $form_footer_data[7] : '#ffffff';
                 }
                 
@@ -4806,7 +4842,7 @@ class Client_functions extends common_function
                 if ($formData != '' || !empty($form_footer_data)) {
                     $reset_button = (isset($form_footer_data[2]) && $form_footer_data[2] == '1') ? "" : 'hidden';
                     $fullwidth_button = (isset($form_footer_data[4]) && $form_footer_data[4] == '1') ? "w100" : '';
-                    $footer_align = isset($form_footer_data[5]) ? $form_footer_data[5] : 'align-left';
+                    $footer_align = isset($form_footer_data[5]) ? $form_footer_data[5] : 'align-center';
 
                     // Convert old numeric values to new format (backward compatibility)
                     if ($footer_align === '1' || $footer_align === 1) {
@@ -4835,8 +4871,8 @@ class Client_functions extends common_function
                     if ($footer_data_length >= 11) {
                         $button_text_size = isset($form_footer_data[6]) ? intval($form_footer_data[6]) : 16;
                         $button_text_color = isset($form_footer_data[7]) ? $form_footer_data[7] : '#ffffff';
-                        $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#EB1256';
-                        $button_hover_bg_color = isset($form_footer_data[9]) ? $form_footer_data[9] : '#C8104A';
+                        $button_bg_color = isset($form_footer_data[8]) ? $form_footer_data[8] : '#297eb0';
+                        $button_hover_bg_color = isset($form_footer_data[9]) ? $form_footer_data[9] : '#004166';
                         $border_radius = isset($form_footer_data[10]) ? intval($form_footer_data[10]) : 4;
 
                         // Reset button settings (if available)
@@ -10630,7 +10666,7 @@ class Client_functions extends common_function
 
             // Validate color formats
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $bg_color))
-                $bg_color = '#000000';
+                $bg_color = '#297eb0';
             if (!preg_match('/^#[0-9A-Fa-f]{6}$/i', $text_color))
                 $text_color = '#ffffff';
 

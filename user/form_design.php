@@ -1123,11 +1123,11 @@ console.log('Custom code loaded');
                                     </div>
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item" style="width: 60px;">
-                                            <input type="color" name="top_header_bg_color" class="top-header-bg-color" value="#000000" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                            <input type="color" name="top_header_bg_color" class="top-header-bg-color" value="#297eb0" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
                                         </div>
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                                <input type="text" name="top_header_bg_color_text" class="Polaris-TextField__Input top-header-bg-color-text" value="#000000" placeholder="#000000">
+                                                <input type="text" name="top_header_bg_color_text" class="Polaris-TextField__Input top-header-bg-color-text" value="#297eb0" placeholder="#297eb0">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -1164,7 +1164,7 @@ console.log('Custom code loaded');
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                                <input name="top_header_logo" id="topHeaderLogoUrl" placeholder="https://example.com/logo.png" class="Polaris-TextField__Input top-header-logo" type="text">
+                                                <input name="top_header_logo" id="topHeaderLogoUrl" placeholder="https://example.com/logo.png" class="Polaris-TextField__Input top-header-logo" type="text" value="assets/images/header-logo.png">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -1173,9 +1173,9 @@ console.log('Custom code loaded');
                                         <div class="upload-area" id="topHeaderLogoUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px;">
                                             <p>Click or Drag & Drop to upload logo</p>
                                             <input type="file" id="topHeaderLogoFile" name="top_header_logo_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
-                                            <div id="topHeaderLogoPreview" style="margin-top: 10px; display: none; text-align: center; position: relative; display: inline-block;">
+                                            <div id="topHeaderLogoPreview" style="margin-top: 10px; text-align: center; position: relative; display: inline-block;">
                                                 <span class="remove-preview" data-for="topHeaderLogo" style="position: absolute; top: -10px; right: -10px; cursor: pointer; color: #fff; background: red; border-radius: 50%; width: 26px; height: 27px; display: flex; justify-content: center; font-size: 16px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;">&times;</span>
-                                                <img src="" alt="Logo Preview" style="max-height: 50px; display: inline-block; border: 1px solid #dfe3e8; border-radius: 3px; padding: 2px;">
+                                                <img src="assets/images/header-logo.png" alt="Logo Preview" style="max-height: 50px; display: inline-block; border: 1px solid #dfe3e8; border-radius: 3px; padding: 2px;">
                                             </div>
                                         </div>
                                     </div>
@@ -1191,7 +1191,7 @@ console.log('Custom code loaded');
                                     <div class="Polaris-Connected">
                                         <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                             <div class="Polaris-TextField">
-                                                <input name="top_header_logo_width" min="10" max="1000" class="Polaris-TextField__Input top-header-logo-width-input" type="number" value="150" placeholder="150">
+                                                <input name="top_header_logo_width" min="10" max="1000" class="Polaris-TextField__Input top-header-logo-width-input" type="number" value="60" placeholder="60">
                                                 <div class="Polaris-TextField__Backdrop"></div>
                                             </div>
                                         </div>
@@ -1201,12 +1201,12 @@ console.log('Custom code loaded');
 
                             <!-- Logo Alignment -->
                             <div class="form-control">
-                                <input name="top_header_logo_align" type="hidden" value="left" class="top-header-logo-align-input">
+                                <input name="top_header_logo_align" type="hidden" value="center" class="top-header-logo-align-input">
                                 <div class="chooseInput">
                                     <div class="label">Logo Alignment</div>
                                     <div class="chooseItems">
-                                        <div class="chooseItem-top-logo-align active" data-value="left">Left</div>
-                                        <div class="chooseItem-top-logo-align" data-value="center">Center</div>
+                                        <div class="chooseItem-top-logo-align" data-value="left">Left</div>
+                                        <div class="chooseItem-top-logo-align active" data-value="center">Center</div>
                                         <div class="chooseItem-top-logo-align" data-value="right">Right</div>
                                     </div>
                                 </div>
@@ -2188,11 +2188,11 @@ console.log('Custom code loaded');
                                                         </div>
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                                <input type="color" name="footer_reset_button_bg_color" class="footer-design-reset-button-bg-color" value="#EB1256" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                                <input type="color" name="footer_reset_button_bg_color" class="footer-design-reset-button-bg-color" value="#297eb0" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
                                                             </div>
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input type="text" name="footer_reset_button_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-bg-color-text" value="#EB1256" placeholder="#EB1256">
+                                                                    <input type="text" name="footer_reset_button_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-bg-color-text" value="#297eb0" placeholder="#297eb0">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -2212,11 +2212,11 @@ console.log('Custom code loaded');
                                                         </div>
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                                <input type="color" name="footer_reset_button_hover_bg_color" class="footer-design-reset-button-hover-bg-color" value="#292929" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                                <input type="color" name="footer_reset_button_hover_bg_color" class="footer-design-reset-button-hover-bg-color" value="#004166" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
                                                             </div>
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input type="text" name="footer_reset_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-hover-bg-color-text" value="#292929" placeholder="#292929">
+                                                                    <input type="text" name="footer_reset_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-reset-button-hover-bg-color-text" value="#004166" placeholder="#004166">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -2295,11 +2295,11 @@ console.log('Custom code loaded');
                                                         </div>
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                                <input type="color" name="footer_button_bg_color" class="footer-design-button-bg-color" value="#EB1256" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                                <input type="color" name="footer_button_bg_color" class="footer-design-button-bg-color" value="#297eb0" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
                                                             </div>
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input type="text" name="footer_button_bg_color_text" class="Polaris-TextField__Input footer-design-button-bg-color-text" value="#EB1256" placeholder="#EB1256">
+                                                                    <input type="text" name="footer_button_bg_color_text" class="Polaris-TextField__Input footer-design-button-bg-color-text" value="#297eb0" placeholder="#297eb0">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -2319,11 +2319,11 @@ console.log('Custom code loaded');
                                                         </div>
                                                         <div class="Polaris-Connected">
                                                             <div class="Polaris-Connected__Item" style="width: 60px;">
-                                                                <input type="color" name="footer_button_hover_bg_color" class="footer-design-button-hover-bg-color" value="#C8104A" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                                                <input type="color" name="footer_button_hover_bg_color" class="footer-design-button-hover-bg-color" value="#004166" style="width: 100%; height: 40px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
                                                             </div>
                                                             <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                                 <div class="Polaris-TextField">
-                                                                    <input type="text" name="footer_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-button-hover-bg-color-text" value="#C8104A" placeholder="#C8104A">
+                                                                    <input type="text" name="footer_button_hover_bg_color_text" class="Polaris-TextField__Input footer-design-button-hover-bg-color-text" value="#004166" placeholder="#004166">
                                                                     <div class="Polaris-TextField__Backdrop"></div>
                                                                 </div>
                                                             </div>
@@ -2332,12 +2332,12 @@ console.log('Custom code loaded');
                                                 </div>
                                             </div>
                                             <div class="form-control alignment" >
-                                                        <input name="footer-button__alignment" type="hidden" value="align-left" class="footer-button__alignment">
+                                                        <input name="footer-button__alignment" type="hidden" value="align-center" class="footer-button__alignment">
                                                         <div class="chooseInput">
                                                             <div class="label">Alignment</div>
                                                             <div class="chooseItems">
-                                                                <div class="chooseItem-align active" data-value="align-left">Left</div>
-                                                                <div class="chooseItem-align" data-value="align-center">Center</div>
+                                                                <div class="chooseItem-align" data-value="align-left">Left</div>
+                                                                <div class="chooseItem-align active" data-value="align-center">Center</div>
                                                                 <div class="chooseItem-align" data-value="align-right">Right</div>
                                                             </div>
                                                         </div>
@@ -7372,7 +7372,7 @@ console.log('Custom code loaded');
         // Function to update top header preview in real-time
         window.updateTopHeaderPreview = function() {
             var showHeader = $('.showTopHeader').is(':checked');
-            var bgColor = $('.top-header-bg-color-text').val() || $('.top-header-bg-color').val() || '#000000';
+            var bgColor = $('.top-header-bg-color-text').val() || $('.top-header-bg-color').val() || '#297eb0';
             var textColor = $('.top-header-text-color-text').val() || $('.top-header-text-color').val() || '#ffffff';
             var logoUrl = $('.top-header-logo').val() || '';
             if (logoUrl.indexOf('Uploaded: ') === 0) {
@@ -7382,7 +7382,7 @@ console.log('Custom code loaded');
             var headerText = $('.top-header-text-input').val() || '';
             var textAlign = $('.top-header-text-align-input').val() || 'right';
             var fontSize = $('.top-header-font-size-input').val() || '14';
-            var logoWidth = $('.top-header-logo-width-input').val() || '150';
+            var logoWidth = $('.top-header-logo-width-input').val() || '60';
             
             var $allHeaders = $('.globo-top-header');
             
