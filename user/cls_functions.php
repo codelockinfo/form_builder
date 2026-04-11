@@ -3169,28 +3169,6 @@ class Client_functions extends common_function
                             // IFSC Code (Text input)
                             $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
-                        else if ($counter == 6 && $elementid == 1) {
-                            // Product Name (Text input)
-                            $element_data = serialize(array("Product Name", "Product Name", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 7 && $elementid == 14) {
-                            // Reason for Refund (Dropdown/Select)
-                            // Fixed: Changed index 4 from "1" to "" to remove stray "1" description
-                            $element_data = serialize(array("Reason for Refund", "Please select", "Damaged product,Wrong item received,Product not as described,Late delivery,Other", "", "", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 8 && $elementid == 13) {
-                            // Refund Type (Radio buttons) - element_id 13 is Radio
-                            // Changed index 8 to "1" for 1 option per line (vertical layout)
-                            $element_data = serialize(array("Refund Type", "Original payment method,Store credit,Replacement product", "", "", "0", "0", "0", "0", "1", "2"));
-                        }
-                        else if ($counter == 9 && $elementid == 1) {
-                            // UPI ID / Bank Account No (Text input)
-                            $element_data = serialize(array("UPI ID / Bank Account No", "UPI ID / Bank Account No", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
-                        else if ($counter == 10 && $elementid == 1) {
-                            // IFSC Code (Text input)
-                            $element_data = serialize(array("IFSC Code", "IFSC Code", "", "0", "100", "0", "0", "1", "0", "2"));
-                        }
                         else if ($counter == 11 && $elementid == 10) {
                             // Upload Images / Video (File upload) - Moved to last
                             // Fixed: Added distinct Label and Button Text
