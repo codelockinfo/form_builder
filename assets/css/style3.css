@@ -15,9 +15,9 @@
 .code-form-app form.get_selected_elements {
   padding: 0px 30px 30px !important;
 }
-/* .hidden {
-  display: none;
-} */
+.hidden {
+  display: none !important;
+}
 .w100{
   width: 100%;
 }

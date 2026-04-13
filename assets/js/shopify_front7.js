@@ -583,6 +583,43 @@ window.store = store;
                 }
             });
             
+            // Floating Form Toggle Logic (Global Delegation as backup for innerHTML injection)
+            $(document).on("click", ".floating-form-icon", function() {
+                var $icon = $(this);
+                var idAttr = $icon.attr("id") || "";
+                var formId = idAttr.replace("floating-form-icon-", "");
+                var $overlay = $("#floating-form-overlay-" + formId);
+                if ($overlay.length) {
+                    $overlay.css("display", "flex");
+                    setTimeout(function() {
+                        $overlay.addClass("active");
+                    }, 10);
+                    $("body").css("overflow", "hidden").addClass("floating-form-active");
+                }
+            });
+
+            $(document).on("click", ".floating-form-close", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var $overlay = $(this).closest(".floating-form-overlay");
+                $overlay.removeClass("active");
+                setTimeout(function() {
+                    $overlay.css("display", "none");
+                }, 300);
+                $("body").css("overflow", "").removeClass("floating-form-active");
+            });
+
+            $(document).on("click", ".floating-form-overlay", function(e) {
+                if (e.target === this) {
+                    var $overlay = $(this);
+                    $overlay.removeClass("active");
+                    setTimeout(function() {
+                        $overlay.css("display", "none");
+                    }, 300);
+                    $("body").css("overflow", "").removeClass("floating-form-active");
+                }
+            });
+
         });
     }
     

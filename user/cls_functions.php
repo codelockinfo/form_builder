@@ -5036,23 +5036,23 @@ class Client_functions extends common_function
 /* Floating Form Styles */
 .floating-form-icon {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 30px;
+    right: 30px;
     width: 60px;
     height: 60px;
-    background-color: #EB1256;
+    background-color: #297eb0;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 9998;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 999999;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .floating-form-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 .floating-form-icon svg {
     width: 28px;
@@ -5065,11 +5065,12 @@ class Client_functions extends common_function
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 1000000;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -5079,18 +5080,18 @@ class Client_functions extends common_function
 }
 .floating-form-popup {
     background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+    max-width: 650px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
     position: relative;
-    transform: scale(0.8);
-    transition: transform 0.3s ease;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .floating-form-overlay.active .floating-form-popup {
-    transform: scale(1);
+    transform: translateY(0);
 }
 .floating-form-close {
     position: absolute;
@@ -5098,7 +5099,7 @@ class Client_functions extends common_function
     right: 15px;
     width: 32px;
     height: 32px;
-    background-color: #f0f0f0;
+    background-color: #f7f7f7;
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -5106,33 +5107,34 @@ class Client_functions extends common_function
     align-items: center;
     justify-content: center;
     z-index: 10;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 .floating-form-close:hover {
-    background-color: #e0e0e0;
+    background-color: #eee;
+    transform: rotate(90deg);
 }
 .floating-form-close svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     fill: #333;
 }
 .floating-form-popup .code-form-app {
-    padding: 20px;
+    padding: 30px;
 }
 @media screen and (max-width: 640px) {
     .floating-form-popup {
         max-width: 95%;
         width: 95%;
+        max-height: 95vh;
+    }
+    .floating-form-popup .code-form-app {
+        padding: 20px 15px;
     }
     .floating-form-icon {
-        width: 50px;
-        height: 50px;
-        bottom: 15px;
-        right: 15px;
-    }
-    .floating-form-icon svg {
-        width: 24px;
-        height: 24px;
+        width: 55px;
+        height: 55px;
+        bottom: 20px;
+        right: 20px;
     }
 }';
                     $all_css .= "\n" . $floating_form_css;
@@ -5154,7 +5156,11 @@ class Client_functions extends common_function
                     small.messages.has-error {
                         color: #f44336 !important;
                         display: block !important;
-                    }';
+                    }
+                    .hidden {
+                        display: none !important;
+                    }
+                ';
 
                 $all_css .= '</style>';
 
@@ -5786,30 +5792,30 @@ class Client_functions extends common_function
 
                 // Check if this is a floating form (form_type == 4) AND we're on storefront
                 if ($form_type == '4' && $is_storefront) {
-                    // Floating form: wrap in popup overlay structure - PUT SCRIPT AFTER FORM HTML
-                    $form_html = $top_header_html . '<div class="' . $form_wrapper_class . '">' .
+                    // Floating form: wrap in popup overlay structure - Use inline onclick for reliable toggling even when injected via innerHTML
+                    $form_html = '<div class="' . $form_wrapper_class . '">' .
                         $css_links .
                         $all_css .
                         '<!-- Floating Form Icon -->
-                                    <div class="floating-form-icon" id="floating-form-icon-' . $form_id . '">
+                                    <div class="floating-form-icon" id="floating-form-icon-' . $form_id . '" style="background-color: #297eb0 !important;" onclick="document.getElementById(\'floating-form-overlay-' . $form_id . '\').style.display=\'flex\'; setTimeout(function(){ document.getElementById(\'floating-form-overlay-' . $form_id . '\').classList.add(\'active\'); }, 10); document.body.style.overflow=\'hidden\';">
                                         <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="envelope" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                             <path fill="currentColor" d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"></path>
                                         </svg>
                                     </div>
                                     <!-- Floating Form Popup Overlay -->
-                                    <div class="floating-form-overlay" id="floating-form-overlay-' . $form_id . '">
+                                    <div class="floating-form-overlay" id="floating-form-overlay-' . $form_id . '" onclick="if(event.target===this){ this.classList.remove(\'active\'); setTimeout(function(){ event.target.style.display=\'none\'; }, 300); document.body.style.overflow=\'\'; }">
                                         <div class="floating-form-popup">
-                                            <button class="floating-form-close" id="floating-form-close-' . $form_id . '">
+                                            <button class="floating-form-close" id="floating-form-close-' . $form_id . '" onclick="var ov=document.getElementById(\'floating-form-overlay-' . $form_id . '\'); ov.classList.remove(\'active\'); setTimeout(function(){ ov.style.display=\'none\'; }, 300); document.body.style.overflow=\'\';">
                                                 <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M11.414 10l6.293-6.293a1 1 0 1 0-1.414-1.414L10 8.586 3.707 2.293a1 1 0 0 0-1.414 1.414L8.586 10l-6.293 6.293a1 1 0 1 0 1.414 1.414L10 11.414l6.293 6.293a.998.998 0 0 0 1.707-.707.999.999 0 0 0-.293-.707L11.414 10z"></path>
                                                 </svg>
                                             </button>
-                                            ' . $form_html . '
+                                            ' . preg_replace('/(<div[^>]*class="[^"]*code-form-app[^"]*"[^>]*>)/', '$1' . $top_header_html, $form_html, 1) . '
                                         </div>
                                     </div>
                                     ' . $form_js . '
-                                    </div>';
-                    error_log("Floating form HTML wrapped with popup structure. Form ID: " . $form_id);
+                                </div>';
+                    error_log("Floating form HTML wrapped with popup structure and inline toggle handlers. Form ID: " . $form_id);
                 }
                 else {
                     // Regular form: normal wrapper - PUT SCRIPT AFTER FORM HTML so it can find the form
