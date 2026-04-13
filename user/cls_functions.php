@@ -5120,6 +5120,7 @@ class Client_functions extends common_function
 }
 .floating-form-popup .code-form-app {
     padding: 30px;
+    margin: 20px auto !important;
 }
 @media screen and (max-width: 640px) {
     .floating-form-popup {
@@ -5129,6 +5130,7 @@ class Client_functions extends common_function
     }
     .floating-form-popup .code-form-app {
         padding: 20px 15px;
+        margin-top: 15px !important;
     }
     .floating-form-icon {
         width: 55px;
