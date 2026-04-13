@@ -3000,13 +3000,23 @@ class Client_functions extends common_function
                     // Blank Form Template: Start with 0 elements as requested
                     $where_query = array();
                 }
-                else if ($_POST['form_type'] == 2 || $_POST['form_type'] == 4) {
+                else if ($_POST['form_type'] == 2) {
                     $where_query = array(
                         ["", "id", "=", "1"], // First Name
                         ["OR", "id", "=", "1"], // Last Name
                         ["OR", "id", "=", "2"], // Email
                         ["OR", "id", "=", "7"], // Phone
                         ["OR", "id", "=", "4"]  // Message
+                    );
+                }
+                else if ($_POST['form_type'] == 4) {
+                    $where_query = array(
+                        ["", "id", "=", "1"], // First Name
+                        ["OR", "id", "=", "1"], // Last Name
+                        ["OR", "id", "=", "2"], // Email
+                        ["OR", "id", "=", "7"], // Phone
+                        ["OR", "id", "=", "1"], // Address
+                        ["OR", "id", "=", "8"]  // Password (Newly added)
                     );
                 }
                 else if ($_POST['form_type'] == 3) {
@@ -3126,6 +3136,14 @@ class Client_functions extends common_function
                             else if ($counter == 8 && $elementid == 1) {
                                 $element_data = serialize(array("City", "City", "", "0", "100", "0", "0", "1", "0", "2"));
                             }
+                        }
+                        else if ($counter == 5 && $elementid == 1) {
+                            // Address (for Floating Form)
+                            $element_data = serialize(array("Address 1", "Address 1", "", "0", "100", "0", "0", "1", "0", "1"));
+                        }
+                        else if ($counter == 6 && $elementid == 8) {
+                            // Password (for Floating Form)
+                            $element_data = serialize(array("Password", "Password", "", "0", "100", "0", "0", "1", "0", "1"));
                         }
                         else if ($counter == 5 && $elementid == 4) {
                             // Message
@@ -5087,9 +5105,10 @@ class Client_functions extends common_function
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
-    max-width: 650px;
-    width: 90%;
-    max-height: 85vh;
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
     overflow-y: auto;
     position: relative;
     transform: translateY(20px);
@@ -5129,8 +5148,8 @@ class Client_functions extends common_function
 }
 @media screen and (max-width: 640px) {
     .floating-form-popup {
-        max-width: 95%;
-        width: 95%;
+        max-width: 100%;
+        width: 100%;
         max-height: 95vh;
     }
     .floating-form-popup .code-form-app {
