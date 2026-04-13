@@ -1259,7 +1259,7 @@ console.log('Custom code loaded');
                                 </div>
                             </div>
 
-                            <div style="margin-bottom: 20px;"></div>
+                            <div style="margin-bottom: 50px;"></div>
                          </form>
                         </div>
                     </div>
@@ -1467,7 +1467,7 @@ console.log('Custom code loaded');
                             </div>
                             
                             <!-- Ensure proper spacing at bottom -->
-                            <div style="margin-bottom: 20px;"></div>
+                            <div style="margin-bottom: 100px;"></div>
                         </form>
                     </div>
                 </div>
