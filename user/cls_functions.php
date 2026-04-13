@@ -5047,6 +5047,7 @@ class Client_functions extends common_function
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    color: #ffffff !important;
     z-index: 999999;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -5057,7 +5058,7 @@ class Client_functions extends common_function
 .floating-form-icon svg {
     width: 28px;
     height: 28px;
-    fill: #ffffff;
+    fill: #ffffff !important;
 }
 .floating-form-overlay {
     position: fixed;
