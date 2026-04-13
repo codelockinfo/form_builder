@@ -3525,7 +3525,7 @@ class Client_functions extends common_function
                         $top_header_font_size  = isset($top_header_data_array[7]) ? $top_header_data_array[7] : '14';
                         $top_header_logo_width = isset($top_header_data_array[8]) ? $top_header_data_array[8] : '150';
 
-                        $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px;">';
+                        $top_header_html = '<div class="globo-top-header" style="background-color: ' . $top_header_bg . '; color: ' . $top_header_text_color . '; padding: 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; min-height: 40px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">';
 
                         $logo_html = '';
                         // Only show logo if it has a valid image extension
