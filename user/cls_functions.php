@@ -2996,7 +2996,11 @@ class Client_functions extends common_function
 
             if (empty($error_array)) {
                 $shopinfo = $this->current_store_obj;
-                if ($_POST['form_type'] == 1 || $_POST['form_type'] == 2 || $_POST['form_type'] == 4) {
+                if ($_POST['form_type'] == 1) {
+                    // Blank Form Template: Start with 0 elements as requested
+                    $where_query = array();
+                }
+                else if ($_POST['form_type'] == 2 || $_POST['form_type'] == 4) {
                     $where_query = array(
                         ["", "id", "=", "1"], // First Name
                         ["OR", "id", "=", "1"], // Last Name
