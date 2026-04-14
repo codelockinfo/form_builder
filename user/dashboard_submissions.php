@@ -698,6 +698,11 @@ s0.parentNode.insertBefore(s1,s0);
         loadFormsForFilter();
         
         // Initial load based on active tab
+        $('.dashboard-tab').removeClass('active');
+        $('[data-tab="' + activeTab + '"]').addClass('active');
+        $('.dashboard-tab-content').removeClass('active');
+        $('#' + activeTab + '-tab').addClass('active');
+
         if(activeTab === 'reports') {
             loadAnalytics();
         } else {

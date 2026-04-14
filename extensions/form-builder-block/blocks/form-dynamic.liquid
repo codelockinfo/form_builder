@@ -80,7 +80,11 @@
   }
 
   async function init() {
-    if (!formId || formId === '0') return;
+    if (!formId || formId === '0') {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      return;
+    }
     // Check both block and section settings for scheme
     const colorScheme = '{{ block.settings.color_scheme }}' || '{{ section.settings.color_scheme }}' || '';
     const url = `/apps/easy-form-builder/render?form_id=${formId}&shop=${shop}&color_scheme=${encodeURIComponent(colorScheme)}&cb=${Date.now()}`;
@@ -90,12 +94,20 @@
       const html = await r.text();
       if (html && html.includes('<form')) {
         container.innerHTML = html;
+        container.style.display = 'block';
         console.log('EFB: Form HTML injected');
         attachListeners(container);
       } else {
-        console.error('EFB: Invalid form HTML received');
+        // Clear loading message if form is inactive or has no content
+        container.innerHTML = '';
+        container.style.display = 'none';
+        console.log('EFB: Form is inactive or invalid, hiding container');
       }
-    } catch(e) { console.error('EFB: Fetch error:', e); }
+    } catch(e) { 
+      console.error('EFB: Fetch error:', e);
+      container.innerHTML = '';
+      container.style.display = 'none';
+    }
   }
 
   function attachListeners(cont) {

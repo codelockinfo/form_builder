@@ -6,7 +6,9 @@ ini_set('log_errors', 1);
 
 // Post/Redirect/Get pattern to prevent "Confirm Form Resubmission" popup on refresh
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_SERVER['HTTP_X_REQUESTED_WITH']) && !isset($_POST['routine_name'])) {
-    header('Location: ' . $_SERVER['REQUEST_URI']);
+    // Preserve query parameters including 'tab'
+    $uri = $_SERVER['REQUEST_URI'];
+    header('Location: ' . $uri);
     exit;
 }
 
