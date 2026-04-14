@@ -370,51 +370,53 @@
       
       /* Rating Star Styles - Horizontal Display */
       .star-rating {
-        display: block;
-        width: 100%;
-        margin-bottom: 5px;
-        overflow: hidden;
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 5px !important;
+        clear: both !important;
+        overflow: hidden !important;
       }
       .star-rating>fieldset {
-        border: none;
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-        padding: 0;
-        margin: 0;
-        overflow: visible;
-        line-height: 1;
-        position: relative;
-        width: fit-content;
-        max-width: 100%;
+        border: none !important;
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        justify-content: flex-end !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        line-height: 1 !important;
+        position: relative !important;
+        width: fit-content !important;
+        max-width: 100% !important;
       }
       .star-rating>fieldset label {
-        display: block;
-        width: 1.8em;
-        height: 1.8em;
-        padding: 0;
-        margin: 0;
+        display: block !important;
+        width: 24px !important;
+        height: 24px !important;
+        padding: 0 !important;
+        margin: 0 2px !important;
         cursor: pointer !important;
-        font-size: 0;
-        position: relative;
-        z-index: 5;
+        font-size: 0 !important;
+        position: relative !important;
+        z-index: 5 !important;
         background: transparent !important;
-        flex-shrink: 0;
+        flex-shrink: 0 !important;
+        pointer-events: auto !important;
       }
       .star-rating>fieldset label:before {
-        content: "";
-        display: block;
-        width: 1.5em;
-        height: 1.5em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        line-height: 1;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23EB1256' d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E");
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
+        content: "" !important;
+        display: block !important;
+        width: 24px !important;
+        height: 24px !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        line-height: 1 !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23EB1256' d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
       }
       .star-rating>fieldset label:hover:before,
       .star-rating>fieldset label:hover~label:before,
@@ -422,24 +424,27 @@
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23EB1256' d='M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z'/%3E%3C/svg%3E") !important;
       }
       .star-rating>fieldset input[type="radio"] {
-        position: relative;
-        opacity: 0;
-        width: 1.8em;
-        height: 1.8em;
-        margin: 0;
-        margin-right: -1.8em;
-        padding: 0;
+        position: absolute !important;
+        opacity: 0 !important;
+        width: 28px !important;
+        height: 28px !important;
+        margin: 0 !important;
+        padding: 0 !important;
         cursor: pointer !important;
-        z-index: 10;
+        z-index: 10 !important;
         pointer-events: auto !important;
-        flex-shrink: 0;
-        appearance: none;
-        -webkit-appearance: none;
+        appearance: none !important;
+        -webkit-appearance: none !important;
       }
-      /* Ensure inputs and labels are clickable */
-      .star-rating>fieldset input[type="radio"],
-      .star-rating>fieldset label {
-        pointer-events: auto !important;
+      /* Individual position for each input to ensure they don't overlap wrongly */
+      .star-rating>fieldset input[value="5"] { right: 0; }
+      .star-rating>fieldset input[value="4"] { right: 32px; }
+      .star-rating>fieldset input[value="3"] { right: 64px; }
+      .star-rating>fieldset input[value="2"] { right: 96px; }
+      .star-rating>fieldset input[value="1"] { right: 128px; }
+
+      .star-rating>fieldset input[type="radio"]:hover,
+      .star-rating>fieldset label:hover {
         cursor: pointer !important;
       }
       
