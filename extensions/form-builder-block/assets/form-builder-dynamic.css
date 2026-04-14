@@ -369,8 +369,13 @@
       }
       
       /* Rating Star Styles - Horizontal Display */
-      .code-form-control .star-rating>fieldset,
-      .contact-form .code-form-control .star-rating>fieldset {
+      .star-rating {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+        overflow: hidden;
+      }
+      .star-rating>fieldset {
         border: none;
         display: flex;
         flex-direction: row-reverse;
@@ -379,107 +384,63 @@
         margin: 0;
         overflow: visible;
         line-height: 1;
-      }
-      .code-form-control .star-rating>fieldset label,
-      .contact-form .code-form-control .star-rating>fieldset label {
-        width: 1.5em;
-        height: 1.5em;
-        padding: 0;
-        overflow: visible;
-        white-space: nowrap;
-        cursor: pointer !important;
-        font-size: 200%;
-        color: rgba(0,0,0,0);
         position: relative;
-        margin: 0 2px;
-        display: block;
-        line-height: 1;
-        box-sizing: border-box;
-        flex-shrink: 0;
-        background: transparent !important;
+        width: fit-content;
+        max-width: 100%;
       }
-      .code-form-control .star-rating>fieldset input[type="radio"],
-      .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
-        position: absolute;
-        opacity: 0;
+      .star-rating>fieldset label {
+        display: block;
+        width: 1.8em;
+        height: 1.8em;
+        padding: 0;
+        margin: 0;
+        cursor: pointer !important;
+        font-size: 0;
+        position: relative;
+        z-index: 5;
+        background: transparent !important;
+        flex-shrink: 0;
+      }
+      .star-rating>fieldset label:before {
+        content: "";
+        display: block;
         width: 1.5em;
         height: 1.5em;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23EB1256' d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      .star-rating>fieldset label:hover:before,
+      .star-rating>fieldset label:hover~label:before,
+      .star-rating>fieldset input:checked~label:before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath fill='%23EB1256' d='M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z'/%3E%3C/svg%3E") !important;
+      }
+      .star-rating>fieldset input[type="radio"] {
+        position: relative;
+        opacity: 0;
+        width: 1.8em;
+        height: 1.8em;
         margin: 0;
+        margin-right: -1.8em;
         padding: 0;
         cursor: pointer !important;
         z-index: 10;
-        top: 0;
-        left: 0;
         pointer-events: auto !important;
-      }
-      .code-form-control .star-rating>fieldset label:hover,
-      .contact-form .code-form-control .star-rating>fieldset label:hover {
-        cursor: pointer !important;
-      }
-      .code-form-control .star-rating>fieldset input[type="radio"]:hover,
-      .contact-form .code-form-control .star-rating>fieldset input[type="radio"]:hover {
-        cursor: pointer !important;
-      }
-      .code-form-control .star-rating>fieldset label:before,
-      .contact-form .code-form-control .star-rating>fieldset label:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg');
-        display: block;
-        width: 1.5em;
-        height: 1.5em;
-        position: absolute;
-        top: 0;
-        left: 0;
-        object-fit: contain;
-        line-height: 1;
-      }
-      .code-form-control .star-rating>fieldset label.star-filled:before,
-      .contact-form .code-form-control .star-rating>fieldset label.star-filled:before,
-      .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before,
-      .contact-form .code-form-control .star-rating>fieldset label[data-star-state="filled"]:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg') !important;
-        display: block !important;
-        width: 1.5em !important;
-        height: 1.5em !important;
-      }
-      .code-form-control .star-rating>fieldset label.star-empty:before,
-      .contact-form .code-form-control .star-rating>fieldset label.star-empty:before,
-      .code-form-control .star-rating>fieldset label[data-star-state="empty"]:before,
-      .contact-form .code-form-control .star-rating>fieldset label[data-star-state="empty"]:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/download.svg') !important;
-        display: block !important;
-        width: 1.5em !important;
-        height: 1.5em !important;
-      }
-      .code-form-control .star-rating>fieldset label:hover:before,
-      .contact-form .code-form-control .star-rating>fieldset label:hover:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
-      }
-      /* When a star is checked, fill that star and all stars with higher values (which appear to the left in RTL) */
-      .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input[value="5"]:checked ~ input[value="4"] ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input[value="4"]:checked ~ input[value="3"] ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input[value="3"]:checked ~ input[value="2"] ~ input[value="1"] ~ label:before,
-      .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input[value="2"]:checked ~ input[value="1"] ~ label:before,
-      .code-form-control .star-rating>fieldset input[value="1"]:checked ~ label:before,
-      .contact-form .code-form-control .star-rating>fieldset input[value="1"]:checked ~ label:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
-      }
-      /* Also fill the label for the checked input itself */
-      .code-form-control .star-rating>fieldset input:checked + label:before,
-      .contact-form .code-form-control .star-rating>fieldset input:checked + label:before {
-        content: url('https://codelocksolutions.com/form_builder/assets/images/star.svg');
+        flex-shrink: 0;
+        appearance: none;
+        -webkit-appearance: none;
       }
       /* Ensure inputs and labels are clickable */
-      .code-form-control .star-rating>fieldset input[type="radio"],
-      .contact-form .code-form-control .star-rating>fieldset input[type="radio"] {
+      .star-rating>fieldset input[type="radio"],
+      .star-rating>fieldset label {
         pointer-events: auto !important;
-      }
-      .code-form-control .star-rating>fieldset label,
-      .contact-form .code-form-control .star-rating>fieldset label {
-        pointer-events: auto !important;
+        cursor: pointer !important;
       }
       
       /* Options per line styles for checkboxes and radio buttons */
