@@ -8675,7 +8675,7 @@ console.log('Custom code loaded');
                     }
                     
                     // Set styles including background-image as fallback
-                    // Override background: transparent !important from customstyle1.css
+                    // Override background: transparent !important from customstyle2.css
                     var starImage = $label.hasClass('star-filled') ? 
                         'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")' : 
                         'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
@@ -8836,7 +8836,7 @@ console.log('Custom code loaded');
                 'border-color: ' + swatch1 + ' !important; ' +
                 '}' +
                 // Star rating - ensure labels are visible and properly sized
-                // IMPORTANT: Override background: transparent !important from customstyle1.css
+                // IMPORTANT: Override background: transparent !important from customstyle2.css
                 // Also override any general input/label styles that might interfere
                 '.code-form-app .star-rating fieldset label, ' +
                 '.contact-form .star-rating fieldset label, ' +
@@ -8860,7 +8860,7 @@ console.log('Custom code loaded');
                 'user-select: none !important; ' +
                 'opacity: 1 !important; ' +
                 'visibility: visible !important; ' +
-                // Override background: transparent !important from customstyle1.css
+                // Override background: transparent !important from customstyle2.css
                 // Override background-image: none !important from general input styles
                 // CRITICAL: Empty stars should ALWAYS be visible with border/outline
                 'background: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
@@ -9054,7 +9054,7 @@ console.log('Custom code loaded');
                         $label.addClass('star-empty');
                     }
                     // Set inline styles to ensure stars show
-                    // Override background: transparent !important from customstyle1.css
+                    // Override background: transparent !important from customstyle2.css
                     var starImage = $label.hasClass('star-filled') ? 
                         'url("https://codelocksolutions.com/form_builder/assets/images/star.svg")' : 
                         'url("https://codelocksolutions.com/form_builder/assets/images/download.svg")';
