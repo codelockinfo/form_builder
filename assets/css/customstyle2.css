@@ -876,7 +876,8 @@ span.Polaris-Choice__Label {
 }
 
 /* Re-implement MY single star in :after with high specificity */
-.star-rating>fieldset label:after {
+.star-rating>fieldset label:after,
+.form-builder-container .star-rating>fieldset label:after {
     content: "" !important;
     display: block !important;
     width: 24px !important;
@@ -891,7 +892,7 @@ span.Polaris-Choice__Label {
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    background-color: #EB1256; /* Default red - schema overrideable */
+    background-color: #EB1256 !important; /* Force red as default */
     z-index: 10 !important;
 }
 
