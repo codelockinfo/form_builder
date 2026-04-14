@@ -388,11 +388,34 @@
         min-width: 0 !important;
         min-inline-size: 0 !important;
       }
-      /* Nuclear Reset for labels to kill theme-default background stars */
-      .star-rating>fieldset label,
-      .star-rating>fieldset label.star-filled,
-      .star-rating>fieldset label.star {
-        display: block !important;
+      /* Super Nuclear Reset - Kill EVERY pseudo-element in the rating container first */
+      .star-rating *,
+      .star-rating *::before,
+      .star-rating *::after {
+        content: none !important;
+        display: none !important;
+        background: none !important;
+        background-image: none !important;
+      }
+
+      /* Re-enable and reset the container components */
+      .star-rating,
+      .star-rating fieldset,
+      .star-rating fieldset label,
+      .star-rating fieldset input {
+        display: block !important; /* Overriding the 'none' from above */
+      }
+
+      .star-rating fieldset {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        justify-content: flex-end !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .star-rating>fieldset label {
         width: 30px !important;
         height: 30px !important;
         padding: 0 !important;
@@ -402,45 +425,32 @@
         position: relative !important;
         z-index: 5 !important;
         background: none !important;
-        background-image: none !important;
         flex-shrink: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #EB1256 !important; /* Default Red - Schema can override if injected after */
+        color: #EB1256 !important; /* Default Red */
       }
 
-      /* Kill ALL theme-default pseudo-elements */
-      .star-rating>fieldset label:before,
-      .star-rating>fieldset label:after,
-      .star-rating>fieldset label::before,
-      .star-rating>fieldset label::after {
-        content: none !important;
-        display: none !important;
-        background: none !important;
-      }
-
-      /* 100% hide the radio buttons to remove any strange lines/dots or themed radio stars */
+      /* Re-hide radio buttons - they were 'block' from the reset above */
       .star-rating>fieldset input[type="radio"] {
         display: none !important;
+        visibility: hidden !important;
       }
-            /* Re-implement MY single star in :after with high specificity */
-      .star-rating>fieldset label:after,
-      .form-builder-container .star-rating>fieldset label:after {
+            /* Re-inject ONLY my one star via :after with higher priority */
+      .star-rating fieldset label:after {
         content: "" !important;
-        display: block !important;
+        display: block !important; /* Re-enabling after the nuclear kill */
         width: 24px !important;
         height: 24px !important;
         position: absolute !important;
         top: 50% !important;
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E");
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        background-color: currentColor !important; /* Take color from label (red or schema) */
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E") !important;
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath d='M528.1 171.5L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6zM388.6 312.3l23.7 138.4L288 385.4l-124.3 65.3 23.7-138.4-100.6-98 139-20.2 62.2-126 62.2 126 139 20.2-100.6 98z'/%3E%3C/svg%3E") !important;
+        -webkit-mask-size: contain !important;
+        mask-size: contain !important;
+        -webkit-mask-repeat: no-repeat !important;
+        mask-repeat: no-repeat !important;
+        background-color: currentColor !important;
         z-index: 10 !important;
       }
 
