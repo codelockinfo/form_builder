@@ -1,5 +1,5 @@
 const fs = require('fs');
-const file = 'extensions/form-builder-block/assets/form-builder-dynamic.css';
+const file = 'extensions/form-builder-block/assets/form-builder-dynamic1.css';
 const cssData = `
 /* Layout Fixes */
 .form-builder-container form {
