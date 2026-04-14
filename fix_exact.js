@@ -17,7 +17,7 @@ if (!fs.existsSync('extensions/form-builder-block/assets')) {
   fs.mkdirSync('extensions/form-builder-block/assets', { recursive: true });
 }
 
-fs.writeFileSync('extensions/form-builder-block/assets/form-builder-dynamic1.css', cssContent);
+fs.writeFileSync('extensions/form-builder-block/assets/form-builder-dynamic2.css', cssContent);
 
 let newContent = content.substring(0, cssStartIndex + cssStartToken.length) + content.substring(cssEndIndex);
 
@@ -29,7 +29,7 @@ let newSchema = schemaContent
     .replace(/\{\s*"type":\s*"richtext"[^}]+\},/g, ''); // Strip non-essential non-interactives to pass 6 settings limit
 
 newContent = newContent.substring(0, schemaStart) + newSchema;
-newContent = "{{ 'form-builder-dynamic1.css' | asset_url | stylesheet_tag }}\n" + newContent;
+newContent = "{{ 'form-builder-dynamic2.css' | asset_url | stylesheet_tag }}\n" + newContent;
 
 fs.writeFileSync(file, newContent, 'utf8');
 console.log('Fixed file layout successfully.');
