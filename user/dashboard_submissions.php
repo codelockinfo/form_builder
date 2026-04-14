@@ -659,6 +659,11 @@ s0.parentNode.insertBefore(s1,s0);
             $('.dashboard-tab-content').removeClass('active');
             $('#' + tabName + '-tab').addClass('active');
             
+            // Update URL without refreshing
+            var url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.pushState({}, '', url);
+            
             // Load content based on tab
             if (tabName === 'reports') {
                 loadAnalytics();
