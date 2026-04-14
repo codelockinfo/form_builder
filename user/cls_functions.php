@@ -2512,9 +2512,7 @@ class Client_functions extends common_function
         $response_data = array('data' => 'success', 'msg' => 'select successfully', 'outcome' => $html, 'outcome2' => $html2, 'outcome3' => $html3, 'outcome4' => $html4, 'outcome5' => $html5);
         $response = json_encode($response_data);
         return $response;
-    }
-
-    function getAllFormFunction()
+    }    function getAllFormFunction()
     {
 
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
@@ -2576,7 +2574,7 @@ class Client_functions extends common_function
                                                     ' . ((isset($templates['public_id']) && !empty($templates['public_id'])) ? '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['public_id'] . '\', this)" title="Click to copy Form ID">' . $templates['public_id'] . '</span>' : '<span class="form-id-value" style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; cursor: pointer;" onclick="copyFormId(\'' . $templates['id'] . '\', this)" title="Click to copy Form ID">' . $templates['id'] . '</span>') . '
                                                     <span class="copy-success" style="color: #297eb0; display: none; font-size: 11px; white-space: nowrap;">✓ Copied!</span>
                                                 </div>
-                                                <div class="sp-font-size" style="width:300px;text-align:center; font-weight: 500;">' . $templates['form_name'] . '</div>
+                                                <div class="sp-font-size" style="width:300px;text-align:center;">' . $templates['form_name'] . '</div>
                                             </div>
                                         </div>
                                     </div>
@@ -2624,6 +2622,7 @@ class Client_functions extends common_function
         $response = json_encode($response_data);
         return $response;
     }
+
 
     function deleteFormFunction()
     {
@@ -10988,11 +10987,12 @@ class Client_functions extends common_function
             $require_login = isset($_POST['require_login']) ? $_POST['require_login'] : '';
             $login_message = isset($_POST['login_message']) ? $_POST['login_message'] : '';
             $custom_code = isset($_POST['custom_code']) ? $_POST['custom_code'] : '';
+            $form_name = isset($_POST['form_name']) ? $_POST['form_name'] : '';
 
             // Log the received custom code for debugging
             error_log("savepublishdata: Form ID: " . $form_id);
             error_log("savepublishdata: Received custom_code length: " . strlen($custom_code));
-            error_log("savepublishdata: Custom code preview: " . substr($custom_code, 0, 100));
+            error_log("savepublishdata: Form Name: " . $form_name);
 
             if ($form_id != "") {
                 $where_query = array(["", "id", "=", $form_id]);
@@ -11001,33 +11001,35 @@ class Client_functions extends common_function
                 $formdata = (isset($formData['data']) && $formData['data'] !== '') ? $formData['data'] : '';
                 $publishdata = (isset($formdata['publishdata']) && $formdata['publishdata'] !== '') ? $formdata['publishdata'] : '';
                 $dataArray = unserialize($publishdata);
-                if ($dataArray !== false) {
-                    $dataArray[0] = $require_login;
-                    $dataArray[1] = $login_message;
-                    $dataArray[2] = isset($dataArray[2]) ? $dataArray[2] : md5(uniqid(rand(), true));
-
-                    // Properly escape custom_code to prevent SQL errors
-                    $custom_code_escaped = mysqli_real_escape_string($GLOBALS['conn'], $custom_code);
-
-                    error_log("savepublishdata: Storing custom_code in dedicated column");
-                    error_log("savepublishdata: Custom code length before escape: " . strlen($custom_code));
-                    error_log("savepublishdata: Custom code length after escape: " . strlen($custom_code_escaped));
-
-                    $updatedSerializedData = serialize($dataArray);
-                    $fields = array(
-                        '`publishdata`' => $updatedSerializedData,
-                        '`custom_code`' => $custom_code_escaped // Store escaped code in dedicated column
-                    );
-                    // Handle both internal id and public_id
-                    $where_query_update = array(
-                        ["(", "id", "=", "$form_id"],
-                        ["OR", "public_id", "=", "$form_id", ")"]
-                    );
-                    $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query_update);
-
-                    error_log("savepublishdata: Save result - " . json_encode($comeback));
-                    $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback);
+                if ($dataArray === false) {
+                    $dataArray = array('', '', md5(uniqid(rand(), true)));
                 }
+                
+                $dataArray[0] = $require_login;
+                $dataArray[1] = $login_message;
+
+                // Properly escape custom_code and form_name to prevent SQL errors
+                $custom_code_escaped = mysqli_real_escape_string($GLOBALS['conn'], $custom_code);
+                $form_name_escaped = ($form_name != "") ? mysqli_real_escape_string($GLOBALS['conn'], $form_name) : "";
+
+                $updatedSerializedData = serialize($dataArray);
+                $fields = array(
+                    '`publishdata`' => $updatedSerializedData,
+                    '`custom_code`' => $custom_code_escaped // Store escaped code in dedicated column
+                );
+                
+                if ($form_name_escaped != "") {
+                    $fields['`form_name`'] = $form_name_escaped;
+                }
+
+                // Use the internal form_id for the update
+                $where_query_update = array(["", "id", "=", "$form_id"]);
+                
+                error_log("savepublishdata: Final fields to update: " . print_r($fields, true));
+                $comeback = $this->put_data(TABLE_FORMS, $fields, $where_query_update);
+
+                error_log("savepublishdata: Save result - " . json_encode($comeback));
+                $response_data = array('data' => 'success', 'msg' => 'Update successfully', 'outcome' => $comeback, 'form_name_saved' => $form_name);
             }
         }
         $response = json_encode($response_data);

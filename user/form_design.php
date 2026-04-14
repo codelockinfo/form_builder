@@ -17,6 +17,16 @@ if ($form_id > 0) {
 } else {
     $public_id = '';
 }
+
+// Get form name
+$form_name = '';
+if ($form_id > 0) {
+    $where_query = array(["", "id", "=", "$form_id"]);
+    $form_data = $functions->select_result(TABLE_FORMS, 'form_name', $where_query, ['single' => true]);
+    if ($form_data['status'] == 1 && !empty($form_data['data'])) {
+        $form_name = $form_data['data']['form_name'];
+    }
+}
 ?>
 <body style="padding: 0; margin: 0;">
     <div>
@@ -29,10 +39,10 @@ if ($form_id > 0) {
                             <div class="Polaris-Connected">
                                 <div class="Polaris-Connected__Item Polaris-Connected__Item--primary disp_flex_input">
                                     <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                        <input id="PolarisTextField1" placeholder=""
-                                            class="Polaris-TextField__Input form_name_form_design" name="form_name_form_design" type="text"
+                                        <input id="PolarisTextField1" placeholder="Form Name"
+                                            class="Polaris-TextField__Input form_name_form_design" name="form_name" type="text"
                                             aria-labelledby="PolarisTextField1Label" aria-invalid="false"
-                                            value="" readonly>
+                                            value="<?php echo htmlspecialchars($form_name); ?>">
                                         <div class="Polaris-TextField__Backdrop"></div>
                                     </div>
                                     <div class="form-id-display-header" style="margin-left: 10px; display: flex; align-items: center; gap: 8px;">

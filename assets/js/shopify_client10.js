@@ -2583,6 +2583,13 @@ function savepublishdata(onComplete) {
 
     // Set custom_code
     form_data.set('custom_code', customCodeValue);
+    
+    // Add form name
+    var formName = $('.form_name_form_design').val() || $('input[name="form_name"]').val();
+    if (formName) {
+        form_data.set('form_name', formName);
+    }
+    
     form_data.append('store', storeName);
     form_data.append('routine_name', 'savepublishdata');
 
