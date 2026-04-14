@@ -406,6 +406,7 @@
         flex-shrink: 0 !important;
         border: none !important;
         box-shadow: none !important;
+        color: #EB1256 !important; /* Default Red - Schema can override if injected after */
       }
 
       /* Kill ALL theme-default pseudo-elements */
@@ -439,7 +440,7 @@
         mask-size: contain;
         -webkit-mask-repeat: no-repeat;
         mask-repeat: no-repeat;
-        background-color: #EB1256 !important; /* Force red as default */
+        background-color: currentColor !important; /* Take color from label (red or schema) */
         z-index: 10 !important;
       }
 
