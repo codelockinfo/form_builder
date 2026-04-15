@@ -162,6 +162,40 @@
     if (e.target.closest('.action.submit, button[type="submit"]')) globalSubmitHandler(e);
   }, true);
 
-  window.EFB = window.EFB || { init: initForm, notify: notify };
+  // Initialize star rating handlers with proper event delegation
+  function initializeStarRating() {
+    document.querySelectorAll('.star-rating input[type="radio"][data-type="rating-star"]').forEach(input => {
+      // Set up click handler for rating inputs
+      input.addEventListener('change', function(e) {
+        updateStars(this);
+        this.closest('form')?.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+    
+    // Also handle label clicks to ensure proper radio button checking
+    document.querySelectorAll('.star-rating fieldset label').forEach(label => {
+      label.addEventListener('click', function(e) {
+        const radioId = this.getAttribute('for');
+        if (radioId) {
+          const radio = document.getElementById(radioId);
+          if (radio && !radio.checked) {
+            radio.checked = true;
+            updateStars(radio);
+            radio.closest('form')?.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        }
+      });
+    });
+  }
+
+  // Initialize on document ready and on efb:loaded event
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeStarRating);
+  } else {
+    initializeStarRating();
+  }
+  document.addEventListener('efb:loaded', initializeStarRating);
+
+  window.EFB = window.EFB || { init: initForm, notify: notify, initializeStarRating: initializeStarRating };
   document.dispatchEvent(new CustomEvent('efb:loaded'));
 })();
