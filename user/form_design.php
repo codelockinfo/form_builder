@@ -7150,16 +7150,17 @@ console.log('Custom code loaded');
             var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75)); // 75% of font size, minimum 8px
             var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5)); // 150% of font size, minimum 16px
             
-            // Apply to submit button ONLY
-            $('.footer .action.submit.classic-button').css({
-                'font-size': buttonTextSize + 'px',
-                'color': buttonTextColor,
-                'background-color': buttonBgColor,
-                'border-color': buttonBgColor,
-                'border-radius': borderRadius + 'px',
-                'padding': verticalPadding + 'px ' + horizontalPadding + 'px',
-                'line-height': '1.2'
-            }).attr('data-hover-bg', buttonHoverBgColor);
+            // Apply to submit button ONLY with !important to override base CSS
+            var buttonStyles = `
+                font-size: ${buttonTextSize}px !important;
+                color: ${buttonTextColor} !important;
+                background-color: ${buttonBgColor} !important;
+                border-color: ${buttonBgColor} !important;
+                border-radius: ${borderRadius}px !important;
+                padding: ${verticalPadding}px ${horizontalPadding}px !important;
+                line-height: 1.2 !important;
+            `;
+            $('.footer .action.submit.classic-button').attr('style', buttonStyles).attr('data-hover-bg', buttonHoverBgColor);
             
             // REMOVED: Applying to reset button here caused the issue
             // Reset button is now handled by its own listeners in shopify_client10.js
