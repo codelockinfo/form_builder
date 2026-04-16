@@ -8732,7 +8732,8 @@ console.log('Custom code loaded');
                     
                 });
                 
-                // Apply to buttons
+                // Apply to buttons, but do NOT apply schema colors.
+                // Button styling should come only from footer design settings.
                 $('.code-form-app button.submit, .contact-form button.submit, .code-form-app .submit.action, .contact-form .submit.action, .code-form-app .file_button, .contact-form .file_button').each(function() {
                     var $btn = $(this);
                     if (!$btn.data('custom-bg')) {
@@ -8755,9 +8756,6 @@ console.log('Custom code loaded');
                         var borderRadiusToApply = customBorderRadius || $btn.css('border-radius') || '4px';
                         
                         $btn.css({
-                            'background-color': swatch1,
-                            'color': bgColor,
-                            'border-color': swatch1,
                             'border-radius': borderRadiusToApply
                         });
                     }
@@ -9186,10 +9184,9 @@ console.log('Custom code loaded');
                                 'background-color': bgColor,
                                 'border-color': swatch1
                             });
-                            $('.code-form-app button, .contact-form button, .code-form-app .file_button, .contact-form .file_button').not('.reset, .action.reset').css({
-                                'background-color': swatch1,
-                                'color': bgColor,
-                                'border-color': swatch1
+                            // Do not apply schema colors to buttons; keep footer button styling only.
+                            $('.code-form-app button, .contact-form button, .code-form-app .file_button, .contact-form .file_button').not('.reset, .action.reset').each(function() {
+                                // preserve existing button colors from footer settings or element defaults
                             });
                             $('.code-form-app .upload-area, .contact-form .upload-area').css('border-color', '#ddd');
                         };
