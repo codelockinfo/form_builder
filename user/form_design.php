@@ -8904,22 +8904,14 @@ console.log('Custom code loaded');
                 '.contact-form .code-form-control .star-rating fieldset label:before, ' +
                 '.code-form-app .star-rating > fieldset > label:before, ' +
                 '.contact-form .star-rating > fieldset > label:before { ' +
-                'content: "" !important; ' +
-                'display: block !important; ' +
-                'width: 24px !important; ' +
-                'height: 24px !important; ' +
-                'position: absolute !important; ' +
-                'top: 0 !important; ' +
-                'left: 0 !important; ' +
-                'opacity: 1 !important; ' +
-                'z-index: 0 !important; ' +
-                'visibility: visible !important; ' +
-                // CRITICAL: Empty stars should show with border/outline
-                'background: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
-                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") !important; ' +
-                'background-size: 24px 24px !important; ' +
-                'background-repeat: no-repeat !important; ' +
-                'background-position: center !important; ' +
+                'content: none !important; ' +
+                'display: none !important; ' +
+                'width: 0 !important; ' +
+                'height: 0 !important; ' +
+                'background: none !important; ' +
+                'background-image: none !important; ' +
+                'mask: none !important; ' +
+                'visibility: hidden !important; ' +
                 '} ' +
                 // Apply text color to empty stars using CSS mask overlay
                 '.code-form-app .star-rating fieldset label:not(.star-filled):after, ' +
@@ -8928,21 +8920,12 @@ console.log('Custom code loaded');
                 '.contact-form .code-form-control .star-rating fieldset label:not(.star-filled):after, ' +
                 '.code-form-app .star-rating > fieldset > label:not(.star-filled):after, ' +
                 '.contact-form .star-rating > fieldset > label:not(.star-filled):after { ' +
-                'content: "" !important; ' +
-                'position: absolute !important; ' +
-                'top: 0 !important; ' +
-                'left: 0 !important; ' +
-                'width: 24px !important; ' +
-                'height: 24px !important; ' +
-                'background-color: ' + textColor + ' !important; ' +
-                'mask: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
-                '-webkit-mask: url("https://codelocksolutions.com/form_builder/assets/images/download.svg") no-repeat center / 24px 24px !important; ' +
-                'mask-size: 24px 24px !important; ' +
-                '-webkit-mask-size: 24px 24px !important; ' +
-                'opacity: 1 !important; ' +
-                'z-index: 1 !important; ' +
-                'pointer-events: none !important; ' +
-                'visibility: visible !important; ' +
+                'content: none !important; ' +
+                'display: none !important; ' +
+                'background: none !important; ' +
+                'background-image: none !important; ' +
+                'mask: none !important; ' +
+                'visibility: hidden !important; ' +
                 '} ' +
                 // Star rating - show filled star icons - update :before to show filled star
                 '.code-form-app .star-rating fieldset label.star-filled:before, ' +
@@ -8961,14 +8944,12 @@ console.log('Custom code loaded');
                 '.contact-form .star-rating fieldset input:checked + label:before, ' +
                 '.code-form-app .code-form-control .star-rating fieldset input:checked + label:before, ' +
                 '.contact-form .code-form-control .star-rating fieldset input:checked + label:before { ' +
-                'content: "" !important; ' +
-                'opacity: 1 !important; ' +
-                'visibility: visible !important; ' +
-                'background: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
-                'background-image: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") !important; ' +
-                'background-size: 24px 24px !important; ' +
-                'background-repeat: no-repeat !important; ' +
-                'background-position: center !important; ' +
+                'content: none !important; ' +
+                'display: none !important; ' +
+                'background: none !important; ' +
+                'background-image: none !important; ' +
+                'mask: none !important; ' +
+                'visibility: hidden !important; ' +
                 '} ' +
                 // Apply accent color to filled stars using CSS mask overlay
                 '.code-form-app .star-rating fieldset label.star-filled:after, ' +
@@ -8989,21 +8970,12 @@ console.log('Custom code loaded');
                 '.contact-form .code-form-control .star-rating fieldset input:checked + label:after, ' +
                 '.code-form-app .star-rating > fieldset > label.star-filled:after, ' +
                 '.contact-form .star-rating > fieldset > label.star-filled:after { ' +
-                'content: "" !important; ' +
-                'position: absolute !important; ' +
-                'top: 0 !important; ' +
-                'left: 0 !important; ' +
-                'width: 24px !important; ' +
-                'height: 24px !important; ' +
-                'background-color: ' + swatch1 + ' !important; ' +
-                'mask: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
-                '-webkit-mask: url("https://codelocksolutions.com/form_builder/assets/images/star.svg") no-repeat center / 24px 24px !important; ' +
-                'mask-size: 24px 24px !important; ' +
-                '-webkit-mask-size: 24px 24px !important; ' +
-                'z-index: 2 !important; ' +
-                'pointer-events: none !important; ' +
-                'opacity: 1 !important; ' +
-                'visibility: visible !important; ' +
+                'content: none !important; ' +
+                'display: none !important; ' +
+                'background: none !important; ' +
+                'background-image: none !important; ' +
+                'mask: none !important; ' +
+                'visibility: hidden !important; ' +
                 '} ' +
                 // Hide native file input fields (the redundant "Choose File" input)
                 '.code-form-app input[type="file"], ' +
