@@ -4970,11 +4970,11 @@ class Client_functions extends common_function
                     // Base padding ratio: for 16px font, use ~12px vertical and ~24px horizontal
                     $vertical_padding = max(8, round($button_text_size * 0.75)); // 75% of font size, minimum 8px
                     $horizontal_padding = max(16, round($button_text_size * 1.5)); // 150% of font size, minimum 16px
-                    $button_style = 'style="font-size: ' . $button_text_size . 'px; color: ' . $button_text_color . ' !important; background-color: ' . $button_bg_color . ' !important; border-radius: ' . $border_radius . 'px !important; border-color: ' . $button_bg_color . ' !important; background-image: none !important; padding: ' . $vertical_padding . 'px ' . $horizontal_padding . 'px; line-height: 1.2;"';
+                    $button_style = 'style="font-size: ' . $button_text_size . 'px; color: ' . $button_text_color . '; background-color: ' . $button_bg_color . '; border-radius: ' . $border_radius . 'px !important; border-color: ' . $button_bg_color . '; padding: ' . $vertical_padding . 'px ' . $horizontal_padding . 'px; line-height: 1.2;"';
                     $button_hover_style = 'data-hover-bg="' . $button_hover_bg_color . '"';
 
                     // Reset button style
-                    $reset_button_style = 'style="font-size: ' . $button_text_size . 'px; color: ' . $reset_button_text_color . ' !important; background-color: ' . $reset_button_bg_color . ' !important; border-radius: ' . $border_radius . 'px !important; border-color: ' . $reset_button_bg_color . ' !important; background-image: none !important; padding: ' . $vertical_padding . 'px ' . $horizontal_padding . 'px; line-height: 1.2;"';
+                    $reset_button_style = 'style="font-size: ' . $button_text_size . 'px; color: ' . $reset_button_text_color . '; background-color: ' . $reset_button_bg_color . '; border-radius: ' . $border_radius . 'px !important; border-color: ' . $reset_button_bg_color . '; padding: ' . $vertical_padding . 'px ' . $horizontal_padding . 'px; line-height: 1.2;"';
                     $reset_button_hover_style = 'data-hover-bg="' . $reset_button_hover_bg_color . '"';
 
                     $form_html .= '<div class="footer forFooterAlign ' . $footer_align . '">
@@ -12353,12 +12353,10 @@ class Client_functions extends common_function
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.code-form-app .footer .action.submit.classic-button,
-.form-builder-wrapper .footer .action.submit.classic-button {
-    background-color: #EB1256 !important;
-    color: #ffffff !important;
-    border: 1px solid #EB1256 !important;
-    background-image: none !important;
+.code-form-app .footer .action.submit.classic-button {
+    background-color: #EB1256;
+    color: #ffffff;
+    border: 1px solid #EB1256;
     text-transform: none;
     display: inline-block;
     text-align: center;
