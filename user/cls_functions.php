@@ -11936,16 +11936,18 @@ class Client_functions extends common_function
                     $design_settings['form_container']['swatch2'] = $swatch2;
                 }
 
-                // Save button colors from theme for preview/fallback
+                // Do NOT apply schema button colors to footer design
+                // Button colors come ONLY from footer settings, not from schema
                 if (!isset($design_settings['footer_design'])) {
                     $design_settings['footer_design'] = array();
                 }
-                if (!empty($button_bg)) {
-                    $design_settings['footer_design']['button_bg_color'] = $button_bg;
-                }
-                if (!empty($button_text)) {
-                    $design_settings['footer_design']['button_text_color'] = $button_text;
-                }
+                // Commented out: Schema button colors should not override footer settings
+                // if (!empty($button_bg)) {
+                //     $design_settings['footer_design']['button_bg_color'] = $button_bg;
+                // }
+                // if (!empty($button_text)) {
+                //     $design_settings['footer_design']['button_text_color'] = $button_text;
+                // }
 
                 // Also update header colors in their specific design sections if provided
                 if (!isset($design_settings['header_design'])) {

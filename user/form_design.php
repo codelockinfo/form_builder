@@ -8489,8 +8489,9 @@ console.log('Custom code loaded');
                 ajaxData.heading_color = window.selectedColorScheme.heading || '';
                 ajaxData.swatch1 = window.selectedColorScheme.swatch1 || window.selectedColorScheme.accent1 || '';
                 ajaxData.swatch2 = window.selectedColorScheme.swatch2 || window.selectedColorScheme.accent2 || '';
-                ajaxData.button_bg = window.selectedColorScheme.buttons || window.selectedColorScheme.primary_button_background || '';
-                ajaxData.button_text = window.selectedColorScheme.buttons_label || window.selectedColorScheme.primary_button_text || '';
+                // REMOVED: Button colors should come ONLY from footer settings, not from schema
+                // ajaxData.button_bg = window.selectedColorScheme.buttons || window.selectedColorScheme.primary_button_background || '';
+                // ajaxData.button_text = window.selectedColorScheme.buttons_label || window.selectedColorScheme.primary_button_text || '';
             }
             
             $.ajax({
