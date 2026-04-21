@@ -580,6 +580,9 @@ $(document).on("click", ".element_coppy_to", function (event) {
                                 $('html, body').animate({ scrollTop: $sidebarEl.offset().top - 100 }, 200);
                                 $sidebarEl.css({ 'background-color': '#e3f2fd', 'transition': 'background-color 0.5s' });
                                 setTimeout(function () { $sidebarEl.css('background-color', ''); }, 1500);
+
+                                // Auto-open settings for the newly added element
+                                $sidebarEl.find('.list-item').trigger('click');
                             }
                         } catch (e) {}
                     } else if (retryCount < maxRetries) {
