@@ -79,6 +79,7 @@ function saveElementFormToTracker(formdataid) {
         designSettings.borderRadius = brInt;
     }
 
+
     var $bgColor = $('.element-design-bg-color-text[data-formdataid="' + formdataid + '"]');
     if ($bgColor.length) designSettings.bgColor = $bgColor.val() || '';
 
