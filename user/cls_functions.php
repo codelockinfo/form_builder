@@ -5188,6 +5188,23 @@ class Client_functions extends common_function
                     }
                 ';
 
+                // Add specific hover styles for footer buttons to ensure they work on storefront
+                $button_hover_bg = (isset($button_hover_bg_color) && !empty($button_hover_bg_color)) ? $button_hover_bg_color : '#C8104A';
+                $reset_hover_bg = (isset($reset_button_hover_bg_color) && !empty($reset_button_hover_bg_color)) ? $reset_button_hover_bg_color : '#292929';
+                
+                $all_css .= '
+                    .form-id-' . $form_id . ' .footer .action.submit.classic-button:hover,
+                    .form-builder-wrapper.form-id-' . $form_id . ' .footer .action.submit.classic-button:hover {
+                        background-color: ' . $button_hover_bg . ' !important;
+                        border-color: ' . $button_hover_bg . ' !important;
+                    }
+                    .form-id-' . $form_id . ' .footer .action.reset.classic-button:hover,
+                    .form-builder-wrapper.form-id-' . $form_id . ' .footer .action.reset.classic-button:hover {
+                        background-color: ' . $reset_hover_bg . ' !important;
+                        border-color: ' . $reset_hover_bg . ' !important;
+                    }
+                ';
+                
                 $all_css .= '</style>';
 
                 // Wrap form HTML with CSS and form-specific wrapper
@@ -5771,45 +5788,8 @@ class Client_functions extends common_function
         setTimeout(attachToAllButtons, 2000);
         setTimeout(attachToAllButtons, 5000);
         
-        // Handle hover effects for buttons with data-hover-bg
-        function initHoverEffects() {
-            // Select all elements with data-hover-bg
-            var hoverElements = document.querySelectorAll("[data-hover-bg]");
-            for (var i = 0; i < hoverElements.length; i++) {
-                (function(el) {
-                    // Avoid attaching multiple listeners
-                    if (el.getAttribute("data-hover-init") === "true") return;
-                    el.setAttribute("data-hover-init", "true");
-                    
-                    var originalBg = el.style.backgroundColor;
-                    // For border color, we might need computed style if not inline
-                    var computedStyle = window.getComputedStyle(el);
-                    var originalBorder = el.style.borderColor || computedStyle.borderColor;
-                    var hoverBg = el.getAttribute("data-hover-bg");
-                    
-                    // If originalBg is empty, use computed style
-                    if (!originalBg) {
-                        originalBg = computedStyle.backgroundColor;
-                    }
-
-                    el.addEventListener("mouseenter", function() {
-                        this.style.backgroundColor = hoverBg;
-                        this.style.borderColor = hoverBg;
-                    });
-                    
-                    el.addEventListener("mouseleave", function() {
-                        this.style.backgroundColor = originalBg;
-                        this.style.borderColor = originalBorder;
-                    });
-                })(hoverElements[i]);
-            }
-        }
-        
-        // Initialize hover effects
-        initHoverEffects();
-        setTimeout(initHoverEffects, 500);
-        setTimeout(initHoverEffects, 2000);
-        setTimeout(initHoverEffects, 5000);
+        // Hover effects are now handled by CSS :hover rules in the generated style block
+                // which is more reliable and supports !important overrides better than JS listeners.
 })();
 }catch(e){}
 })(); // Close the outer IIFE that prevents multiple executions
