@@ -264,23 +264,7 @@ if ($form_id > 0) {
                                             </div>
                                         </div>
                                     </div>
-                                <div class="builder-item-wrapper ">
-                                    <div class="list-item" data-owl="17">
-                                        <div class="row">
-                                            <div class="icon">
-                                                <span class="Polaris-Icon">
-                                                    <span class="Polaris-VisuallyHidden"></span>
-                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                        <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-1-9a1 1 0 0 0 0 2h2a1 1 0 1 0 0-2H9zm0 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H9z"></path>
-                                                    </svg>
-                                                </span>
-                                            </div>
-                                            <div class="title">
-                                                <div>Floating Settings</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               
                             </div>
                             <div class="root elementroot">
                                 <div class="builder-item-wrapper ">
