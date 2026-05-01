@@ -38,10 +38,10 @@ class Client_functions extends common_function
         $store_name = $shopinfo->shop_name;
         $access_token = $shopinfo->password; // This is the access token stored in database (TABLE_USER_SHOP.password)
 
-        // Use API version from config (already includes 'api/' prefix) or default
+        
         $api_version = defined('CLS_API_VERSIION') ? CLS_API_VERSIION : 'api/2023-10';
 
-        // Build the API endpoint URL - CLS_API_VERSIION already includes 'api/'
+
         $shopify_url_array = array_merge(array('/admin/' . $api_version), $shopify_api_name_arr);
         $shopify_main_url = implode('/', $shopify_url_array) . '.json';
 
@@ -2508,11 +2508,27 @@ class Client_functions extends common_function
                 </div>';
                 }
             }
+            // Add Confirm Password element manually
+            $html .= '<div class="builder-item-wrapper element_coppy_to input">
+                    <input type="hidden" class="get_element_hidden" name="get_element_hidden" value="24">
+                    <div class="list-item">
+                        <div class="row">
+                            <div class="icon"><span class="Polaris-Icon"><span class="Polaris-VisuallyHidden"></span><svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true"><path fill-rule="evenodd" d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0-6a5.978 5.978 0 0 0-4.243 1.757l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a4 4 0 1 1 5.658 5.658l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707A5.978 5.978 0 0 0 10 6zm-5.657 5.657l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a4 4 0 1 1 5.658 5.658l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a5.978 5.978 0 0 0-8.486-8.486z"></path></svg></span></div>
+                            <div class="title">
+                                <div>
+                                    <div>Confirm Password</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
         }
         $response_data = array('data' => 'success', 'msg' => 'select successfully', 'outcome' => $html, 'outcome2' => $html2, 'outcome3' => $html3, 'outcome4' => $html4, 'outcome5' => $html5);
         $response = json_encode($response_data);
         return $response;
-    }    function getAllFormFunction()
+    }
+
+    function getAllFormFunction()
     {
 
         $response_data = array('result' => 'fail', 'msg' => __('Something went wrong'));
@@ -2812,17 +2828,21 @@ class Client_functions extends common_function
 
                 $position = $max_position + 1;
 
-                $where_query = array(["", "id", "=", $elementid]);
-                $element_result_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
+                if ($elementid == 24) {
+                    $comeback_client = array('id' => 24, 'element_title' => 'Confirm Password', 'element_category' => 1);
+                } else {
+                    $where_query = array(["", "id", "=", $elementid]);
+                    $element_result_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
 
-                // Validate that element data exists
-                if (!isset($element_result_data["data"]) || !is_array($element_result_data["data"]) || empty($element_result_data["data"])) {
-                    $response_data = array('data' => 'fail', 'msg' => __('Element not found'));
-                    $response = json_encode($response_data);
-                    return $response;
+                    // Validate that element data exists
+                    if (!isset($element_result_data["data"]) || !is_array($element_result_data["data"]) || empty($element_result_data["data"])) {
+                        $response_data = array('data' => 'fail', 'msg' => __('Element not found'));
+                        $response = json_encode($response_data);
+                        return $response;
+                    }
+
+                    $comeback_client = $element_result_data["data"][0];
                 }
-
-                $comeback_client = $element_result_data["data"][0];
 
                 // Validate that comeback_client has required fields
                 if (!isset($comeback_client['id']) || !isset($comeback_client['element_title'])) {
@@ -2831,7 +2851,7 @@ class Client_functions extends common_function
                     return $response;
                 }
 
-                $element_type = array("1", "2", "3", "4", "6", "7");
+                $element_type = array("1", "2", "3", "4", "6", "7", "24");
                 $element_type2 = array("5");
                 $element_type3 = array("8");
                 $element_type4 = array("9");
@@ -2847,8 +2867,31 @@ class Client_functions extends common_function
                 $element_type14 = array("20", "21", "22", "23");
                 $element_type15 = array("14");
 
-                if (in_array($elementid, $element_type)) {
+                if (in_array($elementid, array("1", "2", "3", "4", "6", "7"))) {
                     $element_data = serialize(array($comeback_client['element_title'], $comeback_client['element_title'], "", "0", "100", "0", "0", "1", "0", "1"));
+                } else if ($elementid == 24) {
+                    // Default values for Confirm Password: label, placeholder, description, limit_char, limit_val, hidelabel, keepposition, required, required_hidelabel, columnwidth
+                    $default_data = array(
+                        0 => 'Confirm Password',
+                        1 => 'Confirm Password',
+                        2 => '',
+                        3 => '0',
+                        4 => '100',
+                        5 => '0',
+                        6 => '0',
+                        7 => '1',
+                        8 => '0',
+                        9 => '1' // 100% width
+                    );
+
+                    $default_data[30] = '16'; // Input Font Size
+                    $default_data[31] = '500'; // Font Weight
+                    $default_data[32] = '#004166'; // Color
+                    $default_data[33] = '4'; // Border Radius
+                    $default_data[34] = ''; // BG Color
+                    $default_data[35] = '16'; // Label Font Size
+
+                    $element_data = serialize($default_data);
                 }
                 else if (in_array($elementid, $element_type2)) {
                     $element_data = serialize(array("Url", "", "", "0", "100", "0", "0", "1", "0", "1"));
@@ -3964,8 +4007,12 @@ class Client_functions extends common_function
                         error_log("Processing element #$element_count - Form Data ID: " . (isset($templates['id']) ? $templates['id'] : 'N/A') . ", Element ID: " . (isset($templates['element_id']) ? $templates['element_id'] : 'N/A'));
                         $form_element_no = $templates['element_id'];
                         $form_data_id = $templates['id'];
-                        $where_query = array(["", "id", "=", "$form_element_no"]);
-                        $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
+                        if ($form_element_no == 24) {
+                            $element_data = array('data' => array(array('id' => 24, 'element_title' => 'Confirm Password', 'element_icon' => '<svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true"><path fill-rule="evenodd" d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0-6a5.978 5.978 0 0 0-4.243 1.757l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a4 4 0 1 1 5.658 5.658l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707A5.978 5.978 0 0 0 10 6zm-5.657 5.657l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a4 4 0 1 1 5.658 5.658l-.707.707a.999.999 0 1 0 1.414 1.414l.707-.707a5.978 5.978 0 0 0-8.486-8.486z"></path></svg>')));
+                        } else {
+                            $where_query = array(["", "id", "=", "$form_element_no"]);
+                            $element_data = $this->select_result(TABLE_ELEMENTS, '*', $where_query);
+                        }
 
                         foreach ($element_data['data'] as $elements) {
                             // Unserialize with error handling - if it fails, try to recover
@@ -4303,6 +4350,45 @@ class Client_functions extends common_function
                                         <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ($description_text !== '0' ? $description_text : '') . '</small>
                                 </div>';
                             }
+                            if ($elements['id'] == 24) {
+                                $is_hiderequire = $is_hidelabel = $is_keepossition_label = "";
+
+                                if (isset($unserialize_elementdata[7]) && $unserialize_elementdata[7] == "1") {
+                                    if (isset($unserialize_elementdata[5]) && $unserialize_elementdata[5] == "1") {
+                                        if (isset($unserialize_elementdata[8]) && $unserialize_elementdata[8] == "0") {
+                                            $is_hiderequire = "hidden";
+                                        }
+                                    }
+                                } else {
+                                    $is_hiderequire = "hidden";
+                                }
+                                if (isset($unserialize_elementdata[5]) && $unserialize_elementdata[5] == "1") {
+                                    $is_hidelabel = "hidden";
+                                }
+                                if (isset($unserialize_elementdata[6]) && $unserialize_elementdata[6] == "1") {
+                                    $is_keepossition_label = "position--label";
+                                }
+                                $limitcharacter_value = (isset($unserialize_elementdata[3]) && $unserialize_elementdata[3] == '1') ? $unserialize_elementdata[4] : '';
+
+                                // Generate field name from label
+                                $label_text = isset($unserialize_elementdata[0]) ? $unserialize_elementdata[0] : 'Confirm Password';
+                                $field_name = $generate_field_name($label_text, $elements['id'], $form_data_id);
+
+                                // Remove readonly and tabindex for storefront
+                                $readonly_attr = $is_storefront ? '' : ' tabindex="-1" readonly';
+                                $is_required_attr = (isset($unserialize_elementdata[7]) && $unserialize_elementdata[7] == "1") ? " required" : "";
+                                $layout_col = isset($unserialize_elementdata[9]) ? $unserialize_elementdata[9] : '1';
+                                $placeholder_text = isset($unserialize_elementdata[1]) ? $unserialize_elementdata[1] : '';
+                                $description_text = isset($unserialize_elementdata[2]) ? $unserialize_elementdata[2] : '';
+                                $form_html .= ' <div class="code-form-control layout-' . $layout_col . '-column container_' . $elementtitle . '' . $form_data_id . '" data-id="element' . $elements['id'] . '" data-formdataid="' . $form_data_id . '">
+                                    <label class="classic-label globo-label  ' . $is_keepossition_label . '"><span class="label-content ' . $elementtitle . '' . $form_data_id . '__label ' . $is_hidelabel . '" data-label="Confirm Password" data-formdataid="' . $form_data_id . '"' . $label_design_style . '>' . $label_text . '</span><span class="text-danger text-smaller ' . $is_hiderequire . '"> *</span></label>
+                                    <div class="globo-form-input">
+                                        <input type="password" data-type="confirmpassword" class="classic-input ' . $elementtitle . '' . $form_data_id . '__placeholder"  name="' . htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8') . '" placeholder="' . $placeholder_text . '" maxlength="' . $limitcharacter_value . '" data-formdataid="' . $form_data_id . '"' . $element_design_style . $readonly_attr . $is_required_attr . '>
+                                    </div>
+                                        <small class="messages ' . $elementtitle . '' . $form_data_id . '__description">' . ($description_text !== '0' ? $description_text : '') . '</small>
+                                </div>';
+                            }
+
                             if ($elements['id'] == 9) {
                                 $is_hiderequire = $is_hidelabel = $is_keepossition_label = "";
 
@@ -6342,6 +6428,10 @@ class Client_functions extends common_function
             $comeback = $this->select_result(TABLE_ELEMENTS, '*', $where_query, $resource_array);
             $comebackdata = $comeback['data'];
 
+            if ($elementid == 24) {
+                $comebackdata = array('id' => 24, 'element_title' => 'confirm-password');
+            }
+
             $element_ids_array = array("1", "3", "5", "7");
             $element_ids_array_2 = array("2", "4", "6", "20", "21", "22", "23");
             if (!empty($comebackdata)) {
@@ -7391,55 +7481,82 @@ class Client_functions extends common_function
                                             </label>
                                         </div>
                                         <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox111">
-                                                <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input name="' . $elementtitle . '' . $form_data_id . '__confirmpassword" id="PolarisCheckbox111" type="checkbox" class="Polaris-Checkbox__Input confirmpass" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $confirmpassword_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                            <span class="Polaris-VisuallyHidden"></span>
-                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                                </span>
-                                                <span class="Polaris-Choice__Label">Also create confirm password input</span>
-                                            </label>
+                                            <input name="' . $elementtitle . '' . $form_data_id . '__columnwidth" type="hidden" value="' . $formData[16] . '"  class="input_columnwidth"/>
+                                            <div class="chooseInput">
+                                                <div class="label">Column width</div>
+                                                <div class="chooseItems">
+                                                    <div class="chooseItem ' . $datavalue3 . '" data-value="3">33%</div>
+                                                    <div class="chooseItem ' . $datavalue2 . '" data-value="2">50%</div>
+                                                    <div class="chooseItem ' . $datavalue1 . '" data-value="1">100%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                ' . $this->get_design_customizer_html($form_data_id, $elementid, $formid, null, $design_settings) . '
+
+                                <div class="form-control">
+                                <button class="Polaris-Button Polaris-Button--destructive Polaris-Button--plain Polaris-Button--fullWidth removeElement" type="button"><span class="Polaris-Button__Content"><span class="Polaris-Button__Text"><span>Remove this element</span></span></span></button>
+                                </div>
+                            </div>
+                    </div>';
+                } else if ($elementid == 24) {
+                    $datavalue1 = $datavalue2 = $datavalue3 = "";
+                    if ($formData[9] == "1") {
+                        $datavalue1 = "active";
+                    } else if ($formData[9] == "2") {
+                        $datavalue2 = "active";
+                    } else if ($formData[9] == "3") {
+                        $datavalue3 = "active";
+                    }
+                    $limitcharacter_checked = (isset($formData[3]) && $formData[3] == '1') ? "checked" : '';
+                    $limitcharacter_hidden = (isset($limitcharacter_checked) && $limitcharacter_checked !== '') ? '' : 'hidden';
+                    $hidelabel_checked = (isset($formData[5]) && $formData[5] == '1') ? "checked" : '';
+                    $keepposition_label_hidden = (isset($hidelabel_checked) && $hidelabel_checked !== '') ? "" : 'hidden';
+                    $keepposition_label_checked = (isset($formData[6]) && $formData[6] == '1') ? "checked" : '';
+                    $required_checked = (isset($formData[7]) && $formData[7] == '1') ? "checked" : '';
+                    $required_hidelabel_checked = (isset($formData[8]) && $formData[8] == '1') ? "checked" : '';
+
+                    $comeback .= '<div class="">
+                            <div class="container container_' . $elementtitle . '' . $form_data_id . '">
+                                <div>
+                                    <div class="">
+                                        <div class="form-control">
+                                            <div class="textfield-wrapper">
+                                                <div class="">
+                                                <div class="Polaris-Labelled__LabelWrapper">
+                                                    <div class="Polaris-Label">
+                                                        <label id="PolarisTextField_label_' . $form_data_id . '" for="PolarisTextField_label_in_' . $form_data_id . '" class="Polaris-Label__Text">
+                                                            <div>Label</div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="Polaris-Connected">
+                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                            <input name="' . $elementtitle . '' . $form_data_id . '__label"  id="PolarisTextField_label_in_' . $form_data_id . '" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField_label_' . $form_data_id . '" aria-invalid="false" value="' . $formData[0] . '">
+                                                            <div class="Polaris-TextField__Backdrop"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-control">
-                                            <label class="Polaris-Choice" for="PolarisCheckbox9">
-                                                <span class="Polaris-Choice__Control">
-                                                <span class="Polaris-Checkbox">
-                                                    <input  name="' . $elementtitle . '' . $form_data_id . '__storepassword" id="PolarisCheckbox9" type="checkbox" class="Polaris-Checkbox__Input" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $storepassword_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
-                                                    <span class="Polaris-Checkbox__Icon">
-                                                        <span class="Polaris-Icon">
-                                                            <span class="Polaris-VisuallyHidden"></span>
-                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
-                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-                                                </span>
-                                                </span>
-                                                <span class="Polaris-Choice__Label">Storing password for purpose</span>
-                                            </label>
-                                        </div>
-                                        <div class="form-control conpass ' . $confirmpassword_hidden . '">
                                             <div class="textfield-wrapper">
                                                 <div class="">
                                                 <div class="Polaris-Labelled__LabelWrapper">
                                                     <div class="Polaris-Label">
-                                                        <label id="PolarisTextField10Label" for="PolarisTextField10" class="Polaris-Label__Text">
-                                                            <div>Label confirm</div>
+                                                        <label id="PolarisTextField_placeholder_' . $form_data_id . '" for="PolarisTextField_placeholder_in_' . $form_data_id . '" class="Polaris-Label__Text">
+                                                            <div>Placeholder</div>
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="' . $elementtitle . '' . $form_data_id . '__confirmpasswordlabel" id="PolarisTextField10" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField10Label" aria-invalid="false" value="' . $formData[13] . '">
+                                                            <input name="' . $elementtitle . '' . $form_data_id . '__placeholder" id="PolarisTextField_placeholder_in_' . $form_data_id . '" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField_placeholder_' . $form_data_id . '" aria-invalid="false" value="' . $formData[1] . '">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -7447,41 +7564,20 @@ class Client_functions extends common_function
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-control conpass ' . $confirmpassword_hidden . '">
+                                        <div class="form-control">
                                             <div class="textfield-wrapper">
                                                 <div class="">
                                                 <div class="Polaris-Labelled__LabelWrapper">
                                                     <div class="Polaris-Label">
-                                                        <label id="PolarisTextField11Label" for="PolarisTextField11" class="Polaris-Label__Text">
-                                                            <div>Placeholder confirm</div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="Polaris-Connected">
-                                                    <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                                        <div class="Polaris-TextField Polaris-TextField--hasValue">
-                                                            <input name="' . $elementtitle . '' . $form_data_id . '__confirmpasswordplaceholder" id="PolarisTextField11" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField11Label" aria-invalid="false" value="' . $formData[14] . '">
-                                                            <div class="Polaris-TextField__Backdrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-control conpass ' . $confirmpassword_hidden . '">
-                                            <div class="textfield-wrapper">
-                                                <div class="">
-                                                <div class="Polaris-Labelled__LabelWrapper">
-                                                    <div class="Polaris-Label">
-                                                        <label id="PolarisTextField12Label" for="PolarisTextField12" class="Polaris-Label__Text">
-                                                            <div>Description confirm</div>
+                                                        <label id="PolarisTextField_description_' . $form_data_id . '" for="PolarisTextField_description_in_' . $form_data_id . '" class="Polaris-Label__Text">
+                                                            <div>Description</div>
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div class="Polaris-Connected">
                                                     <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
                                                         <div class="Polaris-TextField">
-                                                            <input name="' . $elementtitle . '' . $form_data_id . '__confirmpassworddescription" id="PolarisTextField12" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField12Label" aria-invalid="false" value="' . $formData[15] . '">
+                                                            <input name="' . $elementtitle . '' . $form_data_id . '__description" id="PolarisTextField_description_in_' . $form_data_id . '" placeholder="" class="Polaris-TextField__Input" type="text" aria-labelledby="PolarisTextField_description_' . $form_data_id . '" aria-invalid="false" value="' . $formData[2] . '">
                                                             <div class="Polaris-TextField__Backdrop"></div>
                                                         </div>
                                                     </div>
@@ -7489,9 +7585,132 @@ class Client_functions extends common_function
                                                 </div>
                                             </div>
                                         </div>
-                                        
                                         <div class="form-control">
-                                            <input name="' . $elementtitle . '' . $form_data_id . '__columnwidth" type="hidden" value="' . $formData[16] . '"  class="input_columnwidth"/>
+                                            <label class="Polaris-Choice" for="PolarisCheckbox_limitcharacter_' . $form_data_id . '">
+                                                 <span class="Polaris-Choice__Control">
+                                                 <span class="Polaris-Checkbox">
+                                                     <input name="' . $elementtitle . '' . $form_data_id . '__limitcharacter" id="PolarisCheckbox_limitcharacter_' . $form_data_id . '" type="checkbox" class="Polaris-Checkbox__Input passLimitcar " aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $limitcharacter_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
+                                                     <span class="Polaris-Checkbox__Icon">
+                                                         <span class="Polaris-Icon">
+                                                             <span class="Polaris-VisuallyHidden"></span>
+                                                             <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                             <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                             </svg>
+                                                         </span>
+                                                     </span>
+                                                 </span>
+                                                 </span>
+                                                 <span class="Polaris-Choice__Label">Limit characters</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control limitCaracters ' . $limitcharacter_hidden . '">
+                                            <div class="">
+                                                <div class="Polaris-Connected">
+                                                <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
+                                                    <div class="Polaris-TextField Polaris-TextField--hasValue">
+                                                        <input name="' . $elementtitle . '' . $form_data_id . '__limitcharactervalue" id="PolarisTextField_limitcharactervalue_' . $form_data_id . '" class="Polaris-TextField__Input" type="number" aria-invalid="false" value="' . $formData[4] . '">
+                                                        <div class="Polaris-TextField__Spinner" aria-hidden="true">
+                                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                        <path d="M6.902 12h6.196c.751 0 1.172-.754.708-1.268l-3.098-3.432c-.36-.399-1.055-.399-1.416 0l-3.098 3.433c-.464.513-.043 1.267.708 1.267Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </div>
+                                                            </div>
+                                                            <div role="button" class="Polaris-TextField__Segment" tabindex="-1">
+                                                            <div class="Polaris-TextField__SpinnerIcon">
+                                                                <span class="Polaris-Icon">
+                                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                                        <path d="M13.098 8h-6.196c-.751 0-1.172.754-.708 1.268l3.098 3.432c.36.399 1.055.399 1.416 0l3.098-3.433c.464-.513.043-1.267-.708-1.267Z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="Polaris-TextField__Backdrop"></div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox_hidelabel_' . $form_data_id . '">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input  name="' . $elementtitle . '' . $form_data_id . '__hidelabel"  id="PolarisCheckbox_hidelabel_' . $form_data_id . '" type="checkbox" class="Polaris-Checkbox__Input  hideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $hidelabel_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Hide label</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control passhideLabel ' . $keepposition_label_hidden . '">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox_keepposition_' . $form_data_id . '">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input  name="' . $elementtitle . '' . $form_data_id . '__keepposition-label"  id="PolarisCheckbox_keepposition_' . $form_data_id . '" type="checkbox" class="Polaris-Checkbox__Input keePositionLabel" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $keepposition_label_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Keep position of label</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox_required_' . $form_data_id . '">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="' . $elementtitle . '' . $form_data_id . '__required" id="PolarisCheckbox_required_' . $form_data_id . '" type="checkbox" class="Polaris-Checkbox__Input requiredCheck" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $required_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Required</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control Requiredpass">
+                                            <label class="Polaris-Choice" for="PolarisCheckbox_required_hidelabel_' . $form_data_id . '">
+                                                <span class="Polaris-Choice__Control">
+                                                <span class="Polaris-Checkbox">
+                                                    <input name="' . $elementtitle . '' . $form_data_id . '__required-hidelabel" id="PolarisCheckbox_required_hidelabel_' . $form_data_id . '" type="checkbox" class="Polaris-Checkbox__Input showRequireHideLabel" aria-invalid="false" role="checkbox" aria-checked="false" value="1" ' . $required_hidelabel_checked . '><span class="Polaris-Checkbox__Backdrop"></span>
+                                                    <span class="Polaris-Checkbox__Icon">
+                                                        <span class="Polaris-Icon">
+                                                            <span class="Polaris-VisuallyHidden"></span>
+                                                            <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                            <path d="M14.723 6.237a.94.94 0 0 1 .053 1.277l-5.366 6.193a.834.834 0 0 1-.611.293.83.83 0 0 1-.622-.264l-2.927-3.097a.94.94 0 0 1 0-1.278.82.82 0 0 1 1.207 0l2.297 2.43 4.763-5.498a.821.821 0 0 1 1.206-.056Z"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                </span>
+                                                <span class="Polaris-Choice__Label">Show required note if hide label?</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-control">
+                                            <input name="' . $elementtitle . '' . $form_data_id . '__columnwidth" type="hidden" value="' . $formData[9] . '"  class="input_columnwidth"/>
                                             <div class="chooseInput">
                                                 <div class="label">Column width</div>
                                                 <div class="chooseItems">
@@ -10317,11 +10536,15 @@ class Client_functions extends common_function
             // Fix unassigned $elementtitle lint
             $elementtitle = '';
             if (!empty($elementid)) {
-                $where_e = array(["", "id", "=", "$elementid"]);
-                $e_res = $this->select_result(TABLE_ELEMENTS, 'element_title', $where_e, ['single' => true]);
-                if (isset($e_res['status']) && $e_res['status'] == 1 && !empty($e_res['data'])) {
-                    $elementtitle = strtolower($e_res['data']['element_title']);
-                    $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
+                if ($elementid == 24) {
+                    $elementtitle = 'confirm-password';
+                } else {
+                    $where_e = array(["", "id", "=", "$elementid"]);
+                    $e_res = $this->select_result(TABLE_ELEMENTS, 'element_title', $where_e, ['single' => true]);
+                    if (isset($e_res['status']) && $e_res['status'] == 1 && !empty($e_res['data'])) {
+                        $elementtitle = strtolower($e_res['data']['element_title']);
+                        $elementtitle = preg_replace('/\s+/', '-', $elementtitle);
+                    }
                 }
             }
 
@@ -10481,7 +10704,7 @@ class Client_functions extends common_function
 
             $content = isset($_POST['contentparagraph']) ? $_POST['contentparagraph'] : '';
 
-            $element_type = array("1", "2", "3", "4", "5", "6", "7", "20", "21", "22", "23");
+            $element_type = array("1", "2", "3", "4", "5", "6", "7", "20", "21", "22", "23", "24");
             // $element_type2 = array("5");
             $element_type3 = array("8");
             $element_type4 = array("9");
@@ -12814,7 +13037,6 @@ class Client_functions extends common_function
 
         return $response_data;
     }
-
 
 }
 ?>
