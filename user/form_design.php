@@ -264,6 +264,22 @@ if ($form_id > 0) {
                                             </div>
                                         </div>
                                     </div>
+                                <div class="builder-item-wrapper ">
+                                    <div class="list-item" data-owl="17">
+                                        <div class="row">
+                                            <div class="icon">
+                                                <span class="Polaris-Icon">
+                                                    <span class="Polaris-VisuallyHidden"></span>
+                                                    <svg viewBox="0 0 20 20" class="Polaris-Icon__Svg" focusable="false" aria-hidden="true">
+                                                        <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-1-9a1 1 0 0 0 0 2h2a1 1 0 1 0 0-2H9zm0 4a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H9z"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="title">
+                                                <div>Floating Settings</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="root elementroot">
@@ -1321,33 +1337,6 @@ console.log('Custom code loaded');
                                 </div>
                             </div>
 
-                            <!-- Header Banner Image -->
-                            <div class="form-control">
-                                <div class="textfield-wrapper">
-                                    <div class="Polaris-Labelled__LabelWrapper">
-                                        <div class="Polaris-Label"><label class="Polaris-Label__Text">Banner Image (Above Title)</label></div>
-                                    </div>
-                                    <div class="Polaris-Connected" style="margin-bottom: 10px;">
-                                        <div class="Polaris-Connected__Item Polaris-Connected__Item--primary">
-                                            <div class="Polaris-TextField">
-                                                <input name="header_banner_image" id="headerBannerUrl" placeholder="https://example.com/banner.png" class="Polaris-TextField__Input header-banner-image" type="text">
-                                                <div class="Polaris-TextField__Backdrop"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="upload-area" id="headerBannerUploadArea" style="border: 2px dashed #dfe3e8; padding: 20px; text-align: center; cursor: pointer; border-radius: 3px; background: #fafbfb;">
-                                        <div style="margin-bottom: 8px;">
-                                            <svg viewBox="0 0 20 20" width="20" height="20" fill="#5c5f62" style="display: inline-block;"><path d="M10 0c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm1 15v-5h3l-4-5-4 5h3v5h2z"/></svg>
-                                        </div>
-                                        <p style="font-size: 13px; color: #5c5f62;">Click or Drag & Drop for banner</p>
-                                        <input type="file" id="headerBannerFile" name="header_banner_image_file" style="position: absolute; overflow: hidden; width: 1px; height: 1px; padding: 0; border: 0; clip: rect(1px, 1px, 1px, 1px); clip-path: inset(50%); white-space: nowrap;" accept="image/*">
-                                        <div id="headerBannerPreview" style="margin-top: 12px; display: none; text-align: center; position: relative; display: inline-block;">
-                                            <span class="remove-preview" data-for="headerBanner" style="position: absolute; top: -10px; right: -10px; cursor: pointer; color: #fff; background: red; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10;">&times;</span>
-                                            <img src="" style="max-width: 100%; max-height: 120px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(63,63,68,0.05); border: 1px solid #dfe3e8; padding: 2px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="form-control">
                                 <div class="Polaris-Labelled__LabelWrapper">
@@ -7394,23 +7383,6 @@ console.log('Custom code loaded');
                 'color': subheadingTextColor
             });
 
-            // Update Header Banner Preview
-            var bannerUrl = $('.header-banner-image').val() || '';
-            if (bannerUrl.indexOf('Uploaded: ') === 0) {
-                bannerUrl = $('#headerBannerPreview img').attr('src') || '';
-            }
-            var $bannerWrapper = $('.globo-header-banner-wrapper');
-            var isBannerImage = bannerUrl && (/(^data:image\/)|(\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$)/i.test(bannerUrl));
-            if (isBannerImage) {
-                if ($bannerWrapper.length === 0) {
-                    $('.formHeader').prepend('<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;"><img class="globo-header-banner" src="' + bannerUrl + '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;"></div>');
-                } else {
-                    $bannerWrapper.find('img').attr('src', bannerUrl);
-                    $bannerWrapper.show();
-                }
-            } else {
-                $bannerWrapper.hide();
-            }
             
             // Also apply alignment classes to formHeader
             $(".formHeader").removeClass("align-left align-center align-right").addClass(textAlign);

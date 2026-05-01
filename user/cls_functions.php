@@ -3622,18 +3622,7 @@ class Client_functions extends common_function
 
 
 
-                        $header_banner_url = isset($form_header_data[8]) ? $form_header_data[8] : '';
-                        $banner_html = '';
-                        if (!empty($header_banner_url) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp|avif)(\?.*)?$/i', $header_banner_url)) {
-                            // Ensure banner URL is absolute
-                            $full_banner_url = (strpos($header_banner_url, 'http') === 0) ? $header_banner_url : main_url($header_banner_url);
-                            $banner_html = '<div class="globo-header-banner-wrapper" style="margin-bottom: 20px; text-align: center;">
-                                               <img src="' . $full_banner_url . '" style="max-width: 100%; height: auto; border-radius: 4px; display: inline-block;">
-                                            </div>';
-                        }
-
                         $form_html = '<div class="formHeader header ' . $header_hidden . '" style="padding-top: 10px;">
-                                ' . $banner_html . '
                                 <h3 class="title globo-heading 1" style="font-size: ' . $heading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $heading_text_color . ' !important;">' . (isset($form_header_data[1]) ? $form_header_data[1] : 'Blank Form') . '</h3>
                                 <div class="description globo-description" style="font-size: ' . $subheading_font_size . 'px; text-align: ' . $header_text_align . '; color: ' . $subheading_text_color . ' !important;">' . (isset($form_header_data[2]) ? $form_header_data[2] : '') . '</div>
                             </div>';
