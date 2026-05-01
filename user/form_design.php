@@ -7144,41 +7144,92 @@ console.log('Custom code loaded');
             var borderRadius = parseInt($('.footer-design-button-border-radius').val()) || 4;
             
             // Validate color formats
-            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonTextColor)) {
-                buttonTextColor = '#ffffff';
-            }
-            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonBgColor)) {
-                buttonBgColor = '#EB1256';
-            }
-            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonHoverBgColor)) {
-                buttonHoverBgColor = '#C8104A';
-            }
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonTextColor)) buttonTextColor = '#ffffff';
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonBgColor)) buttonBgColor = '#EB1256';
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonHoverBgColor)) buttonHoverBgColor = '#C8104A';
             
-            // Calculate padding based on font size for dynamic button sizing
-            // Padding should scale proportionally: larger font = more padding
-            // Base padding ratio: for 16px font, use ~12px vertical and ~24px horizontal
-            var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75)); // 75% of font size, minimum 8px
-            var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5)); // 150% of font size, minimum 16px
+            var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75));
+            var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5));
             
-            // Apply to submit button ONLY with !important to override base CSS
-            var buttonStyles = `
-                font-size: ${buttonTextSize}px !important;
-                color: ${buttonTextColor} !important;
-                background-color: ${buttonBgColor} !important;
-                border-color: ${buttonBgColor} !important;
-                border-radius: ${borderRadius}px !important;
-                padding: ${verticalPadding}px ${horizontalPadding}px !important;
-                line-height: 1.2 !important;
+            // Use dynamic CSS injection for BOTH base and hover states
+            // This is more reliable than inline styles + JS listeners for hover
+            var styleId = 'footer-submit-button-style-preview';
+            $('#' + styleId).remove();
+            
+            var css = `
+                <style id="${styleId}">
+                    .footer .action.submit.classic-button {
+                        font-size: ${buttonTextSize}px !important;
+                        color: ${buttonTextColor} !important;
+                        background-color: ${buttonBgColor} !important;
+                        border-color: ${buttonBgColor} !important;
+                        border-radius: ${borderRadius}px !important;
+                        padding: ${verticalPadding}px ${horizontalPadding}px !important;
+                        line-height: 1.2 !important;
+                        transition: all 0.2s ease !important;
+                    }
+                    .footer .action.submit.classic-button:hover {
+                        background-color: ${buttonHoverBgColor} !important;
+                        border-color: ${buttonHoverBgColor} !important;
+                    }
+                </style>
             `;
-            $('.footer .action.submit.classic-button').attr('style', buttonStyles).attr('data-hover-bg', buttonHoverBgColor);
+            $('head').append(css);
             
-            // REMOVED: Applying to reset button here caused the issue
-            // Reset button is now handled by its own listeners in shopify_client10.js
+            // Clear any inline styles that might conflict
+            $('.footer .action.submit.classic-button').css({
+                'font-size': '', 'color': '', 'background-color': '', 'border-color': '', 'border-radius': '', 'padding': ''
+            });
+        };
+
+        window.updateFooterResetButtonPreview = function() {
+            // Read reset button design settings
+            var buttonTextSize = parseInt($('.footer-design-button-text-size').val()) || 16;
+            var buttonTextColor = $('.footer-design-reset-button-text-color-text').val() || $('.footer-design-reset-button-text-color').val() || '#ffffff';
+            var buttonBgColor = $('.footer-design-reset-button-bg-color-text').val() || $('.footer-design-reset-button-bg-color').val() || '#EB1256';
+            var buttonHoverBgColor = $('.footer-design-reset-button-hover-bg-color-text').val() || $('.footer-design-reset-button-hover-bg-color').val() || '#292929';
+            var borderRadius = parseInt($('.footer-design-button-border-radius').val()) || 4;
+            
+            // Validate color formats
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonTextColor)) buttonTextColor = '#ffffff';
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonBgColor)) buttonBgColor = '#EB1256';
+            if (!/^#[0-9A-Fa-f]{6}$/i.test(buttonHoverBgColor)) buttonHoverBgColor = '#292929';
+            
+            var verticalPadding = Math.max(8, Math.round(buttonTextSize * 0.75));
+            var horizontalPadding = Math.max(16, Math.round(buttonTextSize * 1.5));
+            
+            var styleId = 'footer-reset-button-style-preview';
+            $('#' + styleId).remove();
+            
+            var css = `
+                <style id="${styleId}">
+                    .footer .action.reset.classic-button {
+                        font-size: ${buttonTextSize}px !important;
+                        color: ${buttonTextColor} !important;
+                        background-color: ${buttonBgColor} !important;
+                        border-color: ${buttonBgColor} !important;
+                        border-radius: ${borderRadius}px !important;
+                        padding: ${verticalPadding}px ${horizontalPadding}px !important;
+                        line-height: 1.2 !important;
+                        transition: all 0.2s ease !important;
+                    }
+                    .footer .action.reset.classic-button:hover {
+                        background-color: ${buttonHoverBgColor} !important;
+                        border-color: ${buttonHoverBgColor} !important;
+                    }
+                </style>
+            `;
+            $('head').append(css);
+            
+            $('.footer .action.reset.classic-button').css({
+                'font-size': '', 'color': '', 'background-color': '', 'border-color': '', 'border-radius': '', 'padding': ''
+            });
         };
         
         // Real-time preview updates for footer button design controls
         $(document).on('input change', '.footer-design-button-text-size, .footer-design-button-text-color, .footer-design-button-text-color-text, .footer-design-button-bg-color, .footer-design-button-bg-color-text, .footer-design-button-hover-bg-color, .footer-design-button-hover-bg-color-text, .footer-design-button-border-radius', function() {
             updateFooterButtonPreview();
+            updateFooterResetButtonPreview();
         });
         
         // Sync button text color picker with text input
@@ -7226,33 +7277,8 @@ console.log('Custom code loaded');
             }
         });
         
-        // Add hover effect using CSS data attribute
-        $(document).on('mouseenter', '.footer .action.submit.classic-button, .footer .action.reset.classic-button', function() {
-            var hoverBg = $(this).attr('data-hover-bg');
-            if (hoverBg) {
-                $(this).css({
-                    'background-color': hoverBg,
-                    'border-color': hoverBg
-                });
-            }
-        });
-        
-        $(document).on('mouseleave', '.footer .action.submit.classic-button', function() {
-            var bgColor = $('.footer-design-button-bg-color-text').val() || $('.footer-design-button-bg-color').val() || '#EB1256';
-            $(this).css({
-                'background-color': bgColor,
-                'border-color': bgColor
-            });
-        });
-
-        $(document).on('mouseleave', '.footer .action.reset.classic-button', function() {
-            // Read RESET button color, not submit button color
-            var bgColor = $('.footer-design-reset-button-bg-color-text').val() || $('.footer-design-reset-button-bg-color').val() || '#EB1256';
-            $(this).css({
-                'background-color': bgColor,
-                'border-color': bgColor
-            });
-        });
+        // Redundant JS hover listeners removed as they are now handled by dynamic CSS injection
+        // which correctly handles !important specificity without being overridden by base inline styles.
         
         // Apply saved settings immediately when customization panel inputs are available
         function applySavedSettingsToPreview() {
