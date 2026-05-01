@@ -3828,7 +3828,7 @@ class Client_functions extends common_function
 
                         // Fix: Ignore small values (e.g. 1, 2, 3) used for layout columns to prevent conflict
                         if ($inputFontSize > 9) {
-                            $styles[] = 'font-size: ' . $inputFontSize . 'px';
+                            $styles[] = 'font-size: ' . $inputFontSize . 'px !important';
                         }
 
                         // Font weight - apply if set
@@ -3947,7 +3947,7 @@ class Client_functions extends common_function
 
                         // Fix: Ignore small values (e.g. 1, 2, 3) used for layout columns
                         if ($labelFontSize > 9) { // Only apply if > 9
-                            $styles[] = 'font-size: ' . $labelFontSize . 'px';
+                            $styles[] = 'font-size: ' . $labelFontSize . 'px !important';
                         }
 
                         // Font weight - apply if set and different from default

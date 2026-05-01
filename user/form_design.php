@@ -6837,11 +6837,21 @@ console.log('Custom code loaded');
         // Apply to input, textarea, select elements (Input Font Size)
         $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] .classic-input, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] .classic-input').each(function() {
             var elem = $(this)[0];
-            elem.style.setProperty('font-size', inputFontSize + 'px');
-            elem.style.setProperty('font-weight', fontWeight);
-            elem.style.setProperty('color', color);
+            elem.style.setProperty('font-size', inputFontSize + 'px', 'important');
+            elem.style.setProperty('font-weight', fontWeight, 'important');
+            elem.style.setProperty('color', color, 'important');
             elem.style.setProperty('border-radius', borderRadius + 'px', 'important');
         });
+
+        // Specific fix for Placeholders font-size
+        var placeholderStyleId = 'placeholder-style-' + formdataid;
+        $('#' + placeholderStyleId).remove();
+        var placeholderCss = '<style id="' + placeholderStyleId + '">' +
+            '.code-form-control[data-formdataid="' + formdataid + '"] .classic-input::placeholder { font-size: ' + inputFontSize + 'px !important; } ' +
+            '.code-form-control[data-formdataid="' + formdataid + '"] .classic-input::-webkit-input-placeholder { font-size: ' + inputFontSize + 'px !important; } ' +
+            '.code-form-control[data-formdataid="' + formdataid + '"] .classic-input::-moz-placeholder { font-size: ' + inputFontSize + 'px !important; } ' +
+            '</style>';
+        $('head').append(placeholderCss);
 
         // Apply to Labels (Label Font Size)
         var $labels = $('.code-form-app .code-form-control[data-formdataid="' + formdataid + '"] label, .contact-form .code-form-control[data-formdataid="' + formdataid + '"] label, .code-form-app .label-content[data-formdataid="' + formdataid + '"], .contact-form .label-content[data-formdataid="' + formdataid + '"]');
@@ -7603,7 +7613,16 @@ console.log('Custom code loaded');
             }
             
             // Fallback: Get all design values for this element
-            var fontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+            var labelFontSize = parseInt($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+            var inputFontSize = parseInt($('.element-design-input-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+            
+            // Fallback for missing new inputs
+            if ($('.element-design-label-font-size[data-formdataid="' + formdataid + '"]').length === 0) {
+                 var oldFontSize = parseInt($('.element-design-font-size[data-formdataid="' + formdataid + '"]').val()) || 16;
+                 labelFontSize = oldFontSize;
+                 inputFontSize = oldFontSize;
+            }
+
             var fontWeight = $('.element-design-font-weight[data-formdataid="' + formdataid + '"]').val() || '500';
             var color = $('.element-design-color-text[data-formdataid="' + formdataid + '"]').val() || '#004166';
             var borderRadiusVal = $('.element-design-border-radius[data-formdataid="' + formdataid + '"]').val();
@@ -7617,7 +7636,7 @@ console.log('Custom code loaded');
             var $previewLabel = $('.contact-form .label-content[data-formdataid="' + formdataid + '"], .code-form-app .label-content[data-formdataid="' + formdataid + '"]');
             if ($previewLabel.length) {
                 $previewLabel.css({
-                    'font-size': fontSize + 'px',
+                    'font-size': labelFontSize + 'px',
                     'font-weight': fontWeight,
                     'color': color
                 });
@@ -7626,11 +7645,14 @@ console.log('Custom code loaded');
                 }
             }
             
-            // Apply border-radius to the input field, textarea, and select (not font-size)
+            // Apply font-size and border-radius to the input field, textarea, and select
             var $previewInput = $('.contact-form input[data-formdataid="' + formdataid + '"], .contact-form textarea[data-formdataid="' + formdataid + '"], .contact-form select[data-formdataid="' + formdataid + '"], .code-form-app input[data-formdataid="' + formdataid + '"], .code-form-app textarea[data-formdataid="' + formdataid + '"], .code-form-app select[data-formdataid="' + formdataid + '"]');
             if ($previewInput.length) {
                 $previewInput.each(function() {
-                    $(this)[0].style.setProperty('border-radius', borderRadius + 'px', 'important');
+                    var elem = $(this)[0];
+                    elem.style.setProperty('font-size', inputFontSize + 'px', 'important');
+                    elem.style.setProperty('border-radius', borderRadius + 'px', 'important');
+                    elem.style.setProperty('color', color, 'important');
                 });
             }
             
