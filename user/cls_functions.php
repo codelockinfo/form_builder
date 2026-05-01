@@ -3725,7 +3725,8 @@ class Client_functions extends common_function
                     $form_html = '<div class="code-form-app boxed-layout contact-form">' . $form_html;
                 }
 
-                if (!empty($element_data_array)) {
+                // Always open form tag if form exists, even if it has no elements yet
+                if (isset($comeback_form['data']) && !empty($comeback_form['data'])) {
                     // Use public_id for storefront forms, database ID for preview/admin
                     $form_id_value = $is_storefront ? $form_id_for_submission : $_POST['form_id'];
                     $success_msg_pos = isset($design_settings['form_container']['success_message_position']) ? $design_settings['form_container']['success_message_position'] : 'popup';
@@ -4986,8 +4987,8 @@ class Client_functions extends common_function
                                 <button class="action reset classic-button footer-data__resetbuttontext ' . $reset_button . ' ' . $fullwidth_button . '" type="button" ' . $reset_button_style . ' ' . $reset_button_hover_style . '>' . (isset($form_footer_data[3]) ? $form_footer_data[3] : 'Reset') . '</button>
                             </div>';
                 }
-                // Close the form AFTER the footer button
-                if (!empty($element_data_array)) {
+                // Close the form AFTER the footer button if it was opened
+                if (isset($comeback_form['data']) && !empty($comeback_form['data'])) {
                     $form_html .= '</form>';
                 }
                 // Close the code-form-app wrapper only if we opened it (storefront mode)
