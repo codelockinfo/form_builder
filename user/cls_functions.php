@@ -12354,7 +12354,7 @@ class Client_functions extends common_function
     min-width: 100px;
     cursor: pointer;
     position: relative;
-    margin: 10px 0;
+    margin: 10px 5px !important;
 }
 .code-form-app .footer .action.reset.classic-button,
 .form-builder-wrapper .footer .action.reset.classic-button {
@@ -12374,7 +12374,7 @@ class Client_functions extends common_function
     background-color: #FFFFFF;
     color: #EB1256;
     border: 1px solid #EB1256;
-    margin: 10px 0;
+    margin: 10px 5px !important;
 }
 .code-form-app .footer.align-left {
     text-align: left !important;
